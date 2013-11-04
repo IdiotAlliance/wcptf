@@ -169,18 +169,18 @@ class UsersAR extends CActiveRecord
 	}
 
 		public function getUserByEmail($email){
-        $user = UserAR::model()->find('email=:email', array(':email'=>$email));
+        $user = UsersAR::model()->find('email=:email', array(':email'=>$email));
         return $user;
     }
 
     public function isEmailExisted($email){
-        return UserAR::model()->exists('email=:email', array(':email'=>$email));
+        return UsersAR::model()->exists('email=:email', array(':email'=>$email));
     }
 
     public function generateVerifyCode(){
         $verifyCode = '';
         $randCharactersLength = count($this->_randCharacters);
-        for ($i = 0; $i < UserAR::VERIFY_CODE_LENGTH; $i++){
+        for ($i = 0; $i < UsersAR::VERIFY_CODE_LENGTH; $i++){
             $verifyCode = $verifyCode.$this->_randCharacters[rand(0, $randCharactersLength - 1 )];
         }
         return $verifyCode;
@@ -189,8 +189,8 @@ class UsersAR extends CActiveRecord
     public function verifyUser($email){
         $transaction = Yii::app()->db->beginTransaction();
         try {
-            $userAr = UserAR::model()->find('email=:email', array(':email'=>$email));
-            $userAr->email_verified = UserAR::STATUS_HAS_VERIFIED;
+            $userAr = UsersAR::model()->find('email=:email', array(':email'=>$email));
+            $userAr->email_verified = UsersAR::STATUS_HAS_VERIFIED;
             /*
                 待添加：分配角色权限
             */
@@ -206,8 +206,8 @@ class UsersAR extends CActiveRecord
     }
 
     public function isVerified($email){
-        $userAr = UserAR::model()->find('email=:email', array(':email'=>$email));
-        return $userAr->email_verified == UserAR::STATUS_HAS_VERIFIED ? true : false;
+        $userAr = UsersAR::model()->find('email=:email', array(':email'=>$email));
+        return $userAr->email_verified == UsersAR::STATUS_HAS_VERIFIED ? true : false;
     }
 
 }
