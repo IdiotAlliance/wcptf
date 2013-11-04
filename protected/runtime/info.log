@@ -1,0 +1,8 @@
+2013/11/02 20:12:20 [info] [application] ss
+in /Library/WebServer/Documents/weChat/protected/modules/accounts/models/AssoRegisterForm.php (68)
+in /Library/WebServer/Documents/weChat/protected/modules/accounts/controllers/RegisterController.php (41)
+in /Library/WebServer/Documents/weChat/index.php (13)
+2013/11/02 20:14:05 [info] [application] sss@@@
+in /Library/WebServer/Documents/weChat/protected/modules/accounts/models/AssoRegisterForm.php (68)
+in /Library/WebServer/Documents/weChat/protected/modules/accounts/controllers/RegisterController.php (41)
+in /Library/WebServer/Documents/weChat/index.php (13)

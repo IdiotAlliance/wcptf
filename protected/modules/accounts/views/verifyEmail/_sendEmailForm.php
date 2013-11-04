@@ -1,0 +1,32 @@
+<div class='headtips' >
+    <p> 
+    <strong>1.填写登录邮箱</strong> 
+    <small> >> 2.接收找回密码邮件 >> 3.重设密码 >> 4.完成</small>
+    </p>
+</div>
+       <?php echo $form->textFieldRow($model, 'email', 
+                                array(
+                                    'class'=>'input-large', 
+                                    'placeholder'=>'请填写登录邮箱',
+                                    'tabindex'=>'1',
+                                    )); ?>
+
+        <?php echo $form->captchaRow($model, 'verifyCode', 
+                                array(
+                                    'class'=>'input-large',
+                                    'tabindex'=>'2',
+                                    'captchaOptions'=>array(
+                                        'clickableImage'=>true,
+                                        'showRefreshButton'=>true,
+                                        'buttonLabel'=>'换一张',
+                                    ),
+                                    'enableAjaxValidation'=>false,
+                                    )); ?>
+
+    <div class='form-actions'>
+        <?php echo CHtml::submitButton('提交', 
+                                array(
+                                    'class'=>'btn btn-primary',
+                                    'tabindex'=>'3',
+                                    )); ?>
+    </div>

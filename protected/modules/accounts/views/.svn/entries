@@ -1,0 +1,43 @@
+10
+
+dir
+501
+svn://192.168.1.200/sasp/web/protected/modules/accounts/views
+svn://192.168.1.200/sasp
+
+
+
+2013-05-24T08:47:50.481255Z
+468
+zs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2d8c239e-e28b-4912-a1e4-b34baa6806d1
+
+layouts
+dir
+
+settings
+dir
+
+register
+dir
+
+login
+dir
+
+verifyEmail
+dir
+

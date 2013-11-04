@@ -1,0 +1,148 @@
+<?php
+    /**
+     * @author  zhoushuai
+     */
+    
+class AssoRegisterForm extends CFormModel
+{
+    public $province;
+    public $city;
+    public $university;
+    public $associationName;
+    public $email;
+    public $password;
+    public $contactPerson;
+    public $contactPhone;
+    public $invitationCode;
+    public $verifyCode;
+
+    public function rules()
+    {
+        return array(
+            //array('province', 'required', 'message'=>'请选择省份'),
+            //array('city', 'required', 'message'=>'请选择城市'),
+            array('university', 'required', 'message'=>'请选择大学'),
+            array('associationName', 'required', 'message'=>'请输入社团名称'),
+            array('associationName', 'length', 'max'=>50, 'tooLong'=>'社团名称不能超过50字'),
+            array('email', 'required', 'message'=>'请输入常用邮箱'),
+            array('email', 'email', 'allowEmpty'=>true, 'message'=>'请输入正确的邮箱地址'),
+            array('email', 'length', 'max'=>320, 'tooLong'=>'邮箱地址长度不能超过320位'),
+            array('email', 'emailNotExist'),
+            array('password', 'required', 'message'=>'请输入密码'),
+            array('password', 'length', 'min'=>6, 'max'=>30, 'tooShort'=>'密码长度能不少于6位', 'tooLong'=>'密码长度不能大于30位'),
+            array('contactPerson', 'required', 'message'=>'请输入联系人姓名'),
+            array('contactPerson', 'length', 'max'=>20, 'tooLong'=>'姓名长度不能超过20个字'),
+            array('contactPhone', 'required', 'message'=>'请输入手机号码'),
+            array('contactPhone', 'length', 'max'=>11, 'tooLong'=>'手机号码不能超过11位'),
+            array('contactPhone', 'match', 'allowEmpty'=>true,
+                'pattern'=>'/^1[3|4|5|8]\d{9}$/', 'message'=>'请输入正确的11位手机号码，以13/14/15/18开头'),
+            array('invitationCode', 'required', 'message'=>'请输入邀请码'),
+            array('invitationCode', 'invitationCodeCorrect'),
+            array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(), 'message'=>'验证码错误'),
+
+        );
+    }
+
+    public function attributeLabels()
+    {
+        return array(
+            'province'=>'省份',
+            'city'=>'城市',
+            'university'=>'大学',
+            'associationName'=>'社团名称',
+            'email'=>'登录邮箱',
+            'password'=>'密码',
+            'contactPerson'=>'联系人姓名',
+            'contactPhone'=>'手机号码',
+            'invitationCode'=>'邀请码',
+            'verifyCode'=>'验证码',
+        );
+    }
+
+    /**
+     * this is the 'emailNotExist' validator declared in function rules();
+     */
+    public function emailNotExist($attribute, $params){
+        if (!$this->hasErrors()) {
+            if (UserAR::model()->isEmailExisted($this->email)) {
+                $this->addError('email', '邮箱已经存在');
+            }
+        }
+    }
+
+    /**
+     * @author  zhoushuai
+     * rules中引用的 invatationCodeCorrect 验证方法
+     */
+    public function invitationCodeCorrect($attribute, $params){
+        if (!$this->hasErrors()){
+            $inviCode = InvitationCodeAR::model()->find('code=:code and type=:type', 
+                                                        array(':code'=>$this->invitationCode, 
+                                                              ':type'=>InvitationCodeAR::CODE_FOR_ASSO,
+                                                              ));
+            if ($inviCode == null){
+                $this->addError('invitationCode', '请输入正确的邀请码');
+            }
+            else if ($inviCode['user_id'] != null){
+                $this->addError('invitationCode', '该邀请码已经被使用过了');
+            }
+        }
+    }
+
+    public function registerSucceed(){
+        $transaction = Yii::app()->db->beginTransaction();
+
+        //$userAr = new UserAR(); 
+        //$associationAr = new AssociationAR();
+        try {
+            $userAr = new UserAR();
+            $userAr->email = $this->email;
+            $userAr->password = md5($this->password);
+            $userAr->type = UserAR::TYPE_ASSOCIATION;
+            $userAr->register_time = new CDbExpression('NOW()');
+            $userAr->email_verified = UserAR::STATUS_NOT_VERIFIED;
+            $userAr->verify_code = $userAr->generateVerifyCode();
+            $userAr->save();
+            
+            $associationAr = new AssociationAR();
+            $associationAr->asso_id = $associationAr->generateAssoId();
+            $associationAr->user_id = $userAr->id;
+            $associationAr->name = $this->associationName;
+            $associationAr->university_id = $this->university;
+            $associationAr->contact_phone1 = $this->contactPhone;
+            $associationAr->contact_person1 = $this->contactPerson;
+            $associationAr->verified = AssociationAR::STATUS_NOT_VERIFIED;
+            $associationAr->save();
+
+            $invitationCodeAr = InvitationCodeAR::model()->getInvitationCodeByCode($this->invitationCode);
+            $invitationCodeAr->user_id = $userAr->id;
+            $invitationCodeAr->save();
+
+            //添加rbac角色
+            Yii::app()->authManager->assign(RbacHelper::UNVALIDATER_ROLE, $userAr->id);
+
+            $transaction->commit();
+
+        } catch (Exception $e) {
+            $transaction->rollback();
+            return false;
+        }
+
+        EmailHelper::sendVerifyEmail($userAr, $associationAr->name);
+        return true;
+    }
+
+    public function login()
+    {
+        $identity = new UserIdentity($this->email,$this->password);
+        $identity->authenticate();
+        if($identity->errorCode===UserIdentity::ERROR_NONE)
+        {
+            $duration = 3600*24*30; // 30 days
+            Yii::app()->user->login($identity, $duration);
+            return true;
+        }
+        else
+            return false;
+    }
+}

@@ -1,0 +1,177 @@
+<?php
+/**
+ * @author  zhoushuai
+ */
+class RegisterController extends Controller
+{
+	public $layout = 'column1';
+	
+	public function actions()
+	{
+		return array(
+			'captcha'=>array(
+				'class'=>'CCaptchaAction',
+				'backColor'=>0xFFFFFF,
+				'testLimit'=>1,
+				'minLength'=>4,
+				'maxLength'=>4,
+				'transparent'=>true,
+			),
+		);
+	}
+
+	/**
+	 * @author  zhoushuai
+	 * 社团注册
+	 */
+	public function actionAssociation()
+	{
+		if (Yii::app()->user->isGuest){
+
+			$model = new AssoRegisterForm();
+
+			if (isset($_POST['ajax']) && $_POST['ajax']==='association_register_form'){
+				$model->attributes = $_POST['AssoRegisterForm'];
+				echo CActiveForm::validate($model, array('email'));
+				Yii::app()->end();
+			}
+		
+			if (isset($_POST['AssoRegisterForm'])){
+				$model->attributes = $_POST['AssoRegisterForm'];
+				if ($model->validate() && $model->registerSucceed()){
+					Yii::app()->user->setFlash('success', '<strong>注册成功！</strong>');
+					if ($model->login()){
+						$this->redirect(array('/accounts/verifyEmail'));
+					}
+					else{
+						$this->redirect(array('/accounts/login/login'));				
+					}
+				}
+				else {
+					
+				}
+			}
+
+			//$provinceList = ProvinceAR::model()->getProvinceList();
+			//$cityList = CityAR::model()->getCityList();
+			//$universityList = UniversityAR::model()->getUniversityListByCityID();
+			$provinceList = ProvinceAR::model()->getJiangSu();
+			$cityList = CityAR::model()->getNanJing();
+			$universityList = UniversityAR::model()->getUniversityListofNanJing();
+			$this->render('association', 
+				array('model'=>$model, 
+					'provinceList'=>$provinceList,
+					'cityList'=>$cityList,
+					'universityList'=>$universityList,
+					));
+		}
+		else {
+			$this->redirect(Yii::app()->user->returnUrl);
+		}
+	}
+
+	/**
+	 * @author  zhoushuai
+	 * 企业注册
+	 */
+	public function actionCompany()
+	{
+		if (Yii::app()->user->isGuest){
+
+			$model = new CompanyRegisterForm();
+
+			if (isset($_POST['ajax']) && $_POST['ajax']==='company_register_form'){
+				$model->attributes = $_POST['CompanyRegisterForm'];
+				echo CActiveForm::validate($model, array('loginEmail'));
+				Yii::app()->end();
+			}
+		
+			if (isset($_POST['CompanyRegisterForm'])){
+				$model->attributes = $_POST['CompanyRegisterForm'];
+				if ($model->validate() && $model->registerSucceed()){
+					Yii::app()->user->setFlash('success', '<strong>注册成功！</strong>');
+					if ($model->login()){
+						$this->redirect(array('/accounts/verifyEmail'));
+					}
+					else {
+						$this->redirect(array('/accounts/login/login'));
+					}
+				}
+				else {
+					
+				}
+			}		
+			
+			$provinceList = ProvinceAR::model()->getProvinceList();
+			$cityList = CityAR::model()->getCityList();
+			$this->render('company', array(
+										'model'=>$model,
+										'provinceList'=>$provinceList,
+										'cityList'=>$cityList,
+										));
+
+		}
+		else {
+			$this->redirect(Yii::app()->user->returnUrl);
+		}
+	}
+
+	/**
+	 * @author  zhoushuai
+	 * ajax 返回城市列表
+	 */
+	public function actionDynamicCity(){
+		if (isset($_POST["oldpid"]) && isset($_POST["pid"])){
+			$old = $_POST["oldpid"];
+			$pid = $_POST["pid"];
+			$citys = CityAR::model()->getCityList($pid);
+			echo CHtml::tag('option', array('value'=>''), Yii::t('viewMember', '选择城市'), true);
+			foreach ($citys as $id => $name) {
+				if ($id == $old){
+					echo CHtml::tag('option', array('value'=>$id, 'selected'=>true), CHtml::encode($name), true);
+				}
+				else {
+					echo CHtml::tag('option', array('value'=>$id), CHtml::encode($name), true);
+				}
+			}
+		}
+		else {
+			throw new CHttpException(403, '');		
+		}
+	}
+
+	/**
+	 * @author  zhoushuai
+	 * ajax 返回大学列表
+	 */
+	public function actionDynamicUniversity(){
+		if (isset($_POST["oldcid"]) && isset($_POST["cid"])){
+			$old = $_POST["oldcid"];
+			$cid = $_POST["cid"];
+			$universities = UniversityAR::model()->getUniversityListByCityID($cid);
+			echo CHtml::tag('option', array('value'=>''), Yii::t('viewMember', '选择大学'), true);
+			if (!empty($universities)){
+				foreach ($universities as $id => $name) {
+					if ($id == $old) {
+						echo CHtml::tag('option', array('value'=>$id, 'selected'=>true), CHtml::encode($name), true);
+					}
+					else {
+						echo CHtml::tag('option', array('value'=>$id), CHtml::encode($name), true);
+					}
+				}
+			}
+		}
+		else {
+			throw new CHttpException(403, '');	
+		}
+	}
+
+	public function filters()
+	{
+		return array(
+			'ajaxOnly + dynamicCity',
+			'ajaxOnly + dynamicUniversity',
+		);
+	}
+
+}

@@ -1,0 +1,218 @@
+#myCarousel{
+    margin-top:-20px;
+}
+
+#features {
+    padding: 40px 0px;
+    background: none repeat scroll 0% 0% rgb(67, 128, 121);
+}
+
+a:hover{
+    color:#4298ba;
+    text-decoration:none
+}
+
+#features .feature{
+    display: block;
+    float: left;
+    width: 140px;
+    line-height: 30px;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    font-size:120%;
+}
+
+#features a:hover{
+    opacity:.8;
+}
+
+#features .tour-link {
+    display: block;
+    float: right;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    background: none repeat scroll 0% 0% rgb(101, 153, 149);
+    color: rgb(255, 255, 255);
+    border-radius: 4px 4px 4px 4px;
+}
+
+#customer {
+    padding: 40px 0px;
+    background: none repeat scroll 0% 0% rgb(227, 229, 207);
+}
+
+#customer h1{
+    color:#456b6a;
+    font-weight:bold;
+}
+
+#customer strong{
+    font-size:150%;
+}
+
+#customer .logos {
+    width: 600px;
+    margin: 0 auto;
+}
+
+#customer .logos li {
+    float: left;
+    padding: 15px;
+}
+
+#customer .logos a{
+    display:block;
+    overflow:hidden;
+    width:100px;
+    height:100px;
+    text-align:center;
+    text-indent:-999px;
+    background:url(../img/business.png) no-repeat 0 0;
+}
+
+#customer .logos .l1 a{
+    background-position:0 -200px;
+}
+
+#customer .logos .l1 a:hover{
+    background-position:0 0;
+}
+
+#customer .logos .l2 a{
+    background-position:-100px -200px;
+}
+
+#customer .logos .l2 a:hover{
+    background-position:-100px 0;
+}
+
+#customer .logos .l3 a{
+    background-position:-200px -200px;
+}
+
+#customer .logos .l3 a:hover{
+    background-position:-200px 0;
+}
+
+#customer .logos .l4 a{
+    background-position:-300px -200px;
+}
+
+#customer .logos .l4 a:hover{
+    background-position:-300px 0;
+}
+
+#customer .logos .l5 a{
+    background-position:0 -300px;
+}
+
+#customer .logos .l5 a:hover{
+    background-position:0 -100px;
+}
+
+#customer .logos .l6 a{
+    background-position:-100px -300px;
+}
+
+#customer .logos .l6 a:hover{
+    background-position:-100px -100px;
+}
+
+#customer .logos .l7 a{
+    background-position:-200px -300px;
+}
+
+#customer .logos .l7 a:hover{
+    background-position:-200px -100px;
+}       
+
+#customer .logos .l8 a{
+    background-position:-300px -300px;
+}
+
+#customer .logos .l8 a:hover{
+    background-position:-300px -100px;
+}           
+.unique{
+    background:url("../img/m1.png") repeat-x scroll 50% 50% / cover;
+}
+
+.unique .col-md-4{
+    text-align: center;
+    margin-bottom：20px;
+}
+
+.unique .col-lg-4 p {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.footer{
+    padding: 20px 0px;
+    background: none repeat scroll 0% 0% rgb(34, 34, 34);
+}
+
+.footer .container .links a {
+    display: block;
+    float: left;
+    margin-right: 30px;
+    padding: 5px 0px;
+    font-size: 12px;
+    color: rgb(170, 170, 170);
+}
+
+.footer .container .copyright {
+    float: right;
+    padding: 5px 0px;
+    font-size: 12px;
+    color: rgb(102, 102, 102);
+}
+
+.form-signin {
+    max-width: 330px;
+    padding: 0px;
+    margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+    margin-bottom: 0px;
+}
+.form-signin .checkbox {
+    font-weight: normal;
+}
+.form-signin .form-control {
+    position: relative;
+    font-size: 16px;
+    height: auto;
+    padding-top: 5px;
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+.form-signin .form-control:focus {
+    z-index: 2;
+}
+.form-signin input[type="text"] {
+    margin-bottom: 5px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.form-signin input[type="password"] {
+    margin-bottom: 5px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.jumbotron{
+    padding: 30px;
+}
+/*控制登陆框大小并居中*/
+#login-form{
+    width: 260px;
+    margin: 0 auto;
+}
+
+.getpassword{
+    float: right;
+}

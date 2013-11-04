@@ -1,0 +1,13 @@
+<?php echo CHtml::ajaxLink(
+    '重新发送',
+    array('/accounts/verifyEmail/reSendVerifyEmail'),
+    array(
+        'type'=>'post',
+        'data'=>array(
+            'YII_CSRF_TOKEN'=>Yii::app()->request->csrfToken,
+            ),
+        'update'=>'#hint',
+        )     
+    ); ?>
+
+<p id='hint'></p>

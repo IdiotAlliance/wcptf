@@ -1,0 +1,64 @@
+<?php
+/**
+ * @author  zhoushuai
+ */
+class LoginController extends Controller
+{
+    public $layout = 'column1';
+    public $defaultAction = 'login';
+    
+    public function actionLogin()
+    {
+        if (Yii::app()->user->isGuest){
+            $model = new LoginForm;
+
+            if(isset($_POST['ajax']) && $_POST['ajax']==='login-form')
+            {
+                echo CActiveForm::validate($model);
+                Yii::app()->end();
+            }
+
+            if(isset($_POST['LoginForm']))
+            {
+                $model->attributes=$_POST['LoginForm'];
+                if($model->validate() && $model->login()){
+                    if ($model->isVerified()){
+                       $this->redirect(Yii::app()->user->returnUrl);
+                    }
+                    else{
+                        $this->redirect(array('/accounts/verifyEmail'));
+                    }
+                }
+            }
+            $this->render('login', array('model'=>$model));              
+        }
+        else {
+            $this->redirect(Yii::app()->user->returnUrl);
+        }
+    }
+
+ /*
+    public function filters()
+    {
+        return array(
+            'accessControl',
+            );
+    }
+
+    public function accessRules(){
+        return array(
+            array(
+                'allow',
+                'actions'=>array('login'),
+                'users'=>array('?'),
+                ),
+            array(
+                'deny',
+                'actions'=>array('login'),
+                'users'=>array('@'),
+                ),
+            );
+    }
+ */
+
+}
