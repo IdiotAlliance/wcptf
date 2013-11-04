@@ -7,9 +7,9 @@ class EmailHelper {
     //发送激活邮件
     public static function sendVerifyEmail($userAr, $name){
         $to = $userAr->email;
-        $subject = '请激活您的玉米地账户！';
+        $subject = '请激活您的微积分账户！';
         $message = '亲爱的'.$name."：\r\n"
-                    .'欢迎您加入玉米地！'."\r\n"
+                    .'欢迎您加入微积分！'."\r\n"
                     .'请点击下面的链接完成注册：'."\r\n"
                     .Yii::app()->request->hostInfo.Yii::app()->createUrl(
                         '/accounts/verifyEmail/check',

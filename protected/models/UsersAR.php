@@ -10,6 +10,7 @@
  * @property integer $type
  * @property string $register_time
  * @property integer $email_verified
+ * @property string $verify_code
  * @property string $seller_type
  * @property string $token
  * @property string $store_name
@@ -76,16 +77,17 @@ class UsersAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('email, password, register_time, token, store_name, phone, stime, etime, store_address, logo, start_price, takeaway_fee, threshold', 'required'),
+			array('email, password, register_time, verify_code', 'required'),
 			array('type, email_verified, logo', 'numerical', 'integerOnly'=>true),
 			array('start_price, takeaway_fee, threshold', 'numerical'),
 			array('email, password', 'length', 'max'=>128),
+			array('verify_code, token', 'length', 'max'=>64),
 			array('seller_type, store_name, phone', 'length', 'max'=>32),
-			array('token', 'length', 'max'=>64),
 			array('store_address', 'length', 'max'=>256),
+			array('stime, etime', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, email, password, type, register_time, email_verified, seller_type, token, store_name, phone, stime, etime, store_address, logo, start_price, takeaway_fee, threshold', 'safe', 'on'=>'search'),
+			array('id, email, password, type, register_time, email_verified, verify_code, seller_type, token, store_name, phone, stime, etime, store_address, logo, start_price, takeaway_fee, threshold', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -120,6 +122,7 @@ class UsersAR extends CActiveRecord
 			'type' => 'Type',
 			'register_time' => 'Register Time',
 			'email_verified' => 'Email Verified',
+			'verify_code' => 'Verify Code',
 			'seller_type' => 'Seller Type',
 			'token' => 'Token',
 			'store_name' => 'Store Name',
@@ -151,6 +154,7 @@ class UsersAR extends CActiveRecord
 		$criteria->compare('type',$this->type);
 		$criteria->compare('register_time',$this->register_time,true);
 		$criteria->compare('email_verified',$this->email_verified);
+		$criteria->compare('verify_code',$this->verify_code,true);
 		$criteria->compare('seller_type',$this->seller_type,true);
 		$criteria->compare('token',$this->token,true);
 		$criteria->compare('store_name',$this->store_name,true);
@@ -167,8 +171,7 @@ class UsersAR extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
-
-		public function getUserByEmail($email){
+	public function getUserByEmail($email){
         $user = UsersAR::model()->find('email=:email', array(':email'=>$email));
         return $user;
     }
@@ -187,6 +190,7 @@ class UsersAR extends CActiveRecord
     }
 
     public function verifyUser($email){
+
         $transaction = Yii::app()->db->beginTransaction();
         try {
             $userAr = UsersAR::model()->find('email=:email', array(':email'=>$email));
@@ -209,5 +213,4 @@ class UsersAR extends CActiveRecord
         $userAr = UsersAR::model()->find('email=:email', array(':email'=>$email));
         return $userAr->email_verified == UsersAR::STATUS_HAS_VERIFIED ? true : false;
     }
-
 }

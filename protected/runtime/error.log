@@ -2939,3 +2939,172 @@ REQUEST_URI=/weChat/index.php?r=accounts/login/login
 in /Library/WebServer/Documents/weChat/protected/models/UsersAR.php (172)
 in /Library/WebServer/Documents/weChat/protected/components/UserIdentity.php (20)
 in /Library/WebServer/Documents/weChat/protected/modules/accounts/models/LoginForm.php (39)
+2013/11/04 23:04:35 [error] [exception.CException] exception 'CException' with message 'Property "UsersAR.verify_code" is not defined.' in /Library/WebServer/Documents/yii/framework/base/CComponent.php:173
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/db/ar/CActiveRecord.php(159): CComponent->__set('verify_code', 'vHrlpSp24bBDyBu...')
+#1 /Library/WebServer/Documents/weChat/protected/modules/accounts/models/AssoRegisterForm.php(67): CActiveRecord->__set('verify_code', 'vHrlpSp24bBDyBu...')
+#2 /Library/WebServer/Documents/weChat/protected/modules/accounts/controllers/RegisterController.php(40): AssoRegisterForm->registerSucceed()
+#3 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): RegisterController->actionAssociation()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#5 /Library/WebServer/Documents/yii/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#6 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#7 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('association')
+#8 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('accounts/regist...')
+#9 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#10 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#11 {main}
+REQUEST_URI=/weChat/index.php?r=accounts/register/association
+HTTP_REFERER=http://localhost/weChat/index.php?r=accounts/register/association
+---
+2013/11/04 23:17:29 [error] [exception.CHttpException.404] exception 'CHttpException' with message '页面不存在' in /Library/WebServer/Documents/weChat/protected/modules/accounts/controllers/VerifyEmailController.php:30
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): VerifyEmailController->actionCheck()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#2 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#3 /Library/WebServer/Documents/yii/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#5 /Library/WebServer/Documents/yii/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#6 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#7 /Library/WebServer/Documents/yii/framework/web/CController.php(291): CFilterChain->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#9 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('check')
+#10 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('accounts/verify...')
+#11 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#12 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#13 {main}
+REQUEST_URI=/weChat/index.php?r=accounts/verifyEmail/check&login=lwbhot%40qq.com&code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut
+HTTP_REFERER=http://mail.qq.com/cgi-bin/mail_spam?action=check_link&url=http://localhost/weChat/index.php?r=accounts/verifyEmail/check%26login=lwbhot%2540qq.com%26code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut&mailid=ZC4204-MxoDbx~lKhluKRtJ4ScFD3b&spam=0
+---
+2013/11/04 23:17:41 [error] [exception.CHttpException.404] exception 'CHttpException' with message '页面不存在' in /Library/WebServer/Documents/weChat/protected/modules/accounts/controllers/VerifyEmailController.php:30
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): VerifyEmailController->actionCheck()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#2 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#3 /Library/WebServer/Documents/yii/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#5 /Library/WebServer/Documents/yii/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#6 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#7 /Library/WebServer/Documents/yii/framework/web/CController.php(291): CFilterChain->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#9 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('check')
+#10 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('accounts/verify...')
+#11 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#12 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#13 {main}
+REQUEST_URI=/weChat/index.php?r=accounts/verifyEmail/check&login=lwbhot%40qq.com&code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut
+HTTP_REFERER=http://mail.qq.com/cgi-bin/mail_spam?action=check_link&url=http://localhost/weChat/index.php?r=accounts/verifyEmail/check%26login=lwbhot%2540qq.com%26code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut&mailid=ZC4204-MxoDbx~lKhluKRtJ4ScFD3b&spam=0
+---
+2013/11/04 23:18:46 [error] [exception.CHttpException.404] exception 'CHttpException' with message '页面不存在' in /Library/WebServer/Documents/weChat/protected/modules/accounts/controllers/VerifyEmailController.php:30
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): VerifyEmailController->actionCheck()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#2 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#3 /Library/WebServer/Documents/yii/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#5 /Library/WebServer/Documents/yii/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#6 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#7 /Library/WebServer/Documents/yii/framework/web/CController.php(291): CFilterChain->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#9 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('check')
+#10 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('accounts/verify...')
+#11 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#12 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#13 {main}
+REQUEST_URI=/weChat/index.php?r=accounts/verifyEmail/check&login=lwbhot%40qq.com&code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut
+HTTP_REFERER=http://mail.qq.com/cgi-bin/mail_spam?action=check_link&url=http://localhost/weChat/index.php?r=accounts/verifyEmail/check%26login=lwbhot%2540qq.com%26code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut&mailid=ZC4204-MxoDbx~lKhluKRtJ4ScFD3b&spam=0
+---
+2013/11/04 23:31:31 [error] [exception.CHttpException.404] exception 'CHttpException' with message '页面不存在' in /Library/WebServer/Documents/weChat/protected/modules/accounts/controllers/VerifyEmailController.php:30
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): VerifyEmailController->actionCheck()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#2 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#3 /Library/WebServer/Documents/yii/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#5 /Library/WebServer/Documents/yii/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#6 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#7 /Library/WebServer/Documents/yii/framework/web/CController.php(291): CFilterChain->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#9 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('check')
+#10 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('accounts/verify...')
+#11 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#12 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#13 {main}
+REQUEST_URI=/weChat/index.php?r=accounts/verifyEmail/check&login=lwbhot%40qq.com&code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut
+HTTP_REFERER=http://mail.qq.com/cgi-bin/mail_spam?action=check_link&url=http://localhost/weChat/index.php?r=accounts/verifyEmail/check%26login=lwbhot%2540qq.com%26code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut&mailid=ZC4204-MxoDbx~lKhluKRtJ4ScFD3b&spam=0
+---
+2013/11/04 23:32:57 [error] [exception.CHttpException.404] exception 'CHttpException' with message '页面不存在' in /Library/WebServer/Documents/weChat/protected/modules/accounts/controllers/VerifyEmailController.php:31
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): VerifyEmailController->actionCheck()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#2 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#3 /Library/WebServer/Documents/yii/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#5 /Library/WebServer/Documents/yii/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#6 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#7 /Library/WebServer/Documents/yii/framework/web/CController.php(291): CFilterChain->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#9 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('check')
+#10 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('accounts/verify...')
+#11 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#12 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#13 {main}
+REQUEST_URI=/weChat/index.php?r=accounts/verifyEmail/check&login=lwbhot%40qq.com&code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut
+HTTP_REFERER=http://mail.qq.com/cgi-bin/mail_spam?action=check_link&url=http://localhost/weChat/index.php?r=accounts/verifyEmail/check%26login=lwbhot%2540qq.com%26code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut&mailid=ZC4204-MxoDbx~lKhluKRtJ4ScFD3b&spam=0
+---
+2013/11/04 23:35:12 [error] [exception.CHttpException.404] exception 'CHttpException' with message '页面不存在' in /Library/WebServer/Documents/weChat/protected/modules/accounts/controllers/VerifyEmailController.php:31
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): VerifyEmailController->actionCheck()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#2 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#3 /Library/WebServer/Documents/yii/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#5 /Library/WebServer/Documents/yii/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#6 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#7 /Library/WebServer/Documents/yii/framework/web/CController.php(291): CFilterChain->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#9 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('check')
+#10 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('accounts/verify...')
+#11 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#12 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#13 {main}
+REQUEST_URI=/weChat/index.php?r=accounts/verifyEmail/check&login=lwbhot%40qq.com&code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut
+HTTP_REFERER=http://mail.qq.com/cgi-bin/mail_spam?action=check_link&url=http://localhost/weChat/index.php?r=accounts/verifyEmail/check%26login=lwbhot%2540qq.com%26code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut&mailid=ZC4204-MxoDbx~lKhluKRtJ4ScFD3b&spam=0
+---
+2013/11/04 23:35:44 [error] [exception.CHttpException.404] exception 'CHttpException' with message '页面不存在' in /Library/WebServer/Documents/weChat/protected/modules/accounts/controllers/VerifyEmailController.php:31
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): VerifyEmailController->actionCheck()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#2 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#3 /Library/WebServer/Documents/yii/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#5 /Library/WebServer/Documents/yii/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#6 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#7 /Library/WebServer/Documents/yii/framework/web/CController.php(291): CFilterChain->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#9 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('check')
+#10 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('accounts/verify...')
+#11 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#12 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#13 {main}
+REQUEST_URI=/weChat/index.php?r=accounts/verifyEmail/check&login=lwbhot%40qq.com&code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut
+HTTP_REFERER=http://mail.qq.com/cgi-bin/mail_spam?action=check_link&url=http://localhost/weChat/index.php?r=accounts/verifyEmail/check%26login=lwbhot%2540qq.com%26code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut&mailid=ZC4204-MxoDbx~lKhluKRtJ4ScFD3b&spam=0
+---
+2013/11/04 23:36:12 [error] [exception.CHttpException.404] exception 'CHttpException' with message '页面不存在' in /Library/WebServer/Documents/weChat/protected/modules/accounts/controllers/VerifyEmailController.php:31
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): VerifyEmailController->actionCheck()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#2 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#3 /Library/WebServer/Documents/yii/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#5 /Library/WebServer/Documents/yii/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#6 /Library/WebServer/Documents/yii/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#7 /Library/WebServer/Documents/yii/framework/web/CController.php(291): CFilterChain->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#9 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('check')
+#10 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('accounts/verify...')
+#11 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#12 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#13 {main}
+REQUEST_URI=/weChat/index.php?r=accounts/verifyEmail/check&login=lwbhot%40qq.com&code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut
+HTTP_REFERER=http://mail.qq.com/cgi-bin/mail_spam?action=check_link&url=http://localhost/weChat/index.php?r=accounts/verifyEmail/check%26login=lwbhot%2540qq.com%26code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut&mailid=ZC4204-MxoDbx~lKhluKRtJ4ScFD3b&spam=0
+---

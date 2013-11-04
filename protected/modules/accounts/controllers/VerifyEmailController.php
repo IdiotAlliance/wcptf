@@ -25,21 +25,27 @@ class VerifyEmailController extends Controller
 		$showLogin = false;
 
 		if (isset($_GET['login']) && isset($_GET['code'])){
+
 			$user = UsersAR::model()->getUserByEmail($_GET['login']);
 			if ($user === null || $user->verify_code != $_GET['code']){
 				throw new CHttpException(404, '页面不存在');			
 			}
 			else if ($user->email_verified == UsersAR::STATUS_HAS_VERIFIED){
+				    					var_dump($showLogin);
+				exit();
 				Yii::app()->user->logout();
 				Yii::app()->user->setFlash('warning',  '您的邮箱已经激活过了,请直接登录');
 				$showLogin = true;
 			}
 			else if (strtotime($user->register_time) < strtotime('-5 days')){
+				    					var_dump($showLogin);
+				exit();
 				Yii::app()->user->logout();
 				Yii::app()->user->setFlash('error',  '该链接已经失效，请登录后，选择重新发送激活邮件');
 				$showLogin = true;
 			}
 			else if (UsersAR::model()->verifyUser($user->email)){
+
 				Yii::app()->user->logout();
 				Yii::app()->user->setFlash('success',  '激活成功！');
 				$showLogin = true;
@@ -106,7 +112,7 @@ class VerifyEmailController extends Controller
 			    $userAr->verify_code = UsersAR::model()->generateVerifyCode();
 			    $userAr->save();
 			    
-			    if (EmailHelper::sendVerifyEmail($userAr, Yii::app()->user->specificName)){
+			    if (EmailHelper::sendVerifyEmail($userAr, $userAr->email)){
 			    	echo '发送成功！';
 			    	Yii::trace('发送成功');
 			    }
