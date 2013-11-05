@@ -7,6 +7,13 @@ class ProductManagerController extends Controller
 
 	public function actionAllProducts()
 	{
-		$this->render('allProducts');
+		$productType ='未分类';
+		$productList = ProductsAR::model()->getCategoryProducts($productType, Yii::app()->user->sellerId);
+
+
+		$this->render('allProducts',array(
+			'productType'=>$productType,
+			'productList'=>$productList,
+		));
 	}
 }

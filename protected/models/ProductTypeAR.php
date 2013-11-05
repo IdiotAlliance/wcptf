@@ -1,24 +1,24 @@
 <?php
 
 /**
- * This is the model class for table "posters".
+ * This is the model class for table "product_type".
  *
- * The followings are the available columns in table 'posters':
+ * The followings are the available columns in table 'product_type':
  * @property string $id
- * @property string $name
- * @property string $phone
- * @property string $description
  * @property string $seller_id
+ * @property string $type_name
+ * @property string $type_description
  *
  * The followings are the available model relations:
  * @property Users $seller
+ * @property Products[] $products
  */
-class PostersAR extends CActiveRecord
+class ProductTypeAR extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return PostersAR the static model class
+	 * @return ProductType the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -30,7 +30,7 @@ class PostersAR extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'posters';
+		return 'product_type';
 	}
 
 	/**
@@ -41,12 +41,13 @@ class PostersAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, phone, description, seller_id', 'required'),
-			array('name, phone', 'length', 'max'=>32),
+			array('type_name, type_description', 'required'),
 			array('seller_id', 'length', 'max'=>11),
+			array('type_name', 'length', 'max'=>128),
+			array('type_description', 'length', 'max'=>512),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name, phone, description, seller_id', 'safe', 'on'=>'search'),
+			array('id, seller_id, type_name, type_description', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -59,6 +60,7 @@ class PostersAR extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'seller' => array(self::BELONGS_TO, 'UsersAR', 'seller_id'),
+			'products' => array(self::HAS_MANY, 'ProductsAR', 'type_id'),
 		);
 	}
 
@@ -69,10 +71,9 @@ class PostersAR extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'name' => 'Name',
-			'phone' => 'Phone',
-			'description' => 'Description',
 			'seller_id' => 'Seller',
+			'type_name' => 'Type Name',
+			'type_description' => 'Type Description',
 		);
 	}
 
@@ -88,10 +89,9 @@ class PostersAR extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('phone',$this->phone,true);
-		$criteria->compare('description',$this->description,true);
 		$criteria->compare('seller_id',$this->seller_id,true);
+		$criteria->compare('type_name',$this->type_name,true);
+		$criteria->compare('type_description',$this->type_description,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

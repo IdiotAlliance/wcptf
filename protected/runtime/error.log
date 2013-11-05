@@ -3108,3 +3108,278 @@ Stack trace:
 REQUEST_URI=/weChat/index.php?r=accounts/verifyEmail/check&login=lwbhot%40qq.com&code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut
 HTTP_REFERER=http://mail.qq.com/cgi-bin/mail_spam?action=check_link&url=http://localhost/weChat/index.php?r=accounts/verifyEmail/check%26login=lwbhot%2540qq.com%26code=1sCqocbHEPQ0donwiFW1z7CTBtdCBVut&mailid=ZC4204-MxoDbx~lKhluKRtJ4ScFD3b&spam=0
 ---
+2013/11/05 18:49:05 [error] [exception.CHttpException.400] exception 'CHttpException' with message 'Your request is invalid.' in /Library/WebServer/Documents/yii/framework/web/CController.php:336
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(309): CController->invalidActionParams(Object(CInlineAction))
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#2 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#3 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('allProducts')
+#4 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('takeAway/produc...')
+#5 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#6 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#7 {main}
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts
+HTTP_REFERER=http://localhost/weChat/index.php?r=accounts/login/login
+---
+2013/11/05 21:35:24 [error] [exception.CHttpException.400] exception 'CHttpException' with message 'Your request is invalid.' in /Library/WebServer/Documents/yii/framework/web/CController.php:336
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(309): CController->invalidActionParams(Object(CInlineAction))
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#2 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#3 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('allProducts')
+#4 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('takeAway/produc...')
+#5 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#6 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#7 {main}
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts&0%5BproductType%5D=%E6%9C%AA%E5%88%86%E7%B1%BB
+HTTP_REFERER=http://localhost/weChat/index.php?r=accounts/login/login
+---
+2013/11/05 21:37:58 [error] [exception.CHttpException.400] exception 'CHttpException' with message 'Your request is invalid.' in /Library/WebServer/Documents/yii/framework/web/CController.php:336
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(309): CController->invalidActionParams(Object(CInlineAction))
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#2 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#3 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('allProducts')
+#4 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('takeAway/produc...')
+#5 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#6 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#7 {main}
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts&0%5BproductType%5D=%E6%9C%AA%E5%88%86%E7%B1%BB
+HTTP_REFERER=http://localhost/weChat/index.php?r=accounts/login/login
+---
+2013/11/05 21:39:57 [error] [exception.CHttpException.400] exception 'CHttpException' with message 'Your request is invalid.' in /Library/WebServer/Documents/yii/framework/web/CController.php:336
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(309): CController->invalidActionParams(Object(CInlineAction))
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#2 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#3 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('allProducts')
+#4 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('takeAway/produc...')
+#5 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#6 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#7 {main}
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts&0%5BproductType%5D=%E6%9C%AA%E5%88%86%E7%B1%BB
+HTTP_REFERER=http://localhost/weChat/index.php?r=accounts/login/login
+---
+2013/11/05 21:40:01 [error] [exception.CHttpException.400] exception 'CHttpException' with message 'Your request is invalid.' in /Library/WebServer/Documents/yii/framework/web/CController.php:336
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(309): CController->invalidActionParams(Object(CInlineAction))
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#2 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#3 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('allProducts')
+#4 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('takeAway/produc...')
+#5 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#6 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#7 {main}
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts&0%5BproductType%5D=%E6%9C%AA%E5%88%86%E7%B1%BB
+HTTP_REFERER=http://localhost/weChat/index.php?r=accounts/login/login
+---
+2013/11/05 21:41:18 [error] [exception.CException] exception 'CException' with message 'Property "CDbCriteria.param" is not defined.' in /Library/WebServer/Documents/yii/framework/base/CComponent.php:173
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/db/schema/CDbCriteria.php(160): CComponent->__set('param', Array)
+#1 /Library/WebServer/Documents/yii/framework/db/schema/CDbCommandBuilder.php(483): CDbCriteria->__construct(Array)
+#2 /Library/WebServer/Documents/yii/framework/db/ar/CActiveRecord.php(1415): CDbCommandBuilder->createCriteria(Array, Array)
+#3 /Library/WebServer/Documents/weChat/protected/models/ProductsAR.php(145): CActiveRecord->findAll(Array)
+#4 /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php(10): ProductsAR->getCategoryProducts('?????????', '3')
+#5 [internal function]: ProductManagerController->actionAllProducts('?????????')
+#6 /Library/WebServer/Documents/yii/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(ProductManagerController), Array)
+#7 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(ProductManagerController), Object(ReflectionMethod), Array)
+#8 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#9 /Library/WebServer/Documents/yii/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#10 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#11 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('allProducts')
+#12 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('takeAway/produc...')
+#13 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#14 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#15 {main}
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts&productType=%E6%9C%AA%E5%88%86%E7%B1%BB
+HTTP_REFERER=http://localhost/weChat/index.php?r=accounts/login/login
+---
+2013/11/05 21:42:26 [error] [php] include(Pictures.php): failed to open stream: No such file or directory (/Library/WebServer/Documents/yii/framework/YiiBase.php:421)
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/db/ar/CActiveRecord.php(386): spl_autoload_call()
+#1 /Library/WebServer/Documents/yii/framework/db/ar/CActiveFinder.php(215): model()
+#2 /Library/WebServer/Documents/yii/framework/db/ar/CActiveFinder.php(281): CActiveFinder->buildJoinTree()
+#3 /Library/WebServer/Documents/yii/framework/db/ar/CActiveFinder.php(48): CActiveFinder->buildJoinTree()
+#4 /Library/WebServer/Documents/yii/framework/db/ar/CActiveRecord.php(1301): CActiveFinder->__construct()
+#5 /Library/WebServer/Documents/yii/framework/db/ar/CActiveRecord.php(1416): ProductsAR->query()
+#6 /Library/WebServer/Documents/weChat/protected/models/ProductsAR.php(145): ProductsAR->findAll()
+#7 /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php(10): ProductsAR->getCategoryProducts()
+#8 unknown(0): ProductManagerController->actionAllProducts()
+#9 /Library/WebServer/Documents/yii/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs()
+#10 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(47): CInlineAction->runWithParamsInternal()
+#11 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams()
+#12 /Library/WebServer/Documents/yii/framework/web/CController.php(286): ProductManagerController->runAction()
+#13 /Library/WebServer/Documents/yii/framework/web/CController.php(265): ProductManagerController->runActionWithFilters()
+#14 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): ProductManagerController->run()
+#15 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#16 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#17 /Library/WebServer/Documents/weChat/index.php(13): CWebApplication->run()
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts&productType=%E6%9C%AA%E5%88%86%E7%B1%BB
+in /Library/WebServer/Documents/weChat/protected/models/ProductsAR.php (145)
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php (10)
+in /Library/WebServer/Documents/weChat/index.php (13)
+2013/11/05 21:53:53 [error] [php] include(ProductTypeAR.php): failed to open stream: No such file or directory (/Library/WebServer/Documents/yii/framework/YiiBase.php:421)
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/db/ar/CActiveRecord.php(386): spl_autoload_call()
+#1 /Library/WebServer/Documents/yii/framework/db/ar/CActiveFinder.php(215): model()
+#2 /Library/WebServer/Documents/yii/framework/db/ar/CActiveFinder.php(281): CActiveFinder->buildJoinTree()
+#3 /Library/WebServer/Documents/yii/framework/db/ar/CActiveFinder.php(48): CActiveFinder->buildJoinTree()
+#4 /Library/WebServer/Documents/yii/framework/db/ar/CActiveRecord.php(1301): CActiveFinder->__construct()
+#5 /Library/WebServer/Documents/yii/framework/db/ar/CActiveRecord.php(1416): ProductsAR->query()
+#6 /Library/WebServer/Documents/weChat/protected/models/ProductsAR.php(145): ProductsAR->findAll()
+#7 /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php(10): ProductsAR->getCategoryProducts()
+#8 unknown(0): ProductManagerController->actionAllProducts()
+#9 /Library/WebServer/Documents/yii/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs()
+#10 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(47): CInlineAction->runWithParamsInternal()
+#11 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams()
+#12 /Library/WebServer/Documents/yii/framework/web/CController.php(286): ProductManagerController->runAction()
+#13 /Library/WebServer/Documents/yii/framework/web/CController.php(265): ProductManagerController->runActionWithFilters()
+#14 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): ProductManagerController->run()
+#15 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#16 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#17 /Library/WebServer/Documents/weChat/index.php(13): CWebApplication->run()
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts&productType=%E6%9C%AA%E5%88%86%E7%B1%BB
+in /Library/WebServer/Documents/weChat/protected/models/ProductsAR.php (145)
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php (10)
+in /Library/WebServer/Documents/weChat/index.php (13)
+2013/11/05 21:55:09 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[23000]: Integrity constraint violation: 1052 Column 'seller_id' in where clause is ambiguous. The SQL statement executed was: SELECT `t`.`id` AS `t0_c0`, `t`.`seller_id` AS `t0_c1`, `t`.`type_id` AS `t0_c2`, `t`.`pname` AS `t0_c3`, `t`.`price` AS `t0_c4`, `t`.`credit` AS `t0_c5`, `t`.`description` AS `t0_c6`, `t`.`stime` AS `t0_c7`, `t`.`etime` AS `t0_c8`, `t`.`status` AS `t0_c9`, `t`.`instore` AS `t0_c10`, `t`.`richtext` AS `t0_c11`, `t`.`cover` AS `t0_c12`, `type`.`id` AS `t1_c0`, `type`.`seller_id` AS `t1_c1`, `type`.`type_name` AS `t1_c2`, `type`.`type_description` AS `t1_c3`, `cover0`.`id` AS `t2_c0`, `cover0`.`seller_id` AS `t2_c1`, `cover0`.`description` AS `t2_c2`, `cover0`.`pic_url` AS `t2_c3`, `cover0`.`name` AS `t2_c4` FROM `products` `t`  LEFT OUTER JOIN `product_type` `type` ON (`t`.`type_id`=`type`.`id`)  LEFT OUTER JOIN `pictures` `cover0` ON (`t`.`cover`=`cover0`.`id`)  WHERE (type_name=:type_name and seller_id =:seller_id) ORDER BY pname DESC. Bound with :type_name='未分类', :seller_id='3'.
+in /Library/WebServer/Documents/weChat/protected/models/ProductsAR.php (145)
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php (10)
+in /Library/WebServer/Documents/weChat/index.php (13)
+2013/11/05 21:55:09 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[23000]: Integrity constraint violation: 1052 Column 'seller_id' in where clause is ambiguous. The SQL statement executed was: SELECT `t`.`id` AS `t0_c0`, `t`.`seller_id` AS `t0_c1`, `t`.`type_id` AS `t0_c2`, `t`.`pname` AS `t0_c3`, `t`.`price` AS `t0_c4`, `t`.`credit` AS `t0_c5`, `t`.`description` AS `t0_c6`, `t`.`stime` AS `t0_c7`, `t`.`etime` AS `t0_c8`, `t`.`status` AS `t0_c9`, `t`.`instore` AS `t0_c10`, `t`.`richtext` AS `t0_c11`, `t`.`cover` AS `t0_c12`, `type`.`id` AS `t1_c0`, `type`.`seller_id` AS `t1_c1`, `type`.`type_name` AS `t1_c2`, `type`.`type_description` AS `t1_c3`, `cover0`.`id` AS `t2_c0`, `cover0`.`seller_id` AS `t2_c1`, `cover0`.`description` AS `t2_c2`, `cover0`.`pic_url` AS `t2_c3`, `cover0`.`name` AS `t2_c4` FROM `products` `t`  LEFT OUTER JOIN `product_type` `type` ON (`t`.`type_id`=`type`.`id`)  LEFT OUTER JOIN `pictures` `cover0` ON (`t`.`cover`=`cover0`.`id`)  WHERE (type_name=:type_name and seller_id =:seller_id) ORDER BY pname DESC. Bound with :type_name='未分类', :seller_id='3'' in /Library/WebServer/Documents/yii/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Library/WebServer/Documents/yii/framework/db/ar/CActiveFinder.php(761): CDbCommand->queryAll()
+#2 /Library/WebServer/Documents/yii/framework/db/ar/CActiveFinder.php(422): CJoinElement->runQuery(Object(CJoinQuery))
+#3 /Library/WebServer/Documents/yii/framework/db/ar/CActiveFinder.php(68): CJoinElement->find(Object(CDbCriteria))
+#4 /Library/WebServer/Documents/yii/framework/db/ar/CActiveRecord.php(1302): CActiveFinder->query(Object(CDbCriteria), true)
+#5 /Library/WebServer/Documents/yii/framework/db/ar/CActiveRecord.php(1416): CActiveRecord->query(Object(CDbCriteria), true)
+#6 /Library/WebServer/Documents/weChat/protected/models/ProductsAR.php(145): CActiveRecord->findAll(Array)
+#7 /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php(10): ProductsAR->getCategoryProducts('?????????', '3')
+#8 [internal function]: ProductManagerController->actionAllProducts('?????????')
+#9 /Library/WebServer/Documents/yii/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(ProductManagerController), Array)
+#10 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(ProductManagerController), Object(ReflectionMethod), Array)
+#11 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#12 /Library/WebServer/Documents/yii/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#13 /Library/WebServer/Documents/yii/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#14 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): CController->run('allProducts')
+#15 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('takeAway/produc...')
+#16 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#17 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#18 {main}
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts&productType=%E6%9C%AA%E5%88%86%E7%B1%BB
+HTTP_REFERER=http://localhost/weChat/index.php?r=accounts/login/login
+---
+2013/11/05 23:26:40 [error] [php] Undefined variable: productList (/Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php:40)
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(869): ProductManagerController->renderFile()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(782): ProductManagerController->renderPartial()
+#2 /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php(16): ProductManagerController->render()
+#3 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): ProductManagerController->actionAllProducts()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams()
+#5 /Library/WebServer/Documents/yii/framework/web/CController.php(286): ProductManagerController->runAction()
+#6 /Library/WebServer/Documents/yii/framework/web/CController.php(265): ProductManagerController->runActionWithFilters()
+#7 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): ProductManagerController->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#9 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#10 /Library/WebServer/Documents/weChat/index.php(13): CWebApplication->run()
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php (40)
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php (16)
+in /Library/WebServer/Documents/weChat/index.php (13)
+2013/11/05 23:27:00 [error] [php] Trying to get property of non-object (/Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php:43)
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(869): ProductManagerController->renderFile()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(782): ProductManagerController->renderPartial()
+#2 /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php(17): ProductManagerController->render()
+#3 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): ProductManagerController->actionAllProducts()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams()
+#5 /Library/WebServer/Documents/yii/framework/web/CController.php(286): ProductManagerController->runAction()
+#6 /Library/WebServer/Documents/yii/framework/web/CController.php(265): ProductManagerController->runActionWithFilters()
+#7 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): ProductManagerController->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#9 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#10 /Library/WebServer/Documents/weChat/index.php(13): CWebApplication->run()
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php (43)
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php (17)
+in /Library/WebServer/Documents/weChat/index.php (13)
+2013/11/05 23:28:18 [error] [php] Trying to get property of non-object (/Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php:43)
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(869): ProductManagerController->renderFile()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(782): ProductManagerController->renderPartial()
+#2 /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php(17): ProductManagerController->render()
+#3 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): ProductManagerController->actionAllProducts()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams()
+#5 /Library/WebServer/Documents/yii/framework/web/CController.php(286): ProductManagerController->runAction()
+#6 /Library/WebServer/Documents/yii/framework/web/CController.php(265): ProductManagerController->runActionWithFilters()
+#7 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): ProductManagerController->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#9 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#10 /Library/WebServer/Documents/weChat/index.php(13): CWebApplication->run()
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php (43)
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php (17)
+in /Library/WebServer/Documents/weChat/index.php (13)
+2013/11/05 23:28:19 [error] [php] Trying to get property of non-object (/Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php:43)
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(869): ProductManagerController->renderFile()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(782): ProductManagerController->renderPartial()
+#2 /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php(17): ProductManagerController->render()
+#3 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): ProductManagerController->actionAllProducts()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams()
+#5 /Library/WebServer/Documents/yii/framework/web/CController.php(286): ProductManagerController->runAction()
+#6 /Library/WebServer/Documents/yii/framework/web/CController.php(265): ProductManagerController->runActionWithFilters()
+#7 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): ProductManagerController->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#9 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#10 /Library/WebServer/Documents/weChat/index.php(13): CWebApplication->run()
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php (43)
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php (17)
+in /Library/WebServer/Documents/weChat/index.php (13)
+2013/11/05 23:28:36 [error] [php] Trying to get property of non-object (/Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php:43)
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(869): ProductManagerController->renderFile()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(782): ProductManagerController->renderPartial()
+#2 /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php(17): ProductManagerController->render()
+#3 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): ProductManagerController->actionAllProducts()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams()
+#5 /Library/WebServer/Documents/yii/framework/web/CController.php(286): ProductManagerController->runAction()
+#6 /Library/WebServer/Documents/yii/framework/web/CController.php(265): ProductManagerController->runActionWithFilters()
+#7 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): ProductManagerController->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#9 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#10 /Library/WebServer/Documents/weChat/index.php(13): CWebApplication->run()
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php (43)
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php (17)
+in /Library/WebServer/Documents/weChat/index.php (13)
+2013/11/05 23:28:37 [error] [php] Trying to get property of non-object (/Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php:43)
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(869): ProductManagerController->renderFile()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(782): ProductManagerController->renderPartial()
+#2 /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php(17): ProductManagerController->render()
+#3 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(49): ProductManagerController->actionAllProducts()
+#4 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams()
+#5 /Library/WebServer/Documents/yii/framework/web/CController.php(286): ProductManagerController->runAction()
+#6 /Library/WebServer/Documents/yii/framework/web/CController.php(265): ProductManagerController->runActionWithFilters()
+#7 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): ProductManagerController->run()
+#8 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#9 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#10 /Library/WebServer/Documents/weChat/index.php(13): CWebApplication->run()
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php (43)
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php (17)
+in /Library/WebServer/Documents/weChat/index.php (13)
+2013/11/06 00:17:32 [error] [php] Undefined variable: variable (/Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php:12)
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(286): ProductManagerController->runAction()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(265): ProductManagerController->runActionWithFilters()
+#2 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): ProductManagerController->run()
+#3 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#4 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#5 /Library/WebServer/Documents/weChat/index.php(13): CWebApplication->run()
+REQUEST_URI=/weChat/index.php?r=takeAway/productManager/allProducts
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php (12)
+in /Library/WebServer/Documents/weChat/index.php (13)

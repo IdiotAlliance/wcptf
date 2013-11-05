@@ -71,9 +71,9 @@ class OrdersAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'orderItems' => array(self::HAS_MANY, 'OrderItems', 'order_id'),
-			'member' => array(self::BELONGS_TO, 'Users', 'member_id'),
-			'seller' => array(self::BELONGS_TO, 'Users', 'seller_id'),
+			'orderItems' => array(self::HAS_MANY, 'OrderItemsAR', 'order_id'),
+			'member' => array(self::BELONGS_TO, 'UsersAR', 'member_id'),
+			'seller' => array(self::BELONGS_TO, 'UsersAR', 'seller_id'),
 		);
 	}
 

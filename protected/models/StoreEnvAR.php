@@ -56,8 +56,8 @@ class StoreEnvAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'pic' => array(self::BELONGS_TO, 'Pictures', 'pic_id'),
-			'seller' => array(self::BELONGS_TO, 'Users', 'seller_id'),
+			'pic' => array(self::BELONGS_TO, 'PicturesAR', 'pic_id'),
+			'seller' => array(self::BELONGS_TO, 'UsersAR', 'seller_id'),
 		);
 	}
 

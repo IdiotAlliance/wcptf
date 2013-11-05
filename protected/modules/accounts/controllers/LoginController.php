@@ -27,7 +27,7 @@ class LoginController extends Controller
                         $user = UsersAR::model()->getUserByEmail($model->username);
 
                         switch ($user->seller_type) {
-                            case "1":
+                            case "1":                            
                                 $this->redirect(array('/takeAway/productManager/allProducts'));
                                 break;  
                             default:

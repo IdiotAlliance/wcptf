@@ -99,14 +99,14 @@ class UsersAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'members' => array(self::HAS_MANY, 'Members', 'seller_id'),
-			'orders' => array(self::HAS_MANY, 'Orders', 'member_id'),
-			'orders1' => array(self::HAS_MANY, 'Orders', 'seller_id'),
-			'pictures' => array(self::HAS_MANY, 'Pictures', 'seller_id'),
-			'posters' => array(self::HAS_MANY, 'Posters', 'seller_id'),
-			'productTypes' => array(self::HAS_MANY, 'ProductType', 'seller_id'),
-			'products' => array(self::HAS_MANY, 'Products', 'seller_id'),
-			'storeEnvs' => array(self::HAS_MANY, 'StoreEnv', 'seller_id'),
+			'members' => array(self::HAS_MANY, 'MembersAR', 'seller_id'),
+			'orders' => array(self::HAS_MANY, 'OrdersAR', 'member_id'),
+			'orders1' => array(self::HAS_MANY, 'OrdersAR', 'seller_id'),
+			'pictures' => array(self::HAS_MANY, 'PicturesAR', 'seller_id'),
+			'posters' => array(self::HAS_MANY, 'PostersAR', 'seller_id'),
+			'productTypes' => array(self::HAS_MANY, 'ProductTypeAR', 'seller_id'),
+			'products' => array(self::HAS_MANY, 'ProductsAR', 'seller_id'),
+			'storeEnvs' => array(self::HAS_MANY, 'StoreEnvAR', 'seller_id'),
 		);
 	}
 

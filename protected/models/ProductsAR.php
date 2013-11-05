@@ -52,7 +52,7 @@ class ProductsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, type_id, pname, stime, instore', 'required'),
+			array('seller_id, type_id, pname, stime, instore, cover', 'required'),
 			array('credit, status, instore', 'numerical', 'integerOnly'=>true),
 			array('price', 'numerical'),
 			array('seller_id, type_id, cover', 'length', 'max'=>11),
@@ -72,10 +72,10 @@ class ProductsAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'orderItems' => array(self::HAS_MANY, 'OrderItems', 'product_id'),
-			'cover0' => array(self::BELONGS_TO, 'Pictures', 'cover'),
-			'type' => array(self::BELONGS_TO, 'ProductType', 'type_id'),
-			'seller' => array(self::BELONGS_TO, 'Users', 'seller_id'),
+			'orderItems' => array(self::HAS_MANY, 'OrderItemsAR', 'product_id'),
+			'cover0' => array(self::BELONGS_TO, 'PicturesAR', 'cover'),
+			'type' => array(self::BELONGS_TO, 'ProductTypeAR', 'type_id'),
+			'seller' => array(self::BELONGS_TO, 'UsersAR', 'seller_id'),
 		);
 	}
 
@@ -129,5 +129,31 @@ class ProductsAR extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+
+	/*
+		获取特定类别的商品
+	*/
+	public function getCategoryProducts($productType, $sellerId){
+		if($productType == '未分类')
+			$productList = ProductsAR::model()->with('cover0')->findAll(array(
+				'condition' => 't.seller_id =:seller_id',
+				'params' => array(':seller_id'=>$sellerId),
+				'order'=>'pname DESC',
+			));
+		else if($productType == "星标类")
+			$productList = ProductsAR::model()->with('cover0')->findAll(array(
+				'condition' => 'type_id=:type_id and t.seller_id =:seller_id',
+				'params' => array(':type_id'=>1,':seller_id'=>$sellerId),
+				'order'=>'pname DESC',
+			));
+		else
+			$productList = ProductsAR::model()->with('type','cover0')->findAll(array(
+				'condition' => 'type_name=:type_name and t.seller_id =:seller_id',
+				'params' => array(':type_name'=>$productType,':seller_id'=>$sellerId),
+				'order'=>'pname DESC',
+			));
+
+		return $productList;
 	}
 }

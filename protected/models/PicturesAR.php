@@ -7,7 +7,7 @@
  * @property string $id
  * @property string $seller_id
  * @property string $description
- * @property integer $pic_url
+ * @property string $pic_url
  * @property string $name
  *
  * The followings are the available model relations:
@@ -43,9 +43,9 @@ class PicturesAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, description, pic_url', 'required'),
-			array('pic_url', 'numerical', 'integerOnly'=>true),
+			array('pic_url', 'required'),
 			array('seller_id', 'length', 'max'=>11),
+			array('pic_url', 'length', 'max'=>256),
 			array('name', 'length', 'max'=>64),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -61,9 +61,9 @@ class PicturesAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'seller' => array(self::BELONGS_TO, 'Users', 'seller_id'),
-			'products' => array(self::HAS_MANY, 'Products', 'cover'),
-			'storeEnvs' => array(self::HAS_MANY, 'StoreEnv', 'pic_id'),
+			'seller' => array(self::BELONGS_TO, 'UsersAR', 'seller_id'),
+			'products' => array(self::HAS_MANY, 'ProductsAR', 'cover'),
+			'storeEnvs' => array(self::HAS_MANY, 'StoreEnvAR', 'pic_id'),
 		);
 	}
 
@@ -95,7 +95,7 @@ class PicturesAR extends CActiveRecord
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('seller_id',$this->seller_id,true);
 		$criteria->compare('description',$this->description,true);
-		$criteria->compare('pic_url',$this->pic_url);
+		$criteria->compare('pic_url',$this->pic_url,true);
 		$criteria->compare('name',$this->name,true);
 
 		return new CActiveDataProvider($this, array(

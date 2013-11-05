@@ -20,6 +20,17 @@
     cursor: pointer;
   }
 
+  .sp-select{
+    width: 100px;
+    height:25px;
+    line-height: 20px;
+    display: inline-block;
+  }
+
+  .inline-display{
+    display: inline-block;
+  }
+
   textarea, input[type="text"], input[type="password"], 
   input[type="datetime"], input[type="datetime-local"], 
   input[type="date"], input[type="month"], input[type="time"], 
@@ -137,10 +148,10 @@
     width:200px;
     bottom: 0;
     top: 41px;
-  position: absolute;
-  background: transparent url(../img/bg.png);  
-  border-right: 1px solid #b3b3b3;
-  z-index: 2500;
+    position: absolute;
+    background: transparent url(../img/bg.png);  
+    border-right: 1px solid #b3b3b3;
+    z-index: 2500;
   }
 
   .main .sidebar h4{
@@ -287,24 +298,60 @@
 /* 中间栏样式*/
   .main #task{
     position: absolute;
-    top: 60px;
+    top: 41px;
     bottom: 0;
     left:200px;
-    width:388px;
+    width:410px;
     -moz-box-shadow: 0 0 5px rgba(0,0,0,0.15);
     -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.15);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-  border: 1px solid #dbdfd6;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    border: 1px solid #dbdfd6;
   }
 
   .main #task .batch{
-    padding: 10px 12px 45px;
-    background: url(img/head-border.png) repeat-x 0 100%;
+    padding: 10px 12px 20px;
+    background: url(../img/head-border.png) repeat-x 0 100%;
   }
 
-  .main #task .batch h3{
-    margin-top: 0px;
-    color: #068572;
+  .main #task .batch .bt-header{
+    display: inline-block;
+    max-width: 640px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid transparent;
+    font-size: 28px;
+    font-family: "Microsoft Yahei","SimHei",Helvetica,Arial;
+    line-height: 28px;
+    color: #555;
+    text-align: left;
+  }
+
+  .main #task .batch .bt-desc{
+    border-bottom: 1px solid transparent;
+    font-size: 14px;
+    color: #666666;
+    line-height: 1.5;
+    margin: 10px 0 0 0;
+    text-align: left;
+  }
+
+  .main #task .batch-link{
+    position: absolute;
+    top: 10px;
+    right: -1px;
+    right: 0px\0;
+    font-size: 14px;
+  }
+
+  .batch-link .item{
+    float: right;
+    clear: both;
+    width: 50px;
+    padding: 5px 5px 5px 10px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    -webkit-transition: width 0.3s, -webkit-box-shadow 0.3s ease-in-out;
+    -moz-transition: width 0.3s, -moz-box-shadow 0.3s ease-in-out;
+    transition: width 0.3s, box-shadow 0.3s ease-in-out;
   }
 
   .left{
@@ -316,19 +363,30 @@
   }
 
   #task .listTitle{
-    padding: 5px 0 10px 5px;
+    padding: 5px 0 5px 5px;
     border-bottom: 1px solid #d3d3d3;
-    min-height: 50px;
   }
+
+  #task .listTitle input{
+    width:90px;
+  }  
 
   #product-list{
     margin-bottom: 20px;
+    overflow: auto;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
   }
 
   #product-list li{
     padding: 8px 0 8px 5px;
     overflow: hidden;
   border-bottom: 1px solid #d3d3d3;
+  }
+
+  #product-list li img{
+    width: 48px;
+    height:48px;
   }
 
   #product-list .seal{
@@ -344,7 +402,7 @@
   }
 
 
-    #product-list .prod-link{
+  #product-list .prod-link{
     min-height: 40px;
   font-size: 14px;
   line-height: 16px;
