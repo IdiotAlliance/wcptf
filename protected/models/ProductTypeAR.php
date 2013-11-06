@@ -18,7 +18,7 @@ class ProductTypeAR extends CActiveRecord
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return ProductType the static model class
+	 * @return ProductTypeAR the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -96,5 +96,24 @@ class ProductTypeAR extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+
+	public function updateProductType($typeName, $changeName, $changeDesc)
+	{
+		try{
+			$pdType = ProductTypeAR::model()->find('seller_id=:seller_id',array(':seller_id'=>Yii::app()->user->sellerId),'type_name=:type_name',array(':type_name'=>$typeName));
+			$pdType->type_name = $changeName;
+			$pdType->type_description = $changeDesc;
+			return $pdType->save();
+		}catch(Exception $e){
+			throw new CHttpException(404,'更新失败，请稍后再试！');
+			return false;
+		}
+	}
+
+	public function getSellerProductType($sellerId)
+	{
+		$pdTypeList = ProductTypeAR::model()->findAll('seller_id=?',array($sellerId));
+		return $pdTypeList;
 	}
 }

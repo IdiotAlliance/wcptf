@@ -20,6 +20,15 @@
     cursor: pointer;
   }
 
+  .left{
+    float: left;
+  }
+
+  .right{
+    float: right;
+  }
+
+  /*select 元素样式*/
   .sp-select{
     width: 100px;
     height:25px;
@@ -30,6 +39,58 @@
   .inline-display{
     display: inline-block;
   }
+
+  .btn-tow{
+    display: inline-block;
+    padding: 6px 10px;
+    margin: 0 10px 0 0;
+    border: 1px solid transparent;
+    color: #fff;
+    background-color: #a6bbb6;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+  }
+
+  .btn-tow-mini {
+    padding: 5px 10px;
+    color: #000000;
+    line-height: normal;
+    background: #ffffff;
+    border: 1px solid #cccccc;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    -moz-box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+  }
+
+  .btn-tow-mini:hover{
+    background:#f3f3f3;
+    color:#000000;
+  }
+
+  .btn-tow:focus{
+    -webkit-box-shadow:0 0 6px rgba(121,176,237,0.6);
+    -moz-box-shadow:0 0 6px rgba(121,176,237,0.6);
+    box-shadow:1px 1px 1px rgba(0,0,0,0.1)
+  }
+
+  .btn-tow-x{
+    background: transparent;
+    font-size: 12px;
+    color: #888;
+  }
+
+  .btn-tow-x:hover{color:#06a}
+
+  .btn-tow-x:active{color:#27c}
 
   textarea, input[type="text"], input[type="password"], 
   input[type="datetime"], input[type="datetime-local"], 
@@ -49,9 +110,6 @@
 
   }
 
-  .navbar{
-    margin-bottom: 0;
-  }
   /*印章效果*/
   .seal{
     display: inline-block;
@@ -75,47 +133,7 @@
   label i{
     font-weight: bold;
   }
-  /*修改bootstrap里输入框的高度*/
-  .form-control{
-      height: 30px;
-  }
-  /*修改bootstrap里按钮的高度*/
-  .btn{
-      padding: 5px 12px;
-  }
-  /*修改bootstrap默认导航栏颜色*/
-  .bs-docs-nav {
-  text-shadow: 0 -1px 0 rgba(0,0,0,.15);
-  background-color: #068572;
-  border-color: #055D50;
-  box-shadow: 0 1px 0 rgba(255,255,255,.1);
-}
-.bs-docs-nav .navbar-collapse {
-  border-color: #055D50;
-}
 
-.bs-docs-nav .navbar-nav > li > a {
-  color: #44ad9a;
-}
-.bs-docs-nav .navbar-nav > li > a:hover {
-  color: #fff;
-}
-.bs-docs-nav .navbar-nav > .active > a,
-.bs-docs-nav .navbar-nav > .active > a:hover {
-  color: #fff;
-  background-color: #055D50;
-}
-.bs-docs-nav .navbar-toggle {
-  border-color: #563d7c;
-}
-.bs-docs-nav .navbar-toggle:hover {
-  background-color: #055D50;
-  border-color: #055D50;
-}
-
-#nav-title:hover{
-  color: #fff;
-}
 
 .navbar .notifications{
   background-color: #055D50;
@@ -228,7 +246,8 @@
   background-color: #f8f8f8;
 }
 
-.main .sidebar .menuAction{
+.main .sidebar .menuAction,
+  #task .batch-menu{
   position: absolute;
   width: 100%;
   bottom: 0;
@@ -246,14 +265,12 @@
 
 /* 导航栏最底部*/
 .main .sidebar .menuAction ul,
-    #task .prod-menu .menu-content{
-  border-top: 1px solid #fff;
+    #task .batch-menu ul{
   margin: 0;
   position: relative;
 }
 
-.main .sidebar .menuAction ul li,
-    #task .prod-menu .menu-content > li{
+.main .sidebar .menuAction ul li{
   float: left;
   border-right: 1px solid #e9e9e9;
 }
@@ -261,9 +278,9 @@
 .main .sidebar .menuAction ul li a{
   color: rgb(153,153,153);
   font-size: 14px;
-  height: 30px;
-  width: 30px;
-  padding-top: 10px;
+  height: 25px;
+  width: 25px;
+  padding-top: 5px;
   display: block;
   text-align: center;
   border-right: 1px solid #c8c8c8;
@@ -290,349 +307,9 @@
   filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#c8c8c8', GradientType=0)
 }
 
-.main .sidebar .menuAction ul li.sitRight{
+.main .sidebar .menuAction ul li.sitRight,
+#task .batch-menu ul li.sitRight{
   float:right;
   border-left: 1px solid #c8c8c8;
 }
 
-/* 中间栏样式*/
-  .main #task{
-    position: absolute;
-    top: 41px;
-    bottom: 0;
-    left:200px;
-    width:410px;
-    -moz-box-shadow: 0 0 5px rgba(0,0,0,0.15);
-    -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.15);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-    border: 1px solid #dbdfd6;
-  }
-
-  .main #task .batch{
-    padding: 10px 12px 20px;
-    background: url(../img/head-border.png) repeat-x 0 100%;
-  }
-
-  .main #task .batch .bt-header{
-    display: inline-block;
-    max-width: 640px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid transparent;
-    font-size: 28px;
-    font-family: "Microsoft Yahei","SimHei",Helvetica,Arial;
-    line-height: 28px;
-    color: #555;
-    text-align: left;
-  }
-
-  .main #task .batch .bt-desc{
-    border-bottom: 1px solid transparent;
-    font-size: 14px;
-    color: #666666;
-    line-height: 1.5;
-    margin: 10px 0 0 0;
-    text-align: left;
-  }
-
-  .main #task .batch-link{
-    position: absolute;
-    top: 10px;
-    right: -1px;
-    right: 0px\0;
-    font-size: 14px;
-  }
-
-  .batch-link .item{
-    float: right;
-    clear: both;
-    width: 50px;
-    padding: 5px 5px 5px 10px;
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-    -webkit-transition: width 0.3s, -webkit-box-shadow 0.3s ease-in-out;
-    -moz-transition: width 0.3s, -moz-box-shadow 0.3s ease-in-out;
-    transition: width 0.3s, box-shadow 0.3s ease-in-out;
-  }
-
-  .left{
-    float: left;
-  }
-
-  .right{
-    float: right;
-  }
-
-  #task .listTitle{
-    padding: 5px 0 5px 5px;
-    border-bottom: 1px solid #d3d3d3;
-  }
-
-  #task .listTitle input{
-    width:90px;
-  }  
-
-  #product-list{
-    margin-bottom: 20px;
-    overflow: auto;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-  }
-
-  #product-list li{
-    padding: 8px 0 8px 5px;
-    overflow: hidden;
-  border-bottom: 1px solid #d3d3d3;
-  }
-
-  #product-list li img{
-    width: 48px;
-    height:48px;
-  }
-
-  #product-list .seal{
-    margin-left: 65px;
-  }
-
-  .shift{
-    padding-top: 5px;
-  }
-
-  #product-list .avatar{
-    margin-left: 10px;
-  }
-
-
-  #product-list .prod-link{
-    min-height: 40px;
-  font-size: 14px;
-  line-height: 16px;
-  margin-left: 20px;
-    max-width: 220px;
-  }
-
-  #product-list .prod-link .prod-name{
-    color: #333333;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  }
-
-  #product-list .prod-link .prod-price{
-  overflow: hidden;
-  line-height: 1.0;
-  color: #999999;
-  margin: 4px 0 0 0;
-  font-size: 12px;
-  }
-
-  #product-list .prod-link .prod-date{
-  white-space: nowrap;
-  overflow: hidden;
-  line-height: 1.0;
-  color: #999999;
-  margin: 4px 0 0 0;
-  word-wrap: break-word;
-  }
-
-
-
-    #task .prod-menu{
-        position:absolute;
-        bottom: 0;
-        width: 100%;
-    }
-
-    /*第三块区域*/
-  .main .task-detail{
-    position: absolute;
-    top: 60px;
-    left:588px;
-    right: 0;
-    bottom:0;
-  background-color: #ffffff;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-  -moz-box-shadow: 0 0 5px rgba(0,0,0,0.15);
-    -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.15);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-  }
-    .nav-tabs a{
-        font-size: 16px;
-    }
-
-    .task-detail .prod{
-        padding:0 25px 0 25px;
-    }
-    .prod .prod-action{
-        height: 30px;
-        line-height: 30px;
-    }
-    /*删除按钮*/
-    .prod-action .prod-menu{
-        position: absolute;
-        right: 25px;
-    }
-
-    .prod-id a,.prod a{
-        color: #4298ba;
-    }
-
-    .prod-header a:hover,.prod a:hover{
-        color: #0f769f;
-    }
-
-    
-
-  .task-detail .control-label{
-    font-weight:normal;
-    text-align: right;
-  }
-
-  .task-detail .form-control{
-    display: inline-block;
-  }
-
-  .task-detail .intro-header{
-    margin-top: 10px;
-  }
-
-
-  .intro-header .sp-form{
-  }
-
-  .intro-header .header-desc{
-    display: inline-block;
-  }
-
-
-  .intro-header .sp-form .form-group{
-
-    margin-bottom:10px;
-  }
-  .intro-header .sp-form .control-label{
-    margin-top: 5px;
-    float: left;
-    width: 80px;
-  }
-  .intro-header .sp-form .form-control{
-    margin-left: 10px;
-    height: 30px;
-        width: 43%;
-  }
-
-    .intro-header .sp-form .btn-group{
-        margin-left: 10px;
-    }
-
-  .intro{
-    margin-bottom: 8px;
-  }
-
-  .intro .control-label{
-        float: left;
-    text-align: left;
-        width:12%;
-  }
-    .intro .form-control{
-        display: block;
-        width: 87%;
-    }
-
-  .intro-body{
-    float: left;
-  }
-
-    .intro-body .dropdown-menu{
-        right:0;
-        left:auto;
-    }
-
-  .intro-body .control-label{
-    text-align: left;
-  }
-
-  .intro-body .seal{
-    margin-top: 7px;
-  }
-
-  .nav-header{
-    float: left;
-    margin-right: 20px;
-  }
-
-  .nav-header h4{
-    color:#068572;
-  }
-  /*覆盖bootstrap的导航效果*/
-  .nav-cover .active a{
-    font-weight: bold;
-    color: black !important;
-  }
-  .nav-cover a{
-    color: #555555;
-  }
-  .nav-cover .caret{
-    border-top-color: #555555;
-  }
-  .nav .open > a, .nav .open > a:hover, .nav .open > a:focus{
-    border-color: #84a099;
-  }
-
-  .task-detail .stock-header{
-    margin:8px 0 5px 0;
-  }
-
-  .stock-header .clone{
-    position: relative;
-    left:40px;
-  }
-
-  .stock-header .schedule{
-    position: relative;
-    left:80px;
-  }
-
-  .task-detail .detail-bottom{
-    position: absolute;
-    bottom:0;
-  }
-
-  .stock-body{
-  }
-
-  .stock-body ul{
-    width: 100%;
-  }
-
-  .stock-body .stock-time{
-    float: left;
-    width: 48% !important;
-    margin: 0 1% 0 0 !important;
-  }
-
-  .stock-body .form-control{
-    width: auto;
-  }
-
-  .stock-body .stock-content > li{
-    float: left;
-    width: 100%;
-    margin-bottom: 16px;
-  }
-
-    ul[class='schedule']{
-        border-bottom: 1px solid #d3d3d3;
-    }
-
-    ul[class='schedule'] li{
-        display: table-cell;
-        border-right: 1px solid #d3d3d3;
-        padding: 10px;
-    }
-
-    .inventory .pattern-head{
-        border-top: 1px solid #d3d3d3;
-        border-bottom: 1px solid #d3d3d3;
-    }

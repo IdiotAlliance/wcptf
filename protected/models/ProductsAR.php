@@ -137,14 +137,14 @@ class ProductsAR extends CActiveRecord
 	public function getCategoryProducts($productType, $sellerId){
 		if($productType == '未分类')
 			$productList = ProductsAR::model()->with('cover0')->findAll(array(
-				'condition' => 't.seller_id =:seller_id',
-				'params' => array(':seller_id'=>$sellerId),
+				'condition' => 't.seller_id =:seller_id and type_id=:type_id',
+				'params' => array(':type_id'=>1,':seller_id'=>$sellerId),
 				'order'=>'pname DESC',
 			));
 		else if($productType == "星标类")
 			$productList = ProductsAR::model()->with('cover0')->findAll(array(
 				'condition' => 'type_id=:type_id and t.seller_id =:seller_id',
-				'params' => array(':type_id'=>1,':seller_id'=>$sellerId),
+				'params' => array(':type_id'=>2,':seller_id'=>$sellerId),
 				'order'=>'pname DESC',
 			));
 		else
@@ -153,7 +153,36 @@ class ProductsAR extends CActiveRecord
 				'params' => array(':type_name'=>$productType,':seller_id'=>$sellerId),
 				'order'=>'pname DESC',
 			));
+		foreach ($productList as $product) {
+			$stime = new DateTime($product->stime);
+			$product->stime = $stime->format('Y-m-d');
+			$etime = new DateTime($product->etime);
+			$product->etime = $etime->format('Y-m-d');
+			switch ($product->status) {
+				case 0:
+					$product->status = '上架中';
+					break;
+				case 1:
+					$product->status = '已上架';
+					break;
+				case 0:
+					$product->status = '已下架';
+					break;
 
+				default:
+					$product->status = '上架中';
+					break;
+			}
+		}
 		return $productList;
+	}
+
+	//获取该商户未分类或者星标类的商品数
+	public function getSpCategoryNum($typeId){
+		$pdList = ProductsAR::model()->findAll(array(
+			'condition' => 'seller_id=:seller_id and type_id=:type_id',
+			'params' => array(':seller_id'=>Yii::app()->user->sellerId,':type_id'=>$typeId),
+		));
+		return count($pdList);
 	}
 }

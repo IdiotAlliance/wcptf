@@ -49,8 +49,11 @@
 			<div class='menu'>
 				<h4><span class='glyphicon glyphicon-shopping-cart'></span> &nbsp&nbsp商品管理</h4>
 				<ul id='category'>
-					<li><a href="#">未分类 <i>(14)</i></a></li>
-					<li><a href="#">星标类 <i>(10)</i></a></li>
+					<li><a href="#">未分类 <i>(<?php echo Yii::app()->user->unCategory;?>)</i></a></li>
+					<li><a href="#">星标类 <i>(<?php echo Yii::app()->user->starCategory;?>)</i></a></li>
+					<?php foreach (Yii::app()->user->typeCount as $tc):?>
+					<li><a href="#"><?php echo $tc->type_name;?> <i>(<?php echo $tc->product_num;?>)</i></a></li>
+					<?php endforeach;?>					
 					<li id='categoryInput' style="display:none"><input type="text" placeholder='输入分组名'></input></li>
 					<li><a id='newCategory'><i class='icon-plus'></i> 新建分组</a></li>
 				</ul>
