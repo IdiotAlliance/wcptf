@@ -42,10 +42,8 @@ return array(
 		'request'=>array(
 			'enableCookieValidation'=>true,
 		),
-
-
       
-  'bootstrap'=>array(
+  		'bootstrap'=>array(
             'class'=>'bootstrap.components.Bootstrap',
         ),
 		'user'=>array(
@@ -54,7 +52,11 @@ return array(
 			'loginUrl'=>array('accounts/login/login'),
 			'returnUrl'=>array('site/index'),
 		),
-
+		'session'=>array(
+		   'autoStart'=>true,
+		   'sessionName'=>'typeCount',
+		   'cookieMode'=>'only',
+		),
 		// uncomment the following to enable URLs in path-format
 		/*
 		'urlManager'=>array(

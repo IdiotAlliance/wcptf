@@ -1,10 +1,10 @@
 <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/product.css" rel="stylesheet" type="text/css">
-
+<div id='action-name' class='productManager'></div>
 <div id='task'>
 	<div class="batch">
 		<span class='bt-header'><?php echo $productType;?></span>
 		<br>
-		<span class='bt-desc'><?php echo $productList[0]->type->type_description;?></span>
+		<span class='bt-desc'><?php echo $productDesc;?></span>
 	</div>
 	<div class="batch" style="display:none">
 		<input type="text" placeholder='输入类别'></input>
@@ -99,15 +99,16 @@
 			$.ajax({
                 type: 'POST',
                 url: "<?php echo CHtml::normalizeUrl(array('productManager/updateCategory'));?>",
-                data: {'typeName':'<php echo $productType;?>','changeDesc':changeDesc,
+                data: {'typeName':'<?php echo $productType;?>','changeDesc':changeDesc,
                 'changeName':changeName},
                 dataType: 'json',
                 
                 success:function(json){
-                	$(".batch .bt-header").html(changeName);
-                	$(".batch .bt-desc").html(changeDesc);
-                	$("#task .batch").eq(0).css('display','block');
-					$("#task .batch").eq(1).css('display','none');
+     //            	$(".batch .bt-header").html(changeName);
+     //            	$(".batch .bt-desc").html(changeDesc);
+     //            	$("#task .batch").eq(0).css('display','block');
+					// $("#task .batch").eq(1).css('display','none');
+					window.location.href = "http://localhost/weChat/index.php?r=takeAway/productManager/allProducts&productType="+changeName;
                 },
                 error:function(){
                 	alert('更新失败！');
