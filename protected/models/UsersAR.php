@@ -22,6 +22,7 @@
  * @property double $start_price
  * @property double $takeaway_fee
  * @property double $threshold
+ * @property integer $estimated_time
  *
  * The followings are the available model relations:
  * @property Members[] $members
@@ -35,24 +36,27 @@
  */
 class UsersAR extends CActiveRecord
 {
+	
 	const TYPE_SELLER = 0;
-
-    const SELLERTYPE_TAKEAWAY = 1;
-
-    const STATUS_NOT_VERIFIED = 0;
-    const STATUS_HAS_VERIFIED = 1;
-
-    const VERIFY_CODE_LENGTH = 32;
-
+	
+	const SELLERTYPE_TAKEAWAY = 1;
+	
+	const STATUS_NOT_VERIFIED = 0;
+	const STATUS_HAS_VERIFIED = 1;
+	
+	const VERIFY_CODE_LENGTH = 32;
+	
 	private $_randCharacters = array(
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-        'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    );
+			'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+			'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+			'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+			'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+	);
+
 	/**
 	 * Returns the static model of the specified AR class.
+	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
 	 * @return UsersAR the static model class
 	 */
@@ -60,7 +64,7 @@ class UsersAR extends CActiveRecord
 	{
 		return parent::model($className);
 	}
-
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -78,16 +82,16 @@ class UsersAR extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('email, password, register_time, verify_code', 'required'),
-			array('type, email_verified, logo', 'numerical', 'integerOnly'=>true),
+			array('type, email_verified, logo, estimated_time', 'numerical', 'integerOnly'=>true),
 			array('start_price, takeaway_fee, threshold', 'numerical'),
-			array('email, password', 'length', 'max'=>128),
+			array('email, password, store_name', 'length', 'max'=>128),
 			array('verify_code, token', 'length', 'max'=>64),
-			array('seller_type, store_name, phone', 'length', 'max'=>32),
+			array('seller_type, phone', 'length', 'max'=>32),
 			array('store_address', 'length', 'max'=>256),
 			array('stime, etime', 'safe'),
 			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('id, email, password, type, register_time, email_verified, verify_code, seller_type, token, store_name, phone, stime, etime, store_address, logo, start_price, takeaway_fee, threshold', 'safe', 'on'=>'search'),
+			// @todo Please remove those attributes that should not be searched.
+			array('id, email, password, type, register_time, email_verified, verify_code, seller_type, token, store_name, phone, stime, etime, store_address, logo, start_price, takeaway_fee, threshold, estimated_time', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -100,8 +104,8 @@ class UsersAR extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'members' => array(self::HAS_MANY, 'MembersAR', 'seller_id'),
-			'orders' => array(self::HAS_MANY, 'OrdersAR', 'member_id'),
-			'orders1' => array(self::HAS_MANY, 'OrdersAR', 'seller_id'),
+			'orders' => array(self::HAS_MANY, 'OrdersAR', 'seller_id'),
+			'orders1' => array(self::HAS_MANY, 'OrdersAR', 'member_id'),
 			'pictures' => array(self::HAS_MANY, 'PicturesAR', 'seller_id'),
 			'posters' => array(self::HAS_MANY, 'PostersAR', 'seller_id'),
 			'productTypes' => array(self::HAS_MANY, 'ProductTypeAR', 'seller_id'),
@@ -134,17 +138,25 @@ class UsersAR extends CActiveRecord
 			'start_price' => 'Start Price',
 			'takeaway_fee' => 'Takeaway Fee',
 			'threshold' => 'Threshold',
+			'estimated_time' => 'Estimated Time',
 		);
 	}
 
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
+	 *
+	 * Typical usecase:
+	 * - Initialize the model fields with values from filter form.
+	 * - Execute this method to get CActiveDataProvider instance which will filter
+	 * models according to data in model fields.
+	 * - Pass data provider to CGridView, CListView or any similar widget.
+	 *
+	 * @return CActiveDataProvider the data provider that can return the models
+	 * based on the search/filter conditions.
 	 */
 	public function search()
 	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
+		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 
@@ -166,51 +178,58 @@ class UsersAR extends CActiveRecord
 		$criteria->compare('start_price',$this->start_price);
 		$criteria->compare('takeaway_fee',$this->takeaway_fee);
 		$criteria->compare('threshold',$this->threshold);
+		$criteria->compare('estimated_time',$this->estimated_time);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
+
+	public function getUserById($userid){
+		$user = UsersAR::model()->find('id=:userid', array(':userid'=>$userid));
+		return $user;
+	}
+	
 	public function getUserByEmail($email){
-        $user = UsersAR::model()->find('email=:email', array(':email'=>$email));
-        return $user;
-    }
-
-    public function isEmailExisted($email){
-        return UsersAR::model()->exists('email=:email', array(':email'=>$email));
-    }
-
-    public function generateVerifyCode(){
-        $verifyCode = '';
-        $randCharactersLength = count($this->_randCharacters);
-        for ($i = 0; $i < UsersAR::VERIFY_CODE_LENGTH; $i++){
-            $verifyCode = $verifyCode.$this->_randCharacters[rand(0, $randCharactersLength - 1 )];
-        }
-        return $verifyCode;
-    }
-
-    public function verifyUser($email){
-
-        $transaction = Yii::app()->db->beginTransaction();
-        try {
-            $userAr = UsersAR::model()->find('email=:email', array(':email'=>$email));
-            $userAr->email_verified = UsersAR::STATUS_HAS_VERIFIED;
-            /*
-                待添加：分配角色权限
-            */
-            $userAr->save();   
-
-            $transaction->commit();        
-        } catch (Exception $e) {
-            $transaction->rollback();
-            return false;
-        }
-        return true;
-
-    }
-
-    public function isVerified($email){
-        $userAr = UsersAR::model()->find('email=:email', array(':email'=>$email));
-        return $userAr->email_verified == UsersAR::STATUS_HAS_VERIFIED ? true : false;
-    }
+		$user = UsersAR::model()->find('email=:email', array(':email'=>$email));
+		return $user;
+	}
+	
+	public function isEmailExisted($email){
+		return UsersAR::model()->exists('email=:email', array(':email'=>$email));
+	}
+	
+	public function generateVerifyCode(){
+		$verifyCode = '';
+		$randCharactersLength = count($this->_randCharacters);
+		for ($i = 0; $i < UsersAR::VERIFY_CODE_LENGTH; $i++){
+			$verifyCode = $verifyCode.$this->_randCharacters[rand(0, $randCharactersLength - 1 )];
+		}
+		return $verifyCode;
+	}
+	
+	public function verifyUser($email){
+	
+		$transaction = Yii::app()->db->beginTransaction();
+		try {
+			$userAr = UsersAR::model()->find('email=:email', array(':email'=>$email));
+			$userAr->email_verified = UsersAR::STATUS_HAS_VERIFIED;
+			/*
+			 待添加：分配角色权限
+			*/
+			$userAr->save();
+	
+			$transaction->commit();
+		} catch (Exception $e) {
+			$transaction->rollback();
+			return false;
+		}
+		return true;
+	
+	}
+	
+	public function isVerified($email){
+		$userAr = UsersAR::model()->find('email=:email', array(':email'=>$email));
+		return $userAr->email_verified == UsersAR::STATUS_HAS_VERIFIED ? true : false;
+	}
 }
