@@ -29,13 +29,14 @@ class UserIdentity extends CUserIdentity
 			$this->errorCode=self::ERROR_NONE;
 
 			$pdTypeList = ProductTypeAR::model()->getSellerProductType($user->id);
-			Yii::app()->user->setState(UserIdentity::SESSION_TYPECOUNT, $pdTypeList);
+			Yii::app()->session[UserIdentity::SESSION_TYPECOUNT] = $pdTypeList;
 
 			$unCategory = ProductsAR::model()->getSpCategoryNum(1);
-			Yii::app()->user->setState(UserIdentity::SESSION_UNCATEGORY, $unCategory);
+			Yii::app()->session[UserIdentity::SESSION_UNCATEGORY] = $unCategory;
 			
 			$starCategory = ProductsAR::model()->getSpCategoryNum(2);
-			Yii::app()->user->setState(UserIdentity::SESSION_STARCATEGORY, $starCategory);
+			Yii::app()->session[UserIdentity::SESSION_STARCATEGORY] = $starCategory;
+		
 		}	
 		return !$this->errorCode;
 	}

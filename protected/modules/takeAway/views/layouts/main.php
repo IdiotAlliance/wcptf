@@ -45,35 +45,41 @@
 
 	<div class='main'>
 		<div class='sidebar'>
-			<div id='menuHeight'>
 			<div class='menu'>
-				<h4><span class='glyphicon glyphicon-shopping-cart'></span> &nbsp&nbsp商品管理</h4>
-				<ul id='category'>
-					<li><a href="#">未分类 <i>(<?php echo Yii::app()->user->unCategory;?>)</i></a></li>
-					<li><a href="#">星标类 <i>(<?php echo Yii::app()->user->starCategory;?>)</i></a></li>
-					<?php foreach (Yii::app()->user->typeCount as $tc):?>
-					<li><a href="#"><?php echo $tc->type_name;?> <i>(<?php echo $tc->product_num;?>)</i></a></li>
-					<?php endforeach;?>					
-					<li id='categoryInput' style="display:none"><input type="text" placeholder='输入分组名'></input></li>
-					<li><a id='newCategory'><i class='icon-plus'></i> 新建分组</a></li>
-				</ul>
-			</div>
-			<div class='menu'>
-				<h4><span class='glyphicon glyphicon-list-alt'></span> &nbsp&nbsp订单管理</h4>
+				<h4><a href="<?php echo Yii::app()->createUrl('/takeAway/productManager/allProducts',array('productType'=>'未分类'));?>"><i class='icon-list-alt'></i> &nbsp&nbsp订单管理</a></h4>
 				<ul>
 					<li><a href="#">订单1</a></li>
 					<li><a href="#">订单2</a></li>					
 				</ul>
 			</div>
 			<div class='menu'>
-				<h4><span class='glyphicon glyphicon-user'></span> &nbsp&nbsp会员管理</h4>
+				<h4><a href="<?php echo Yii::app()->createUrl('/takeAway/productManager/allProducts',array('productType'=>'未分类'));?>"><i class='icon-shopping-cart'></i> &nbsp&nbsp商品管理<a></h4>
+				<ul>
+					<li><a href="<?php echo Yii::app()->createUrl('/takeAway/productManager/allProducts',array('productType'=>'未分类'));?>">未分类 <i>(<?php echo Yii::app()->session['unCategory'];?>)</i></a></li>
+					<li><a href="<?php echo Yii::app()->createUrl('/takeAway/productManager/allProducts',array('productType'=>'星标类'));?>">星标类 <i>(<?php echo Yii::app()->session['starCategory'];?>)</i></a></li>
+					<?php foreach (Yii::app()->session['typeCount'] as $tc):?>
+					<li><a href="<?php echo Yii::app()->createUrl('/takeAway/productManager/allProducts',array('productType'=>$tc->type_name));?>"><?php echo $tc->type_name;?><i>(<?php echo $tc->product_num;?>)</i></a></li>
+					<?php endforeach;?>					
+					<li id='categoryInput' style="display:none"><input type="text" placeholder='输入分组名'></input></li>
+					<li><a id='newCategory'><i class='icon-plus'></i> 新建分组</a></li>
+				</ul>
 			</div>
 			<div class='menu'>
-				<h4><span class='glyphicon glyphicon glyphicon-star'></span> &nbsp&nbsp活动管理</h4>
+				<h4><i class='icon-user'></i> &nbsp&nbsp会员管理</h4>
 			</div>
 			<div class='menu'>
-				<h4><span class='glyphicon glyphicon-stats'></span> &nbsp&nbsp统计分析</h4>
+				<h4><i class='icon-star'></i> &nbsp&nbsp活动管理</h4>
 			</div>
+			<div class='menu'>
+				<h4><i class='icon-align-left'></i> &nbsp&nbsp统计分析</h4>
+				<ul>
+					<li><a href="#">人员访问量</a></li>
+					<li><a href="#">用户丢失率</a></li>		
+					<li><a href="#">用户丢失率</a></li>				
+				</ul>
+			</div>
+			<div class='menu'>
+				<h4><a href="<?php echo Yii::app()->createUrl('/takeAway/sellerProfile');?>"><i class='icon-home'></i> &nbsp&nbsp店铺信息</a></h4>
 			</div>
 			<div class='menuAction'>
 				<ul>
@@ -110,7 +116,7 @@
 		});
 		/*
 			实现菜单的折叠效果
-		*/
+
 		$(".menu ul").hide();
 		$(".menu h4").click(function(){
 			if($(this).next("ul").css("display") == "block"){
@@ -121,6 +127,20 @@
 			}
 			$(this).next("ul").slideToggle("slow");
 		})
+		*/
+		$(".menu ul").hide();
+		switch($("#action-name").attr('class')){
+			case 'orderFlowController':
+				$('.menu ul').eq(0).show();
+				break;
+			case 'productManager':
+				$('.menu ul').eq(1).show();
+				break;
+			default:
+				break;
+		}
+
+
 	});
 </script>
 </body>

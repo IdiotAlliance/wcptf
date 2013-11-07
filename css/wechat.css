@@ -222,6 +222,10 @@
 }
 
 .main .sidebar a{
+  color: black;
+}
+
+.main .sidebar li a{
   color: rgb(107, 100, 100);
 }
 
