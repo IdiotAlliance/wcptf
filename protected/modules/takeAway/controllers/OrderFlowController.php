@@ -10,18 +10,21 @@ class OrderFlowController extends Controller
 		$this->render('orderFlow');
 	}
 	/*
-		未派送订单
+		ajax未派送订单
 	*/
 	public function actionNotSend(){
 		echo $this->renderPartial('_orderList', null, true, false);
 	}
 	/*
-		获取已派送订单
+		ajax获取已派送订单
 	*/
 	public function actionSended(){
 		echo $this->renderPartial('_orderList1', null, true, false);
 	}
 	
+	/*
+		ajax获取订单子项
+	*/
 	public function actionGetOrderItems(){
 		echo $this->renderPartial('_orderItems', null, true, false);
 	}
