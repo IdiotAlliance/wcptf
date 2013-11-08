@@ -115,7 +115,7 @@
 			}				
 		});
 		
-			实现菜单的折叠效果
+			//实现菜单的折叠效果
 
 		$(".menu ul").hide();
 		$(".menu h4").click(function(){
