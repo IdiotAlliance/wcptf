@@ -69,10 +69,10 @@ return array(
 		),
 		*/
 		'db'=>array(
-			'connectionString' => 'mysql:host=127.0.0.1;dbname=wechat',
+			'connectionString' => 'mysql:host=127.0.0.1;dbname=wcptf_dev',
 			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => '123456',
+			'username' => 'wcadmin',
+			'password' => '123',
 			'charset' => 'utf8',
 			'enableProfiling'=>true, 
             'enableParamLogging'=>true, 
