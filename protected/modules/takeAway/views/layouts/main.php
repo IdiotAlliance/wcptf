@@ -46,9 +46,9 @@
 	<div class='main'>
 		<div class='sidebar'>
 			<div class='menu'>
-				<h4><a href="<?php echo Yii::app()->createUrl('/takeAway/productManager/allProducts',array('productType'=>'未分类'));?>"><i class='icon-list-alt'></i> &nbsp&nbsp订单管理</a></h4>
+				<h4><i class='icon-list-alt'></i> &nbsp&nbsp订单管理</a></h4>
 				<ul>
-					<li><a href="#">订单1</a></li>
+					<li><a href="/wcptf/index.php?r=takeAway/orderFlow/orderFlow">订单流</a></li>
 					<li><a href="#">订单2</a></li>					
 				</ul>
 			</div>
@@ -114,8 +114,8 @@
 				}
 			}				
 		});
-		/*
-			实现菜单的折叠效果
+		
+			//实现菜单的折叠效果
 
 		$(".menu ul").hide();
 		$(".menu h4").click(function(){
@@ -127,7 +127,7 @@
 			}
 			$(this).next("ul").slideToggle("slow");
 		})
-		*/
+		
 		$(".menu ul").hide();
 		switch($("#action-name").attr('class')){
 			case 'orderFlowController':

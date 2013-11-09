@@ -1,0 +1,397 @@
+/*第二栏效果*/
+		.order {
+			position: absolute;
+    		top: 40px;
+    		bottom: 0;
+    		left:200px;
+    		width:650px;
+    		height: auto;
+    		overflow:hidden;
+    		padding-top: 0px;
+    		border-left: 1px solid #d5d3d3;
+    		border-right: 1px solid #d5d3d3;
+    		-moz-box-shadow: 0 0 5px rgba(0,0,0,0.15);
+    		-webkit-box-shadow: 0 0 5px rgba(0,0,0,0.15);
+			box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+		}
+		.order-header {
+			top:0;
+            height: 100%;
+
+		}
+        #order-header-content {
+           height: 100%; 
+        }
+        .order-header ul.nav.nav-tabs{
+            margin-bottom: 0;
+        }
+        .order-header .tab-content{
+            position: absolute;
+            width: 100%;
+            top: 38px;
+            bottom: 50px;
+        }
+		.order-footer {
+			position: absolute;
+			width: 100%;
+			bottom: 0;
+			height: 50px;
+			border-top: 1px solid #c8c8c8;
+			background-color: #e7e7e7;
+			background-image: -moz-linear-gradient(top, #f7f7f7, #cfcfcf);
+			background-image: -ms-linear-gradient(top, #f7f7f7, #cfcfcf);
+			background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f7f7f7), to(#cfcfcf));
+			background-image: -webkit-linear-gradient(top, #f7f7f7, #cfcfcf);
+			background-image: -o-linear-gradient(top, #f7f7f7, #cfcfcf);
+			background-image: linear-gradient(top, #f7f7f7, #cfcfcf);
+			background-repeat: repeat-x;
+		}
+
+		.order-footer ul li {
+			float: left;
+			height: 50px;
+		}
+		.order-footer ul li div{
+			color: rgb(153,153,153);
+			font-size: 14px;
+			height: 50px;
+			width: 60px;
+			padding-top: 5px;
+			display: block;
+			text-align: center;
+			background-color: #e7e7e7;
+			background-image: -moz-linear-gradient(top, #f7f7f7, #cfcfcf);
+			background-image: -ms-linear-gradient(top, #f7f7f7, #cfcfcf);
+			background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f7f7f7), to(#cfcfcf));
+			background-image: -webkit-linear-gradient(top, #f7f7f7, #cfcfcf);
+			background-image: -o-linear-gradient(top, #f7f7f7, #cfcfcf);
+			background-image: linear-gradient(top, #f7f7f7, #cfcfcf);
+			background-repeat: repeat-x;
+		}
+
+		.order-footer ul li div:hover{
+			color: black;
+			background-color:#e9e9e9;
+			background-image:-moz-linear-gradient(top, #fff, #c8c8c8);
+			background-image:-ms-linear-gradient(top, #fff, #c8c8c8);
+			background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#c8c8c8));
+			background-image:-webkit-linear-gradient(top, #fff, #c8c8c8);
+			background-image:-o-linear-gradient(top, #fff, #c8c8c8);
+			background-image:linear-gradient(top, #fff, #c8c8c8);
+			background-repeat:repeat-x;
+			filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#c8c8c8', GradientType=0)
+		}
+		.order-footer .footer-btn {
+			width: 60px;
+    		padding-top: 30%
+		}
+		.order-footer .footer-left-btn { 
+    		border-right: 1px solid #c8c8c8;
+    		width: 60px;
+    		padding-top: 30%
+    	}
+    	.order-footer .footer-right-btn { 
+    		border-left: 1px solid #c8c8c8;
+    		width: 60px;
+    		padding-top: 30%
+    	}
+
+		.order-footer .order-left {
+			
+		}
+		.order-footer .glyphicon .glyphicon-chevron-left {
+			width: 40px;
+			height: 40px;
+		}
+		.order-footer .glyphicon .glyphicon-chevron-right {
+			width: 40px;
+			height: 40px;
+		}
+		.order-footer .order-right {
+			
+		}
+		.order-footer .order-footer-title {
+			display: inline-block;
+			margin-left: 30px;
+		}
+
+		 /*label效果*/
+    	.order-footer label{
+    		display: inline;
+    		margin: 0px;
+    		padding: 0px;
+    		font-size: 14px;
+    		font-weight: normal;
+    	}
+
+    	.order-footer label i{
+    		font-weight: bold;
+    	}
+    	.order-body {
+    		width: 100%;
+    		height: 100%;
+    	}
+    	.order-body .order-body-scroll {
+    		height: 100%;
+    		width: 100%;
+    	}
+    	.order-body >ul{
+    		width: 100%;
+    		height: 100%;
+    	}
+    	.order-body ul >li{
+    		width: 100%;
+    		height: 150px;
+    	}
+    	.order-body ul>li .order-item {
+    		width: 100%;
+    		height: 150px;
+    		border: 1px solid #c8c8c8;
+    	}
+    	.order-body ul>li .order-item ul {
+    		width: 100%;
+    		height: 100%;
+
+    	}
+    	.order-body ul>li .order-item ul>li {
+    		float: left;
+    	}
+    	/**订单状态**/
+    	.order-body ul>li .item-wait ul>li.order-state {
+    		width: 6%;
+    		height: 100%;
+    		background-color: #f0f9fe;
+            border-bottom: 1px solid #c8c8c8;
+    	}
+        .order-body ul>li .order-item .state {
+            height: 100%;
+            border-right: 1px solid #c8c8c8;
+        }
+    	.order-body ul>li .item-produce ul>li.order-state {
+    		width: 6%;
+    		height: 100%;
+    		background-color: #f8c0c0;
+            border-bottom: 1px solid #ffc8c8;
+    	}
+    	.order-body ul>li .order-item .order-state label{
+    		width: 20px;
+    		padding: 10px;
+    		margin-top: 100%;
+    		text-align: center;
+    		display: inline-block;
+    	}
+    	/**订单内容**/
+    	.order-body ul>li .order-item ul>li.order-content {
+    		width: 94%;
+    		height: 100%;
+    		background-color: #f7f7f7;
+            border-bottom: 1px solid #c8c8c8;
+    	}
+    	.order-body ul>li .order-item ul>li.order-content .item-line {
+    		line-height: 28px;
+    		margin-left: 15px;
+    	}
+    	.order-body ul>li .order-item ul>li.order-content .order-phonenumber {
+    		margin-left: 40px;
+    	}
+    	.order-body ul>li .order-item ul>li.order-content .order-id {
+    		margin-left: 40px;
+    	}
+    	.order-body ul>li .order-item ul>li.order-content .order-type {
+    		margin-left: 10px;
+    	}
+    	.order-body ul>li .order-item ul>li.order-content .order-checkbox {
+    		display: inline-block;
+    		width: 13px;
+    		height: 13px;
+    		margin-left: 5px;
+    	}
+    	.order-body ul>li .order-item ul>li.order-content .order-discount {
+    		margin-left: 100px;
+    	}
+    	.order-body ul>li .order-item ul>li.order-content .discount-icon {
+        	width: 50%;
+        	display: inline-block;
+        }
+        .order-body ul>li .order-item ul>li.order-content .item-line .item-line4 {
+        	height: 1px;
+        	line-height: 1px;
+        	border: 1px solid #c8c8c8;
+        }
+
+    	.order-body ul>li .order-item ul>li.order-content .order-subitem {
+    		margin-left: 30px;
+    	}
+    	.order-body ul>li .order-item ul>li.order-content .order-date {
+    		margin-left: 200px;
+    	}
+
+
+    	/*label效果*/
+    	.order-body ul>li .order-item ul>li.order-content label{
+    		display: inline-block;
+    		margin: 0px;
+    		padding: 0px;
+    		font-size: 14px;
+    		font-weight: normal;
+    	}
+    	.order-body ul>li .order-item ul>li.order-content label i{
+    		font-weight: bold;
+    	}
+
+    	/**事件编辑器**/
+		#event_edit_container {
+			border-left: 1px solid #b3b3b3;
+		}
+		#event_container {
+			border-left: 1px solid #b3b3b3;
+		}
+
+		/*第三块区域*/
+    	.main .order-detail{
+    		position: absolute;
+    		height: auto;
+    		top: 40px;
+    		left:850px;
+    		bottom:0px;
+    		min-width: 330px;
+    		right: 0;
+			background-color: #ffffff;
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			-ms-box-sizing: border-box;
+			box-sizing: border-box;
+			-moz-box-shadow: 0 0 5px rgba(0,0,0,0.15);
+    		-webkit-box-shadow: 0 0 5px rgba(0,0,0,0.15);
+			box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    	}
+
+    	.order-detail .order-detail-scroll {
+    		height: 100%;
+    		overflow: auto;
+			overflow-x: hidden !important;
+			overflow-y: auto !important; 
+    	}
+
+        .order-detail .order-detail-header{
+            padding:5px 5px 10px 20px;
+        }
+        /*label效果*/
+    	.order-detail label{
+    		display: inline-block;
+    		margin: 0px;
+    		padding: 0px;
+    		font-size: 14px;
+    		font-weight: normal;
+    	}
+
+    	.order-detail label i{
+    		font-weight: bold;
+    	}
+    	.order-detail-header {
+    		border-bottom: 1px solid #d5d3d3;
+    		-moz-box-shadow: 0 0 5px rgba(0,0,0,0.15);
+    		-webkit-box-shadow: 0 0 5px rgba(0,0,0,0.15);
+			box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    	}
+
+    	.order-detail-header .order-come-type {
+    		margin-left: 8%;
+    	}
+
+    	.order-detail-header .order-phone {
+    		margin-left: 1%;
+    	}
+
+    	.order-detail-header .order-setblack-menu {
+    		margin-left: 1%;
+    	}
+    	.order-detail-header .order-cancel-menu {
+    		margin-left: 10%;
+    	}
+
+    	.order-detail-header .order-modify-menu {
+    		margin-left: 5%;
+    	}
+        .order-detail-header .order-line{
+            height: 30px;
+            line-height: 30px;
+        }
+        .order-detail-header #btn-confirm {
+        	margin-left: 5%;
+        } 
+        .order-detail-header .order-user .user-phone {
+        	margin-left: 8%;
+        }
+
+        .order-detail-body .order-item {
+        	margin: 0px 10px 0px 10px;
+        	border: 1px solid #d5d3d3;
+        }
+        /*第一个item*/
+        .order-detail-body .item-1 {
+        	margin-top: 10px;
+        }
+
+        /*orderitem 样式*/
+        .order-detail-body div:hover {
+        	background-color:#e9e9e9;
+        }
+
+        .order-detail-body .order-line {
+        	margin: 10px;
+        }
+
+        .order-detail-body .order-line .type {
+        	margin-left: 10%;
+        }
+
+        .order-detail-body .order-line .modify {
+        	margin-left: 20%;
+        	font-size: 14px;
+    		font-weight: normal;
+        }
+
+        .order-detail-body .order-line .price{
+        	margin-left: 10%;
+        }
+
+		.order-detail-body .order-line .total {
+        	margin-left: 20%;
+        }
+
+        .order-detail-body .order-line .discount-icon {
+        	width: 50%;
+        	display: inline-block;
+        }
+
+        .order-detail-body .add-item-text {
+        	margin:10px;
+        	font-size: 20px;
+        	color: #2B2B2B;
+        	margin-left: 40%;
+        }
+
+        /*event-editor*/
+        /*label效果*/
+        #event-editor label{
+        	display: inline-block;
+    		margin: 0px;
+    		padding: 0px;
+    		font-size: 14px;
+    		font-weight: normal;
+        }
+        #event-editor label i {
+        	font-weight: bold;
+        }
+        #event-editor .form-control {
+        	width: 100px;
+        	display: inline-block;
+        }
+        #event-editor .orderinfo {
+        	margin-bottom: 15px;
+        	margin-left: 20px;
+        }
+        #event-editor .modal-header {
+        	/*background: #055D50;*/
+        }

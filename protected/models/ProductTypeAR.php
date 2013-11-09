@@ -119,7 +119,11 @@ class ProductTypeAR extends CActiveRecord
 
 	//获取类别的描述
 	public function getProductDesc($typeName){
-		$pdType = ProductTypeAR::model()->find('seller_id=:seller_id',array(':seller_id'=>Yii::app()->user->sellerId),'type_name=:type_name',array(':type_name'=>$typeName));
-		return $pdType->type_description;
+		if($typeName=='未分类' || $typeName=='星标类')
+			return '默认分类';
+		else{
+			$pdType = ProductTypeAR::model()->find('seller_id=:seller_id',array(':seller_id'=>Yii::app()->user->sellerId),'type_name=:type_name',array(':type_name'=>$typeName));
+			return $pdType->type_description;
+		}
 	}
 }
