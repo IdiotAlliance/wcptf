@@ -36,7 +36,7 @@
                             )),
                         array('label'=>'设置','url'=>'#','items'=>array(
                                 array('label'=>'个人设置','url'=>'#'),
-                                array('label'=>'退出','url'=>'#'),
+                                array('label'=>'退出','url'=>'index.php?r=/site/logout'),
                             )),
                     ),
             ),
@@ -79,7 +79,10 @@
 				</ul>
 			</div>
 			<div class='menu'>
-				<h4><a href="<?php echo Yii::app()->createUrl('/takeAway/sellerProfile');?>"><i class='icon-home'></i> &nbsp&nbsp店铺信息</a></h4>
+				<h4><a href="<?php echo Yii::app()->createUrl('/takeAway/sellerProfile');?>"><i class='icon-edit'></i> &nbsp&nbsp店铺信息</a></h4>
+			</div>
+			<div class='menu'>
+				<h4><a href="<?php echo Yii::app()->createUrl('/takeAway/sellerSettings');?>"><i class='icon-wrench'></i> &nbsp&nbsp店铺设置</a></h4>
 			</div>
 			<div class='menuAction'>
 				<ul>

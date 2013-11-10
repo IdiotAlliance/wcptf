@@ -12,6 +12,9 @@
  * @property integer $email_verified
  * @property string $verify_code
  * @property string $seller_type
+ * @property string $wechat_id
+ * @property string $wechat_url
+ * @property integer $wechat_bound
  * @property string $token
  * @property string $store_name
  * @property string $phone
@@ -128,6 +131,9 @@ class UsersAR extends CActiveRecord
 			'email_verified' => 'Email Verified',
 			'verify_code' => 'Verify Code',
 			'seller_type' => 'Seller Type',
+			'wechat_id' => '微信号',
+			'wechat_url' => '回调地址',
+			'wechat_bound' => '绑定微信号',
 			'token' => 'Token',
 			'store_name' => 'Store Name',
 			'phone' => 'Phone',

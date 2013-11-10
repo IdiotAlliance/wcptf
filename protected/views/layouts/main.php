@@ -39,8 +39,9 @@
                 'items'=>array(
                     array('label'=>'注册', 'url'=>array('/accounts/register/association'), 'visible'=>Yii::app()->user->isGuest),
                     array('label'=>'登录', 'url'=>array('/accounts/login/login'), 'visible'=>Yii::app()->user->isGuest),
+					array('label'=>'进入管理器', 'url'=>array('takeAway/orderFlow/orderFlow'), 'visible'=>!Yii::app()->user->isGuest),
                     array('label'=>'退出 ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest),
-                    ),
+				),
             ),
         ),
     )); ?>

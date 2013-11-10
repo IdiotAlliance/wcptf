@@ -59,6 +59,9 @@
 		</div>
 		<!-- 上传店内环境照，最多十张 -->
 		<div class="row">
+			<?php foreach ($env as $env_pic):?>
+				
+			<?php endforeach;?>
 		</div>
 		<hr>
 		<h5>外送设定</h5>
