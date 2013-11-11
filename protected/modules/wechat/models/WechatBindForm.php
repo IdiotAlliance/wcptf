@@ -7,7 +7,7 @@
 class WechatBindForm extends CFormModel{
 	public $wechat_id; // 微信号
 	public $token; // token
-	public $url; // 回调地址
+	public $wechat_url; // 回调地址
 	public $store_name; // 店铺名称
 	
 	public function rules()
@@ -27,17 +27,24 @@ class WechatBindForm extends CFormModel{
 				'store_name'=>'店铺名称',
 				'wechat_id'=>'微信号',
 				'token'=>'token',
-				'url'=>'回调地址',
+				'wechat_url'=>'回调地址',
 		);
 	}
 	
 	public function updateUser($user){
 		if($user != null){
 			$user->wechat_id  = $this->wechat_id;
-			$user->wechat_url = $this->url;
+			$user->wechat_url = $this->wechat_url;
 			$user->token      = $this->token;
 			$user->store_name = $this->store_name;
 			$user->save();
 		}
+	}
+	
+	public function bindComplete($user){
+		if($user != null){
+			return $user->wechat_id && $user->wechat_url && $user->token && $user->store_name;
+		}
+		return false;
 	}
 }

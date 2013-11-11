@@ -17,7 +17,7 @@
 	<?php $this->widget('bootstrap.widgets.TbNavbar',array(
         'type'=>'inverse',
         'brand'=>'微积分',
-        'brandUrl'=>'./',
+        'brandUrl'=>Yii::app()->createUrl('index'),
         'fixed'=>'top', 
         'items'=>array(
             array(
@@ -36,7 +36,7 @@
                             )),
                         array('label'=>'设置','url'=>'#','items'=>array(
                                 array('label'=>'个人设置','url'=>'#'),
-                                array('label'=>'退出','url'=>'index.php?r=/site/logout'),
+                                array('label'=>'退出','url'=>Yii::app()->createUrl("site/logout")),
                             )),
                     ),
             ),
@@ -48,17 +48,17 @@
 			<div class='menu'>
 				<h4><i class='icon-list-alt'></i> &nbsp&nbsp订单管理</a></h4>
 				<ul>
-					<li><a href="/wcptf/index.php?r=takeAway/orderFlow/orderFlow">订单流</a></li>
+					<li><a href="<?php echo Yii::app()->createUrl('takeAway/orderFlow/orderFlow')?>">订单流</a></li>
 					<li><a href="#">订单2</a></li>					
 				</ul>
 			</div>
 			<div class='menu'>
-				<h4><a href="<?php echo Yii::app()->createUrl('/takeAway/productManager/allProducts',array('productType'=>'未分类'));?>"><i class='icon-shopping-cart'></i> &nbsp&nbsp商品管理<a></h4>
+				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('productType'=>'未分类'));?>"><i class='icon-shopping-cart'></i> &nbsp&nbsp商品管理<a></h4>
 				<ul>
-					<li><a href="<?php echo Yii::app()->createUrl('/takeAway/productManager/allProducts',array('productType'=>'未分类'));?>">未分类 <i>(<?php echo Yii::app()->session['unCategory'];?>)</i></a></li>
-					<li><a href="<?php echo Yii::app()->createUrl('/takeAway/productManager/allProducts',array('productType'=>'星标类'));?>">星标类 <i>(<?php echo Yii::app()->session['starCategory'];?>)</i></a></li>
+					<li><a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('productType'=>'未分类'));?>">未分类 <i>(<?php echo Yii::app()->session['unCategory'];?>)</i></a></li>
+					<li><a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('productType'=>'星标类'));?>">星标类 <i>(<?php echo Yii::app()->session['starCategory'];?>)</i></a></li>
 					<?php foreach (Yii::app()->session['typeCount'] as $tc):?>
-					<li><a href="<?php echo Yii::app()->createUrl('/takeAway/productManager/allProducts',array('productType'=>$tc->type_name));?>"><?php echo $tc->type_name;?><i>(<?php echo $tc->product_num;?>)</i></a></li>
+					<li><a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('productType'=>$tc->type_name));?>"><?php echo $tc->type_name;?><i>(<?php echo $tc->product_num;?>)</i></a></li>
 					<?php endforeach;?>					
 					<li id='categoryInput' style="display:none"><input type="text" placeholder='输入分组名'></input></li>
 					<li><a id='newCategory'><i class='icon-plus'></i> 新建分组</a></li>
@@ -79,10 +79,10 @@
 				</ul>
 			</div>
 			<div class='menu'>
-				<h4><a href="<?php echo Yii::app()->createUrl('/takeAway/sellerProfile');?>"><i class='icon-edit'></i> &nbsp&nbsp店铺信息</a></h4>
+				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/sellerProfile');?>"><i class='icon-edit'></i> &nbsp&nbsp店铺信息</a></h4>
 			</div>
 			<div class='menu'>
-				<h4><a href="<?php echo Yii::app()->createUrl('/takeAway/sellerSettings');?>"><i class='icon-wrench'></i> &nbsp&nbsp店铺设置</a></h4>
+				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/sellerSettings');?>"><i class='icon-wrench'></i> &nbsp&nbsp店铺设置</a></h4>
 			</div>
 			<div class='menuAction'>
 				<ul>

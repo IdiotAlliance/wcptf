@@ -1,5 +1,6 @@
 <h4>在进行下一步之前，您需要将账户与微信绑定</h4><br><br>
-<?php $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+<?php $form = $this->beginWidget(
+	'bootstrap.widgets.TbActiveForm', array(
     'id'=>'wechat_bind_form',
     'type'=>'horizontal',
     'enableClientValidation'=>true,
@@ -19,9 +20,10 @@
                                                              )); ?>                                                  
         <?php echo $form->textFieldRow($model, 'token', array('id'=>'wechat_bind_token',
                                                               'class'=>'input-xlarge',
-        													  'onkeyup'=>'setUrl()'
+        													  'onchange'=>'setUrl()',
+        													  'onkeyup'=>'setUrl()',
                                                              )); ?>
-		<?php echo $form->textFieldRow($model, 'url', array('id'=>'wechat_bind_url',
+		<?php echo $form->textFieldRow($model, 'wechat_url', array('id'=>'wechat_bind_url',
 															'class'=>'input-xxlarge',
 															'readonly'=>'true'))?>
 </fieldset>
@@ -33,9 +35,12 @@
 <?php $this->endWidget(); ?>
 
 <script type="text/javascript">
+	var userId  = <?php echo $user->id?>;
+	var baseurl = "<?php echo Constants::BASE_URL?>";
+	
 	function setUrl(){
 		var value = $('#wechat_bind_token').val();
-		var base  = 'http://127.0.0.1/wechat/wechatAccess/';
+		var base  = baseurl + userId + '/';
 		$('#wechat_bind_url').val(base + value);
 	}
 </script>

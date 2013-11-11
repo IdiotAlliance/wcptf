@@ -59,16 +59,23 @@ return array(
 		   'cookieMode'=>'only',
 		),
 		// uncomment the following to enable URLs in path-format
-		/*
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'rules'=>array(
-				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
+				''=>'index',
+				'logout'=>'site/logout',
+				
+				'takeAway/orderFlow/orderFlow'=>'takeAway/orderFlow/orderFlow',
+				'takeAway/products/<productType:\w+>'=>'takeAway/productsManager/allProducts/<productType:\w+>',
+				
+				'wechat/wechatBind'=>'wechat/wechatBind/wechatBind',
+				'wechat/bindComplete'=>'wechat/wechatBind/bindComplete',
+				
+				'<controller:\w+>/<action:\w+>/<id:\d+>/<token:\w+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			),
 		),
-		*/
 		'db'=>array(
 			'connectionString' => 'mysql:host=127.0.0.1;dbname=wcptf_dev',
 			'emulatePrepare' => true,
@@ -103,11 +110,11 @@ return array(
 					'levels'=>'info',
 					'logFile'=>'info.log',
 				),
-				array(
-                    'class'=>'ext.yii-debug-toolbar.YiiDebugToolbarRoute',//加载
-                    'ipFilters'=>array('127.0.0.1'),//运行显示的ip
-                    'levels'=>'error,warning',//提示等级
-                ),
+// 				array(
+//                     'class'=>'ext.yii-debug-toolbar.YiiDebugToolbarRoute',//加载
+//                     'ipFilters'=>array('127.0.0.1'),//运行显示的ip
+//                     'levels'=>'error,warning',//提示等级
+//                 ),
 			),
 		),
 	),

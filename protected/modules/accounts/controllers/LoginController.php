@@ -28,7 +28,7 @@ class LoginController extends Controller
 
                         switch ($user->seller_type) {
                             case "1":                            
-                                $this->redirect(array('/takeAway/productManager/allProducts','productType'=>'未分类'));
+                                $this->redirect(array('/takeAway/orderFlow/orderFlow'));
                                 break;  
                             default:
                                 $this->redirect(Yii::app()->user->returnUrl);

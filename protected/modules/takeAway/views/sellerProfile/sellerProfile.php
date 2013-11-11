@@ -27,7 +27,7 @@
 		<button id="seller_profile_cancel" class="btn action_btn" onclick="cancel()">放弃更改</button>
 	</div>
 	<hr>
-	<form action="index.php?r=takeAway/sellerProfile" method="post">
+	<form action="<?php echo Yii::app()->createUrl('takeAway/sellerProfile')?>" method="post">
 		<h5>店铺信息</h5>
 		<div class="row">
 			<div class="row span3">
