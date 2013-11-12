@@ -78,7 +78,8 @@
 </div>
 
 <div class='task-detail'>
-    <div class='prod' action='<?php echo CHtml::normalizeUrl(array('productManager/updateCategory'));?>'>
+	<?php if($productInfo!=null):?>
+    <div class='prod'>
         <img class='img-rounded left' width='200' src="<?php echo Yii::app()->baseUrl.'/img/prod1.png'?>">
     	<div class='info-group-left'>
     		<label class='title-label'>商品名称</label>
@@ -141,6 +142,7 @@
 			<a href="javascript:;"><i class='icon-trash'></i>删除</a>
 		</div>
     </div>
+	<?php endif;?>
 </div>
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/ueditor/ueditor.config.js"></script>
@@ -198,7 +200,7 @@
                 dataType: 'json',
                 
                 success:function(json){
-					window.location.href = "http://localhost/weChat/index.php?r=takeAway/productManager/allProducts&productType="+changeName;
+					window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+'/productType/'+changeName;
                 },
                 error:function(){
                 	alert('更新失败！');

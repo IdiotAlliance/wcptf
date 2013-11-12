@@ -1,0 +1,73 @@
+2013/11/12 19:03:40 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "index".' in /Library/WebServer/Documents/yii/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('index')
+#1 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/weChat/index.php
+---
+2013/11/12 19:03:45 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "index".' in /Library/WebServer/Documents/yii/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('index')
+#1 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/weChat/index.php
+HTTP_REFERER=http://localhost/weChat/index.php
+---
+2013/11/12 19:03:52 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "index".' in /Library/WebServer/Documents/yii/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('index')
+#1 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/weChat/index.php
+HTTP_REFERER=http://localhost/weChat/index.php/takeAway/orderFlow/orderFlow
+---
+2013/11/12 19:04:11 [error] [php] Trying to get property of non-object (/Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php:86)
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(869): ProductManagerController->renderFile()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(782): ProductManagerController->renderPartial()
+#2 /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php(24): ProductManagerController->render()
+#3 unknown(0): ProductManagerController->actionAllProducts()
+#4 /Library/WebServer/Documents/yii/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs()
+#5 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(47): CInlineAction->runWithParamsInternal()
+#6 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams()
+#7 /Library/WebServer/Documents/yii/framework/web/CController.php(286): ProductManagerController->runAction()
+#8 /Library/WebServer/Documents/yii/framework/web/CController.php(265): ProductManagerController->runActionWithFilters()
+#9 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): ProductManagerController->run()
+#10 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#11 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#12 /Library/WebServer/Documents/weChat/index.php(13): CWebApplication->run()
+REQUEST_URI=/weChat/index.php/takeAway/productManager/allProducts/productType/%E6%98%9F%E6%A0%87%E7%B1%BB
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php (86)
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php (24)
+in /Library/WebServer/Documents/weChat/index.php (13)
+2013/11/12 19:04:25 [error] [php] Trying to get property of non-object (/Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php:86)
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CController.php(869): ProductManagerController->renderFile()
+#1 /Library/WebServer/Documents/yii/framework/web/CController.php(782): ProductManagerController->renderPartial()
+#2 /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php(24): ProductManagerController->render()
+#3 unknown(0): ProductManagerController->actionAllProducts()
+#4 /Library/WebServer/Documents/yii/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs()
+#5 /Library/WebServer/Documents/yii/framework/web/actions/CInlineAction.php(47): CInlineAction->runWithParamsInternal()
+#6 /Library/WebServer/Documents/yii/framework/web/CController.php(308): CInlineAction->runWithParams()
+#7 /Library/WebServer/Documents/yii/framework/web/CController.php(286): ProductManagerController->runAction()
+#8 /Library/WebServer/Documents/yii/framework/web/CController.php(265): ProductManagerController->runActionWithFilters()
+#9 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(282): ProductManagerController->run()
+#10 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#11 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#12 /Library/WebServer/Documents/weChat/index.php(13): CWebApplication->run()
+REQUEST_URI=/weChat/index.php/takeAway/productManager/allProducts/productType/%E6%98%9F%E6%A0%87%E7%B1%BB
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/views/productManager/allProducts.php (86)
+in /Library/WebServer/Documents/weChat/protected/modules/takeAway/controllers/ProductManagerController.php (24)
+in /Library/WebServer/Documents/weChat/index.php (13)
+2013/11/12 19:13:15 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "index".' in /Library/WebServer/Documents/yii/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Library/WebServer/Documents/yii/framework/web/CWebApplication.php(141): CWebApplication->runController('index')
+#1 /Library/WebServer/Documents/yii/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Library/WebServer/Documents/weChat/index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/weChat/index.php
+HTTP_REFERER=http://localhost/weChat/index.php/takeAway/productManager/allProducts/productType/%E6%9C%AA%E5%88%86%E7%B1%BB
+---
