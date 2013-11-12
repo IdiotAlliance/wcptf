@@ -185,4 +185,9 @@ class ProductsAR extends CActiveRecord
 		));
 		return count($pdList);
 	}
+	
+	public function getProductsBySellerId($sellerId){
+		$products = ProductsAR::model()->findAll('seller_id=:sellerId', array(':sellerId'=>$sellerId));
+		return $products;
+	}
 }

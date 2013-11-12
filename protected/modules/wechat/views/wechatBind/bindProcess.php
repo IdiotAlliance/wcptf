@@ -113,7 +113,6 @@
 
 	function copyToken(){
 		window.prompt ("使用Ctrl+C复制token", token);
-		
 	}
 
 	function copyUrl(){

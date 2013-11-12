@@ -1,35 +1,57 @@
 <?php
-class WechatAcccessController extends Controller {
+class WechatAccessController extends Controller {
+	
+	public $defaultAction = "wechatAccess";
+	
 	/**
 	 * 微信的回调接口
 	 */
 	public function actionWechatAccess() {
-		if ($this->request->isPostRequest) {
+
+		if (Yii::app()->request->isPostRequest) {
 			// 处理消息
-			$this->handleMsg();
+			$url = Yii::app()->request->getUrl();
+			// 用正则表达式从url获取seller id
+			preg_match('/.*wechatAccess\/(\d+)\/(\w+)/i', $url, $matches);
+			$sellerId = $matches[1];
 			
-		} else if ($this->request->isGetRequest) {
-			// 接口验证请求
-			$signature = $_GET["signature"];
-			$timestamp = $_GET["timestamp"];
-			$nonce = $_GET["nonce"];
-			$echostr = $_GET["echostr"];
-			
-			$token = TOKEN;
-			$tmpArr = array (
-					$token,
-					$timestamp,
-					$nonce 
-			);
-			sort ( $tmpArr );
-			$tmpStr = implode ( $tmpArr );
-			$tmpStr = sha1 ( $tmpStr );
-			
-			if ($tmpStr == $signature) {
+			// 获取post过来的xml消息
+			$postStr = file_get_contents("php://input");
+			if($sellerId && $postStr){
+				echo $postStr;
+				handleMsg($sellerId, $postStr);
+			}
+			else{
+				echo 'invalid arguments';
+			}
+		} else {
+			if(isset($_GET['signature']) && 
+			   isset($_GET['timestamp']) && 
+			   isset($_GET['nonce']) && 
+			   isset($_GET['echostr'])){
+				// 接口验证请求
+				$signature = $_GET["signature"];
+				$timestamp = $_GET["timestamp"];
+				$nonce = $_GET["nonce"];
+				$echostr = $_GET["echostr"];
 				
-				echo echostr;
-			} else {
-				echo echostr . "fuck you tencent";
+				$token = TOKEN;
+				$tmpArr = array (
+						$token,
+						$timestamp,
+						$nonce 
+				);
+				sort ( $tmpArr );
+				$tmpStr = implode ( $tmpArr );
+				$tmpStr = sha1 ( $tmpStr );
+				
+				if ($tmpStr == $signature) {
+					echo echostr;
+				} else {
+					echo "invalid arguments";
+				}
+			}else{
+				echo 'invalid arguments';
 			}
 		}
 	}
@@ -37,18 +59,15 @@ class WechatAcccessController extends Controller {
 	/**
 	 * 处理post消息的函数
 	 */
-	public function handleMsg() {
-		// get post data, May be due to the different environments
-		$postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
+	public function handleMsg($sellerId, $postStr) {
 	
-		// extract post data
-		if (! empty ( $postStr )) {
-	
-			$postObj = simplexml_load_string ( $postStr, 'SimpleXMLElement', LIBXML_NOCDATA );
+		$postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
+		echo '1';
+		if($postObj){
 			$fromUsername = $postObj->FromUserName;
 			$toUsername = $postObj->ToUserName;
 			$msgType = $postObj->MsgType;
-			$keyword = trim ( $postObj->Content );
+			$keyword = trim($postObj->Content);
 			$time = time();
 			$textTpl = "<xml>
 							<ToUserName><![CDATA[%s]]></ToUserName>
@@ -59,17 +78,16 @@ class WechatAcccessController extends Controller {
 							<FuncFlag>0</FuncFlag>
 						</xml>";
 			
-			if (! empty ( $keyword )) {
+			if (! empty($keyword)) {
 				$msgType = "text";
 				$contentStr = "Welcome to wechat world!";
-				$resultStr = sprintf ( $textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr );
+				$resultStr = sprintf( $textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr );
 				echo $resultStr;
 			} else {
 				echo "Input something...";
 			}
-		} else {
-			echo "";
-			exit();
+		}else{
+			echo "invalid xml message!";
 		}
 	}
 	

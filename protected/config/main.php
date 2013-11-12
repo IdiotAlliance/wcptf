@@ -26,16 +26,16 @@ return array(
 	'modules'=>array(
 		// uncomment the following to enable the Gii tool
 		
-// 		'gii'=>array(
-// 			'class'=>'system.gii.GiiModule',
-// 			'password'=>'123',
-// 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
-// 			'ipFilters'=>array('127.0.0.1','::1'),
-// 		),
+		'gii'=>array(
+			'class'=>'system.gii.GiiModule',
+			'password'=>'123',
+			// If removed, Gii defaults to localhost only. Edit carefully to taste.
+			'ipFilters'=>array('127.0.0.1','::1'),
+		),
 		'accounts',
 		'takeAway',
 		'wechat',
-		'wap'
+		'wap',
 	),
 
 	// application components
@@ -70,10 +70,9 @@ return array(
 				
 				'wechat/wechatBind'=>'wechat/wechatBind/wechatBind',
 				'wechat/bindComplete'=>'wechat/wechatBind/bindComplete',
-				
-				'<controller:\w+>/<action:\w+>/<id:\d+>/<token:\w+>'=>'<controller>/<action>',
-				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
-				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
+				'wechat/wechatAccess/<id:\d+>/<token:\w+>'=>'wechat/wechatAccess',
+					
+				'wap/index/<sellerId:\d+>'=>'wap/wap/index',
 			),
 		),
 		'db'=>array(

@@ -99,8 +99,7 @@ class StoreEnvAR extends CActiveRecord
 	 */
 	public function getStoreEnvByUserId($userId){
 		$criteria = new CDbCriteria;
-		
-		$criteria->compare('seller_id', $this->seller_id, true);
+		$criteria->compare($userIds, $this->seller_id, true);
 		
 		return new CActiveDataProvider($this, array('criteria'=>$criteria));
 	}

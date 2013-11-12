@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 class WechatBindController extends Controller{
 	
