@@ -51,6 +51,7 @@ class HotProductsAR extends CActiveRecord
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('seller_id, desc, pic_id, pic_url, product_id', 'safe', 'on'=>'search'),
+
 		);
 	}
 
@@ -84,6 +85,7 @@ class HotProductsAR extends CActiveRecord
 
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
+<<<<<<< .merge_file_H8R342
 <<<<<<< .merge_file_Iu8QTw
 	 *
 	 * Typical usecase:
@@ -98,6 +100,7 @@ class HotProductsAR extends CActiveRecord
 	public function search()
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
+
 
 		$criteria=new CDbCriteria;
 
