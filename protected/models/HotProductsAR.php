@@ -14,9 +14,21 @@
  * @property ProductType $product
  * @property Users $seller
  * @property Pictures $pic
+ * @property Users $seller
+ * @property Products $product
  */
 class HotProductsAR extends CActiveRecord
 {
+	/**
+	 * Returns the static model of the specified AR class.
+	 * @param string $className active record class name.
+	 * @return HotProductsAR the static model class
+	 */
+	public static function model($className=__CLASS__)
+	{
+		return parent::model($className);
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -50,9 +62,9 @@ class HotProductsAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'product' => array(self::BELONGS_TO, 'ProductType', 'product_id'),
-			'seller' => array(self::BELONGS_TO, 'Users', 'seller_id'),
-			'pic' => array(self::BELONGS_TO, 'Pictures', 'pic_id'),
+			'pic' => array(self::BELONGS_TO, 'PicturesAR', 'pic_id'),
+			'seller' => array(self::BELONGS_TO, 'UsersAR', 'seller_id'),
+			'product' => array(self::BELONGS_TO, 'ProductsAR', 'product_id'),
 		);
 	}
 
@@ -72,6 +84,7 @@ class HotProductsAR extends CActiveRecord
 
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
+<<<<<<< .merge_file_Iu8QTw
 	 *
 	 * Typical usecase:
 	 * - Initialize the model fields with values from filter form.
@@ -99,17 +112,6 @@ class HotProductsAR extends CActiveRecord
 		));
 	}
 
-	/**
-	 * Returns the static model of the specified AR class.
-	 * Please note that you should have this exact method in all your CActiveRecord descendants!
-	 * @param string $className active record class name.
-	 * @return HotProductsAR the static model class
-	 */
-	public static function model($className=__CLASS__)
-	{
-		return parent::model($className);
-	}
-	
 	public function getHotProductsById($userId){
 		$hots = HotProductsAR::model()->findAll('seller_id=:userId', array(':userId'=>$userId));
 		return $hots;

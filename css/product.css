@@ -90,8 +90,20 @@
   #product-list li{
     padding: 8px 0 8px 5px;
     overflow: hidden;
-  border-bottom: 1px solid #d3d3d3;
+    border-bottom: 1px solid #d3d3d3;
   }
+
+  #product-list li:hover{
+    cursor: pointer;
+      background-color:#ecf2f5;
+  background-image:-moz-linear-gradient(top, #f4fafd, #e0e5e8);
+  background-image:-ms-linear-gradient(top, #f4fafd, #e0e5e8);
+  background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#f4fafd), to(#e0e5e8));
+  background-image:-webkit-linear-gradient(top, #f4fafd, #e0e5e8);
+  background-image:-o-linear-gradient(top, #f4fafd, #e0e5e8);
+  background-image:linear-gradient(top, #f4fafd, #e0e5e8);
+  }
+
 
   #product-list li:last-child{
     border-bottom: none;
@@ -194,8 +206,8 @@
     /*第三块区域*/
   .main .task-detail{
     position: absolute;
-    top: 60px;
-    left:588px;
+    top: 41px;
+    left:610px;
     right: 0;
     bottom:0;
     background-color: #ffffff;
@@ -207,181 +219,73 @@
     -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.15);
     box-shadow: 0 1px 3px rgba(0,0,0,0.5);
   }
-    .nav-tabs a{
-        font-size: 16px;
-    }
 
-    .task-detail .prod{
-        padding:0 25px 0 25px;
-    }
-    .prod .prod-action{
-        height: 30px;
-        line-height: 30px;
-    }
-    /*删除按钮*/
-    .prod-action .prod-menu{
-        position: absolute;
-        right: 25px;
-    }
-
-    .prod-id a,.prod a{
-        color: #4298ba;
-    }
-
-    .prod-header a:hover,.prod a:hover{
-        color: #0f769f;
-    }
-
-    
-
-  .task-detail .control-label{
-    font-weight:normal;
-    text-align: right;
+  .task-detail .prod{
+    padding:10px 10px 0 10px;
   }
 
-  .task-detail .form-control{
-    display: inline-block;
+  .prod img{
+    height:auto;
   }
 
-  .task-detail .intro-header{
-    margin-top: 10px;
-  }
-
-
-  .intro-header .sp-form{
-  }
-
-  .intro-header .header-desc{
-    display: inline-block;
-  }
-
-
-  .intro-header .sp-form .form-group{
-
-    margin-bottom:10px;
-  }
-  .intro-header .sp-form .control-label{
-    margin-top: 5px;
-    float: left;
-    width: 80px;
-  }
-  .intro-header .sp-form .form-control{
-    margin-left: 10px;
-    height: 30px;
-        width: 43%;
-  }
-
-    .intro-header .sp-form .btn-group{
-        margin-left: 10px;
-    }
-
-  .intro{
+  .info-group-left{
     margin-bottom: 8px;
   }
 
-  .intro .control-label{
-        float: left;
+  .info-group-left .title-label{
+    float: left;
+    width: 80px;
+    text-align: right;
+    padding-top: 5px;
+  }
+
+  .info-group-left .content-label{
+    margin-left: 300px;
+  }
+
+  .cover-desc{
+    margin-left: 70px;
+    margin-top: -15px;
+  }
+
+  .cover-desc p{
+    margin-left: -60px;
+  }
+
+  .info-group{
+    margin-bottom: 8px;
+  }
+
+  .info-group .title-label{
+    float: left;
     text-align: left;
-        width:12%;
+    padding-top: 5px;
   }
-    .intro .form-control{
-        display: block;
-        width: 87%;
-    }
 
-  .intro-body{
+  .info-group .content-label{
+    margin-left: 60px;
+  }
+
+  .date-group{
     float: left;
+    margin-bottom: 8px;
   }
 
-    .intro-body .dropdown-menu{
-        right:0;
-        left:auto;
-    }
-
-  .intro-body .control-label{
-    text-align: left;
+  .date-group input,
+  .date-group label{
+    display: inline-block;
   }
 
-  .intro-body .seal{
-    margin-top: 7px;
+  .date-group input{
+    margin-left: 13px;
   }
 
-  .nav-header{
-    float: left;
-    margin-right: 20px;
+  .info-button{
+    margin-top: 10px;
+    margin-left: 20px;
   }
 
-  .nav-header h4{
-    color:#068572;
+  .info-button a{
+    float: right;
   }
-  /*覆盖bootstrap的导航效果*/
-  .nav-cover .active a{
-    font-weight: bold;
-    color: black !important;
-  }
-  .nav-cover a{
-    color: #555555;
-  }
-  .nav-cover .caret{
-    border-top-color: #555555;
-  }
-  .nav .open > a, .nav .open > a:hover, .nav .open > a:focus{
-    border-color: #84a099;
-  }
-
-  .task-detail .stock-header{
-    margin:8px 0 5px 0;
-  }
-
-  .stock-header .clone{
-    position: relative;
-    left:40px;
-  }
-
-  .stock-header .schedule{
-    position: relative;
-    left:80px;
-  }
-
-  .task-detail .detail-bottom{
-    position: absolute;
-    bottom:0;
-  }
-
-  .stock-body{
-  }
-
-  .stock-body ul{
-    width: 100%;
-  }
-
-  .stock-body .stock-time{
-    float: left;
-    width: 48% !important;
-    margin: 0 1% 0 0 !important;
-  }
-
-  .stock-body .form-control{
-    width: auto;
-  }
-
-  .stock-body .stock-content > li{
-    float: left;
-    width: 100%;
-    margin-bottom: 16px;
-  }
-
-    ul[class='schedule']{
-        border-bottom: 1px solid #d3d3d3;
-    }
-
-    ul[class='schedule'] li{
-        display: table-cell;
-        border-right: 1px solid #d3d3d3;
-        padding: 10px;
-    }
-
-    .inventory .pattern-head{
-        border-top: 1px solid #d3d3d3;
-        border-bottom: 1px solid #d3d3d3;
-    }
+  

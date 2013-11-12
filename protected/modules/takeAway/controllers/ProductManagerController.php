@@ -7,13 +7,20 @@ class ProductManagerController extends Controller
 
 	public function actionAllProducts($productType)
 	{	
-		
-		$productDesc = ProductTypeAR::model()->getProductDesc($productType);
 		$productList = ProductsAR::model()->getCategoryProducts($productType, Yii::app()->user->sellerId);
+		$productInfo = null;
+		if($productList != null){
+			$productDesc = $productList[0]->type->type_description;
+			$productInfo = $productList[0];
+
+		}else{
+			$productDesc = ProductTypeAR::model()->getProductDesc($productType);
+		}
 		$this->render('allProducts',array(
 			'productType'=>$productType,
 			'productList'=>$productList,
 			'productDesc'=>$productDesc,
+			'productInfo'=>$productInfo,
 		));
 
 	}
@@ -33,6 +40,19 @@ class ProductManagerController extends Controller
 			Yii::app()->session[UserIdentity::SESSION_STARCATEGORY] = $starCategory;	
 		}
 	}
+
+	public function actionGetProduct()
+	{
+		if(isset($_POST['pname'])){
+			$product = ProductsAR::model()->getProduct($_POST['pname']);
+			echo CJSON::encode($product);
+		}
+	}
+
+	public function actionUpdateProduct()
+	{
+	}
+
 
 	public function accessRules(){
         return array(

@@ -101,7 +101,13 @@ class ProductTypeAR extends CActiveRecord
 	public function updateProductType($typeName, $changeName, $changeDesc)
 	{
 		try{
-			$pdType = ProductTypeAR::model()->find('seller_id=:seller_id',array(':seller_id'=>Yii::app()->user->sellerId),'type_name=:type_name',array(':type_name'=>$typeName));
+			$pdType = ProductTypeAR::model()->find(
+					'seller_id=:seller_id AND type_name=:type_name',
+					array(
+						':seller_id'=>Yii::app()->user->sellerId,
+						':type_name'=>$typeName,
+					)
+				);
 			$pdType->type_name = $changeName;
 			$pdType->type_description = $changeDesc;
 			return $pdType->save();
@@ -122,7 +128,13 @@ class ProductTypeAR extends CActiveRecord
 		if($typeName=='未分类' || $typeName=='星标类')
 			return '默认分类';
 		else{
-			$pdType = ProductTypeAR::model()->find('seller_id=:seller_id',array(':seller_id'=>Yii::app()->user->sellerId),'type_name=:type_name',array(':type_name'=>$typeName));
+			$pdType = ProductTypeAR::model()->find(
+					'seller_id=:seller_id AND type_name=:type_name',
+					array(
+						':seller_id'=>Yii::app()->user->sellerId,
+						':type_name'=>$typeName,
+					)
+				);
 			return $pdType->type_description;
 		}
 	}

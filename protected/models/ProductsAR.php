@@ -15,14 +15,17 @@
  * @property string $etime
  * @property integer $status
  * @property integer $instore
+ * @property integer $daily_instore
+ * @property integer $insufficient
  * @property string $richtext
  * @property string $cover
  *
  * The followings are the available model relations:
+ * @property HotProducts[] $hotProducts
  * @property OrderItems[] $orderItems
- * @property Pictures $cover0
  * @property ProductType $type
  * @property Users $seller
+ * @property Pictures $cover0
  */
 class ProductsAR extends CActiveRecord
 {
@@ -52,15 +55,15 @@ class ProductsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, type_id, pname, stime, instore, cover', 'required'),
-			array('credit, status, instore', 'numerical', 'integerOnly'=>true),
+			array('seller_id, type_id, pname, stime, instore, daily_instore', 'required'),
+			array('credit, status, instore, daily_instore, insufficient', 'numerical', 'integerOnly'=>true),
 			array('price', 'numerical'),
 			array('seller_id, type_id, cover', 'length', 'max'=>11),
 			array('pname', 'length', 'max'=>256),
 			array('description, etime, richtext', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, seller_id, type_id, pname, price, credit, description, stime, etime, status, instore, richtext, cover', 'safe', 'on'=>'search'),
+			array('id, seller_id, type_id, pname, price, credit, description, stime, etime, status, instore, daily_instore, insufficient, richtext, cover', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -72,10 +75,11 @@ class ProductsAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'hotProducts' => array(self::HAS_MANY, 'HotProductsAR', 'product_id'),
 			'orderItems' => array(self::HAS_MANY, 'OrderItemsAR', 'product_id'),
-			'cover0' => array(self::BELONGS_TO, 'PicturesAR', 'cover'),
 			'type' => array(self::BELONGS_TO, 'ProductTypeAR', 'type_id'),
 			'seller' => array(self::BELONGS_TO, 'UsersAR', 'seller_id'),
+			'cover0' => array(self::BELONGS_TO, 'PicturesAR', 'cover'),
 		);
 	}
 
@@ -96,6 +100,8 @@ class ProductsAR extends CActiveRecord
 			'etime' => 'Etime',
 			'status' => 'Status',
 			'instore' => 'Instore',
+			'daily_instore' => 'Daily Instore',
+			'insufficient' => 'Insufficient',
 			'richtext' => 'Richtext',
 			'cover' => 'Cover',
 		);
@@ -123,6 +129,8 @@ class ProductsAR extends CActiveRecord
 		$criteria->compare('etime',$this->etime,true);
 		$criteria->compare('status',$this->status);
 		$criteria->compare('instore',$this->instore);
+		$criteria->compare('daily_instore',$this->daily_instore);
+		$criteria->compare('insufficient',$this->insufficient);
 		$criteria->compare('richtext',$this->richtext,true);
 		$criteria->compare('cover',$this->cover,true);
 
@@ -131,6 +139,7 @@ class ProductsAR extends CActiveRecord
 		));
 	}
 
+	
 	/*
 		获取特定类别的商品
 	*/
@@ -189,5 +198,22 @@ class ProductsAR extends CActiveRecord
 	public function getProductsBySellerId($sellerId){
 		$products = ProductsAR::model()->findAll('seller_id=:sellerId', array(':sellerId'=>$sellerId));
 		return $products;
+	}
+
+	public function getProduct($pname){
+		$product = ProductsAR::model()->find(
+			'seller_id=:seller_id AND pname=:pname',
+			array(
+				':seller_id'=>Yii::app()->user->sellerId,
+				':pname'=>$pname,
+				)
+			);
+		$stime = new DateTime($product->stime);
+		$product->stime = $stime->format('Y-m-d');
+		$etime = new DateTime($product->etime);
+		$product->etime = $etime->format('Y-m-d');
+		if($product->richtext==null)
+			$product->richtext = "请输入商品详细图文信息";
+		return $product;
 	}
 }

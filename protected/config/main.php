@@ -109,6 +109,7 @@ return array(
 					'levels'=>'info',
 					'logFile'=>'info.log',
 				),
+
 // 				array(
 //                     'class'=>'ext.yii-debug-toolbar.YiiDebugToolbarRoute',//加载
 //                     'ipFilters'=>array('127.0.0.1'),//运行显示的ip

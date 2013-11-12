@@ -168,7 +168,6 @@
     </div>
     
 
-<script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/holder.js"></script>
 </body>
 </html>

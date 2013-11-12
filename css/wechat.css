@@ -16,14 +16,16 @@
   }
 
   a{
-    color:#84a099;
-    text-decoration: none;
-    cursor:pointer;
+    color: #4298ba;
   }
 
   a:hover{
     text-decoration: none;
-    cursor: pointer;
+  }
+
+  p.desc{
+    font-size: 12px;
+    color: #999;
   }
 
   .left{
