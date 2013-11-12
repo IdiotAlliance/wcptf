@@ -1,4 +1,6 @@
 <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/product.css" rel="stylesheet" type="text/css">
+<link href="<?php echo Yii::app()->request->baseUrl; ?>/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+
 <div id='action-name' class='productManager'></div>
 <div id='task'>
 	<div class="batch">
@@ -75,8 +77,100 @@
 	</div>
 </div>
 
+<div class='task-detail'>
+    <div class='prod' action='<?php echo CHtml::normalizeUrl(array('productManager/updateCategory'));?>'>
+        <img class='img-rounded left' width='200' src="<?php echo Yii::app()->baseUrl.'/img/prod1.png'?>">
+    	<div class='info-group-left'>
+    		<label class='title-label'>商品名称</label>
+    		<div class='content-label'>
+    			<input type="text" name='pname' value="<?php echo $productInfo->pname?>">
+    		</div>
+    	</div>
+    	<div class='info-group-left'>
+    		<label class='title-label'>类别</label>
+    		<div class='content-label'>
+				<select class='sp-select'>
+					<option>未分类</option>
+					<option>星标类</option>
+					<?php foreach (Yii::app()->session['typeCount'] as $tc):?>						
+					<option <?php if($productInfo->type_id == $tc->id){echo 'Selected';}?>><?php echo $tc->type_name?></option>
+					<?php endforeach?>
+				</select>
+    		</div>
+    	</div>
+    	<div class='info-group-left'>
+    		<label class='title-label'>价格</label>
+    		<div class='content-label'>
+    			<input type="text" name='price' value="<?php echo $productInfo->price.'￥';?>">
+    		</div>
+    	</div>
+    	<div class='info-group-left'>
+    		<label class='title-label'>积分</label>
+    		<div class='content-label'>
+    			<input type="text" name='credit' value="<?php echo $productInfo->credit;?>">
+    		</div>
+    	</div>
+    	<div class="cover-desc">
+    		<a href="javascript:;">选择新封面</a>
+    		<p class='desc'>你可以选择jpg/png图片(200*150)作为封面</p>
+    	</div>
+    	<div class='info-group'>
+    		<label class='title-label'>描述</label>
+    		<div class='content-label'>
+    			<input type="text"  style="width:446px" value="<?php echo $productInfo->description;?>" placeholder='请输入商品描述'>
+    		</div>
+    	</div>
+    	<div class='date-group'>
+    		<label>有效期</label>
+    		<input type="text"  style="width:200px" name='stime' value="<?php echo $productInfo->stime;?>" readonly class='form_dateime'>
+    		<label>至</label>
+    		<input type="text"  style="width:200px" name='etime' value="<?php echo $productInfo->etime;?>" readonly class='form_dateime'>
+    	</div>
+    	<div class='info-group'>
+    		<label class='title-label'>产量</label>
+    		<div class='content-label'>
+    			<input type="text" value="<?php echo $productInfo->instore;?>" placeholder='请输入商品产能'>
+    		</div>
+    	</div>
+
+
+		<textarea id="myEditor"><?php echo $productInfo->richtext;?></textarea>
+
+		<div class='info-button'>
+			<button class="btn btn-success" id="saveProd">保存</button>
+			<a href="javascript:;"><i class='icon-trash'></i>删除</a>
+		</div>
+    </div>
+</div>
+<script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/ueditor/ueditor.all.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
+		var editor = new UE.ui.Editor();
+	    editor.render("myEditor");
+		editor.addListener("ready", function () {
+	        // editor准备好之后才可以使用
+	        editor.setHeight(150);
+
+		});		
+		$.fn.datetimepicker.dates['zh-CN'] = {
+					days: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
+					daysShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+					daysMin:  ["日", "一", "二", "三", "四", "五", "六", "日"],
+					months: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+					monthsShort: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+					today: "今日",
+					suffix: [],
+					meridiem: []
+				};
+		$(".form_dateime").datetimepicker({
+			format:'yyyy-mm-dd',
+			autoclose:true,
+			minView:2,
+			language:'zh-CN',
+		});
+
 		/*
 			编辑、保存、取消类别的修改
 		*/
@@ -104,16 +198,43 @@
                 dataType: 'json',
                 
                 success:function(json){
-     //            	$(".batch .bt-header").html(changeName);
-     //            	$(".batch .bt-desc").html(changeDesc);
-     //            	$("#task .batch").eq(0).css('display','block');
-					// $("#task .batch").eq(1).css('display','none');
 					window.location.href = "http://localhost/weChat/index.php?r=takeAway/productManager/allProducts&productType="+changeName;
                 },
                 error:function(){
                 	alert('更新失败！');
                 },
             })  
+		})
+
+		$("#product-list li").click(function(){
+			var pname = $(this).find('.prod-name').html();
+
+			$.ajax({
+                type: 'POST',
+                url: "<?php echo CHtml::normalizeUrl(array('productManager/getProduct'));?>",
+                data: {'pname':pname},
+                dataType: 'json',
+                
+                success:function(json){
+                	$(".task-detail input").eq(0).val(json.pname);
+                	$(".task-detail input").eq(1).val(json.price+'￥');
+                	$(".task-detail input").eq(2).val(json.credit);
+                	$(".task-detail input").eq(3).val(json.description);
+                	$(".task-detail input").eq(4).val(json.stime);
+                	$(".task-detail input").eq(5).val(json.etime);
+                	$(".task-detail input").eq(6).val(json.instore);
+        			editor.ready(function(){
+        				editor.setContent(json.richtext);
+        			})
+                },
+                error:function(){
+                	alert('更新失败！');
+                },				
+			})
+		})
+
+		$("#saveProd").click(function(){
+
 		})
 
 	})

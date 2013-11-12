@@ -8,6 +8,7 @@
  * @property string $name
  * @property string $description
  * @property integer $seller_id
+ * @property integer $daily_status
  */
 class DistrictsAR extends CActiveRecord
 {
@@ -38,12 +39,12 @@ class DistrictsAR extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('name, seller_id', 'required'),
-			array('seller_id', 'numerical', 'integerOnly'=>true),
+			array('seller_id, daily_status', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>64),
 			array('description', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name, description, seller_id', 'safe', 'on'=>'search'),
+			array('id, name, description, seller_id, daily_status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -68,6 +69,7 @@ class DistrictsAR extends CActiveRecord
 			'name' => 'Name',
 			'description' => 'Description',
 			'seller_id' => 'Seller',
+			'daily_status' => 'Daily Status',
 		);
 	}
 
@@ -86,6 +88,7 @@ class DistrictsAR extends CActiveRecord
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('seller_id',$this->seller_id);
+		$criteria->compare('daily_status',$this->daily_status);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
