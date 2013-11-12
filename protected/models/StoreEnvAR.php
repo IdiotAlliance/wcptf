@@ -92,4 +92,16 @@ class StoreEnvAR extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+	
+	/**
+	 * 根据用户信息获取店内环境的图片id数组
+	 * @param unknown $userId
+	 */
+	public function getStoreEnvByUserId($userId){
+		$criteria = new CDbCriteria;
+		
+		$criteria->compare('seller_id', $this->seller_id, true);
+		
+		return new CActiveDataProvider($this, array('criteria'=>$criteria));
+	}
 }

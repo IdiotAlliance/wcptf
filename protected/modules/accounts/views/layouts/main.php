@@ -17,7 +17,7 @@
     <?php $this->widget('bootstrap.widgets.TbNavbar',array(
         'type'=>'inverse',
         'brand'=>'微积分',
-        'brandUrl'=>'./',
+        'brandUrl'=>Yii::app()->createUrl('index'),
         'fixed'=>'top', 
         'items'=>array(
             array(

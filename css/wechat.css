@@ -3,6 +3,12 @@
     height: 100%;
   }
 
+  .task{
+	position: absolute;
+  	left: 200px;
+  	top: 41px;
+  }
+  
   ul{
     list-style: none;
     margin: 0;
@@ -318,4 +324,3 @@
   float:right;
   border-left: 1px solid #c8c8c8;
 }
-

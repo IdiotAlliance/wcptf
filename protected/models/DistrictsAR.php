@@ -94,4 +94,16 @@ class DistrictsAR extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+	
+	/**
+	 * 根据用户id获取配送片区
+	 * @param $userId 用户的id
+	 */
+	public function getDistrictsByUserId($userId){
+		$criteria = new CDbCriteria;
+		
+		$criteria->compare('seller_id', $this->seller_id, true);
+		
+		return new CActiveDataProvider($this, array('criteria'=>$criteria));
+	}
 }
