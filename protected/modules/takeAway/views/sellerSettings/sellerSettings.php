@@ -105,7 +105,7 @@
 							'<div class="span8 row">' + 
 								'<b class="span1">' + type.type_name + '</b>' +
 								'<div class="span3">' + (type.picurl?type.picurl:"未上传图片") + '&nbsp;</div>' +
-								'<button class="span2">上传图片</button>' + 
+								'<input type="file" class="span2" value="上传图片">' + 
 								'<div class="span1"></div>' + 
 								'<select class="span1" id="select_' + type.id + '">' +
 									'<option value="无">无</option>' +
