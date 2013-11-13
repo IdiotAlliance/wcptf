@@ -100,10 +100,7 @@ class DistrictsAR extends CActiveRecord
 	 * @param $userId 用户的id
 	 */
 	public function getDistrictsByUserId($userId){
-		$criteria = new CDbCriteria;
-		
-		$criteria->compare('seller_id', $this->seller_id, true);
-		
-		return new CActiveDataProvider($this, array('criteria'=>$criteria));
+		$districts = DistrictsAR::model()->findAll('seller_id=:userId', array(':userId'=>$userId));
+		return $districts;
 	}
 }
