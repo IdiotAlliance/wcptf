@@ -110,7 +110,7 @@ class ProductTypeAR extends CActiveRecord
 				);
 			$pdType->type_name = $changeName;
 			$pdType->type_description = $changeDesc;
-			return $pdType->save();
+			return $pdType->update();
 		}catch(Exception $e){
 			throw new CHttpException(500,'更新失败，请稍后再试！');
 			return false;
@@ -137,5 +137,16 @@ class ProductTypeAR extends CActiveRecord
 				);
 			return $pdType->type_description;
 		}
+	}
+	//获取特定类别
+	public function getProductType($typeName){
+		$pdType = ProductTypeAR::model()->find(
+					'seller_id=:seller_id AND type_name=:type_name',
+					array(
+						':seller_id'=>Yii::app()->user->sellerId,
+						':type_name'=>$typeName,
+					)
+				);
+		return $pdType;
 	}
 }

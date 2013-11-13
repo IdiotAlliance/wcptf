@@ -185,6 +185,36 @@ class ProductsAR extends CActiveRecord
 		}
 		return $productList;
 	}
+	//将对象数组转成数组
+	public function getAllProducts($productList){
+		$prodList = array();
+		foreach ($productList as $product) {
+			$prod = array();
+			$prod['pname'] = $product->pname;
+			$prod['stime'] = $product->stime;
+			$prod['etime'] = $product->etime;
+			switch ($product->status) {
+				case 0:
+					$prod['status'] = '上架中';
+					break;
+				case 1:
+					$prod['status'] = '已上架';
+					break;
+				case 0:
+					$prod['status'] = '已下架';
+					break;
+
+				default:
+					$prod['status'] = '上架中';
+					break;
+			}
+			$prod['price'] = $product->price;
+			$prod['cover'] = $product->cover0->pic_url;
+
+			$prodList[] = $prod;
+		}
+		return $prodList;
+	}
 
 	//获取该商户未分类或者星标类的商品数
 	public function getSpCategoryNum($typeId){
