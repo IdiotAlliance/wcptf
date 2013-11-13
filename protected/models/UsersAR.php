@@ -205,6 +205,13 @@ class UsersAR extends CActiveRecord
 		return UsersAR::model()->exists('email=:email', array(':email'=>$email));
 	}
 	
+	public function getUserTokenById($userId){
+		$user = $this->getUserById($userId);
+		if($user != null)
+			return $user->token;
+		return null;
+	}
+	
 	public function generateVerifyCode(){
 		$verifyCode = '';
 		$randCharactersLength = count($this->_randCharacters);
@@ -212,6 +219,14 @@ class UsersAR extends CActiveRecord
 			$verifyCode = $verifyCode.$this->_randCharacters[rand(0, $randCharactersLength - 1 )];
 		}
 		return $verifyCode;
+	}
+	
+	public function setBound($userId){
+		$user = $this->getUserById($userId);
+		if($user != null){
+			$user->wechat_bound = 1;
+			$user->update();
+		}
 	}
 	
 	public function verifyUser($email){

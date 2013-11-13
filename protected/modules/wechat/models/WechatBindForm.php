@@ -37,7 +37,7 @@ class WechatBindForm extends CFormModel{
 			$user->wechat_url = $this->wechat_url;
 			$user->token      = $this->token;
 			$user->store_name = $this->store_name;
-			$user->save();
+			$user->update();
 		}
 	}
 	

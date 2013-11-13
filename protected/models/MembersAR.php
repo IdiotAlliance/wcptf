@@ -13,6 +13,7 @@
  * @property string $ctime
  * @property string $wxid
  * @property string $wxnickname
+ * @property integer $unsubscribed
  *
  * The followings are the available model relations:
  * @property Users $seller
@@ -45,7 +46,7 @@ class MembersAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, openid, ctime', 'required'),
+			array('seller_id, openid', 'required'),
 			array('credits', 'numerical', 'integerOnly'=>true),
 			array('seller_id', 'length', 'max'=>11),
 			array('openid, fakeid, memberid', 'length', 'max'=>64),
@@ -111,4 +112,24 @@ class MembersAR extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+	
+	/**
+	 * 检测具有某个openId的用户是否已经是某个商家的会员
+	 * @param unknown $sellerId 商家id
+	 * @param unknown $openId 微信用户的openid
+	 */
+	public function memberExists($sellerId, $openId){
+		$member = MembersAR::model()->find('seller_id=:sellerId and openid=:openId', 
+										   array(':sellerId'=>$sellerId, ':openId'=>$openId));
+		if($member)
+			return true;
+		return false;
+	}
+	
+	public function getMemberBySellerIdAndOpenId($sellerId, $openId){
+		$member = MembersAR::model()->find('seller_id=:sellerId and openid=:openId',
+				array(':sellerId'=>$sellerId, ':openId'=>$openId));
+		return $member;
+	}
+	
 }

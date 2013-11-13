@@ -19,7 +19,7 @@
      * 因此，UEditor提供了针对不同页面的编辑器可单独配置的根路径，具体来说，在需要实例化编辑器的页面最顶部写上如下代码即可。当然，需要令此处的URL等于对应的配置。
      * window.UEDITOR_HOME_URL = "/xxxx/xxxx/";
      */
-    var URL = window.UEDITOR_HOME_URL|| "/weChat/ueditor/" || (function(){
+    var URL = window.UEDITOR_HOME_URL|| "/wcptf/ueditor/" || (function(){
 
         function PathStack() {
 
@@ -136,7 +136,7 @@
         UEDITOR_HOME_URL : URL
 
         //图片上传配置区
-        ,imageUrl:"/weChat/index.php?r=imageUp/imageUp"            //图片上传提交地址
+        ,imageUrl:"/wcptf/index.php/imageUp/imageUp"            //图片上传提交地址
         ,imagePath:URL + "php/"                     //图片修正地址，引用了fixedImagePath,如有特殊需求，可自行配置
         //,imageFieldName:"upfile"                   //图片数据的key,若此处修改，需要在后台对应文件修改对应参数
         //,compressSide:0                            //等比压缩的基准，确定maxImageSideLength参数的参照对象。0为按照最长边，1为按照宽度，2为按照高度
