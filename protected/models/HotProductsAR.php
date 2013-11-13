@@ -7,12 +7,9 @@
  * @property string $seller_id
  * @property string $desc
  * @property string $pic_id
- * @property string $pic_url
  * @property string $product_id
  *
  * The followings are the available model relations:
- * @property ProductType $product
- * @property Users $seller
  * @property Pictures $pic
  * @property Users $seller
  * @property Products $product
@@ -45,13 +42,12 @@ class HotProductsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, desc, pic_id, pic_url, product_id', 'required'),
+			array('seller_id, desc, pic_id, product_id', 'required'),
 			array('seller_id, pic_id, product_id', 'length', 'max'=>11),
-			array('desc, pic_url', 'length', 'max'=>128),
+			array('desc', 'length', 'max'=>128),
 			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('seller_id, desc, pic_id, pic_url, product_id', 'safe', 'on'=>'search'),
-
+			// Please remove those attributes that should not be searched.
+			array('seller_id, desc, pic_id, product_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -78,45 +74,28 @@ class HotProductsAR extends CActiveRecord
 			'seller_id' => 'Seller',
 			'desc' => 'Desc',
 			'pic_id' => 'Pic',
-			'pic_url' => 'Pic Url',
 			'product_id' => 'Product',
 		);
 	}
 
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
-<<<<<<< .merge_file_H8R342
-<<<<<<< .merge_file_Iu8QTw
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
+	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
 	 */
 	public function search()
 	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+		// Warning: Please modify the following code to remove attributes that
+		// should not be searched.
 
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('seller_id',$this->seller_id,true);
 		$criteria->compare('desc',$this->desc,true);
 		$criteria->compare('pic_id',$this->pic_id,true);
-		$criteria->compare('pic_url',$this->pic_url,true);
 		$criteria->compare('product_id',$this->product_id,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
-	}
-
-	public function getHotProductsById($userId){
-		$hots = HotProductsAR::model()->findAll('seller_id=:userId', array(':userId'=>$userId));
-		return $hots;
 	}
 }
