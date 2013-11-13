@@ -29,7 +29,7 @@
 	<div class="listTitle">
 		<div class='inline-display'>
 			<label class='inline-display'>排序：</label>
-			<select class='sp-select'>
+			<select class='sp-select' id='sort' onselect="sort()">
 				<option value='0'>名称</option>
 				<option value='1'>有效期起始</option>
 				<option value='2'>有效期终止</option>
@@ -50,19 +50,19 @@
 	</div>
 
 	<ul id='product-list'>
-		<?php foreach($productList as $product):?>
+		<?php foreach($prodList as $product):?>
 		<li class='product'>
             <div class='left shift'><input type="checkbox"></div>
-            <img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl.$product->cover0->pic_url;?>'>
+            <img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl."/".$product['cover'];?>'>
             <a class="left prod-link">
-                <div class='prod-name'><?php echo $product->pname;?> </div>
-                <div class='prod-price'>价格：<?php echo $product->price;?>￥</div>
+                <div class='prod-name'><?php echo $product['pname'];?> </div>
+                <div class='prod-price'>价格：<?php echo $product['price'];?>￥</div>
                 <div class='prod-price'>
-                	有效期：<span class="label label-info"><?php echo $product->stime;?> </span> 至
-                	<span class="label label-info"><?php echo $product->etime;?></span>
+                	有效期：<span class="label label-info"><?php echo $product['stime'];?> </span> 至
+                	<span class="label label-info"><?php echo $product['etime'];?></span>
                 </div>                       
             </a>
-            <a class="seal"><?php echo $product->status;?></a>
+            <a class="seal"><?php echo $product['status'];?></a>
         </li>	
 		<?php endforeach;?>
 	</ul>
@@ -80,7 +80,10 @@
 <div class='task-detail'>
 	<?php if($productInfo!=null):?>
     <div class='prod'>
-        <img class='img-rounded left' width='200' src="<?php echo Yii::app()->baseUrl.'/img/prod1.png'?>">
+    	<div id='prod-id' style="display:none"><?php echo $productInfo->id;?></div>
+        <div id='showimg'>
+        	<img class='img-rounded left' width='200' src="<?php echo Yii::app()->baseUrl.'/img/prod1.png'?>">
+    	</div>
     	<div class='info-group-left'>
     		<label class='title-label'>商品名称</label>
     		<div class='content-label'>
@@ -112,9 +115,12 @@
     		</div>
     	</div>
     	<div class="cover-desc">
-    		<a href="javascript:;">选择新封面</a>
-    		<p class='desc'>你可以选择jpg/png图片(200*150)作为封面</p>
+			<span>选择新封面</span>
+			<input type='file' id='fileupload' name='cover'>
     	</div>
+    	<p class="desc">你可以选择png/jpg图片作为封面</p>
+
+
     	<div class='info-group'>
     		<label class='title-label'>描述</label>
     		<div class='content-label'>
@@ -147,13 +153,14 @@
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/ueditor/ueditor.config.js"></script>
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/ueditor/ueditor.all.js"></script>
+<script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/jquery.form.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
 		var editor = new UE.ui.Editor();
 	    editor.render("myEditor");
 		editor.addListener("ready", function () {
 	        // editor准备好之后才可以使用
-	        editor.setHeight(150);
+	        editor.setHeight(149);
 
 		});		
 		$.fn.datetimepicker.dates['zh-CN'] = {
@@ -171,6 +178,10 @@
 			autoclose:true,
 			minView:2,
 			language:'zh-CN',
+		}).on('changeDate', function(ev){
+		    if ($(".prod input").eq(4).val() > $(".prod input").eq(5).val()){
+		        alert("有效期起始时间不能超过结束时间");
+		    }
 		});
 
 		/*
@@ -235,9 +246,132 @@
 			})
 		})
 
+		$(".prod input").eq(0).blur(function(){
+			var pname = $(this).val();
+			if(pname == "")
+				alert("商品名称不能为空");
+		})
+
+		$(".prod input").eq(1).blur(function(){
+			var price = $(this).val();
+			if(price == "")
+				alert("商品价格不能为空");
+		})	
+
+		$(".prod input").eq(2).blur(function(){
+			var credit = $(this).val();
+			if(credit == "")
+				alert("商品积分不能为空");
+		})
+
 		$("#saveProd").click(function(){
+			var prodId = $("#prod-id").html();
+			var pname = $(".prod input").eq(0).val();
+			var productType = $(".prod .sp-select").find('option:selected').val();
+			var price = $(".prod input").eq(1).val();
+			var credit = $(".prod input").eq(2).val();
+			var description = $(".prod input").eq(3).val();
+			var stime = $(".prod input").eq(4).val();
+			var etime = $(".prod input").eq(5).val();
+			var instore = $(".prod input").eq(6).val();	
+			var richtext = editor.getContent();
+			$.ajax({
+                type: 'POST',
+                url: "<?php echo CHtml::normalizeUrl(array('productManager/updateProduct'));?>",
+                data: {'id':prodId,'pname':pname,'productType':productType,'price':price,
+                		'credit':credit,'description':description,'stime':stime,'etime':etime,'instore':instore,
+            			'richtext':richtext},
+                dataType: 'json',
+                
+                success:function(json){
+                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+'/productType/'+productType;
+                },
+                error:function(){
+                	alert('保存失败');
+                },				
+			})
+		})
+
+		/*图片上传*/
+		var btn =$(".cover-desc span");
+		var showimg = $("#showimg");
+		$("#fileupload").wrap("<form id='myupload' action='<?php echo Yii::app()->createUrl('takeAway/productManager/coverUp',array('productId'=>2));?>' method='post' enctype='multipart/form-data'></form>");
+		$("#fileupload").change(function(){
+			$("#myupload").ajaxSubmit({
+				dataType:  'json',
+				beforeSend: function() {
+					btn.html("上传中...");
+	    		},
+	    		uploadProgress: function(event, position, total, percentComplete) {
+					btn.html("上传中...");
+	    		},
+				success: function(data) {
+					var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+data.pic_path;
+					showimg.html("<img  width='200' class='left img-rounded'  src='"+img+"'>");
+					btn.html("添加附件");
+				},
+				error:function(xhr){
+					btn.html("上传失败");
+				}
+			});
+		});
+
+		function sortByName(list){
+			for(var i=1;i<list.length;i++){
+				if(list[i-1].pname > list[i].pname){
+					var tmp = list[i];
+					var j = i;
+					while(j>0 && list[j-1].pname>tmp){
+						list[j] = list[j-1];
+						j--;
+					}
+					list[j] = tmp;
+				}
+			}
+		}
+
+		function sortByPrice(list){
+			for(var i=1;i<list.length;i++){
+				if(list[i-1].price > list[i].price){
+					var tmp = list[i];
+					var j = i;
+					while(j>0 && list[j-1].price>tmp.price){
+						list[j] = list[j-1];
+						j--;
+					}
+					list[j] = tmp;
+				}
+			}
+			return list;
+		}
+
+		$("#sort").change(function(){
+			var prodList = <?php echo json_encode($prodList);?>;
+			var option = $(this).find("option:selected").text();
+			switch(option){
+				case '名称':
+					sortByName(prodList);
+					break;
+				case '价格':
+					prodList = sortByPrice(prodList);
+					break;
+				default:
+					breal;
+			}
+
+			// for(var i=0;i<prodList.length;i++){
+
+			// 	var li ="<li class='product'><div class='left shift'><input type='checkbox'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
+			// 	+prodList[i].cover+"'><a class='left prod-link'><div class='prod-name'>"
+			// 	+prodList[i].pname+"</div><div class='prod-price'>价格："
+			// 	+prodList[i].price+"<div class='prod-price'>有效期：<span class='label label-info'>"
+			// 	+prodList[i].stime+"</span> 至<span class='label label-info'>"
+			// 	+prodList[i].etime+"</span></div></a><a class='seal'>"
+			// 	+prodList[i].status+"</a></li>";
+			// }
 
 		})
+
 
 	})
 </script>

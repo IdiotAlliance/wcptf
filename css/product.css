@@ -226,6 +226,8 @@
 
   .prod img{
     height:auto;
+    min-height: 150px;
+    max-height: 165px;
   }
 
   .info-group-left{
@@ -244,13 +246,51 @@
   }
 
   .cover-desc{
-    margin-left: 70px;
-    margin-top: -15px;
+    margin-top: -10px;
+    margin-left: 50px;
+    position: relative;
+    overflow: hidden;
+    margin-right: 4px;
+    display: inline-block;
+    padding: 4px 10px 4px;
+    font-size: 14px;
+    line-height: 18px;
+    color: #fff;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: #5bb75b;
+    border: 1px solid #cccccc;
+    border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+    border-bottom-color: #b3b3b3;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
   }
 
-  .cover-desc p{
-    margin-left: -60px;
+  .cover-desc form{
+    margin-bottom: 0;
   }
+
+  .cover-desc input{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    border: solid transparent;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    cursor: pointer;
+  }
+
+  .prod p{
+    margin-left: 25px;
+  }
+
+  .progress { position:relative; margin-left:100px; margin-top:-24px; width:200px;padding: 1px; border-radius:3px; display:none}
+  .bar {background-color: green; display:block; width:0%; height:20px; border-radius: 3px; }
+  .percent { position:absolute; height:20px; display:inline-block; top:3px; left:2%; color:#fff }
+
 
   .info-group{
     margin-bottom: 8px;
