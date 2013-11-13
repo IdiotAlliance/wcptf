@@ -119,7 +119,7 @@ class ProductTypeAR extends CActiveRecord
 
 	public function getSellerProductType($sellerId)
 	{
-		$pdTypeList = ProductTypeAR::model()->findAll('seller_id=?',array($sellerId));
+		$pdTypeList = ProductTypeAR::model()->findAll('seller_id=:sellerId',array(':sellerId'=>$sellerId));
 		return $pdTypeList;
 	}
 

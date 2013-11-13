@@ -15,14 +15,16 @@ class SellerProfileController extends Controller{
 			$userId = Yii::app()->user->sellerId;
 			$model = new SellerProfileForm();
 			// 获取用户的配送地址信息
-			$districts = DistrictsAR::model()->getDistrictsByUserId($userId)->getData(); 
+			//$districts = array();
+			$districts = DistrictsAR::model()->getDistrictsByUserId($userId); 
 			// 获取用户的店内环境信息
-			$env = StoreEnvAR::model()->getStoreEnvByUserId($userId)->getData();
-			
+			//$env = array();
+			$env = StoreEnvAR::model()->getStoreEnvByUserId($userId);
+
 			$user  = null;
 			// post提交表格
-			if(isset($_POST['ProfileForm'])){
-				$model->attributes = $_POST['ProfileForm'];
+			if(isset($_POST['SellerProfileForm'])){
+				$model->attributes = $_POST['SellerProfileForm'];
 				// 根据rules对表格进行验证
 				if($model->validate()){
 					$user = $model->updateUser($userId);

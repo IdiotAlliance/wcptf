@@ -97,4 +97,14 @@ class PostersAR extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+	
+	/**
+	 * 根据用户id获取邮递员的信息
+	 * @param unknown $userId
+	 * @return unknown
+	 */
+	public function getPostersByUserId($userId){
+		$posters = PostersAR::model()->findAll('seller_id=:userId', array(':userId'=>$userId));
+		return $posters;
+	}
 }

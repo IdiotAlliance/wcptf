@@ -98,4 +98,9 @@ class HotProductsAR extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+	
+	public function getHotProductsById($sellerId){
+		$hots = HotProductsAR::model()->findAll('seller_id=:sellerId', array(':sellerId'=>$sellerId));
+		return $hots;
+	}
 }

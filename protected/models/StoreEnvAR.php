@@ -98,9 +98,7 @@ class StoreEnvAR extends CActiveRecord
 	 * @param unknown $userId
 	 */
 	public function getStoreEnvByUserId($userId){
-		$criteria = new CDbCriteria;
-		$criteria->compare($userIds, $this->seller_id, true);
-		
-		return new CActiveDataProvider($this, array('criteria'=>$criteria));
+		$env = StoreEnvAR::model()->findAll('seller_id=:userId', array('userId'=>$userId));
+		return $env;
 	}
 }

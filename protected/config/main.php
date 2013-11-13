@@ -67,7 +67,9 @@ return array(
 				
 				'takeAway/orderFlow/orderFlow'=>'takeAway/orderFlow/orderFlow',
 				'takeAway/products/<productType:\w+>'=>'takeAway/productsManager/allProducts/<productType:\w+>',
-				
+				'takeAway/sellerProfile'=>'takeAway/sellerProfile/sellerProfile',
+				'takeAway/sellerSettings'=>'takeAway/sellerSettings/sellerSettings',
+					
 				'wechat/wechatBind'=>'wechat/wechatBind/wechatBind',
 				'wechat/bindComplete'=>'wechat/wechatBind/bindComplete',
 				'wechat/wechatAccess/<id:\d+>/<token:\w+>'=>'wechat/wechatAccess',
