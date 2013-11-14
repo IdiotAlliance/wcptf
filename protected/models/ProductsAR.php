@@ -185,7 +185,7 @@ class ProductsAR extends CActiveRecord
 		}
 		return $productList;
 	}
-	//将对象数组转成数组
+	//将产品list数组转成二维数组，原因在于联表查询没法转成json
 	public function getAllProducts($productList){
 		$prodList = array();
 		foreach ($productList as $product) {
@@ -215,6 +215,33 @@ class ProductsAR extends CActiveRecord
 		}
 		return $prodList;
 	}
+	//将产品转为数组
+	public function getProductArray($product){
+		$prod = array();
+		$prod['id'] = $product->id;
+		$prod['pname'] = $product->pname;
+		$prod['stime'] = $product->stime;
+		$prod['etime'] = $product->etime;
+		switch ($product->status) {
+			case 0:
+				$prod['status'] = '上架中';
+				break;
+			case 1:
+				$prod['status'] = '已上架';
+				break;
+			case 0:
+				$prod['status'] = '已下架';
+				break;
+
+			default:
+				$prod['status'] = '上架中';
+				break;
+		}
+		$prod['price'] = $product->price;
+		$prod['cover'] = $product->cover0->pic_url;
+		return $prod;
+	}
+
 
 	//获取该商户未分类或者星标类的商品数
 	public function getSpCategoryNum($typeId){

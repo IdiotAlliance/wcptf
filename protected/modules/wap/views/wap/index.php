@@ -19,32 +19,43 @@
    	<section id="personalinfo">
         <header><h4>收货信息（*必填）</h4></header>
         <div id="personalinfo-content" >
-        <label for="name">姓名:*</label>
-        <input type="text" placeholder="请输入姓名" id="name" value="">
-        <label for="number">联系电话:*</label>
-        <input id="number" placeholder="请输入联系电话" type="tel" value="">
-        <label for="select-area" class="select">请选择收货片区:*</label>
-        <select id="select-area">
-            
+        <label class="mylabel-main">姓名:*</label><label class="mylabel-tips"></label>
+        <input type="text" placeholder="请输入姓名" data-maxinput="10" data-nonull="true" onblur="checkinput(this)" id="name" value="">
+        <label class="mylabel-main">联系电话:*</label><label class="mylabel-tips"></label>
+        <input id="number" placeholder="请输入联系电话" data-maxinput="20" data-nonull="true" onblur="checkinput(this)" type="tel" value="">
+        <label class="mylabel-main">请选择收货片区:*</label><label class="mylabel-tips"></label>
+        <select id="select-area" onchange="checkselect(this)">
         </select>
-        <label for="text-basic">详细收货地点:*</label>
-        <textarea type="text" placeholder="请输入详细收货地址，如：仙1-202" name="text-basic" id="areadesc" value=""></textarea>
-        <label for="text-basic">备注:</label>
-        <textarea type="text"  placeholder="请输入备注，如：xxx不要放生菜" name="text-basic" id="tips" value=""></textarea>
+        <label class="mylabel-desc"></label>
+        <label class="mylabel-main">详细收货地点:*</label><label class="mylabel-tips"></label>
+        <textarea type="text" placeholder="请输入详细收货地址，如：仙1-202" data-maxinput="40" data-nonull="true" onblur="checkinput(this)" id="areadesc" value=""></textarea>
+        <label class="mylabel-main">备注:</label><label class="mylabel-tips"></label>
+        <textarea type="text"  placeholder="请输入备注，如：xxx不要放生菜" data-maxinput="40" data-nonull="false" onblur="checkinput(this)" id="tips" value=""></textarea>
         </div>
     </section>
     <button class="btn-icon-text" onclick=submit() id="submit-btn">
 	    <p class="text-in-btn"id="submit">提交订单</p>
-	    <img class="img-in-btn" src="_assets/img/check-purple.png">
+	    <img class="img-in-btn" src="/weChat/img/wap/check-purple.png">
 	</button>
-
-    </div>
+</div>
 <footer class="footer-order">
-    <button onclick = payback() id="back-btn" class="btn-icon" ><img src="_assets/img/back-purple.png"></button>
-    <button onclick = callsort() id="sort-btn" class="btn-icon"><img src="_assets/img/bullets-purple.png"></button>
-    <button onclick = topay() id="pay-btn" class="btn-icon-text"><p class="text-in-btn"id="totalpay">结算 ￥0</p><img class="img-in-btn" src="_assets/img/shop-purple.png"></button>
+    <button onclick = payback() id="back-btn" class="btn-icon" ><img src="/weChat/img/wap/back-purple.png"></button>
+    <button onclick = callsort() id="sort-btn" class="btn-icon"><img src="/weChat/img/wap/bullets-purple.png"></button>
+    <button onclick = topay() id="pay-btn" class="btn-icon-text"><p class="text-in-btn"id="totalpay">结算 ￥0</p><img class="img-in-btn" src="/weChat/img/wap/shop-purple.png"></button>
 </footer>  
 <div class="toast" id="mytoast" style="display: none;"></div>
+<div class="waiting" style="display:none;">正在载入…</div>
+<div class="success" style="display:none;">
+	<section class="tips" id='tips-ordersuccess'><header><h4 id="tips-title-ordersuccess">恭喜您，下单成功！</h4></header><div class="tips-content"><p id="tips-orderdesc-ordersuccess">订单：</p></div></section>
+	<button class="btn-icon-text" onclick=reloadcontent() id="reload-btn">
+	    <p class="text-in-btn">网络异常，点击刷新</p>
+	    <img class="img-in-btn" src="/weChat/img/wap/refresh-purple.png">
+	</button>
+    <button class="btn-icon-text" onclick=newstart() id="newstart-btn">
+	    <p class="text-in-btn">继续下单</p>
+	    <img class="img-in-btn" src="/weChat/img/wap/carat-r-purple.png">
+	</button>
+</div>
 <div id="wap_data_holder" style="display:none"><?php echo $json_data?></div>
 </div>
 
@@ -58,6 +69,5 @@ var recommenddata = json['recommenddata'];
 var shopinfodata = json['shopinfodata'];
 
 firstinit();
-showsortcontent();
 
 </script>

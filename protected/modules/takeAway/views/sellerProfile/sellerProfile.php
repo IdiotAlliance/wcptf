@@ -63,6 +63,7 @@
 		<!-- 上传logo -->
 		<div class="row">
 			<div class="span1 input_label">logo：</div>
+			<img class="span2" alt="" src="" id="logoimg" />
 			<form id="uploadLogoForm" method="post" 
 					action="<?php echo Yii::app()->createUrl('takeAway/sellerProfile/imgUpload')?>">
 				<input id="uploadlogo" type="file" name="logo" >
@@ -196,9 +197,10 @@
 	function uploadLogo(){
 		$("#uploadLogoForm").ajaxSubmit({
 			dataType:  'json',
-			success: function(data) {
-				var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+data.pic_path;
-				alert("success");
+			success: function(result) {
+				var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+result.pic_path;
+				$('#logoimg').attr('src', img);
+				data['shopinfo']['logo'] = img;
 			},
 			error:function(xhr){
 				alert("上传失败");
@@ -226,6 +228,7 @@
 		$('#stime').val(data['shopinfo']['stime']);
 		$('#etime').val(data['shopinfo']['etime']);
 		$('#store_address').val(data['shopinfo']['address']);
+		$('#logoimg').attr('src', data['shopinfo']['logo']);
 		$('#start_price').val(data['shopinfo']['start_price']);
 		$('#takeaway_fee').val(data['shopinfo']['takeaway_fee']);
 		if(data['shopinfo']['takeaway_fee'] > "0" && data['shopinfo']['threshold'] == "1")

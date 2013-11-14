@@ -23,6 +23,7 @@ class SellerProfileController extends Controller{
 				$user->stime = $obj->shopinfo->stime;
 				$user->etime = $obj->shopinfo->etime;
 				$user->store_address = $obj->shopinfo->address;
+				$user->logo        = $obj->shopinfo->logo;
 				$user->start_price = (float)$obj->shopinfo->start_price;
 				$user->takeaway_fee = (float)$obj->shopinfo->takeaway_fee;
 				$user->threshold = (float)$obj->shopinfo->threshold;
@@ -84,6 +85,7 @@ class SellerProfileController extends Controller{
 			$shopinfo[0]->stime      = $user->stime;
 			$shopinfo[0]->etime      = $user->etime;
 			$shopinfo[0]->address    = $user->store_address;
+			$shopinfo[0]->logo       = $user->logo;
 			$shopinfo[0]->start_price = $user->start_price;
 			$shopinfo[0]->takeaway_fee = $user->takeaway_fee;
 			$shopinfo[0]->threshold  = $user->threshold;

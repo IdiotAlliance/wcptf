@@ -145,7 +145,7 @@ class WechatAccessController extends Controller {
 									<item>
 										<Title><![CDATA[您好~(^O^)~,我是茹果！]]></Title> 
 										<Description><![CDATA[欢迎使用茹果微信点单工具]]></Description>
-										<PicUrl><![CDATA[http://210.209.70.43/wcptf/img/wap/fruitjuice.jpg]]></PicUrl>
+										<PicUrl><![CDATA[%s]]></PicUrl>
 										<Url><![CDATA[%s]]></Url>
 									</item>
 									<item>
@@ -176,12 +176,24 @@ class WechatAccessController extends Controller {
 								</Articles>
 							</xml>
 						";
-					$order_url = Yii::app()->createAbsoluteUrl('wap/index/'.$sellerId.'#'.$openid);
-					$hots_url  = Yii::app()->createAbsoluteUrl('wap/index/'.$sellerId.'#'.$openid);
+					
+					$order_url = Yii::app()->createAbsoluteUrl('wap/index/'.$sellerId.'?'.$openid);
+					$hots_url = $order_url;
+					$hot_products = HotProductsAR::model()->getHotProductsById($sellerId);
+					$user = UsersAR::model()->getUserById($sellerId);
+					
+					foreach ($hot_products as $hot){
+						if($hot->onindex == 1){
+							$hots_url = $order_url.'?'.$hot->product_id;
+							break;
+						}
+						$hots_url = $order_url.'?'.$hot->product_id;
+					}
 					$personal_url = "";
 					$propose_url = "";
 					$about_url = "";
 					$resultStr = sprintf( $textTpl, $msg->FromUserName, $msg->ToUserName, $time, 
+										  'http://210.209.70.43'.$user->logo, 
 										  $order_url, $order_url, $hots_url, $personal_url, 
 										  $propose_url, $about_url);
 					echo $resultStr;

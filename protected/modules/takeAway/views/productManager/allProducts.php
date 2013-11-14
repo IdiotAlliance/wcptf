@@ -82,7 +82,7 @@
     <div class='prod'>
     	<div id='prod-id' style="display:none"><?php echo $productInfo->id;?></div>
         <div id='showimg'>
-        	<img class='img-rounded left' width='200' src="<?php echo Yii::app()->baseUrl.'/img/prod1.png'?>">
+        	<img class='img-rounded left' width='200' src="<?php echo Yii::app()->baseUrl.'/'.$productInfo->cover0->pic_url?>">
     	</div>
     	<div class='info-group-left'>
     		<label class='title-label'>商品名称</label>
@@ -184,6 +184,32 @@
 		    }
 		});
 
+		/*图片上传*/
+		var prodId = $("#prod-id").html();
+		var btn =$(".cover-desc span");
+		var showimg = $("#showimg");
+		var wrap_content = "<form id='myupload' action='<?php echo Yii::app()->createUrl('takeAway/productManager/coverUp');?>"+"/productId/"+prodId+"' method='post' enctype='multipart/form-data'></form>"
+		$("#fileupload").wrap(wrap_content);
+		$("#fileupload").change(function(){
+			$("#myupload").ajaxSubmit({
+				dataType:  'json',
+				beforeSend: function() {
+					btn.html("上传中...");
+	    		},
+	    		uploadProgress: function(event, position, total, percentComplete) {
+					btn.html("上传中...");
+	    		},
+				success: function(data) {
+					var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+data.pic_path;
+					showimg.html("<img  width='200' class='left img-rounded'  src='"+img+"'>");
+					btn.html("添加附件");
+				},
+				error:function(xhr){
+					btn.html("上传失败");
+				}
+			});
+		});
+
 		/*
 			编辑、保存、取消类别的修改
 		*/
@@ -229,6 +255,9 @@
                 dataType: 'json',
                 
                 success:function(json){
+                	var tmp = "<?php echo Yii::app()->createUrl('takeAway/productManager/coverUp');?>"+"/productId/"+json.id;
+                	$("#myupload").attr('action',tmp);
+                	$("#prod-id").html(json.id);
                 	$(".task-detail input").eq(0).val(json.pname);
                 	$(".task-detail input").eq(1).val(json.price+'￥');
                 	$(".task-detail input").eq(2).val(json.credit);
@@ -236,6 +265,8 @@
                 	$(".task-detail input").eq(4).val(json.stime);
                 	$(".task-detail input").eq(5).val(json.etime);
                 	$(".task-detail input").eq(6).val(json.instore);
+                	var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+json.cover;
+					$("#showimg").html("<img  width='200' class='left img-rounded'  src='"+img+"'>");
         			editor.ready(function(){
         				editor.setContent(json.richtext);
         			})
@@ -292,29 +323,7 @@
 			})
 		})
 
-		/*图片上传*/
-		var btn =$(".cover-desc span");
-		var showimg = $("#showimg");
-		$("#fileupload").wrap("<form id='myupload' action='<?php echo Yii::app()->createUrl('takeAway/productManager/coverUp',array('productId'=>2));?>' method='post' enctype='multipart/form-data'></form>");
-		$("#fileupload").change(function(){
-			$("#myupload").ajaxSubmit({
-				dataType:  'json',
-				beforeSend: function() {
-					btn.html("上传中...");
-	    		},
-	    		uploadProgress: function(event, position, total, percentComplete) {
-					btn.html("上传中...");
-	    		},
-				success: function(data) {
-					var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+data.pic_path;
-					showimg.html("<img  width='200' class='left img-rounded'  src='"+img+"'>");
-					btn.html("添加附件");
-				},
-				error:function(xhr){
-					btn.html("上传失败");
-				}
-			});
-		});
+		
 
 		function sortByName(list){
 			for(var i=1;i<list.length;i++){
@@ -347,6 +356,7 @@
 
 		$("#sort").change(function(){
 			var prodList = <?php echo json_encode($prodList);?>;
+			prodList = eval(prodList);
 			var option = $(this).find("option:selected").text();
 			switch(option){
 				case '名称':

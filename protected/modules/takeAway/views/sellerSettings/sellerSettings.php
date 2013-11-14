@@ -91,6 +91,24 @@
 		window.onresize = setContainerWidth;
 		initView();
 		$('#form_json_input').val(escape(JSON.stringify(data)));
+
+
+		for(typeindex in data['types']){
+			var type = data['types'][typeindex];
+			$("#fileupload_" + type.id).change(function(){
+				var id = this.id.substr(11);
+				$("#myupload_" + id).ajaxSubmit({
+					dataType:  'json',
+					success: function(data) {
+						var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+data.pic_path;
+						$('#pic_url_'+id).html(img);
+					},
+					error:function(xhr){
+						alert("上传失败");
+					}
+				});
+			});
+		}	
 	});
 
 	function setContainerWidth(){
@@ -143,18 +161,6 @@
 			
 			/*图片上传*/
 			$("#fileupload_" + type.id).wrap("<form class='span2' id=\"myupload_" + type.id + "\" action='<?php echo Yii::app()->createUrl('takeAway/sellerSettings/imgUpload')?>/typeId/" + type.id + "' method='post' enctype='multipart/form-data'></form>");
-			$("#fileupload_" + type.id).change(function(){
-				$("#myupload_" + type.id).ajaxSubmit({
-					dataType:  'json',
-					success: function(data) {
-						var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+data.pic_path;
-						alert("success");
-					},
-					error:function(xhr){
-						alert("上传失败");
-					}
-				});
-			});
 		}
 	}
 

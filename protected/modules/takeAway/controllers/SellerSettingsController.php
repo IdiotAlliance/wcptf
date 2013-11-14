@@ -31,7 +31,7 @@ class SellerSettingsController extends Controller {
 						$dbhot->seller_id = $userId;
 						$dbhot->product_id = $type->id;
 						if(isset($type->picurl) && $type->picurl)
-							$dbhot->picurl = $type->picurl;
+							$dbhot->pic_url = $type->picurl;
 						$dbhot->onindex = (int)$type->onindex;
 						$dbhot->desc = $type->tag;
 						$dbhot->save();

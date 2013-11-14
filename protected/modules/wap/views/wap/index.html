@@ -11,53 +11,63 @@
     
 </head>
 <style>a{TEXT-DECORATION:none}</style>
-<body id="mybody">
+<body>
 <div id="sortcontent"  class="content-frame">
-	<section class="tips" id='tips-sortcontent'><header><h4 id="tips-title"></h4></header><div class="tips-content"><p id="tips-announcement"></p></div></section>
+	<section class="tips" id='tips-sortcontent'><header><h4 id="tips-title-sort"></h4></header><div class="tips-content"><p id="tips-announcement-sort"></p></div></section>
 	<ul id="sort-recommendlist" class="ul-listview ul-sort-recommend"></ul>
 	<ul id="sort-normallist" class="ul-listview ul-sort-normal"></ul>
 </div>
-<div id="productcontent" class="content-frame">
+<div id="productcontent" class="content-frame" style="display: none;">
 	<ul id="product-list" class="ul-listview ul-product">
         
     </ul>
 
-		<!-- '<button class="btn-icon-text" onclick=cancel() id="cancel-btn">'
-		'<p class="text-in-btn"id="cancel">放弃订单</p>'
-		'<img class="img-in-btn" src="_assets/img/delete-purple.png">'
-		'</button>' -->
+		 
 </div>
-<div id="paycontent" class="content-frame" >
+<div id="paycontent" class="content-frame" style="display: none;" >
     <ul id="order-list" class="ul-listview ul-product">
     </ul>
+    <section class="tips" id='tips-ordercontent'><header><h4 id="tips-title-order">外送须知</h4></header><div class="tips-content"><p id="tips-announcement-order"></p></div></section>
    	<section id="personalinfo">
         <header><h4>收货信息（*必填）</h4></header>
         <div id="personalinfo-content" >
-        <label for="name">姓名:*</label>
-        <input type="text"  id="name" value="">
-        <label for="number">联系电话:*</label>
-        <input id="number" type="telephone" value="">
-        <label for="select-area" class="select">请选择收货片区:*</label>
-        <select id="select-area">
-            
+        <label class="mylabel-main">姓名:*</label><label class="mylabel-tips"></label>
+        <input type="text" placeholder="请输入姓名" data-maxinput="10" data-nonull="true" onblur="checkinput(this)" id="name" value="">
+        <label class="mylabel-main">联系电话:*</label><label class="mylabel-tips"></label>
+        <input id="number" placeholder="请输入联系电话" data-maxinput="20" data-nonull="true" onblur="checkinput(this)" type="tel" value="">
+        <label class="mylabel-main">请选择收货片区:*</label><label class="mylabel-tips"></label>
+        <select id="select-area" onchange="checkselect(this)">
         </select>
-        <label for="text-basic">详细收货地点:*</label>
-        <textarea type="text" name="text-basic" id="areadesc" value=""></textarea>
-        <label for="text-basic">备注:</label>
-        <textarea type="text" name="text-basic" id="tips" value=""></textarea>
+        <label class="mylabel-desc"></label>
+        <label class="mylabel-main">详细收货地点:*</label><label class="mylabel-tips"></label>
+        <textarea type="text" placeholder="请输入详细收货地址，如：仙1-202" data-maxinput="40" data-nonull="true" onblur="checkinput(this)" id="areadesc" value=""></textarea>
+        <label class="mylabel-main">备注:</label><label class="mylabel-tips"></label>
+        <textarea type="text"  placeholder="请输入备注，如：xxx不要放生菜" data-maxinput="40" data-nonull="false" onblur="checkinput(this)" id="tips" value=""></textarea>
         </div>
     </section>
     <button class="btn-icon-text" onclick=submit() id="submit-btn">
 	    <p class="text-in-btn"id="submit">提交订单</p>
 	    <img class="img-in-btn" src="_assets/img/check-purple.png">
 	</button>
-
-    </div>
+</div>
 <footer class="footer-order">
     <button onclick = payback() id="back-btn" class="btn-icon" ><img src="_assets/img/back-purple.png"></button>
     <button onclick = callsort() id="sort-btn" class="btn-icon"><img src="_assets/img/bullets-purple.png"></button>
     <button onclick = topay() id="pay-btn" class="btn-icon-text"><p class="text-in-btn"id="totalpay">结算 ￥0</p><img class="img-in-btn" src="_assets/img/shop-purple.png"></button>
 </footer>  
+<div class="toast" id="mytoast" style="display: none;"></div>
+<div class="waiting" style="display:none;">正在载入…</div>
+<div class="success" style="display:none;">
+	<section class="tips" id='tips-ordersuccess'><header><h4 id="tips-title-ordersuccess">恭喜您，下单成功！</h4></header><div class="tips-content"><p id="tips-orderdesc-ordersuccess">订单：</p></div></section>
+	<button class="btn-icon-text" onclick=reloadcontent() id="reload-btn">
+	    <p class="text-in-btn">网络异常，点击刷新</p>
+	    <img class="img-in-btn" src="_assets/img/refresh-purple.png">
+	</button>
+    <button class="btn-icon-text" onclick=newstart() id="newstart-btn">
+	    <p class="text-in-btn">继续下单</p>
+	    <img class="img-in-btn" src="_assets/img/carat-r-purple.png">
+	</button>
+</div>
 </body>
 <script type="text/javascript">
 	var sortdata=[
@@ -99,7 +109,7 @@
 	{"recommendid":2,"recommendtype":"recsort","recommendtag":"新品","recommendimg":"_assets/img/importedfruit.jpg","objectid":2},
 	];
 
-	var shopinfodata= {"announcement":"今明两天购满100起八折，抓紧哦！","shopstatus":"innormal","begintime":"08:00","endtime":"21:00","severtime":"20:00","isdeliveryfree":true,"sendingfee":20,"deliveryfee":3,"expecttime":40};
+	var shopinfodata= {"announcement":"今明两天购满100起八折，抓紧哦！","shopstatus":"innormal","begintime":"08:00","endtime":"21:00","servertime":"20:00","isdeliveryfree":false,"sendingfee":30,"deliveryfee":3,"expecttime":40};
 	firstinit();
 	callsort();
 	
