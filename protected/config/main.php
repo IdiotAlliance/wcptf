@@ -36,6 +36,7 @@ return array(
 		'takeAway',
 		'wechat',
 		'wap',
+		'mobile',
 	),
 
 	// application components

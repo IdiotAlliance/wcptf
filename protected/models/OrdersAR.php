@@ -51,7 +51,7 @@ class OrdersAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, member_id, ctime, status, total, phone, order_no, poster_id', 'required'),
+			array('seller_id, member_id, ctime, status, total, phone, poster_id', 'required'),
 			array('status, type, poster_id', 'numerical', 'integerOnly'=>true),
 			array('total', 'numerical'),
 			array('seller_id, member_id', 'length', 'max'=>11),
@@ -96,6 +96,7 @@ class OrdersAR extends CActiveRecord
 			'phone' => 'Phone',
 			'order_no' => 'Order No',
 			'poster_id' => 'Poster',
+			'area_id' => "area",
 		);
 	}
 
@@ -123,9 +124,235 @@ class OrdersAR extends CActiveRecord
 		$criteria->compare('phone',$this->phone,true);
 		$criteria->compare('order_no',$this->order_no,true);
 		$criteria->compare('poster_id',$this->poster_id);
+		$criteria->compare('area_id',$this->area_id,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
+
+	/*
+		设置派送人员
+	*/
+	public function setPoster($orderId, $posterId){
+		$order = OrdersAR::model()->find('id=:orderId', array(':orderId'=>$orderId));
+		$order->poster_id = $posterId;
+		$order->save();
+	}
+	/*
+		获取商家ID
+	*/
+	public function getUserId($orderId){
+		$order = OrdersAR::model()->find('id=:orderId', array(':orderId'=>$orderId));
+		return $order->seller_id;
+	}
+
+	/*
+		获取未派送的订单地点过滤
+	*/
+	public function filterNotSend($userId, $date, $place){
+		$orders = OrdersAR::model()->findAll(array('condition'=>'seller_id=:userId and status=:status1', 
+			'params'=>array(':userId'=>$userId, ':status1'=>0), 'order'=>'ctime DESC',));
+		$orders = OrdersAR::model()->filterDate($orders, $date);
+		OrdersAR::model()->changeOrdersToView($orders);
+		return $orders;
+	}
+	/*
+		获取已派送的订单
+	*/
+	public function filterSended($userId, $date, $place){
+		$orders = OrdersAR::model()->findAll(array('condition'=>'seller_id=:userId and status=:status1', 
+			'params'=>array(':userId'=>$userId, ':status1'=>1,), 'order'=>'ctime DESC',));
+		$orders = OrdersAR::model()->filterDate($orders, $date);
+		OrdersAR::model()->changeOrdersToView($orders);
+		return $orders;
+	}
+	/*
+		获取已取消的订单
+	*/
+	public function filterCancel($userId, $date, $place){
+		$orders = OrdersAR::model()->findAll(array('condition'=>'seller_id=:userId and status=:status1', 
+			'params'=>array(':userId'=>$userId, ':status1'=>3), 'order'=>'ctime DESC',));
+		$orders = OrdersAR::model()->filterDate($orders, $date);
+		OrdersAR::model()->changeOrdersToView($orders);
+		return $orders;
+	}
+
+	public function filterDate($orders, $date){
+		$newOrder = array();
+		foreach ($orders as $order) {
+			if(OrdersAR::model()->DateDiff($order->ctime, $date, 'd')<=1){
+				array_push($newOrder, $order);
+			}
+		}
+		return $newOrder;
+	}
+
+	public function DateDiff($date1, $date2, $unit = "") { //时间比较函数，返回两个日期相差几秒、几分钟、几小时或几天
+	    switch ($unit) {
+	        case 's':
+	            $dividend = 1;
+	            break;
+	        case 'i':
+	            $dividend = 60; //oSPHP.COM.CN
+	            break;
+	        case 'h':
+	            $dividend = 3600;
+	            break;
+	        case 'd':
+	            $dividend = 86400;
+	            break; //开源OSPhP.COM.CN
+	        default:
+	            $dividend = 86400;
+	    }
+	    $time1 = strtotime($date1);
+	    $time2 = strtotime($date2);
+	    if ($time1 && $time2)
+	        return (float)($time1 - $time2) / $dividend;
+	    return false;
+	}
+	/*
+		过滤订单
+	*/
+	public function filterOrders($userId, $date, $place, $filter){
+		$orders = null;
+		if($filter=="#tab1"){
+			$orders = OrdersAR::model()->filterNotSend($userId, $date, $place);
+		}else if($filter=="#tab2"){
+			$orders = OrdersAR::model()->filterSended($userId, $date, $place);
+		}else if($filter=="#tab3"){
+			$orders = OrdersAR::model()->filterCancel($userId, $date, $place);
+		}
+		return $orders;
+	}
+	
+	/*
+		取消订单
+	*/
+
+	public function cancelOrder($userId, $orderId){
+		$order = OrdersAR::model()->find('seller_id=:userId and id=:orderId', 
+			array(':userId'=>$userId, ':orderId'=>$orderId));
+		$order->status=3;
+		$order->save();
+	}
+
+	/*
+		完成订单
+	*/
+	public function finishOrder($userId, $orderId){
+		$order = OrdersAR::model()->find('seller_id=:userId and id=:orderId', 
+			array(':userId'=>$userId, ':orderId'=>$orderId));
+		$order->status=1;
+		$order->save();
+	}
+
+	/*
+		返回会员的订单
+	*/
+	public function getMemberOrders($memberId, $sellerId){
+		$orders = OrdersAR::model()->findAll('member_id=:memberid and seller_id=:sellerid', 
+			array(':memberid'=>$memberId, ':sellerid'=>$sellerId));
+		OrdersAR::model()->changeOrdersToView($orders);
+		return $orders;
+	}
+
+	/*
+		根据订单id得到订单
+	*/
+	public function getOrder($orderID) {
+		$order = OrdersAR::model()->find('id=:orderID', array(':orderID'=>$orderID));
+		OrdersAR::model()->changeOrderToView($order);
+		return $order;
+	}
+
+	/*
+		订订单
+	*/
+	public function makeOrder($sellerid, $memberid, $areaid, $areadesc, $phone, $tips) {
+		$order = new OrdersAR;
+		$order->seller_id = $sellerid;
+		$order->member_id = $memberid;
+		$order->area_id = $areaid;
+		$order->address = $areadesc;
+		$order->phone = $phone;
+		$order->poster_id = 0;
+		$order->status = 0;
+		$order->total = 0;
+		$order->description = $tips;
+		$order->ctime = $date = date('Y-m-d H:i:s');
+		$order->save();
+		$order->order_no = OrdersAR::model()->getOrderNo($order->seller_id, $order->id, $order->ctime);
+		$order->save();
+		return $order;
+	}
+
+	public function setOrderTotal($orderId, $total){
+		$order = OrdersAR::model()->find('id=:orderId', array(':orderId'=>$orderId));
+		if(!empty($order)){
+			$order->total = $total;
+			$order->save();
+		}
+	}
+	/*
+		订单编号
+	*/
+	public function getOrderNo($sellerId, $orderId, $ctime){
+		return $sellerId.$orderId.date('YmdHis');
+	}
+
+	/*
+		删除订单
+	*/
+	public function deleteOrder($orderID) {
+		$order = OrdersAR::model()->find('id=:orderID', array(':orderID'=>$orderID));
+		$order->delete();
+	}
+
+	public function changeOrderToView($order) {
+		if(empty($order)){
+			return;
+		}
+		switch ($order->status){
+				case 0: 
+					$order->status = "待派送";
+					break;
+				case 1:
+					$order->status = "已完成";
+					break;
+				case 2: 
+					$order->status = "派送中";
+					break;
+				case 3: 
+					$order->status = "已取消";
+					break;
+		}
+		switch ($order->type) {
+			case 0:
+				$order->type = "通过微信下单";
+				break;
+			case 1:
+				$order->type = "通过网页下单";
+				break;
+		}
+		$order->member_id = MembersAR::model()->getMemberName($order->member_id);
+		$posterId = $order->poster_id;
+		if($posterId==0){
+			$order->poster_id = "无";
+		}else{
+			$order->poster_id = PostersAR::model()->getPoster($posterId)->name;
+		};
+		$order->seller_id = OrderItemsAR::model()->generateItems($order->id);
+		$order->address = DistrictsAR::model()->getAreaName($order->area_id)."-".$order->address;
+	}
+
+	public function changeOrdersToView($orders) {
+		if(empty($orders)){
+			return;
+		}
+		foreach ($orders as $order) {
+			OrdersAR::model()->changeOrderToView($order);
+		}
+	}
+
 }
