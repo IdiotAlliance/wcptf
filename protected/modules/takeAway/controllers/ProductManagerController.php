@@ -38,7 +38,8 @@ class ProductManagerController extends Controller
 	{
 		if(isset($_POST['pname'])){
 			$product = ProductsAR::model()->getProduct($_POST['pname']);
-			echo CJSON::encode($product);
+			$prodArray = ProductsAR::model()->getProductArray($product);
+			echo json_encode($prodArray);
 		}
 	}
 
