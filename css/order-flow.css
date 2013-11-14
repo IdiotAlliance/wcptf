@@ -81,6 +81,14 @@
 			background-repeat:repeat-x;
 			filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#c8c8c8', GradientType=0)
 		}
+        .order-footer ul li div{
+           width: 280px;
+        }
+
+        .order-footer .order-date-container{
+            display: none;
+        }
+
 		.order-footer .footer-btn {
 			width: 60px;
     		padding-top: 30%
@@ -117,7 +125,7 @@
 
 		 /*label效果*/
     	.order-footer label{
-    		display: inline;
+    		display: block;
     		margin: 0px;
     		padding: 0px;
     		font-size: 14px;
@@ -146,7 +154,6 @@
     	.order-body ul>li .order-item {
     		width: 100%;
     		height: 150px;
-    		border: 1px solid #c8c8c8;
     	}
     	.order-body ul>li .order-item ul {
     		width: 100%;
@@ -192,19 +199,21 @@
     		margin-left: 15px;
     	}
     	.order-body ul>li .order-item ul>li.order-content .order-phonenumber {
-    		margin-left: 40px;
+    		margin-left: 20px;
     	}
     	.order-body ul>li .order-item ul>li.order-content .order-id {
-    		margin-left: 40px;
+    		margin-left: 15px;
     	}
     	.order-body ul>li .order-item ul>li.order-content .order-type {
-    		margin-left: 10px;
+    		margin-left: 5px;
     	}
     	.order-body ul>li .order-item ul>li.order-content .order-checkbox {
     		display: inline-block;
+            position: absolute;
     		width: 13px;
     		height: 13px;
-    		margin-left: 5px;
+            margin-top: 5px;
+    		right: 10px;
     	}
     	.order-body ul>li .order-item ul>li.order-content .order-discount {
     		margin-left: 100px;
@@ -223,7 +232,8 @@
     		margin-left: 30px;
     	}
     	.order-body ul>li .order-item ul>li.order-content .order-date {
-    		margin-left: 200px;
+    		float: right;
+            margin-right: 10px;
     	}
 
 
@@ -274,7 +284,7 @@
     	}
 
         .order-detail .order-detail-header{
-            padding:5px 5px 10px 20px;
+            padding:10px 10px 10px 20px;
         }
         /*label效果*/
     	.order-detail label{
@@ -296,18 +306,24 @@
     	}
 
     	.order-detail-header .order-come-type {
-    		margin-left: 8%;
+    		margin-left: 40%;
     	}
 
     	.order-detail-header .order-phone {
-    		margin-left: 1%;
+    		
     	}
 
+        .order-detail-header .order-date {
+            float: right;
+            margin-right: 20px;
+        }
+
     	.order-detail-header .order-setblack-menu {
-    		margin-left: 1%;
+    		float: right;
+            margin-right: 20px;
     	}
     	.order-detail-header .order-cancel-menu {
-    		margin-left: 10%;
+    		margin-left: 0%;
     	}
 
     	.order-detail-header .order-modify-menu {
@@ -323,14 +339,16 @@
         .order-detail-header .order-user .user-phone {
         	margin-left: 8%;
         }
-
+        .order-detail-body {
+            margin-top: 10px;
+        }
         .order-detail-body .order-item {
         	margin: 0px 10px 0px 10px;
         	border: 1px solid #d5d3d3;
         }
         /*第一个item*/
         .order-detail-body .item-1 {
-        	margin-top: 10px;
+        	margin-top: 0px;
         }
 
         /*orderitem 样式*/
@@ -371,6 +389,26 @@
         	color: #2B2B2B;
         	margin-left: 40%;
         }
+
+        /*选取派送人员*/
+        #choosePosterModal {
+            width: 360px;
+            margin-left: -180px;
+
+        }
+        #choosePosterModal .modal-body{
+            width: 280px;
+            height: 201px;
+            padding-right: 40px;
+            padding-left: 40px;
+        }
+        #choosePosterModal .modal-body label{
+            display: block;
+        }
+        #choosePosterModal .modal-body label .required{
+            display: none;
+        }
+
 
         /*event-editor*/
         /*label效果*/

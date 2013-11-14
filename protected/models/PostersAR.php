@@ -97,4 +97,20 @@ class PostersAR extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+	/*
+		查找有效的派送人员
+	*/
+	public function getWorkPosters($seller_id){
+		$posters = PostersAR::model()->findAll('seller_id=:seller_id', array(':seller_id'=>$seller_id));
+		return $posters;
+	}
+
+	/*
+		获取派送人员
+	*/
+	public function getPoster($posterId){
+		$poster = PostersAR::model()->find('id=:posterId', array(':posterId'=>$posterId));
+		return $poster;
+	}
 }

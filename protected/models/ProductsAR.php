@@ -141,6 +141,33 @@ class ProductsAR extends CActiveRecord
 
 	
 	/*
+		获取特定商品
+	*/
+	public function getProductByIdSeller($product_id, $sellerId){
+		$product = ProductsAR::model()->find('id=:product_id and seller_id=:sellerId', 
+			array(':product_id'=>$product_id, ':sellerId'=>$sellerId));
+		return $product;
+	}
+	/*
+		获取特定商品
+	*/
+	public function getProductById($product_id){
+		$product = ProductsAR::model()->find('id=:product_id', 
+			array(':product_id'=>$product_id));
+		return $product;
+	}
+	/*
+		购买特定商品
+	*/
+	public function buyProduct($product_id, $sellerId, $num){
+		$product = ProductsAR::model()->find('id=:product_id and seller_id=:sellerId', 
+			array(':product_id'=>$product_id, ':sellerId'=>$sellerId));
+		$product->instore = $product->instore - $num;
+		$product->save();
+		return $product;
+	}
+
+	/*
 		获取特定类别的商品
 	*/
 	public function getCategoryProducts($productType, $sellerId){
