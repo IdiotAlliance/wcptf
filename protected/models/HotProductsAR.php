@@ -8,6 +8,7 @@
  * @property string $desc
  * @property string $pic_id
  * @property string $product_id
+ * @property string $picurl
  *
  * The followings are the available model relations:
  * @property Pictures $pic
@@ -42,7 +43,7 @@ class HotProductsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, desc, pic_id, product_id', 'required'),
+			array('seller_id, product_id', 'required'),
 			array('seller_id, pic_id, product_id', 'length', 'max'=>11),
 			array('desc', 'length', 'max'=>128),
 			// The following rule is used by search().
@@ -102,5 +103,9 @@ class HotProductsAR extends CActiveRecord
 	public function getHotProductsById($sellerId){
 		$hots = HotProductsAR::model()->findAll('seller_id=:sellerId', array(':sellerId'=>$sellerId));
 		return $hots;
+	}
+	
+	public function deleteHotProductsByUserId($userId){
+		HotProductsAR::model()->deleteAll('seller_id=:seller_id', array(':seller_id'=>$userId));
 	}
 }

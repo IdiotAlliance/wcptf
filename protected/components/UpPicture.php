@@ -16,7 +16,7 @@ class UpPicture
                 exit;
             }
             $type = strstr($picname, '.');
-            if ($type != ".gif" && $type != ".jpg") {
+            if ($type != ".png" && $type != ".jpg") {
                 echo '图片格式不对！';
                 exit;
             }

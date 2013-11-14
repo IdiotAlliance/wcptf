@@ -103,4 +103,13 @@ class DistrictsAR extends CActiveRecord
 		$districts = DistrictsAR::model()->findAll('seller_id=:userId', array(':userId'=>$userId));
 		return $districts;
 	}
+	
+	public function getDistrictById($id){
+		$district = DistrictsAR::model()->find('id=:id', array(':id'=>$id));
+		return $district;
+	}
+	
+	public function deleteDistrictById($id){
+		DistrictsAR::model()->deleteByPK($id);
+	}
 }

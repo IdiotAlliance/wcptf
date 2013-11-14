@@ -41,7 +41,7 @@ class PostersAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, phone, description, seller_id', 'required'),
+			array('name, seller_id', 'required'),
 			array('name, phone', 'length', 'max'=>32),
 			array('seller_id', 'length', 'max'=>11),
 			// The following rule is used by search().
@@ -106,5 +106,14 @@ class PostersAR extends CActiveRecord
 	public function getPostersByUserId($userId){
 		$posters = PostersAR::model()->findAll('seller_id=:userId', array(':userId'=>$userId));
 		return $posters;
+	}
+	
+	public function getPosterById($id){
+		$poster = PostersAR::model()->find('id=:id', array(':id'=>$id));
+		return $poster;
+	}
+	
+	public function deletePosterById($id){
+		PostersAR::model()->delete('id=:id', array(':id'=>$id));
 	}
 }

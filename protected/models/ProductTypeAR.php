@@ -149,4 +149,9 @@ class ProductTypeAR extends CActiveRecord
 				);
 		return $pdType;
 	}
+	
+	public function getProductTypeById($id){
+		$pdType = ProductTypeAR::model()->find('id=:id', array(':id'=>$id));
+		return $pdType;
+	}
 }
