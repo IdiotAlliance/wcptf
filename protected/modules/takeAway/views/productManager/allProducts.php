@@ -38,21 +38,21 @@
 		</div>
 		<div class='inline-display'>
 			<label class='inline-display'>筛选：</label>
-			<select class='sp-select'>
+			<select class='sp-select' id='filt'>
 				<option value='0'>上架中</option>
-				<option value='1'>下架中</option>
-				<option value='2'>已过期</option>
+				<option value='1'>已上架</option>
+				<option value='2'>已下架</option>
 			</select>
 		</div>
 		<div class='inline-display'>
-			<input type='text' placeholder='搜索'></input>
+			<input type='text' placeholder='搜索' id="search"></input>
 		</div>
 	</div>
 
 	<ul id='product-list'>
 		<?php foreach($prodList as $product):?>
 		<li class='product'>
-            <div class='left shift'><input type="checkbox"></div>
+            <div class='left shift'><input name="chkItem" type="checkbox"></div>
             <img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl."/".$product['cover'];?>'>
             <a class="left prod-link">
                 <div class='prod-name'><?php echo $product['pname'];?> </div>
@@ -69,7 +69,7 @@
 	<div class='batch-menu'>
 		<ul>
 			<li>
-				<input type='checkbox'>  全选
+				<input id='checkAll' type='checkbox'>  全选
 			</li>
 			<li><a href="javascript:;">批量操作</a></li>
 			<li><a href="javascript:;">添加新商品</a></li>
@@ -261,10 +261,10 @@
                 	$(".task-detail input").eq(0).val(json.pname);
                 	$(".task-detail input").eq(1).val(json.price+'￥');
                 	$(".task-detail input").eq(2).val(json.credit);
-                	$(".task-detail input").eq(3).val(json.description);
-                	$(".task-detail input").eq(4).val(json.stime);
-                	$(".task-detail input").eq(5).val(json.etime);
-                	$(".task-detail input").eq(6).val(json.instore);
+                	$(".task-detail input").eq(4).val(json.description);
+                	$(".task-detail input").eq(5).val(json.stime);
+                	$(".task-detail input").eq(6).val(json.etime);
+                	$(".task-detail input").eq(7).val(json.instore);
                 	var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+json.cover;
 					$("#showimg").html("<img  width='200' class='left img-rounded'  src='"+img+"'>");
         			editor.ready(function(){
@@ -301,10 +301,10 @@
 			var productType = $(".prod .sp-select").find('option:selected').val();
 			var price = $(".prod input").eq(1).val();
 			var credit = $(".prod input").eq(2).val();
-			var description = $(".prod input").eq(3).val();
-			var stime = $(".prod input").eq(4).val();
-			var etime = $(".prod input").eq(5).val();
-			var instore = $(".prod input").eq(6).val();	
+			var description = $(".prod input").eq(4).val();
+			var stime = $(".prod input").eq(5).val();
+			var etime = $(".prod input").eq(6).val();
+			var instore = $(".prod input").eq(7).val();	
 			var richtext = editor.getContent();
 			$.ajax({
                 type: 'POST',
@@ -327,10 +327,10 @@
 
 		function sortByName(list){
 			for(var i=1;i<list.length;i++){
-				if(list[i-1].pname > list[i].pname){
+				if(list[i-1].pinyin < list[i].pinyin){
 					var tmp = list[i];
 					var j = i;
-					while(j>0 && list[j-1].pname>tmp){
+					while(j>0 && list[j-1].pinyin<tmp.pinyin){
 						list[j] = list[j-1];
 						j--;
 					}
@@ -341,17 +341,58 @@
 
 		function sortByPrice(list){
 			for(var i=1;i<list.length;i++){
-				if(list[i-1].price > list[i].price){
+				if(parseInt(list[i-1].price) > parseInt(list[i].price)){
 					var tmp = list[i];
 					var j = i;
-					while(j>0 && list[j-1].price>tmp.price){
+					while(j>0 && parseInt(list[j-1].price)>parseInt(tmp.price)){
 						list[j] = list[j-1];
 						j--;
 					}
 					list[j] = tmp;
 				}
 			}
-			return list;
+		}
+
+		function sortByStime(list){
+			for(var i=1;i<list.length;i++){
+				if(compareDate(list[i].stime,list[i-1].stime)){
+					var tmp = list[i];
+					var j = i;
+					while(j>0 && compareDate(tmp.stime,list[j-1].stime)){
+						list[j] = list[j-1];
+						j--;
+					}
+					list[j] = tmp;
+				}
+			}
+		}
+
+		function sortByEtime(list){
+			for(var i=1;i<list.length;i++){
+				if(compareDate(list[i].etime,list[i-1].etime)){
+					var tmp = list[i];
+					var j = i;
+					while(j>0 && compareDate(tmp.etime,list[j-1].etime)){
+						list[j] = list[j-1];
+						j--;
+					}
+					list[j] = tmp;
+				}
+			}
+		}
+
+		function compareDate(date1,date2){
+			var arr=date1.split("-");    
+			var time1 = new Date(parseInt(arr[0]),parseInt(arr[1])-1,parseInt(arr[2]));
+			var times1 = time1.getTime();
+
+			var arr2 = date2.split("-");
+			var time2 = new Date(parseInt(arr2[0]),parseInt(arr2[1])-1,parseInt(arr2[2]));
+			var times2 = time2.getTime();
+			if(times1>=times2)
+				return false;
+			else
+				return true;
 		}
 
 		$("#sort").change(function(){
@@ -363,25 +404,109 @@
 					sortByName(prodList);
 					break;
 				case '价格':
-					prodList = sortByPrice(prodList);
+					sortByPrice(prodList);
+					break;
+				case '有效期起始':
+					sortByStime(prodList);
+					break;
+				case '有效期终止':
+					sortByEtime(prodList);
 					break;
 				default:
-					breal;
+					break;
 			}
+			var content="";
+			for(var i=0;i<prodList.length;i++){
 
-			// for(var i=0;i<prodList.length;i++){
+				content ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
+				+prodList[i].cover+"'><a class='left prod-link'><div class='prod-name'>"
+				+prodList[i].pname+"</div><div class='prod-price'>价格："
+				+prodList[i].price+"</div><div class='prod-price'>有效期：<span class='label label-info'>"
+				+prodList[i].stime+"</span> 至<span class='label label-info'>"
+				+prodList[i].etime+"</span></div></a><a class='seal'>"
+				+prodList[i].status+"</a></li>" +content;
+			}
+			$("#product-list").html(content);
+		})
+		
 
-			// 	var li ="<li class='product'><div class='left shift'><input type='checkbox'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
-			// 	+prodList[i].cover+"'><a class='left prod-link'><div class='prod-name'>"
-			// 	+prodList[i].pname+"</div><div class='prod-price'>价格："
-			// 	+prodList[i].price+"<div class='prod-price'>有效期：<span class='label label-info'>"
-			// 	+prodList[i].stime+"</span> 至<span class='label label-info'>"
-			// 	+prodList[i].etime+"</span></div></a><a class='seal'>"
-			// 	+prodList[i].status+"</a></li>";
-			// }
-
+		$("#filt").change(function(){
+			var prodList = <?php echo json_encode($prodList);?>;
+			prodList = eval(prodList);	
+			var option = $(this).find("option:selected").text();
+			switch(option){
+				case '上架中':
+					for(var i=0;i<prodList.length;i++){
+						if(prodList[i].status!='上架中'){
+							delete prodList[i];
+						}
+					}
+					break;
+				case '已上架':
+					for(var i=0;i<prodList.length;i++){
+						if(prodList[i].status!='已上架'){
+							delete prodList[i];
+						}
+					}
+					break;
+				case '已下架':
+					for(var i=0;i<prodList.length;i++){
+						if(prodList[i].status!='已下架'){
+							delete prodList[i];
+						}
+					}
+					break;
+				default:
+					break;
+			}
+			var content="";
+			for(var i=0;i<prodList.length;i++){
+				if(prodList[i]!=null)
+					content ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
+					+prodList[i].cover+"'><a class='left prod-link'><div class='prod-name'>"
+					+prodList[i].pname+"</div><div class='prod-price'>价格："
+					+prodList[i].price+"</div><div class='prod-price'>有效期：<span class='label label-info'>"
+					+prodList[i].stime+"</span> 至<span class='label label-info'>"
+					+prodList[i].etime+"</span></div></a><a class='seal'>"
+					+prodList[i].status+"</a></li>" +content;
+			}
+			$("#product-list").html(content);
 		})
 
+		$("#search").keyup(function(event){
+			var key = event.which;
+			var content = $("#search").val();
+			if(key == 13){
+				if(content==null)
+					alert("搜索内容那个不能为空");
+				else{
+					var prodList = <?php echo json_encode($prodList);?>;
+					var pageContent = "";
+					for(var i=0;i<prodList.length;i++){
+						if(prodList[i].pname.indexOf(content)>=0){
+							pageContent ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
+							+prodList[i].cover+"'><a class='left prod-link'><div class='prod-name'>"
+							+prodList[i].pname+"</div><div class='prod-price'>价格："
+							+prodList[i].price+"</div><div class='prod-price'>有效期：<span class='label label-info'>"
+							+prodList[i].stime+"</span> 至<span class='label label-info'>"
+							+prodList[i].etime+"</span></div></a><a class='seal'>"
+							+prodList[i].status+"</a></li>" +pageContent;
+						}
+					}
+					$("#product-list").html(pageContent);
 
+				}
+			}				
+		});
+
+		$("#checkAll").click(function(){
+			if($("#checkAll").attr("checked")=='checked')
+				$("[name = chkItem]:checkbox").attr("checked", true);
+			else
+				$("[name = chkItem]:checkbox").attr("checked", false);
+
+		});
+
+		
 	})
 </script>

@@ -1,6 +1,8 @@
   /*组件全局样式设置 */
   html,body{
     height: 100%;
+    overflow-x:hidden;
+    overflow-y:hidden;  
   }
 
   .task{

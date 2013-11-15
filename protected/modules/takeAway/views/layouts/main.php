@@ -139,6 +139,9 @@
 			case 'productManager':
 				$('.menu ul').eq(1).show();
 				break;
+			case 'sellerSettings':
+				$('.menu ul').eq(6).show();
+				break;
 			default:
 				break;
 		}

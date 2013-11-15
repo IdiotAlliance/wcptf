@@ -81,7 +81,7 @@
 
   #product-list{
     margin-bottom: 20px;
-    height:464px;
+    max-height:430px;
     overflow: scroll;
     overflow-x: hidden !important;
     overflow-y: auto !important;

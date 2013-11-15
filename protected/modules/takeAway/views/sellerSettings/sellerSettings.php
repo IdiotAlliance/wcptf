@@ -22,7 +22,6 @@
 		margin-top: 20px;
 	}
 </style>
-
 <div id="seller_settings_container">
 	<div id="seller_settings_actions">
 		<button id="seller_settings_save" class="btn btn-primary action_btn" onclick="saveProxy()">保存</button>

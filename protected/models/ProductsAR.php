@@ -148,19 +148,19 @@ class ProductsAR extends CActiveRecord
 			$productList = ProductsAR::model()->with('cover0')->findAll(array(
 				'condition' => 't.seller_id =:seller_id and type_id=:type_id',
 				'params' => array(':type_id'=>1,':seller_id'=>$sellerId),
-				'order'=>'pname DESC',
+				'order'=>'price DESC',
 			));
 		else if($productType == "星标类")
 			$productList = ProductsAR::model()->with('cover0')->findAll(array(
 				'condition' => 'type_id=:type_id and t.seller_id =:seller_id',
 				'params' => array(':type_id'=>2,':seller_id'=>$sellerId),
-				'order'=>'pname DESC',
+				'order'=>'price DESC',
 			));
 		else
 			$productList = ProductsAR::model()->with('type','cover0')->findAll(array(
 				'condition' => 'type_name=:type_name and t.seller_id =:seller_id',
 				'params' => array(':type_name'=>$productType,':seller_id'=>$sellerId),
-				'order'=>'pname DESC',
+				'order'=>'price DESC',
 			));
 		foreach ($productList as $product) {
 			$stime = new DateTime($product->stime);
@@ -191,25 +191,13 @@ class ProductsAR extends CActiveRecord
 		foreach ($productList as $product) {
 			$prod = array();
 			$prod['pname'] = $product->pname;
+			$prod['pinyin'] = PinyinHelper::pinyin($prod['pname'],1);
 			$prod['stime'] = $product->stime;
 			$prod['etime'] = $product->etime;
-			switch ($product->status) {
-				case 0:
-					$prod['status'] = '上架中';
-					break;
-				case 1:
-					$prod['status'] = '已上架';
-					break;
-				case 0:
-					$prod['status'] = '已下架';
-					break;
-
-				default:
-					$prod['status'] = '上架中';
-					break;
-			}
+			$prod['status'] = $product->status;
 			$prod['price'] = $product->price;
 			$prod['cover'] = $product->cover0->pic_url;
+			$prod['richtext'] = $product->richtext;
 
 			$prodList[] = $prod;
 		}
@@ -222,6 +210,8 @@ class ProductsAR extends CActiveRecord
 		$prod['pname'] = $product->pname;
 		$prod['stime'] = $product->stime;
 		$prod['etime'] = $product->etime;
+		$prod['credit'] = $product->credit;
+
 		switch ($product->status) {
 			case 0:
 				$prod['status'] = '上架中';
@@ -229,7 +219,7 @@ class ProductsAR extends CActiveRecord
 			case 1:
 				$prod['status'] = '已上架';
 				break;
-			case 0:
+			case 2:
 				$prod['status'] = '已下架';
 				break;
 
@@ -239,6 +229,7 @@ class ProductsAR extends CActiveRecord
 		}
 		$prod['price'] = $product->price;
 		$prod['cover'] = $product->cover0->pic_url;
+		$prod['richtext'] = $product->richtext;
 		return $prod;
 	}
 
