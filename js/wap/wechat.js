@@ -934,7 +934,7 @@ function submit(){
 				$.ajax({
 			        type:'POST',
 			        dataType: 'json',
-			        url:  'http://192.168.1.196/wcptf/index.php?r=mobile/order/order',
+			        url:  '/weChat/index.php/mobile/order/order',
 			        			        data:{sellerid:sellerid,openid:openid,name:mypersonalinfo.uesrname,phone:mypersonalinfo.phonenumber, areaid:mypersonalinfo.areaid,areadesc:mypersonalinfo.areadesc,tips:mypersonalinfo.tips, products:products, nums:nums},
 			        success:function(data,textStatus){
 			            if(data.success=='1'){
@@ -963,7 +963,7 @@ function paysuccess(){
 	$.ajax({
         type:'POST',
         dataType: 'json',
-        url:  'http://192.168.1.196/wcptf/index.php?r=mobile/order/getOrders',
+        url:  '/weChat/index.php/mobile/order/getOrders',
         			        data:{sellerid:sellerid,openid:openid},
         success:function(data,textStatus){
             if(data.success=='1'){

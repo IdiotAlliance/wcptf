@@ -335,7 +335,8 @@ class OrdersAR extends CActiveRecord
 				$order->type = "通过网页下单";
 				break;
 		}
-		$order->member_id = MembersAR::model()->getMemberName($order->member_id);
+		// $order->member_id = MembersAR::model()->getMemberName($order->member_id);
+		
 		$posterId = $order->poster_id;
 		if($posterId==0){
 			$order->poster_id = "无";

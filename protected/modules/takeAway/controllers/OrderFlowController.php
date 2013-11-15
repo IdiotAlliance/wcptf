@@ -108,7 +108,7 @@ class OrderFlowController extends Controller
 	*/
 	public function actionfirstGetOrderItems(){
 		$orderId = $this->firstOrderID;
-		$orderItems = orderItemsAR::model()->getItems($orderId);
+		$orderItems = OrderItemsAR::model()->getItems($orderId);
 		$order = ordersAR::model()->getOrder($orderId);
 		if(empty($order)){
 			echo "没有订单数据";

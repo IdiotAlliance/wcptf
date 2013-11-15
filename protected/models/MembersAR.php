@@ -136,7 +136,7 @@ class MembersAR extends CActiveRecord
 		获取微信昵称
 	*/
 	public function getMemberName($memberid){
-		$member= MembersAR::model()->find('memberid=:memberid', array(':memberid'=>$memberid));
+		$member= MembersAR::model()->find('openid=:openid', array(':openid'=>$memberid));
 		$memberName = $member->wxnickname;
 		return $memberName;
 	}

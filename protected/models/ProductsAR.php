@@ -300,9 +300,5 @@ class ProductsAR extends CActiveRecord
 			$product->richtext = "请输入商品详细图文信息";
 		return $product;
 	}
-	
-	public function getProductById($id){
-		$product = ProductsAR::model()->find('id=:id', array(':id'=>$id));
-		return $product;
-	}
+
 }

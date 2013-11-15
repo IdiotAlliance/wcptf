@@ -1,7 +1,6 @@
 <div class="order-detail-scroll">
 	<div class='order-detail-header'>
-		<div class="order-name" <?php echo 'id="'.$order->id.'">'; ?>
-		</div>
+		<div class="order-name" <?php echo 'id="'.$order->id.'">'; ?></div>
 		<div class="order-line line-1">
 			<label class="order-id">订单号：<?php echo $order->order_no; ?></label>
 			<label class="order-come-type"><?php echo $order->type; ?></label>
