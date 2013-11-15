@@ -41,7 +41,7 @@ class WapController extends Controller{
 		preg_match('/(\d+:\d+):\d+/i', $user->etime, $matches);
 		$shopInfo[0]->endtime    = $matches[1];
 		$shopInfo[0]->servertime = date('H:i');
-		$shopInfo[0]->isdeliveryfree = $user->takeaway_fee<=0;
+		$shopInfo[0]->isdeliveryfree = $user->threshold==1;
 		$shopInfo[0]->sendingfee = $user->start_price;
 		$shopInfo[0]->deliveryfee = $user->takeaway_fee;
 		$shopInfo[0]->expecttime = $user->estimated_time;

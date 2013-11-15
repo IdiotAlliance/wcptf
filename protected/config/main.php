@@ -36,6 +36,7 @@ return array(
 		'takeAway',
 		'wechat',
 		'wap',
+		'mobile',
 	),
 
 	// application components
@@ -67,7 +68,9 @@ return array(
 				
 				'takeAway/orderFlow/orderFlow'=>'takeAway/orderFlow/orderFlow',
 				'takeAway/products/<productType:\w+>'=>'takeAway/productsManager/allProducts/<productType:\w+>',
-				
+				'takeAway/sellerProfile'=>'takeAway/sellerProfile/sellerProfile',
+				'takeAway/sellerSettings'=>'takeAway/sellerSettings/sellerSettings',
+					
 				'wechat/wechatBind'=>'wechat/wechatBind/wechatBind',
 				'wechat/bindComplete'=>'wechat/wechatBind/bindComplete',
 				'wechat/wechatAccess/<id:\d+>/<token:\w+>'=>'wechat/wechatAccess',
@@ -110,11 +113,6 @@ return array(
 					'logFile'=>'info.log',
 				),
 
-// 				array(
-//                     'class'=>'ext.yii-debug-toolbar.YiiDebugToolbarRoute',//加载
-//                     'ipFilters'=>array('127.0.0.1'),//运行显示的ip
-//                     'levels'=>'error,warning',//提示等级
-//                 ),
 			),
 		),
 	),

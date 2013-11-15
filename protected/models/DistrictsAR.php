@@ -94,7 +94,7 @@ class DistrictsAR extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
-	
+
 	/**
 	 * 根据用户id获取配送片区
 	 * @param $userId 用户的id
@@ -102,5 +102,26 @@ class DistrictsAR extends CActiveRecord
 	public function getDistrictsByUserId($userId){
 		$districts = DistrictsAR::model()->findAll('seller_id=:userId', array(':userId'=>$userId));
 		return $districts;
+	}
+	
+	public function getDistrictById($id){
+		$district = DistrictsAR::model()->find('id=:id', array(':id'=>$id));
+		return $district;
+	}
+	
+	public function deleteDistrictById($id){
+		DistrictsAR::model()->deleteByPK($id);
+	}
+
+	/*
+		获取片区名称
+	*/
+	public function getAreaName($areaId){
+		$district =  DistrictsAR::model()->find('id=:areaId', array(':areaId'=>$areaId));
+		if(!empty($district)){
+			return $district->name;
+		}else{
+			return " ";
+		}
 	}
 }

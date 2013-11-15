@@ -103,4 +103,69 @@ class OrderItemsAR extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+	/*
+		获取特定订单的子项
+	*/
+	public function getItems($order_id){
+		$orderItems = OrderItemsAR::model()->findAll('order_id=:order_id', array(':order_id'=>$order_id));
+		return $orderItems;
+	}
+
+	public function generateItems($order_id){
+		$items = OrderItemsAR::model()->getItems($order_id);
+		$result = "";
+		foreach ($items as $item) {
+			$pName = ProductsAR::model()->getProductById($item->product_id)->pname;
+			$result = $result.$pName.'*'.$item->number." ";
+		}
+		return $result;
+	}
+
+	/*
+		删除特定订单的子项
+	*/
+	public function deleteItems($order_id){
+		$orderItems = OrderItemsAR::model()->findAll('order_id=:order_id', array(':order_id'=>$order_id));
+		foreach ($orderItems as $item) {
+			$item->delete();
+		}
+	}
+
+	public function changeItemToView($item){
+		 $product = ProductsAR::model()->getProduct($item->product_id, Yii::app()->user->sellerId);
+		 $item->product_id = $product->pname;
+	}
+
+	/*
+		新建订单子项
+	*/
+	public function createItems($sellerId, $orderId, $productId, $num){
+		$product = ProductsAR::model()->getProductByIdSeller($productId, $sellerId);
+		if(!empty($product)){
+			if($product->instore>=$num){
+				$product = ProductsAR::model()->buyProduct($productId, $sellerId, $num);
+				if($product->instore>=0){
+					//成功购买
+					$item = new OrderItemsAR;
+					$item->order_id = $orderId;
+					$item->product_id = $productId;
+					$item->number = $num;
+					$item->price = $product->price * $num;
+					$item->status = 0;
+					$item->save();
+					return "ok";
+				}else{
+					//防止死锁，恢复
+					$product = ProductsAR::model()->buyProduct($sellerId, $productId, -$num);
+					return "number is not enough";
+				}
+			}else{
+				return $product->id." number is not enough";
+			}
+		}else{
+			return "product id is out";
+		}
+		
+	}
 }

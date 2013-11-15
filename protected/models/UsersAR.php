@@ -84,7 +84,7 @@ class UsersAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('email, password, register_time, verify_code', 'required'),
+			array('email, password, register_time', 'required'),
 			array('type, email_verified, logo, estimated_time', 'numerical', 'integerOnly'=>true),
 			array('start_price, takeaway_fee, threshold', 'numerical'),
 			array('email, password, store_name', 'length', 'max'=>128),

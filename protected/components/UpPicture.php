@@ -15,7 +15,9 @@ class UpPicture
                 echo '图片大小不能超过1M';
                 exit;
             }
-            $type = strstr($picname, '.');
+			preg_match('/.*(\.jpg|\.JPG|\.png|\.PNG)$/i', $picname, $matches);
+			$type = $matches[1];
+			
             if ($type != ".png" && $type != ".jpg" && $type != ".PNG" && $type != ".JPG") {
                 echo '图片格式不对！';
                 exit;

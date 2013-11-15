@@ -41,7 +41,7 @@ class PostersAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, phone, description, seller_id', 'required'),
+			array('name, seller_id', 'required'),
 			array('name, phone', 'length', 'max'=>32),
 			array('seller_id', 'length', 'max'=>11),
 			// The following rule is used by search().
@@ -96,5 +96,39 @@ class PostersAR extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+	/**
+	 * 根据用户id获取邮递员的信息
+	 * @param unknown $userId
+	 * @return unknown
+	 */
+	public function getPostersByUserId($userId){
+		$posters = PostersAR::model()->findAll('seller_id=:userId', array(':userId'=>$userId));
+		return $posters;
+	}
+	
+	public function getPosterById($id){
+		$poster = PostersAR::model()->find('id=:id', array(':id'=>$id));
+		return $poster;
+	}
+	
+	public function deletePosterById($id){
+		PostersAR::model()->delete('id=:id', array(':id'=>$id));
+	}
+
+	/*
+		查找有效的派送人员
+	*/
+	public function getWorkPosters($seller_id){
+		$posters = PostersAR::model()->findAll('seller_id=:seller_id', array(':seller_id'=>$seller_id));
+		return $posters;
+	}
+
+	/*
+		获取派送人员
+	*/
+	public function getPoster($posterId){
+		$poster = PostersAR::model()->find('id=:posterId', array(':posterId'=>$posterId));
+		return $poster;
 	}
 }

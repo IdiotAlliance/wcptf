@@ -132,4 +132,34 @@ class MembersAR extends CActiveRecord
 		return $member;
 	}
 	
+	/*
+		获取微信昵称
+	*/
+	public function getMemberName($memberid){
+		$member= MembersAR::model()->find('openid=:openid', array(':openid'=>$memberid));
+		$memberName = $member->wxnickname;
+		return $memberName;
+	}
+
+	/*
+		通过openid查找用户
+	*/
+	public function getMemberByOpenId($openid){
+		$member= MembersAR::model()->find('openid=:openid', array(':openid'=>$openid));
+		return $member;
+	}
+	/*
+		新建用户
+	*/
+	public function createMember($sellerid, $openid, $name){
+		$member = new MembersAR;
+		$member->seller_id = $sellerid;
+		$member->openid = $openid;
+		$member->wxnickname = $name;
+		$member->ctime = date("Y-m-d H:i:s");
+		$member->credits = 0;
+		$member->save();
+		return $member;
+	}
+
 }

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Accordions - jQuery Mobile Demos</title>
+
+    <link rel="stylesheet"  href="css/themes/default/wechat.min.css">
+	<link rel="stylesheet"  href="css/themes/default/jquery.mobile.structure-1.3.2.min.css">
+    <link rel="stylesheet"  href="grid-listview.css">
+	<link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+	<script src="js/jquery.js"></script>
+    <script src="js/jquery.mobile-1.3.2.min.js"></script>
+    <script src="js/order.js"></script>
+    
+</head>
+<body>
+<div  data-role="page" data-theme="a" id="demo-page" class="my-page" data-url="demo-page">
+    
+
+
+
+    
+    <div id="sortcontent" data-role="content" >
+    <section id="announcement"><header><h4>今日公告</h4></header><div id="announcement-content"><p id="announcement-desc"></p></div></section>'
+    <ul id="recommendlist" data-role="listview" class="ui-listview-sort ui-recommend" data-inset="true">
+    </ul>
+    <!-- <section id="announcement">
+        <header><h4>今日公告</h4></header>
+        <div id="announcement-content"><p id="announcement-desc">今明两天购满100起八折，抓紧哦！</p></div>
+    </section>
+        <ul data-role="listview" class="ui-listview-sort ui-recommend" data-inset="true">
+            <li><a href="#" >
+                <img src="_assets/img/fruitjuice.jpg"alt="image"  >
+                <h3>牛排套餐</h3>
+                <p>各式牛排、意面、浓汤</p>
+                <p class="ui-li-aside">热卖</p>
+            </a></li>
+            <li><a href="#">
+                <img src="_assets/img/fruitdish.jpg"alt="image"  >
+                <h3>水果拼盘</h3>
+                <p>理想的代餐拼盘，塑身MM最爱</p>
+                <p class="ui-li-aside">推荐</p>
+            </a></li>
+            <li><a href="#">
+                <img src="_assets/img/importedfruit.jpg"alt="image"  >
+                <h3>风味披萨</h3>
+                <p>量足，味道也是极好的</p>
+                <p class="ui-li-aside">新品</p>
+            </a></li>
+            
+        </ul>
+        <ul data-role="listview" data-inset="true" class="ui-listview-sort">
+            <li><a href="#">
+                <img src="_assets/img/charlotte.jpg">
+                <h2 >Galaxy</h2>
+                <p >New Samsung Galaxy Express</p>
+            </a></li>
+            <li><a href="#">
+                <img src="_assets/img/localfruit.jpg">
+                <h2 >Galaxy</h2>
+                <p >New Samsung Galaxy Express</p>
+            </a></li>
+            <li><a href="#">
+                <img src="_assets/img/fruitmask.jpg">
+                <h2 >Galaxy</h2>
+                <p >New Samsung Galaxy Express</p>
+            </a></li>
+        </ul> -->
+
+    </div>
+    <div id="productcontent" data-role="content">
+    	<!-- <ul class="foodlist" data-role="listview" data-inset="true">
+        <li data-role="list-divider" data-theme="a">牛排套餐<p>各式牛排、意面、浓汤</p></li>
+        <li>
+            <div class="multibtn-title"><h1>咖喱土豆盖浇饭</h1><p>￥10</p></div>
+            <div data-role="controlgroup" data-type="horizontal" align="right">
+            <a href="#" data-role="button" data-icon="minus" data-iconpos="notext" data-theme="a" data-inline="true" align="right">Minus</a>
+            <a href="#" data-role="button" data-icon="plus" data-iconpos="notext" data-theme="a" data-inline="true" align="right">Plus</a>
+            </div>
+            <p class="ui-li-aside2">已选数量：3（总价：￥30）</p>
+        </li> </ul>-->
+
+
+
+
+        <!-- auto create -->
+		<!-- <li>
+            <div style="float:left;position:relative" ><h1>咖喱土豆盖浇饭</h1><p>￥10</p></div>
+            <div data-role="controlgroup" data-type="horizontal" align="right">
+            <a onclick = addfood("咖喱土豆盖浇饭",10) href="#" data-role="button" data-icon="plus" data-iconpos="notext" data-theme="a" data-inline="true" align="right" >Plus</a>
+			<a onclick = deletefood("咖喱土豆盖浇饭",10) href="#" data-role="button" data-icon="minus" data-iconpos="notext" data-theme="a" data-inline="true" align="right" >Minus</a>
+			</div>
+        </li>
+        <li>
+            <div style="float:left;position:absolute"><h1>青椒肉丝盖浇饭</h1><p>￥10</p></div>
+            <div data-role="controlgroup" data-type="horizontal" align="right">
+            <a onclick = addfood("青椒肉丝盖浇饭",10) href="#" data-role="button" data-icon="plus" data-iconpos="notext" data-theme="a" data-inline="true" align="right">Plus</a>
+			<a onclick = deletefood("青椒肉丝盖浇饭",10) href="#" data-role="button" data-icon="minus" data-iconpos="notext" data-theme="a" data-inline="true" align="right">Minus</a></div>
+        </li>
+        <li>
+            <div style="float:left;position:absolute"><h1>红烧牛腩盖浇饭</h1><p>￥10</p></div>
+            <div data-role="controlgroup" data-type="horizontal" align="right">
+            <a onclick = addfood("红烧牛腩盖浇饭",10) href="#" data-role="button" data-icon="plus" data-iconpos="notext" data-theme="a" data-inline="true" align="right">Plus</a>
+			<a onclick = deletefood("红烧牛腩盖浇饭",10) href="#" data-role="button" data-icon="minus" data-iconpos="notext" data-theme="a" data-inline="true" align="right">Minus</a></div>
+        </li>
+        <li>
+            <div style="float:left;position:absolute"><h1>黑椒牛排盖浇饭</h1><p>￥10</p></div>
+            <div data-role="controlgroup" data-type="horizontal" align="right">
+            <a onclick = addfood("黑椒牛排盖浇饭",10) href="#" data-role="button" data-icon="plus" data-iconpos="notext" data-theme="a" data-inline="true" align="right">Plus</a>
+			<a onclick = deletefood("黑椒牛排盖浇饭",10) href="#" data-role="button" data-icon="minus" data-iconpos="notext" data-theme="a" data-inline="true" align="right">Minus</a></div>
+        </li> -->
+        
+
+<!--         // <script>
+        //     createfoodlist();
+        // </script>
+ -->
+       
+    </div>
+    <div id="paycontent" data-role="content" >
+        <!-- <ul class="orderlist" data-role="listview" data-inset="true"> -->
+
+            <!-- auto create -->
+            <!-- <li data-role="list-divider" data-theme="a" role="heading" class="ui-li ui-li-divider ui-bar-a ui-first-child">已点外卖</li>
+            <li class="ui-li ui-li-static ui-btn-up-c ui-last-child"><h5 class="ui-li-heading">暂无下单纪录</h5><h5 class="ui-li-heading"></h5></li> -->
+        <!-- </ul>
+        <script>
+            fillorder();
+        </script>
+    <section id="personal">
+        <header><h4>收货信息（*必填）</h4></header>
+        <div id="personal-content">
+        <label for="text-basic">姓名:*</label>
+        <input type="text" name="text-basic" id="name" value="">
+        <label for="text-basic">联系电话:*</label>
+        <input type="text" name="text-basic" id="number" value="">
+        <label for="select-choice-1" class="select">请选择收货片区:*</label>
+        <select name="select-choice-1" id="select-choice-1">
+            <option value="teachingbuilding">教学楼（约30分钟送达）</option>
+            <option value="library">图书馆（约30分钟送达）</option>
+            <option value="dormitory">宿舍（约40分钟送达）</option>
+            <option value="other">其他（约45分钟送达）</option>
+        </select>
+        <label for="text-basic">详细收货地点:*</label>
+        <input type="text" name="text-basic" id="tips" value="">
+        <label for="text-basic">备注:</label>
+        <input type="text" name="text-basic" id="tips" value="">
+        </div>
+    </section>
+    <fieldset class="ui-grid-a">
+        <div class="ui-block-a"><button id="submit">提交订单</button></div>
+        <div class="ui-block-b"><button id="cancel">放弃订单</button></div>
+    </fieldset> -->
+
+    </div>
+
+    <script type="text/javascript">
+    showsort();
+    </script>
+<div data-theme="a" class=""data-role="footer" data-position="fixed"data-type="horizontal" >
+            <a href="#" onclick = payback() id="back-btn" data-role="button" data-icon="back" data-iconpos="bottom"class="ui-sort" data-corners="false"></a>
+            <a href="#" onclick = callsort() id="sort-btn" data-role="button" data-icon="bars" data-iconpos="bottom"class="ui-sort" data-corners="false"></a>
+            <a href="#" onclick = topay() data-role="button" id="pay-btn" data-icon="arrow-r" data-iconpos="right" data-inline="true"data-theme="b" class="ui-account">结算 ￥400</a>
+    </div>  
+</div>
+
+    
+
+<!-- <div data-role="controlgroup" data-type="horizontal"  data-inline="true" align="right">
+                <a href="#" onclick = clearorder() data-role="button" data-icon="delete" data-iconpos="left" data-inline="true"   style="position:relative;">清空</a>
+                <a href="#" onclick = sumorder() class="price" data-role="button" data-icon="arrow-r" data-iconpos="right" data-inline="true" data-theme="b"style="width:110px;margin-right:10px;position:relative">结算：¥0</a></div>
+            </div>   -->
+</body>
+</html>
