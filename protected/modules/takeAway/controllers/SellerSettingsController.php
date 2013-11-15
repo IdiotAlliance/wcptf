@@ -24,7 +24,6 @@ class SellerSettingsController extends Controller {
 				HotProductsAR::model()->deleteHotProductsByUserId($userId);
 				foreach ($obj->types as $type){
 					$dbtype = ProductTypeAR::model()->getProductTypeById($type->id);
-					$dbtype->insufficient = (int)$type->insufficient;
 					$dbtype->update();
 					if(isset($type->tag) && $type->tag){
 						$dbhot = new HotProductsAR();
@@ -39,7 +38,7 @@ class SellerSettingsController extends Controller {
 					
 					foreach($type->products as $product){
 						$dbproduct = ProductsAR::model()->getProductById($product->id);
-						$dbproduct->insufficient = (int)$product->insufficient;
+						$dbproduct->daily_instore = $product->daily_instore;
 						$dbproduct->update();
 					}
 				}
@@ -78,7 +77,6 @@ class SellerSettingsController extends Controller {
 					$typearr [$i]->type_name = $type->type_name;
 					$typearr [$i]->daily_status = $type->daily_status;
 					$typearr [$i]->hot = false;
-					$typearr [$i]->insufficient = $type->insufficient;
 					$typearr [$i]->products = array ();
 					
 					$j = 0;
@@ -87,7 +85,7 @@ class SellerSettingsController extends Controller {
 							$typearr [$i]->products [$j]->id = $product->id;
 							$typearr [$i]->products [$j]->typeid = $product->type_id;
 							$typearr [$i]->products [$j]->pname = $product->pname;
-							$typearr [$i]->products [$j]->insufficient = $product->insufficient;
+							$typearr [$i]->products [$j]->daily_instore = $product->daily_instore;
 							$j ++;
 						}
 					}
@@ -163,7 +161,6 @@ class SellerSettingsController extends Controller {
 					$ret .= chr ( 0xc0 | ($val >> 6) ) . chr ( 0x80 | ($val & 0x3f) );
 				else
 					$ret .= chr ( 0xe0 | ($val >> 12) ) . chr ( 0x80 | (($val >> 6) & 0x3f) ) . chr ( 0x80 | ($val & 0x3f) );
-				
 				$i += 5;
 			} else if ($str [$i] == '%') {
 				$ret .= urldecode ( substr ( $str, $i, 3 ) );

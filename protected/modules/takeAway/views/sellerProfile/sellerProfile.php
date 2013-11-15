@@ -15,13 +15,20 @@
 		overflow-x: hidden;
 		width: expression(document.width - 200 + "px");
 	}
+	#seller_profile_main_container{
+		margin-top: 60px;
+	}
 	#config_main_container{
 		padding-left: 20px;
 	}
 	#seller_profile_actions{
+		position: fixed;
 		width: 100%;
+		padding-top: 10px;
+		padding-bottom: 10px;
 		padding-left: 20px;
-		margin-top: 20px;
+		background-color: #ffffff;
+		box-shadow: 0px 1px 3px #808080;
 	}
 </style>
 <div id="seller_profile_config">
@@ -29,125 +36,126 @@
 		<button id="seller_profile_save" class="btn btn-primary action_btn" onclick="submit()">保存</button>
 		<button id="seller_profile_cancel" class="btn action_btn" onclick="window.location.reload()">放弃更改</button>
 	</div>
-	<hr>
-	<form style="display: none" action="<?php echo Yii::app()->createUrl('takeAway/sellerProfile')?>" method="post">
-		<input type="text" name="json" id="form_json_input"/>
-		<input type="submit" id="form_submit">
-	</form>
-	<div id="config_main_container">
-		<h5>店铺信息</h5>
-		<div class="row">
-			<div class="row span3">
-				店铺名称：<input class="span2" id="store_name" name="store_name" type="text">
-			</div>
-			<div class="span2">
-				店铺类型：
-				<span class="label label-info" id="store_type"></span>
-			</div>
-		</div>
-		<div class="row">
-			<div class="span1 input_label">点单电话：</div>
-			<input class="span2" id="phone_number" name="phone" type="text">
-		</div>
-		<div class="row">
-			<div class="span1 input_label">经营时间：</div>
-			<input class="span2" id="stime" name="stime" type="text">
-			&nbsp;至&nbsp;
-			<input class="span2" id="etime" name="etime" type="text">
-		</div>
-		<div class="row">
-			<div class="span1 input_label">店铺地址：</div>
-			<input class="span4" id="store_address" name="store_address" type="text" >
-		</div>
-		
-		<!-- 上传logo -->
-		<div class="row">
-			<div class="span1 input_label">logo：</div>
-			<img class="span2" alt="" src="" id="logoimg" />
-			<form id="uploadLogoForm" method="post" 
-					action="<?php echo Yii::app()->createUrl('takeAway/sellerProfile/imgUpload')?>">
-				<input id="uploadlogo" type="file" name="logo" >
-			</form>
-		</div>
-		<!-- 上传店内环境照，最多十张 -->
-		<div class="row">
-		
-		</div>
-		<hr>
-		<h5>外送设定</h5>
-		<div class="row">
-			<div class="row span3">
-				起送价格：<input type="text" id="start_price" name="start_price" class="span2"/>
-			</div>
-		</div>
-		<div class="row">
-			<div class="row span3">
-				外卖费用：<input type="text" id="takeaway_fee" name="takeaway_fee" class="span2" />
-			</div>
-			<div class="span3 input_label">
-				<input type="checkbox" id="threshold" name="threshold">超过起送价格免运费
-			</div>
-		</div>
-		<div class="row">
-			<div class="row span3 input_label">
-				预计时间：<input type="text" id="es_time" name="estimated_time" class="span2">分钟
-			</div>
-		</div>
-		<div>
-			配送片区：<select id="districts_select" onchange="setDistrict()">
-			</select>
-			&nbsp;&nbsp;<a href="#dismodal" role="button" data-toggle="modal">添加新片区</a>
-			&nbsp;<a href="#" onclick="deleteDistrict()">删除该片区</a>
-			<div class="row" >
-				<div class="span1">详细描述：</div>
-				<textarea id="district_desc" rows="5" cols="10" class="span5" onkeyup="setDisDesc()"></textarea>
-			</div>
-		</div>
-		<div>
-			配送人员：<select id="posters_select" onchange="setPoster()">
-			</select>
-			&nbsp;&nbsp;<a href="#posmodal" role="button" data-toggle="modal">添加新送货员</a>&nbsp;
-			<a href="#" onclick="deletePoster()">删除该送货员</a>
+	<div id="seller_profile_main_container">
+		<form style="display: none" action="<?php echo Yii::app()->createUrl('takeAway/sellerProfile')?>" method="post">
+			<input type="text" name="json" id="form_json_input"/>
+			<input type="submit" id="form_submit">
+		</form>
+		<div id="config_main_container">
+			<h5>店铺信息</h5>
 			<div class="row">
-				<div class="span1">联系方式：</div>
-				<input type="text" class="span5" id="poster_phone" onkeyup="setPosPhone()"/>
+				<div class="row span3">
+					店铺名称：<input class="span2" id="store_name" name="store_name" type="text">
+				</div>
+				<div class="span2">
+					店铺类型：
+					<span class="label label-info" id="store_type"></span>
+				</div>
 			</div>
 			<div class="row">
-				<div class="span1">详细描述：</div>
-				<textarea rows="5" cols="10" class="span5" id="poster_desc" onkeyup="setPosDesc()"></textarea>
+				<div class="span1 input_label">点单电话：</div>
+				<input class="span2" id="phone_number" name="phone" type="text">
 			</div>
-		</div>
-		<!-- Modal -->
-		<div id="dismodal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		  <div class="modal-header">
-		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		    <h3 id="myModalLabel">新建片区</h3>
-		  </div>
-		  <div class="modal-body">
-		  	<label>片区名：</label><input type="text" id="add_district_name">
-		  	<label>详细描述：</label><textarea id="add_district_desc"></textarea>
-		  </div>
-		  <div class="modal-footer">
-		    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
-		    <button class="btn btn-primary" onclick="addDistrict()">添加片区</button>
-		  </div>
-		</div>
-		
-		<!-- Modal -->
-		<div id="posmodal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		  <div class="modal-header">
-		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		    <h3 id="myModalLabel">添加送货员</h3>
-		  </div>
-		  <div class="modal-body">
-		  	<label>姓名：</label><input type="text" id="add_poster_name">
-		  	<label>电话：</label><input type="text" id="add_poster_phone">
-		  	<label>描述：</label><textarea id="add_poster_desc" ></textarea>
-		  </div>
-		  <div class="modal-footer">
-		    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
-		    <button class="btn btn-primary" onclick="addPoster()">添加</button>
-		  </div>
+			<div class="row">
+				<div class="span1 input_label">经营时间：</div>
+				<input class="span2" id="stime" name="stime" type="text">
+				&nbsp;至&nbsp;
+				<input class="span2" id="etime" name="etime" type="text">
+			</div>
+			<div class="row">
+				<div class="span1 input_label">店铺地址：</div>
+				<input class="span4" id="store_address" name="store_address" type="text" >
+			</div>
+			
+			<!-- 上传logo -->
+			<div class="row">
+				<div class="span1 input_label">logo：</div>
+				<img class="span2" alt="" src="" id="logoimg" />
+				<form id="uploadLogoForm" method="post" 
+						action="<?php echo Yii::app()->createUrl('takeAway/sellerProfile/imgUpload')?>">
+					<input id="uploadlogo" type="file" name="logo" >
+				</form>
+			</div>
+			<!-- 上传店内环境照，最多十张 -->
+			<div class="row">
+			
+			</div>
+			<hr>
+			<h5>外送设定</h5>
+			<div class="row">
+				<div class="row span3">
+					起送价格：<input type="text" id="start_price" name="start_price" class="span2"/>
+				</div>
+			</div>
+			<div class="row">
+				<div class="row span3">
+					外卖费用：<input type="text" id="takeaway_fee" name="takeaway_fee" class="span2" />
+				</div>
+				<div class="span3 input_label">
+					<input type="checkbox" id="threshold" name="threshold">超过起送价格免运费
+				</div>
+			</div>
+			<div class="row">
+				<div class="row span3 input_label">
+					预计时间：<input type="text" id="es_time" name="estimated_time" class="span2">分钟
+				</div>
+			</div>
+			<div>
+				配送片区：<select id="districts_select" onchange="setDistrict()">
+				</select>
+				&nbsp;&nbsp;<a href="#dismodal" role="button" data-toggle="modal">添加新片区</a>
+				&nbsp;<a href="#" onclick="deleteDistrict()">删除该片区</a>
+				<div class="row" >
+					<div class="span1">详细描述：</div>
+					<textarea id="district_desc" rows="5" cols="10" class="span5" onkeyup="setDisDesc()"></textarea>
+				</div>
+			</div>
+			<div>
+				配送人员：<select id="posters_select" onchange="setPoster()">
+				</select>
+				&nbsp;&nbsp;<a href="#posmodal" role="button" data-toggle="modal">添加新送货员</a>&nbsp;
+				<a href="#" onclick="deletePoster()">删除该送货员</a>
+				<div class="row">
+					<div class="span1">联系方式：</div>
+					<input type="text" class="span5" id="poster_phone" onkeyup="setPosPhone()"/>
+				</div>
+				<div class="row">
+					<div class="span1">详细描述：</div>
+					<textarea rows="5" cols="10" class="span5" id="poster_desc" onkeyup="setPosDesc()"></textarea>
+				</div>
+			</div>
+			<!-- Modal -->
+			<div id="dismodal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			  <div class="modal-header">
+			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			    <h3 id="myModalLabel">新建片区</h3>
+			  </div>
+			  <div class="modal-body">
+			  	<label>片区名：</label><input type="text" id="add_district_name">
+			  	<label>详细描述：</label><textarea id="add_district_desc"></textarea>
+			  </div>
+			  <div class="modal-footer">
+			    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+			    <button class="btn btn-primary" onclick="addDistrict()">添加片区</button>
+			  </div>
+			</div>
+			
+			<!-- Modal -->
+			<div id="posmodal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			  <div class="modal-header">
+			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			    <h3 id="myModalLabel">添加送货员</h3>
+			  </div>
+			  <div class="modal-body">
+			  	<label>姓名：</label><input type="text" id="add_poster_name">
+			  	<label>电话：</label><input type="text" id="add_poster_phone">
+			  	<label>描述：</label><textarea id="add_poster_desc" ></textarea>
+			  </div>
+			  <div class="modal-footer">
+			    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+			    <button class="btn btn-primary" onclick="addPoster()">添加</button>
+			  </div>
+			</div>
 		</div>
 	</div>
 </div>

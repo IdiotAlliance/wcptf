@@ -23,12 +23,13 @@ class TakeAwayModule extends CWebModule
 			// if not signed in
 			if(Yii::app()->user->isGuest){
 				$controller->redirect(Yii::app()->createUrl('accounts/login'));
-			}
-			// if no wechat account has been bound go to the bind action
-			$userId = Yii::app()->user->sellerId;
-			$user = UsersAR::model()->getUserById($userId);
-			if($user->wechat_id == null || $user->wechat_bound == 0){
-				$controller->redirect(Yii::app()->createUrl('wechat/wechatBind'));
+			}else{
+				// if no wechat account has been bound go to the bind action
+				$userId = Yii::app()->user->sellerId;
+				$user = UsersAR::model()->getUserById($userId);
+				if($user->wechat_id == null || $user->wechat_bound == 0){
+					$controller->redirect(Yii::app()->createUrl('wechat/wechatBind'));
+				}
 			}
 			return true;
 		}
