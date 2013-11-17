@@ -1,6 +1,6 @@
 <div class="order-detail-scroll">
 	<div class='order-detail-header'>
-		<div class="order-name" <?php echo 'id="'.$order->id.'">'; ?></div>
+		<div class="order-name" <?php echo 'id="'.$order->id.'"'; ?>></div>
 		<div class="order-line line-1">
 			<label class="order-id">订单号：<?php echo $order->order_no; ?></label>
 			<label class="order-come-type"><?php echo $order->type; ?></label>
@@ -46,6 +46,7 @@
 			});
 
 		});
+		//获取派送人员
 		function getPosters(){
 			var orderId = $('.order-detail-header .order-name').attr("id");
 			ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/getPosters';
@@ -67,9 +68,10 @@
 			}
 			return false;
 		}
+		//设置跑送人员
 		function setPosters(){
 			var orderId = $('.order-detail-header .order-name').attr("id");
-			var posterId = $("input[name='ChoosePosterForm[poster]']:checked").val()
+			var posterId = $("input[name='ChoosePosterForm[poster]']:checked").val();
 			if(posterId==false){
 				alert("not choose anything!");
 			}else{

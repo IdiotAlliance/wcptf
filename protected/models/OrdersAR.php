@@ -51,7 +51,7 @@ class OrdersAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, member_id, ctime, status, total, phone, poster_id', 'required'),
+			array('seller_id, member_id, ctime, status, total, phone, poster_id, order_name', 'required'),
 			array('status, type, poster_id', 'numerical', 'integerOnly'=>true),
 			array('total', 'numerical'),
 			array('seller_id, member_id', 'length', 'max'=>11),
@@ -97,6 +97,7 @@ class OrdersAR extends CActiveRecord
 			'order_no' => 'Order No',
 			'poster_id' => 'Poster',
 			'area_id' => "area",
+			'order_name' => "name",  
 		);
 	}
 
@@ -125,6 +126,7 @@ class OrdersAR extends CActiveRecord
 		$criteria->compare('order_no',$this->order_no,true);
 		$criteria->compare('poster_id',$this->poster_id);
 		$criteria->compare('area_id',$this->area_id,true);
+		$criteria->compare('order_name',$this->order_name,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -150,10 +152,11 @@ class OrdersAR extends CActiveRecord
 	/*
 		获取未派送的订单地点过滤
 	*/
-	public function filterNotSend($userId, $date, $place){
-		$orders = OrdersAR::model()->findAll(array('condition'=>'seller_id=:userId and status=:status1', 
-			'params'=>array(':userId'=>$userId, ':status1'=>0), 'order'=>'ctime DESC',));
-		$orders = OrdersAR::model()->filterDate($orders, $date);
+	public function filterNotSend($userId, $date, $areaId){
+		// $orders = OrdersAR::model()->findAll(array('condition'=>'seller_id=:userId and status=:status1', 
+		// 	'params'=>array(':userId'=>$userId, ':status1'=>0), 'order'=>'ctime DESC',));
+		// $orders = OrdersAR::model()->filterDate($orders, $date);
+		$orders = OrdersAR::model()->filterBase($userId, $date, $areaId, "#tab1");
 		OrdersAR::model()->changeOrdersToView($orders);
 		return $orders;
 	}
@@ -188,6 +191,66 @@ class OrdersAR extends CActiveRecord
 		return $newOrder;
 	}
 
+	/*
+		过滤函数
+	*/
+	public function filterBase($userId, $date, $areaId, $filter){
+		$connection = OrdersAR::model()->getDbConnection();
+		$query = "";
+		if($areaId == 0){
+		//不过滤
+			$query = "select * from orders where seller_id=:userId and TO_DAYS(ctime)=TO_DAYS(:date)".
+			" and (status=:status1 or status=:status2)";
+		}else{
+			$query = "select * from orders where seller_id=:userId and TO_DAYS(ctime)=TO_DAYS(:date)".
+			" and area_id=:areaId and (status=:status1 or status=:status2)";
+		}
+		if ($stmt = $connection->createCommand($query)) {
+		    $stmt->bindParam(':userId', $userId);
+		    $stmt->bindParam(':date', $date);
+		    if($areaId != 0){
+		    	 $stmt->bindParam(':areaId', $areaId);
+		    }
+		    if($filter == "#tab3"){
+		    	$stmt->bindValue(':status1', 3);
+		    	$stmt->bindValue(':status2', 3);
+		    }else if($filter == "#tab2"){
+		    	$stmt->bindValue(':status1', 1);
+		    	$stmt->bindValue(':status2', 2);
+		    }else{
+		    	$stmt->bindValue(':status1', 0);
+		    	$stmt->bindValue(':status2', 4);
+		    }
+		    $result = $stmt->queryAll();
+		    $orders = OrdersAR::model()->changeArrayToAR($result);
+		    return $orders;
+		}
+	}
+
+	public function changeArrayToAR($array){
+		$orders = array();
+		foreach ($array as $arr) {
+			$order = new OrdersAR;
+			$order->id = $arr['id'];
+			$order->seller_id = $arr['seller_id'];
+			$order->member_id = $arr['member_id'];
+			$order->ctime = $arr['ctime'];
+			$order->status = $arr['status'];
+			$order->address = $arr['address'];
+			$order->description = $arr['description'];
+			$order->duetime = $arr['duetime'];
+			$order->total = $arr['total'];
+			$order->type = $arr['type'];
+			$order->phone = $arr['phone'];
+			$order->order_no = $arr['order_no'];
+			$order->poster_id = $arr['poster_id'];
+			$order->area_id = $arr['area_id'];
+			$order->order_name = $arr['order_name'];
+			array_push($orders, $order);
+		}
+		return $orders;
+	}
+
 	public function DateDiff($date1, $date2, $unit = "") { //时间比较函数，返回两个日期相差几秒、几分钟、几小时或几天
 	    switch ($unit) {
 	        case 's':
@@ -214,14 +277,14 @@ class OrdersAR extends CActiveRecord
 	/*
 		过滤订单
 	*/
-	public function filterOrders($userId, $date, $place, $filter){
+	public function filterOrders($userId, $date, $areaId, $filter){
 		$orders = null;
 		if($filter=="#tab1"){
-			$orders = OrdersAR::model()->filterNotSend($userId, $date, $place);
+			$orders = OrdersAR::model()->filterNotSend($userId, $date, $areaId);
 		}else if($filter=="#tab2"){
-			$orders = OrdersAR::model()->filterSended($userId, $date, $place);
+			$orders = OrdersAR::model()->filterSended($userId, $date, $areaId);
 		}else if($filter=="#tab3"){
-			$orders = OrdersAR::model()->filterCancel($userId, $date, $place);
+			$orders = OrdersAR::model()->filterCancel($userId, $date, $areaId);
 		}
 		return $orders;
 	}
@@ -298,7 +361,10 @@ class OrdersAR extends CActiveRecord
 		订单编号
 	*/
 	public function getOrderNo($sellerId, $orderId, $ctime){
-		return $sellerId.$orderId.date('YmdHis');
+		//每天的订单对1000000取余减伤0位
+		$orderId = $orderId % 1000000;
+		$orderId = str_pad($orderId, 6, "0", STR_PAD_LEFT);
+		return date('Ymd').$orderId;
 	}
 
 	/*
@@ -344,7 +410,13 @@ class OrdersAR extends CActiveRecord
 			$order->poster_id = PostersAR::model()->getPoster($posterId)->name;
 		};
 		$order->seller_id = OrderItemsAR::model()->generateItems($order->id);
-		$order->address = DistrictsAR::model()->getAreaName($order->area_id)."-".$order->address;
+		$address = DistrictsAR::model()->getAreaName($order->area_id);
+		if(!empty($address) && strlen($address)>0){
+			$address = $address."-".$order->address;
+		}else{
+			$address = $order->address;
+		}
+		$order->address = $address;
 	}
 
 	public function changeOrdersToView($orders) {

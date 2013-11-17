@@ -57,10 +57,10 @@
 				            success  : function(html)
 				            {
 				            	//alert(html);
+				            	getOrderItems(orderId);
 				                jQuery(tabId).html(html);
 				                var orderId = $((tabId+" .order-body ul>li .order-item ul>li.order-content")).attr("id");
-				                getOrderItems(orderId);
-
+				               
 				            },
 				            error:function(){
 				                    alert('Request failed');
@@ -73,7 +73,10 @@
 			</div>
 			<div class="order-footer">
 				<ul>
-					<li><div class="footer-left-btn area-picker">片区高亮</div></li>
+					<li>
+						<div class="order-area-container" id="0"></div>
+						<div class="footer-left-btn area-picker">片区筛选</div>
+					</li>
 					<li><div class="footer-left-btn type-picker">显示全部</div></li>
 					<li>
 						<div class="footer-btn order-left"><i class="icon-chevron-left"></i></div>
@@ -92,6 +95,9 @@
 					<li><div class="footer-right-btn all-edit">批量</div></li>
 					<li><div class="footer-right-btn new-order">+订单</div></li>
 				</ul>
+				<!--popover菜单-->
+				<ul id='popup' style="display:none">
+				</ul>
 			</div>
 		</div>
 		<div class='order-detail'>
@@ -100,6 +106,7 @@
 			?>
 		</div>
 		<script type="text/javascript">
+			var lastIntervalId = "wcptf_default";
 
 			// 对Date的扩展，将 Date 转化为指定格式的String
 			// 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符， 
@@ -124,7 +131,9 @@
 			}
 
 			$(function(){
-			    updateListener();
+				//初次加载获取区域列表
+				fetchAreas();
+			   	updateListener();
 			    $('.order-footer .footer-btn.order-left').click(function(){
 			    	dayBack();
 			    });
@@ -133,8 +142,58 @@
 			    });
 			    var currentDate = new Date().Format("yyyy-MM-dd");
 				$('.order-footer .order-footer-wrap .order-footer-date').html(currentDate);
+				$('.order-footer .footer-left-btn.area-picker').click(function(){
+					$(".order-footer #popup").toggle();
+					fetchAreas();
+				});
+				//动态绑定 区域列表click事件
+				$('.order-footer #popup').delegate('li .area', 'click', function(e){
+					var id = $(this).attr('id');
+					var name = $(this).html();
+					chooseArea(id, name);
+				});
 			});
-
+			// 获取
+			function fetchAreas(){
+				var ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/fetchAreas';
+				$.ajax({
+				    url      : ctUrl,
+				    type     : 'POST',
+				    dataType : 'json',
+				    cache    : false,
+				    success  : function(data)
+				    {
+				    	//alert(html);
+				        if(data.success == 0){
+				        	var areas = data.area;
+				        	var html = '<li><a class="area "id='+0+'>全部</a></li>';
+				        	for (var i = 0; i < areas.length; i++) {
+				        		var id = areas[i]['id'];
+				        		var name = areas[i]['name'];
+				        		html = html+'<li><a class="area "id='+id+'>'+name+'</a></li>';
+				        	};
+				        	$('.order-footer #popup').html(html);
+				        } else{
+				        	alert('Request failed');
+				        }
+				    },
+				    error:function(){
+				            alert('Request failed');
+				    }
+				});
+			}
+			// 选择区域
+			function chooseArea(areaid, areaname){
+				$('.order-footer .order-area-container').attr('id', areaid);
+				if(areaid == 0){
+					$('.order-footer .footer-left-btn.area-picker').html('片区筛选');
+				}else{
+					$('.order-footer .footer-left-btn.area-picker').html(areaname);
+				}
+				updateOperate();
+				$(".order-footer #popup").toggle();
+			}
+			// 日期向后
 			function dayBack(){
 				var day = $('.order-footer .order-date-container').attr("id");
 				day = parseInt(day) -1;
@@ -144,11 +203,12 @@
 				a = a.valueOf();
 				a = a + parseInt(day) * 24 * 60 * 60 * 1000;
 				//a = new Date(a);
+				updateOperate();
 				var currentDate = new Date(a).Format("yyyy-MM-dd");
 				$('.order-footer .order-footer-wrap .order-footer-date').html(currentDate);
 				//alert(date);
 			}
-
+			// 日期向前
 			function dayFront(){
 				var day = $('.order-footer .order-date-container').attr("id");
 				if(parseInt(day)<0){
@@ -159,6 +219,7 @@
 					a = a.valueOf();
 					a = a + parseInt(day) * 24 * 60 * 60 * 1000;
 					//a = new Date(a);
+					updateOperate();
 					var currentDate = new Date(a).Format("yyyy-MM-dd");
 					$('.order-footer .order-footer-wrap .order-footer-date').html(currentDate);
 				}else{
@@ -166,7 +227,31 @@
 				}
 				//alert(date);
 			}
-
+			/*
+				实时更新
+			*/
+			function updateOperate(){
+			    var day = $('.order-footer .order-date-container').attr("id");
+			    var areaId = $('.order-footer .order-area-container').attr("id");
+			    $.ajax({
+			        type:'POST',
+			        dataType: 'json',
+			        url:  '/wcptf/index.php?r=takeAway/orderFlow/updateOperate',
+			        timeout: 60000,
+			        data:{day:day, areaId:areaId},
+			        success:function(data,textStatus){
+			            if(data.operate=='1'){
+			                updateTabContent(currentTab);
+			                updateTabHeaders("#tab1", data.header[0]);
+			                updateTabHeaders("#tab2", data.header[1]);
+			                updateTabHeaders("#tab3", data.header[2]);
+			            }
+			        },
+			        error:function(XMLHttpRequest,textStatus,errorThrown){    
+			            alert("更新超时");
+			        }  
+			    }); 
+			}
 			/*
 				当有新订单来时更新订单和TabTitle
 			*/
@@ -178,17 +263,21 @@
   				});
   				//获取tab头
   				var nums = [];
-  				nums.push(getTabHeaders("#tab1"));
-  				nums.push(getTabHeaders("#tab2"));
-  				nums.push(getTabHeaders("#tab3"));
-			    var date = "xx";
-			    var place = "xx";
+  				var temp1 = getTabHeaders("#tab1");
+  				var temp2 = getTabHeaders("#tab2");
+  				var temp3 = getTabHeaders("#tab3");
+  				nums.push(temp1);
+  				nums.push(temp2);
+  				nums.push(temp3);
+  				//获取当前的偏移时间
+			    var day = $('.order-footer .order-date-container').attr("id");
+			    var areaId = $('.order-footer .order-area-container').attr("id");
 			    $.ajax({
 			        type:'POST',
 			        dataType: 'json',
 			        url:  '/wcptf/index.php?r=takeAway/orderFlow/update',
 			        timeout: 60000,
-			        data:{time:'2', existList:orders, nums:nums, date:date, place:place, filter:currentTab},
+			        data:{time:'1', existList:orders, nums:nums, day:day, areaId:areaId, filter:currentTab},
 			        success:function(data,textStatus){
 			            if(data.success=='1'){
 			                updateTabContent(currentTab);
@@ -196,22 +285,21 @@
 			                updateTabHeaders("#tab1", data.nums[0]);
 			                updateTabHeaders("#tab2", data.nums[1]);
 			                updateTabHeaders("#tab3", data.nums[2]);
-			                updateListener();
 			            }
 			            if(data.success=='2'){
 			            	updateTabHeaders("#tab1", data.nums[0]);
 			                updateTabHeaders("#tab2", data.nums[1]);
 			                updateTabHeaders("#tab3", data.nums[2]);
-			                updateListener();
 			            }
 			            if(data.success=='0'){
-			                updateListener();
 			            }
+			            setTimeout('updateListener()', 10000);
 			        },
 			        error:function(XMLHttpRequest,textStatus,errorThrown){    
-			            if(textStatus=="timeout"){    
-			                updateListener();    
-			            }    
+			            if(textStatus=="timeout"){  
+			                alert("更新超时");
+			            }
+			            setTimeout('updateListener()', 10000);
 			        }  
 			    });       
 			}
@@ -244,15 +332,15 @@
 			//更新订单内容
 			function updateTabContent(tabId){
 			    var ctUrl = ''; 
-			    currentTab = tabId;
 			   // alert(currentTab);
-			   var day = $('.order-footer .order-date-container').attr("id");
+			    var day = $('.order-footer .order-date-container').attr("id");
+			    var areaId = $('.order-footer .order-area-container').attr("id");
 			    if(tabId == '#tab1') {
 					ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/notSend';
 			    } else if(tabId == '#tab2') {
 			        ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/sended';
 			    } else if(tabId == '#tab3') {
-			    	ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/cancel';
+			    	ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/cancel'; 
 			    }
 
 			    if(ctUrl != '') {
@@ -260,12 +348,18 @@
 			            url      : ctUrl,
 			            type     : 'POST',
 			            dataType : 'html',
-			            data 	 : {day: day},
+			            data 	 : {day: day, areaId: areaId},
 			            cache    : false,
 			            success  : function(html)
 			            {
 			            	//alert(html);
 			                jQuery(tabId).html(html);
+			                var orderId = $('#tab1 .order-body .order-list li .order-item .order-content').first().attr("id");
+			                if(orderId != null){
+			                	getOrderItems(orderId);
+			                }else{
+			                	getOrderItems(-1);
+			                }
 			            },
 			            error:function(){
 			                    alert('Request failed');
