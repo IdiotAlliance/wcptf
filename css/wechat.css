@@ -1,6 +1,7 @@
   /*组件全局样式设置 */
   html,body{
     height: 100%;
+    overflow-y:hidden;  
   }
 
   .task{
@@ -19,9 +20,10 @@
     color: #4298ba;
   }
 
-  a:hover{
+  a:hover,a:focus{
     text-decoration: none;
   }
+
 
   p.desc{
     font-size: 12px;
@@ -133,6 +135,22 @@
   .seal:hover{
     color: #D54334;
   }
+
+  .grey-seal{
+    display: inline-block;
+    padding: 2px 6px 2px;
+    background-color: #efefef;
+    color: #999;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    font-size:12px;
+    vertical-align: middle;
+  }
+
+  .grey-seal:hover{
+    color:#666666;
+  }
   /*label效果*/
   label{
     font-weight: normal;
@@ -177,7 +195,6 @@
     position: absolute;
     background: transparent url(../img/bg.png);  
     border-right: 1px solid #b3b3b3;
-    z-index: 2500;
   }
 
   .main .sidebar h4{
@@ -249,6 +266,10 @@
   border-bottom: 1px solid #ddd;
 }
 
+.main .sidebar .menu ul li:hover{
+  cursor: pointer;
+}
+
 .main .sidebar .menu ul li i{
   font-style: normal;
   color: rgb(162, 154, 154);
@@ -259,7 +280,8 @@
 }
 
 .main .sidebar .menuAction,
-  #task .batch-menu{
+  #task .batch-menu,
+  #change-area .batch-menu{
   position: absolute;
   width: 100%;
   bottom: 0;

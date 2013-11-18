@@ -40,11 +40,11 @@
 				   // alert(currentTab);
 				    var day = $('.order-footer .order-date-container').attr("id");
 				    if(tabId == '#tab1') {
-						ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/notSend';
+						ctUrl = '/weChat/index.php?r=takeAway/orderFlow/notSend';
 				    } else if(tabId == '#tab2') {
-				        ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/sended';
+				        ctUrl = '/weChat/index.php?r=takeAway/orderFlow/sended';
 				    } else if(tabId == '#tab3') {
-				    	ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/cancel';
+				    	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/cancel';
 				    }
 
 				    if(ctUrl != '') {
@@ -118,7 +118,7 @@
 			?>
 		</div>
 		<script type="text/javascript">
-			var lastIntervalId = "wcptf_default";
+			var lastIntervalId = "weChat_default";
 
 			// 对Date的扩展，将 Date 转化为指定格式的String
 			// 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符， 
@@ -191,6 +191,12 @@
 					$('#batOperate').toggle();
 					batfinishOrders();
 				});
+				var h1 = getTabHeaders('#tab1');
+        		var h2 = getTabHeaders('#tab2');
+        		var h3 = getTabHeaders('#tab3');
+        		h1 = parseInt(h1) + parseInt(h2) + parseInt(h3);
+				var orderInfo = "当日订单数："+h1;
+				$('.order-footer-info').html(orderInfo);
 			});
 
 			// 全选订单 或取消
@@ -225,7 +231,7 @@
 				if(posterId==null){
 					alert("没有选择派送人员!");
 				}else{
-					ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/batSetPosters';
+					ctUrl = '/weChat/index.php/takeAway/orderFlow/batSetPosters';
 					if(ctUrl != '') {
 					    $.ajax({
 					        url      : ctUrl,
@@ -258,7 +264,7 @@
 					alert("请选择一个订单！");
 					return false;
 				}
-				ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/batFinishOrder';
+				ctUrl = '/weChat/index.php/takeAway/orderFlow/batFinishOrder';
 				if(currentTab=='#tab2'){
 					alert('该订单已经完成');
 					return false;
@@ -311,7 +317,7 @@
 					alert("请选择一个订单！");
 					return false;
 				}
-				ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/batCancelOrder';
+				ctUrl = '/weChat/index.php/takeAway/orderFlow/batCancelOrder';
 				if(currentTab=='#tab3'){
 					alert('该订单处于取消状态！');
 					return false;
@@ -389,7 +395,7 @@
 			}
 			// 获取派送地区
 			function fetchAreas(){
-				var ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/fetchAreas';
+				var ctUrl = '/weChat/index.php/takeAway/orderFlow/fetchAreas';
 				$.ajax({
 				    url      : ctUrl,
 				    type     : 'POST',
@@ -470,7 +476,7 @@
 			    $.ajax({
 			        type:'POST',
 			        dataType: 'json',
-			        url:  '/wcptf/index.php?r=takeAway/orderFlow/updateOperate',
+			        url:  '/weChat/index.php/takeAway/orderFlow/updateOperate',
 			        timeout: 60000,
 			        data:{day:day, areaId:areaId},
 			        success:function(data,textStatus){
@@ -509,7 +515,7 @@
 			    $.ajax({
 			        type:'POST',
 			        dataType: 'json',
-			        url:  '/wcptf/index.php?r=takeAway/orderFlow/update',
+			        url:  '/weChat/index.php/takeAway/orderFlow/update',
 			        timeout: 60000,
 			        data:{time:'1', existList:orders, nums:nums, day:day, areaId:areaId, filter:currentTab},
 			        success:function(data,textStatus){
@@ -571,11 +577,11 @@
 			    var day = $('.order-footer .order-date-container').attr("id");
 			    var areaId = $('.order-footer .order-area-container').attr("id");
 			    if(tabId == '#tab1') {
-					ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/notSend';
+					ctUrl = '/weChat/index.php/takeAway/orderFlow/notSend';
 			    } else if(tabId == '#tab2') {
-			        ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/sended';
+			        ctUrl = '/weChat/index.php/takeAway/orderFlow/sended';
 			    } else if(tabId == '#tab3') {
-			    	ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/cancel'; 
+			    	ctUrl = '/weChat/index.php/takeAway/orderFlow/cancel'; 
 			    }
 
 			    if(ctUrl != '') {
@@ -598,6 +604,12 @@
 			                	getOrderItems(-1);
 			                }
 			                getBatOrdersCache();
+			                var h1 = getTabHeaders('#tab1');
+			        		var h2 = getTabHeaders('#tab2');
+			        		var h3 = getTabHeaders('#tab3');
+			        		h1 = parseInt(h1) + parseInt(h2) + parseInt(h3);
+							var orderInfo = "当日订单数："+h1;
+							$('.order-footer-info').html(orderInfo);
 			            },
 			            error:function(){
 			                    alert('Request failed');
@@ -611,7 +623,7 @@
 
 			    var ctUrl = ''; 
 
-				ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/getOrderItems'; 
+				ctUrl = '/weChat/index.php/takeAway/orderFlow/getOrderItems'; 
 
 			    if(ctUrl != '') {
 			        $.ajax({
