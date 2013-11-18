@@ -53,15 +53,22 @@
 				</ul>
 			</div>
 			<div class='menu'>
-				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('productType'=>'未分类'));?>"><i class='icon-shopping-cart'></i> &nbsp&nbsp商品管理<a></h4>
-				<ul>
-					<li><a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('productType'=>'未分类'));?>">未分类 <i>(<?php echo Yii::app()->session['unCategory'];?>)</i></a></li>
-					<li><a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('productType'=>'星标类'));?>">星标类 <i>(<?php echo Yii::app()->session['starCategory'];?>)</i></a></li>
+				<h4>
+					<a href="<?php 
+					if(Yii::app()->session['typeCount']!=null){
+						echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>Yii::app()->session['typeCount'][0]['typeId']));
+					}else{
+						echo Yii::app()->createUrl('takeAway/productManager/noProducts');
+					}
+
+					?>"><i class='icon-shopping-cart'></i> &nbsp&nbsp商品管理<a>
+				</h4>
+				<ul id="category">
 					<?php foreach (Yii::app()->session['typeCount'] as $tc):?>
-					<li><a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('productType'=>$tc->type_name));?>"><?php echo $tc->type_name;?><i>(<?php echo $tc->product_num;?>)</i></a></li>
+					<li><a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$tc['typeId']));?>"><?php echo $tc['type_name'];?><i>(<?php echo $tc['product_count'];?>)</i></a></li>
 					<?php endforeach;?>					
 					<li id='categoryInput' style="display:none"><input type="text" placeholder='输入分组名'></input></li>
-					<li><a id='newCategory'><i class='icon-plus'></i> 新建分组</a></li>
+					<li><a id='newCategory'><i class='icon-plus'></i> 添加类别</a></li>
 				</ul>
 			</div>
 			<div class='menu'>
@@ -108,9 +115,20 @@
 			if(key == 13){
 				var inputText = $("#categoryInput input").val();
 				if(inputText != ""){
-					var li = $("<li><a href='#'>"+inputText+" <i>(0)</i></li>");
-					$("#categoryInput").css('display','none');
-					$("#category").prepend(li);
+					$.ajax({
+		                type: 'POST',
+		                url: "<?php echo CHtml::normalizeUrl(array('productManager/addCategory'));?>",
+		                data: {'typeName':inputText},
+		                dataType: 'json',
+		                
+		                success:function(json){
+		                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+json.success;
+		                },
+		                error:function(json){
+		                	alert("商品类别名重复！");
+		                	$("#categoryInput").css('display','none');
+		                },
+		            }) 	
 				}
 				else{
 					$("#categoryInput").css('display','none');
@@ -138,9 +156,6 @@
 				break;
 			case 'productManager':
 				$('.menu ul').eq(1).show();
-				break;
-			case 'sellerSettings':
-				$('.menu ul').eq(6).show();
 				break;
 			default:
 				break;

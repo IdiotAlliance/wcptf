@@ -6,8 +6,7 @@ class UserIdentity extends CUserIdentity
 	const SESSION_SELLERID = 'sellerId';
 	const SESSION_HOMEURL = 'homeUrl';
 	const SESSION_TYPECOUNT = 'typeCount';
-	const SESSION_UNCATEGORY = 'unCategory';
-	const SESSION_STARCATEGORY = 'starCategory';
+
 	/**
 	 * @author  luwenbin
 	 * 验证用户登录名密码，并且向Session中记录 sellerType , sellerId , specificName , homeUrl;
@@ -28,15 +27,8 @@ class UserIdentity extends CUserIdentity
 			Yii::app()->user->setState(UserIdentity::SESSION_SELLERID, $user->id);
 			$this->errorCode=self::ERROR_NONE;
 
-			$pdTypeList = ProductTypeAR::model()->getSellerProductType($user->id);
-			Yii::app()->session[UserIdentity::SESSION_TYPECOUNT] = $pdTypeList;
-
-			$unCategory = ProductsAR::model()->getSpCategoryNum(1);
-			Yii::app()->session[UserIdentity::SESSION_UNCATEGORY] = $unCategory;
-			
-			$starCategory = ProductsAR::model()->getSpCategoryNum(2);
-			Yii::app()->session[UserIdentity::SESSION_STARCATEGORY] = $starCategory;
-		
+			$typeCount = ProductTypeAR::model()->getProductsByType(Yii::app()->user->sellerId);
+			Yii::app()->session[UserIdentity::SESSION_TYPECOUNT] = $typeCount;
 		}	
 		return !$this->errorCode;
 	}

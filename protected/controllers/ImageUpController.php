@@ -15,7 +15,7 @@ class ImageUpController extends Controller
 
 	    //上传配置
 	    $config = array(
-	        "savePath" => ($path == "1" ? "upload" : "upload1"),
+	        "savePath" => ($path == "1" ? "upload/detail" : "upload1/detail"),
 	        "maxSize" => 100000, //单位KB
 	        "allowFiles" => array(".gif", ".png", ".jpg", ".jpeg", ".bmp")
 	    );
