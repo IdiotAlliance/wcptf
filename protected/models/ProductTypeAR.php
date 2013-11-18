@@ -117,12 +117,27 @@ class ProductTypeAR extends CActiveRecord
 		}
 	}
 
+	/**
+	 * 获取商家的所有产品品类，包括已删除的
+	 * @param unknown $sellerId
+	 * @return unknown
+	 */
 	public function getSellerProductType($sellerId)
 	{
 		$pdTypeList = ProductTypeAR::model()->findAll('seller_id=:sellerId',array(':sellerId'=>$sellerId));
 		return $pdTypeList;
 	}
 
+	/**
+	 * 获取商家未删除的商品品类
+	 * @param unknown $sellerId
+	 */
+	public function getUndeletedProductTypeBySellerId($sellerId){
+		$pdTypeList = ProductTypeAR::model()->findAll('seller_id=:sellerId and deleted<>1',
+													  array(':sellerId'=>$sellerId));
+		return $pdTypeList;
+	}
+	
 	//获取类别的描述
 	public function getProductDesc($typeName){
 		if($typeName=='未分类' || $typeName=='星标类')

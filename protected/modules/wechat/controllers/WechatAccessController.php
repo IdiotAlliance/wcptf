@@ -10,6 +10,9 @@ class WechatAccessController extends Controller {
 		$url = Yii::app()->request->getUrl();
 		// 用正则表达式从url获取seller id
 		preg_match('/.*wechatAccess\/(\d+)\/(\w+)/i', $url, $matches);
+		if(!$matches){
+			$this->redirect(Yii::app()->createUrl('errors/error/404'));
+		}
 		$sellerId = $matches[1];
 		
 		if (Yii::app()->request->isPostRequest) {	
@@ -95,6 +98,7 @@ class WechatAccessController extends Controller {
  					$member = new MembersAR();
  					$member->seller_id = $sellerId;
  					$member->openid    = $openId;
+ 					$member->wapkey = SeriesGenerator::generateMemberKey();
  					$member->save();
  				}else{
  					$member->unsubscribed = 0;
@@ -134,6 +138,29 @@ class WechatAccessController extends Controller {
 		if($content){
 			switch($content){
 				case '菜单':{
+					// 若没有该用户，先创建该用户
+					$member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid);
+					if(!$member){
+						$member = new MembersAR();
+						$member->openid = $openid;
+						$member->seller_id = $sellerId;
+						$member->wapkey = SeriesGenerator::generateMemberKey();
+						$member->save();
+					}else{
+						if($member->unsubscribed){
+							$member->unsubscribed = 0;
+							$member->update();
+						}
+					}
+					
+					// 为用户创建token
+					$token = SeriesGenerator::generateMemeberToken();
+					$memtoken = new MemberTokenAR();
+					$memtoken->seller_id = $sellerId;
+					$memtoken->openid = $openid;
+					$memtoken->token = $token;
+					$memtoken->save();
+					
 					// 返回消息
 					$textTpl = "<xml>
 								<ToUserName><![CDATA[%s]]></ToUserName>
@@ -177,23 +204,23 @@ class WechatAccessController extends Controller {
 							</xml>
 						";
 					
-					$order_url = Yii::app()->createAbsoluteUrl('wap/index/'.$sellerId.'?'.$openid);
+					$order_url = Yii::app()->createAbsoluteUrl('wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token);
 					$hots_url = $order_url;
 					$hot_products = HotProductsAR::model()->getHotProductsById($sellerId);
 					$user = UsersAR::model()->getUserById($sellerId);
 					
 					foreach ($hot_products as $hot){
 						if($hot->onindex == 1){
-							$hots_url = $order_url.'?'.$hot->product_id;
+							$hots_url = $order_url.'&sortid='.$hot->product_id;
 							break;
 						}
-						$hots_url = $order_url.'?'.$hot->product_id;
+						$hots_url = $order_url.'&sortid='.$hot->product_id;
 					}
 					$personal_url = "";
 					$propose_url = "";
 					$about_url = "";
 					$resultStr = sprintf( $textTpl, $msg->FromUserName, $msg->ToUserName, $time, 
-										  'http://210.209.70.43'.$user->logo, 
+										  'http://www.v7fen.com'.$user->logo, 
 										  $order_url, $order_url, $hots_url, $personal_url, 
 										  $propose_url, $about_url);
 					echo $resultStr;

@@ -32,14 +32,15 @@ class SellerProfileController extends Controller{
 				
 				foreach ($obj->posters as $poster){
 					if(isset($poster->deleted) && isset($poster->id)){
-						PostersAR::model()->deleteByPK($poster->id);
+						PostersAR::model()->deletePosterById($poster->id);
 					}else{
 						if(isset($poster->id)){
 							$dbposter = PostersAR::model()->getPosterById($poster->id);
+							$dbposter->name = $poster->name;
 							$dbposter->phone = $poster->phone;
 							$dbposter->description  = $poster->desc;
 							$dbposter->update();
-						}else{
+						}else if(!isset($poster->deleted)){
 							$dbposter = new PostersAR();
 							$dbposter->name = $poster->name;
 							$dbposter->seller_id = $userId;
@@ -52,13 +53,14 @@ class SellerProfileController extends Controller{
 				
 				foreach ($obj->districts as $district){
 					if(isset($district->deleted) && isset($district->id)){
-						DistrictsAR::model()->deleteByPK($district->id);
+						DistrictsAR::model()->deleteDistrictById($district->id);
 					}else{
 						if(isset($district->id)){
 							$dbdistrict = DistrictsAR::model()->getDistrictById($district->id);
+							$dbdistrict->name = $district->name;
 							$dbdistrict->description = $district->desc;
 							$dbdistrict->update();
-						}else{
+						}else if(!isset($district->deleted)){
 							$dbdistrict = new DistrictsAR();
 							$dbdistrict->seller_id = $userId;
 							$dbdistrict->name = $district->name;
@@ -72,11 +74,11 @@ class SellerProfileController extends Controller{
 			$model = array();
 			$user = UsersAR::model()->getUserById($userId);
 			// 获取用户的配送地址信息
-			$districts = DistrictsAR::model()->getDistrictsByUserId($userId); 
+			$districts = DistrictsAR::model()->getUndeletedDistrictsByUserId($userId);
 			// 获取用户的店内环境信息
 			$env = StoreEnvAR::model()->getStoreEnvByUserId($userId);
 			// 获取邮递员信息
-			$posters = PostersAR::model()->getPostersByUserId($userId);
+			$posters = PostersAR::model()->getUndeletedPostersByUserId($userId);
 
 			$shopinfo = array();
 			$shopinfo[0]->store_name = $user->store_name;
@@ -133,14 +135,12 @@ class SellerProfileController extends Controller{
 		for($i = 0; $i < $len; $i ++) {
 			if ($str [$i] == '%' && $str [$i + 1] == 'u') {
 				$val = hexdec ( substr ( $str, $i + 2, 4 ) );
-	
 				if ($val < 0x7f)
 					$ret .= chr ( $val );
 				else if ($val < 0x800)
 					$ret .= chr ( 0xc0 | ($val >> 6) ) . chr ( 0x80 | ($val & 0x3f) );
 				else
 					$ret .= chr ( 0xe0 | ($val >> 12) ) . chr ( 0x80 | (($val >> 6) & 0x3f) ) . chr ( 0x80 | ($val & 0x3f) );
-	
 				$i += 5;
 			} else if ($str [$i] == '%') {
 				$ret .= urldecode ( substr ( $str, $i, 3 ) );

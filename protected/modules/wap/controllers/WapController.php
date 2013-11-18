@@ -5,29 +5,86 @@ class WapController extends Controller{
 	public $defaultAction = "index";
 	
 	public function actionIndex(){
+		
 		// 获取商家id
 		$url = Yii::app()->request->getUrl();
 		// 用正则表达式从url获取seller id
-		preg_match('/.*wap\/index\/(\d+)/i', $url, $matches);
-		$sellerId = $matches[1];
-		
-		$json_data = "hello world!";
-		// 构建json数据
-		$shopinfodata = $this->getShopInfo($sellerId);
-		$recommenddata = $this->getRecommendData($sellerId);
-		$sortdata = $this->getSortData($sellerId);
-		$productdata = $this->getProductData($sellerId);
-		$deliveryareadata = $this->getDeliveryAreaData($sellerId);
-		
-		$json_data = array(
-			'shopinfodata'=>$shopinfodata,
-			'recommenddata'=>$recommenddata,
-			'sortdata'=>$sortdata,
-			'deliveryareadata'=>$deliveryareadata,
-			'productdata'=>$productdata
-		);
-		
-		$this->render('index', array('json_data'=>json_encode($json_data)));
+		preg_match('/.*wap\/index\/(\d+)[?](.*)/i', $url, $matches);
+		$sellerId = null;
+		$openid = null;
+		$sortId = null;
+		$token  = null;
+		if(isset($matches[1]) &&  isset($_GET['openid']) && isset($_GET['token'])){
+			$sellerId = $matches[1];
+			$openid = $_GET['openid'];
+			$token = $_GET['token'];
+		}else{
+			$this->redirect(Yii::app()->createUrl('errors/error/404'));
+		}
+		if($sellerId && $openid && 
+		   UsersAR::model()->getUserById($sellerId) &&
+		   ($member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid))){
+			
+			$key = null;
+			// 验证token
+			if(MemberTokenAR::validate($sellerId, $openid, $token)){
+				$key = $member->wapkey;
+			}
+			
+			// 构建json数据
+			$shopinfodata = $this->getShopInfo($sellerId);
+			$recommenddata = $this->getRecommendData($sellerId);
+			$sortdata = $this->getSortData($sellerId);
+			$productdata = $this->getProductData($sellerId);
+			$deliveryareadata = $this->getDeliveryAreaData($sellerId);
+			
+			$json_data = array(
+				'shopinfodata'=>$shopinfodata,
+				'recommenddata'=>$recommenddata,
+				'sortdata'=>$sortdata,
+				'deliveryareadata'=>$deliveryareadata,
+				'productdata'=>$productdata,
+				'key'=>$key,
+			);
+			
+			$this->render('index', array('json_data'=>json_encode($json_data)));
+		}else{
+			$this->redirect(Yii::app()->createUrl('errors/error/404'));
+		}
+	}
+	
+	public function actionGetData(){
+
+		if(Yii::app()->request->isPostRequest){
+			if(isset($_POST['sellerid'])){
+				$sellerId = $_POST['sellerid'];
+				$seller = UsersAR::model()->findByPK($sellerId);
+				if($seller){
+					$data = array();
+					$data[0]->error = 0;
+					if(isset($_POST['needsort']) && $_POST['needsort'] == 'true'){
+						$data[0]->sortdata = $this->getSortData($sellerId);
+					}
+					if(isset($_POST['needproduct']) && $_POST['needproduct'] == 'true'){
+						$data[0]->productdata = $this->getProductData($sellerId);
+					}
+					if(isset($_POST['needdeliveryarea']) && $_POST['needdeliveryarea'] == 'true'){
+						$data[0]->deliveryareadata = $this->getDeliveryAreaData($sellerId);
+					}
+					if(isset($_POST['needrecommend']) && $_POST['needrecommend'] == 'true'){
+						$data[0]->recommenddata = $this->getRecommendData($sellerId);
+					}
+					if(isset($_POST['needshopinfo']) && $_POST['needshopinfo'] == 'true'){
+						$data[0]->shopinfodata = $this->getShopInfo($sellerId);
+					}
+					echo json_encode($data[0]);
+				}
+			}else{
+				echo json_encode(array('error'=>1, 'error_msg'=>'找不到该商家'));
+			}
+		}else{
+			$this->redirect(Yii::app()->createUrl('errors/error/404'));
+		}
 	}
 	
 	
@@ -49,7 +106,7 @@ class WapController extends Controller{
 	}
 	
 	private function getSortData($userId){
-		$types = ProductTypeAR::model()->getSellerProductType($userId);
+		$types = ProductTypeAR::model()->getUndeletedProductTypeBySellerId($userId);
 		$sortdata = array();
 		$i = 0;
 		foreach ($types as $type){
@@ -63,15 +120,25 @@ class WapController extends Controller{
 	}
 	
 	private function getProductData($sellerId){
-		$products = ProductsAR::model()->getProductsBySellerId($sellerId);
+		$products = ProductsAR::model()->getUndeletedProductsWithPicUrl($sellerId);
 		$productdata = array();
 		$i = 0;
 		foreach ($products as $product){
-			$productdata[$i]->productid = $product->id;
-			$productdata[$i]->sortid    = $product->type_id;
-			$productdata[$i]->price     = $product->price;
-			$productdata[$i]->productname = $product->pname;
-			$productdata[$i]->productleft = $product->daily_instore;
+			$stime = new DateTime($product['stime']);
+			$stime = $stime->format('Y-m-d');
+			$etime = new DateTime($product['etime']);
+			$etime = $etime->format('Y-m-d');
+			$now   = date('Y-m-d');
+			if($now < $stime || $now > $etime || $product['status']!= 1)
+				break;
+			
+			$productdata[$i]->productid = $product['id'];
+			$productdata[$i]->sortid    = $product['type_id'];
+			$productdata[$i]->price     = $product['price'];
+			$productdata[$i]->productname = $product['pname'];
+			$productdata[$i]->productleft = $product['daily_instore'];
+			$productdata[$i]->productdesc = $product['description'];
+			$productdata[$i]->productimg  = $product['picurl'];
 			$i++;
 		}
 		return $productdata;

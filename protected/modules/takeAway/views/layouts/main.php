@@ -65,7 +65,7 @@
 				</ul>
 			</div>
 			<div class='menu'>
-				<h4><i class='icon-user'></i> &nbsp&nbsp会员管理</h4>
+				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/members');?>"><i class='icon-user'></i> &nbsp&nbsp会员管理</a></h4>
 			</div>
 			<div class='menu'>
 				<h4><i class='icon-star'></i> &nbsp&nbsp活动管理</h4>

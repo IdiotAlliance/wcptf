@@ -132,25 +132,55 @@ class MembersAR extends CActiveRecord
 		return $member;
 	}
 	
-	/*
-		获取微信昵称
-	*/
+	/**
+	 * 获取微信昵称
+	 * @param $memberid
+	 */
 	public function getMemberName($memberid){
 		$member= MembersAR::model()->find('openid=:openid', array(':openid'=>$memberid));
 		$memberName = $member->wxnickname;
 		return $memberName;
 	}
 
-	/*
-		通过openid查找用户
-	*/
+	/**
+	 * 通过openid查找用户
+	 * @param $openid
+	 */
 	public function getMemberByOpenId($openid){
 		$member= MembersAR::model()->find('openid=:openid', array(':openid'=>$openid));
 		return $member;
 	}
-	/*
-		新建用户
-	*/
+	
+	/**
+	 * 通过sellerId查找用户
+	 * @param $sellerId
+	 */
+	public function getMembersBySellerId($sellerId){
+		$members = MembersAR::model()->findAll('seller_id=:sellerId', array(':sellerId'=>$sellerId));
+		return $members;
+	}
+	
+	/**
+	 * 通过sellerId查找用户，并且根据评论时间排序
+	 * @param unknown $sellerId
+	 */
+	public function getMembersBySellerIdOrderByComment($sellerId){
+		$members = MembersAR::model()->findAll(
+			array(
+				'condition'=>'seller_id=:sellerId',
+				'params'=>array(':sellerId'=>$sellerId),
+				'order'=>'latest_comment DESC',
+			)
+		);
+		return $members;
+	}
+	
+	/**
+	 * 新建用户
+	 * @param $sellerid
+	 * @param $openid
+	 * @param $name
+	 */
 	public function createMember($sellerid, $openid, $name){
 		$member = new MembersAR;
 		$member->seller_id = $sellerid;

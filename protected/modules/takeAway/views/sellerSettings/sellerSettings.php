@@ -25,6 +25,7 @@
 	#seller_settings_container{
 		position: absolute;
 		left: 200px;
+		right: 0px;
 		top: 41px;
 		bottom: 0px;
 		overflow-y: auto;
@@ -39,6 +40,7 @@
 		padding-bottom: 10px;
 		padding-left: 20px;
 		box-shadow: 0px 1px 3px #808080;
+		-moz-box-shadow: 0px 1px 3px #808080;
 	}
 	#seller_settings_main_container{
 		margin-top: 60px;
@@ -115,10 +117,11 @@
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/jquery.form.js" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
 	var data = eval('(' + '<?php echo $json?>' + ')');
+	var info_threshold = 30;
+	var warn_threshold = 10;
 	
 	// 设置容器宽度，并使其随着窗口大小改变而改变
 	$(document).ready(function(){
-		window.onresize = setContainerWidth;
 		initView();
 		$('#form_json_input').val(escape(JSON.stringify(data)));
 		for(typeindex in data['types']){
@@ -137,13 +140,8 @@
 				});
 			});
 		}
-		setContainerWidth();
 	});
 
-	function setContainerWidth(){
-		var width = $('body').width();
-		$('#seller_settings_container').css("width", width - 200 + "px");
-	}
 
 	function initView(){
 		initShopInfo();
@@ -242,7 +240,7 @@
 								'<input onclick="onpro(this)" type="checkbox" id="instore_pro_cb_' + 
 								product.id + '" name="' + type.id + '"/>' + 
 								product.pname +
-								'<div class="badge badge-' + (product.daily_instore>30?'success':(product.daily_instore>10?'warning':'important')) + 
+								'<div class="badge badge-' + (product.daily_instore>info_threshold?'success':(product.daily_instore>warn_threshold?'warning':'important')) + 
 								'" id="daily_instore_' + product.id + '">' + product['daily_instore'] + '</div>' +
 							'</label>' +
 						'</div>'
@@ -344,8 +342,19 @@
 					for(proindex in type['products']){
 						var product = type['products'][proindex];
 						var proid   = product.id;
-						if($('#instore_pro_cb_' + proid).attr('checked'))
+						if($('#instore_pro_cb_' + proid).attr('checked')){
 							$('#daily_instore_' + proid).html(num);
+							$('#daily_instore_' + proid + '.badge-success').removeClass('badge-success');
+							$('#daily_instore_' + proid + '.badge-warning').removeClass('badge-warning');
+							$('#daily_instore_' + proid + '.badge-important').removeClass('badge-important');
+							if(parseInt(num) > info_threshold){
+								$('#daily_instore_' + proid).addClass('badge-success');
+							}else if(parseInt(num) > warn_threshold){
+								$('#daily_instore_' + proid).addClass('badge-warning');
+							}else{
+								$('#daily_instore_' + proid).addClass('badge-important');
+							}
+						}
 					}
 				}
 				$('#instore_modal_num').val('');

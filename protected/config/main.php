@@ -17,6 +17,7 @@ return array(
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
+		'application.components.PHPExcel.*',
 	),
 
 	'timeZone'=>'Asia/Shanghai',
@@ -37,6 +38,7 @@ return array(
 		'wechat',
 		'wap',
 		'mobile',
+		'errors',
 	),
 
 	// application components
@@ -76,6 +78,9 @@ return array(
 				'wechat/wechatAccess/<id:\d+>/<token:\w+>'=>'wechat/wechatAccess',
 					
 				'wap/index/<sellerId:\d+>'=>'wap/wap/index',
+				'wap/getData'=>'wap/wap/getData',
+					
+				'errors/404'=>'errors/error/404',
 			),
 		),
 		'db'=>array(

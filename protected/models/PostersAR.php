@@ -98,12 +98,22 @@ class PostersAR extends CActiveRecord
 		));
 	}
 	/**
-	 * 根据用户id获取邮递员的信息
+	 * 根据用户id获取邮递员的信息,包括已删除的用户
 	 * @param unknown $userId
 	 * @return unknown
 	 */
 	public function getPostersByUserId($userId){
 		$posters = PostersAR::model()->findAll('seller_id=:userId', array(':userId'=>$userId));
+		return $posters;
+	}
+	
+	/**
+	 * 根据用户的id获取未删除的送货员id
+	 * @param unknown $userId
+	 */
+	public function getUndeletedPostersByUserId($userId){
+		$posters = PostersAR::model()->findAll('seller_id=:userId and deleted<>1', 
+									array(':userId'=>$userId));
 		return $posters;
 	}
 	
@@ -113,7 +123,11 @@ class PostersAR extends CActiveRecord
 	}
 	
 	public function deletePosterById($id){
-		PostersAR::model()->delete('id=:id', array(':id'=>$id));
+		$poster = $this->getPosterById($id);
+		if($poster){
+			$poster->deleted = 1;
+			$poster->update();
+		}
 	}
 
 	/*

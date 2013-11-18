@@ -266,9 +266,50 @@ class OrdersAR extends CActiveRecord
 		return $order;
 	}
 
-	/*
-		订订单
-	*/
+	/**
+	 * 根据sellerId获取订单
+	 * @param unknown $sellerId
+	 */
+	public function getOrdersBySellerId($sellerId){
+		$orders = OrdersAR::model()->findAll('seller_id=:sellerId', array(':sellerId'=>$sellerId));
+		return $orders;
+	}
+	
+	/**
+	 * 根据sellerId获取一个商家每个会员的订单数量
+	 * @param unknown $sellerId
+	 */
+	public function getOrdersCountBySellerId($sellerId){
+		$connection = OrdersAR::model()->getDbConnection();
+		$query = "SELECT orders.member_id as member_id, COUNT(*) AS order_count FROM orders ".
+				 "WHERE orders.seller_id=:sellerId GROUP BY orders.member_id";
+		$orders = array();
+		if($stmt = $connection->createCommand($query)){
+			$stmt->bindParam(':sellerId',$sellerId);
+			$result = $stmt->queryAll();
+			return $result;
+		}
+		return $orders;
+	}
+	
+	/**
+	 * 根据会员的id获取所有订单
+	 * @param $memberId
+	 */
+	public function getOrdersByMemeberId($memberId){
+		$orders = OrdersAR::model()->findAll(
+			array(
+				'condition'=>'member_id=:memberId',
+				'params'=>array(':memberId'=>$memberId),
+				'order'=>'ctime DESC',
+			)
+		);
+		return $orders;
+	}
+	
+	/**
+	 *	订订单
+	 */
 	public function makeOrder($sellerid, $memberid, $areaid, $areadesc, $phone, $tips) {
 		$order = new OrdersAR;
 		$order->seller_id = $sellerid;

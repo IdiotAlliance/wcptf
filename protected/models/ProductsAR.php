@@ -279,11 +279,44 @@ class ProductsAR extends CActiveRecord
 		return count($pdList);
 	}
 	
+	/**
+	 * 取出一个商家的所有商品，包括已经被删除的商品
+	 * @param unknown $sellerId
+	 * @return unknown
+	 */
 	public function getProductsBySellerId($sellerId){
 		$products = ProductsAR::model()->findAll('seller_id=:sellerId', array(':sellerId'=>$sellerId));
 		return $products;
 	}
 
+	/**
+	 * 
+	 * @param unknown $sellerId
+	 */
+	public function getUndeletedProductsBySellerId($sellerId){
+		$products = ProductsAR::model()->findAll('seller_id=:sellerId and deleted<>1', 
+												 array(':sellerId'=>$sellerId));
+		return $products;
+	}
+	
+	/**
+	 * 根据sellerid获取产品，以及它们的图片url
+	 * @param unknown $sellerId
+	 */
+	public function getUndeletedProductsWithPicUrl($sellerId){
+		$connection = ProductsAR::model()->getDbConnection();
+		$query = "SELECT products.id as id, products.status as status, products.type_id as type_id, products.stime as stime,".
+				 " products.etime as etime, products.description as description, products.pname as pname,".
+				 " products.price as price, products.daily_instore as daily_instore, pictures.pic_url as picurl".
+				 " FROM products LEFT JOIN pictures ON products.cover=pictures.id".
+				 " WHERE products.seller_id=:sellerId";
+		if($stmt = $connection->createCommand($query)){
+			$stmt->bindParam(':sellerId', $sellerId);
+			$result = $stmt->queryAll();
+			return $result;
+		}
+	}
+	
 	public function getProduct($pname){
 		$product = ProductsAR::model()->find(
 			'seller_id=:seller_id AND pname=:pname',
