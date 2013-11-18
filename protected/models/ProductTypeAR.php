@@ -98,16 +98,10 @@ class ProductTypeAR extends CActiveRecord
 		));
 	}
 
-	public function updateProductType($typeName, $changeName, $changeDesc)
+	public function updateProductType($id, $changeName, $changeDesc)
 	{
 		try{
-			$pdType = ProductTypeAR::model()->find(
-					'seller_id=:seller_id AND type_name=:type_name',
-					array(
-						':seller_id'=>Yii::app()->user->sellerId,
-						':type_name'=>$typeName,
-					)
-				);
+			$pdType = ProductTypeAR::model()->findByPK($id);
 			$pdType->type_name = $changeName;
 			$pdType->type_description = $changeDesc;
 			return $pdType->update();
@@ -124,7 +118,7 @@ class ProductTypeAR extends CActiveRecord
 	 */
 	public function getSellerProductType($sellerId)
 	{
-		$pdTypeList = ProductTypeAR::model()->findAll('seller_id=:sellerId',array(':sellerId'=>$sellerId));
+		$pdTypeList = ProductTypeAR::model()->findAll('seller_id=:sellerId and deleted=:deleted',array(':sellerId'=>$sellerId,':deleted'=>0));
 		return $pdTypeList;
 	}
 
@@ -152,18 +146,43 @@ class ProductTypeAR extends CActiveRecord
 				);
 			return $pdType->type_description;
 		}
+		
 	}
-	//获取特定类别
-	public function getProductType($typeName){
-		$pdType = ProductTypeAR::model()->find(
-					'seller_id=:seller_id AND type_name=:type_name',
-					array(
-						':seller_id'=>Yii::app()->user->sellerId,
-						':type_name'=>$typeName,
-					)
-				);
-		return $pdType;
+	
+	public function getCategoryByName($name){
+		$type = ProductTypeAR::model()->find('type_name=:type_name and seller_id=:sellerId',
+			array(':type_name'=>$name,':sellerId'=>Yii::app()->user->sellerId));
+		return $type;
 	}
+
+	//获取商家各类别的商品数量和类别id和名字
+	public function getProductsByType($sellerId){
+		$connection = ProductsAR::model()->getDbConnection();
+        $query = "select count(*) as product_count, product_type.id as typeId,
+        product_type.type_name from product_type left join (select * from products where products.deleted<>1) as products_view on products_view.type_id = product_type.id where product_type.seller_id=:seller_id and product_type.deleted = 0  group by product_type.id";
+        if ($stmt = $connection->createCommand($query)) {
+            $stmt->bindParam(':seller_id',$sellerId);
+            $result = $stmt->queryAll();
+
+           	$products = ProductsAR::model()->getProductsBySellerId(Yii::app()->user->sellerId);
+
+           	for($i=0;$i<count($result);$i++){
+            	if($result[$i]['product_count']==1)
+					$result[$i]['product_count']=0;
+           	}
+            
+        	foreach($products as $product){
+        		for($i=0;$i<count($result);$i++){
+            		if($product->type_id == $result[$i]['typeId'] && $result[$i]['product_count'] == 0)
+            			$result[$i]['product_count']=1;
+        		}
+        	}
+
+            return $result;
+        }
+
+	}
+
 	
 	public function getProductTypeById($id){
 		$pdType = ProductTypeAR::model()->find('id=:id', array(':id'=>$id));

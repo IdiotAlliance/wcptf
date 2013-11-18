@@ -47,7 +47,6 @@
 		padding-left: 20px;
 	}
 </style>
-
 <div id="seller_settings_container">
 	<form style="display: none" id="settings_json_form" 
 		  action="<?php echo Yii::app()->createUrl('takeAway/sellerSettings/sellerSettings')?>" method="post">
