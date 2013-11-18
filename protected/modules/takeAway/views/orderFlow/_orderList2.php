@@ -20,10 +20,10 @@
 		<ul class="order-list">
 			<?php foreach ($orders as $order):?>
 				<li>
-					<div <?php if($order->status=="待派送"){
-						echo 'class="order-item item-wait"';}
+					<div <?php if($order->status=="派送中"){
+						echo 'class="order-item item-sending"';}
 						else {
-							echo 'class="order-item item-produce"';
+							echo 'class="order-item item-finish"';
 						}
 						?>>
 						<ul>

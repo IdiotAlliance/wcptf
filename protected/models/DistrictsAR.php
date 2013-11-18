@@ -121,7 +121,7 @@ class DistrictsAR extends CActiveRecord
 		if(!empty($district)){
 			return $district->name;
 		}else{
-			return " ";
+			return "无";
 		}
 	}
 }

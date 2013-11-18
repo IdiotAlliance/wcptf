@@ -58,9 +58,10 @@
 				            {
 				            	//alert(html);
 				                jQuery(tabId).html(html);
+				                $('.footer-right-btn.all-pick').html("全选");
 				                var orderId = $((tabId+" .order-body ul>li .order-item ul>li.order-content")).attr("id");
-				                getOrderItems(orderId);
-
+				                $((tabId+" .order-body ul>li .order-item ul>li.order-content")).first().css("background-color", "#e7e7e7");
+				            	getOrderItems(orderId);
 				            },
 				            error:function(){
 				                    alert('Request failed');
@@ -73,8 +74,11 @@
 			</div>
 			<div class="order-footer">
 				<ul>
-					<li><div class="footer-left-btn area-picker">片区高亮</div></li>
-					<li><div class="footer-left-btn type-picker">显示全部</div></li>
+					<li>
+						<div class="order-area-container" id="0"></div>
+						<div class="footer-left-btn area-picker">片区筛选</div>
+					</li>
+					<li><div class="footer-left-btn new-order">+订单</div></li>
 					<li>
 						<div class="footer-btn order-left"><i class="icon-chevron-left"></i></div>
 					</li>
@@ -90,8 +94,22 @@
 						<div class="footer-btn order-right"><i class="icon-chevron-right"></i></span></div>
 					</li>
 					<li><div class="footer-right-btn all-edit">批量</div></li>
-					<li><div class="footer-right-btn new-order">+订单</div></li>
+					<li><div class="footer-right-btn all-pick">全选</div></li>
 				</ul>
+				<!--popover菜单-->
+				<ul id='popup' style="display:none">
+				</ul>
+				<ul id='batOperate' style="display:none">
+					<li><a class="bat-dispatch">批量派送</a></li>
+					<li><a class="bat-cancel">批量取消</a></li>
+					<li><a class="bat-finish">批量完成</a></li>
+				</ul>
+				<!-- 控制批量操作 -->
+				<div class="isBatOperate" id="0">
+				</div>
+				<!-- 批量缓存 -->
+				<div class="batOrderCache" id="0">
+				</div>
 			</div>
 		</div>
 		<div class='order-detail'>
@@ -100,6 +118,7 @@
 			?>
 		</div>
 		<script type="text/javascript">
+			var lastIntervalId = "wcptf_default";
 
 			// 对Date的扩展，将 Date 转化为指定格式的String
 			// 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符， 
@@ -124,7 +143,9 @@
 			}
 
 			$(function(){
-			    updateListener();
+				//初次加载获取区域列表
+				fetchAreas();
+			   	updateListener();
 			    $('.order-footer .footer-btn.order-left').click(function(){
 			    	dayBack();
 			    });
@@ -133,8 +154,280 @@
 			    });
 			    var currentDate = new Date().Format("yyyy-MM-dd");
 				$('.order-footer .order-footer-wrap .order-footer-date').html(currentDate);
+				$('.order-footer .footer-left-btn.area-picker').click(function(){
+					$(".order-footer #popup").toggle();
+					fetchAreas();
+				});
+				//动态绑定 区域列表click事件
+				$('.order-footer #popup').delegate('li .area', 'click', function(e){
+					var id = $(this).attr('id');
+					var name = $(this).html();
+					chooseArea(id, name);
+				});
+				//批量操作
+				$('.footer-right-btn.all-edit').click(function(){
+					$('#batOperate').toggle();
+				});
+				//全选
+				$('.footer-right-btn.all-pick').click(function(){
+					pickAll();
+				});
+				$('#batOperate .bat-dispatch').click(function(){
+					$('#batOperate').toggle();
+					var orders = getBatOrders();
+					if(orders.length==0){
+						alert("请选择一个订单！");
+					}else{
+						$('.order-footer .isBatOperate').attr('id', 1);
+						$('#choosePosterModal').modal('show');
+					}
+					// batDispatchOrders();
+				});
+				$('#batOperate .bat-cancel').click(function(){
+					$('#batOperate').toggle();
+					batCancelOrders();
+				});
+				$('#batOperate .bat-finish').click(function(){
+					$('#batOperate').toggle();
+					batfinishOrders();
+				});
 			});
 
+			// 全选订单 或取消
+			function pickAll(){
+				var menu = $('.footer-right-btn.all-pick').html();
+				var ele = ' .order-body ul>li .order-item ul>li.order-content .order-checkbox input';
+				ele = currentTab + ele;
+				if(menu=='全选'){
+					$(ele).each(function(){
+    				//alert($(this).html());
+	    				$(this).attr("checked", true);
+	    				$('.footer-right-btn.all-pick').html("取消全选");
+  					});
+				}else{
+					$(ele).each(function(){
+    				//alert($(this).html());
+	    				$(this).attr("checked", false);
+	    				$('.footer-right-btn.all-pick').html("全选");
+  					});
+				}
+			}
+
+			// 批量派送订单
+			function batDispatchOrders(){
+				var orders = getBatOrders();
+				if(orders.length==0){
+					alert("请选择一个订单！");
+					return false;
+				}
+				var posterId = $("input[name='ChoosePosterForm[poster]']:checked").val();
+				alert(posterId);
+				if(posterId==null){
+					alert("没有选择派送人员!");
+				}else{
+					ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/batSetPosters';
+					if(ctUrl != '') {
+					    $.ajax({
+					        url      : ctUrl,
+					        type     : 'POST',
+					        dataType : 'json',
+					        data 	 : {orderIds:orders, posterId:posterId},
+					        cache    : false,
+					        success  : function(data)
+					        {
+					        	if(data.success==1){
+					        		updateTabContent(currentTab);
+					        		alert("订单派送成功！");
+					        	}else{
+					        		alert("订单派送失败！");
+					        	}
+					        	
+					        },
+					        error:function(){
+					                alert('Request failed');
+					        }
+					    });
+					}
+				}
+				return false;
+			}
+			// 批量完成订单
+			function batfinishOrders(){
+				var orders = getBatOrders();
+				if(orders.length==0){
+					alert("请选择一个订单！");
+					return false;
+				}
+				ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/batFinishOrder';
+				if(currentTab=='#tab2'){
+					alert('该订单已经完成');
+					return false;
+				}
+				if(ctUrl != '') {
+				    $.ajax({
+				        url      : ctUrl,
+				        type     : 'POST',
+				        dataType : 'json',
+				        data 	 : {orderIds:orders},
+				        cache    : false,
+				        success  : function(data)
+				        {
+				        	//alert(html);
+				        	if(data.success==1){
+				        		updateTabContent(currentTab);
+				        		// 预刷新头
+				        		var h1 = getTabHeaders('#tab1');
+				        		var h2 = getTabHeaders('#tab2');
+				        		var h3 = getTabHeaders('#tab3');
+				        		if(currentTab == '#tab1'){
+				        			h2 = parseInt(h2)+orders.length;
+				        			h1 = parseInt(h1)-orders.length;
+				        			updateTabHeaders('#tab1', h1);
+				        			updateTabHeaders('#tab2', h2);
+				        		}
+				        		if(currentTab == '#tab3'){
+				        			h2 = parseInt(h2)+orders.length;
+				        			h3 = parseInt(h3)-orders.length;
+				        			updateTabHeaders('#tab3', h3);
+				        			updateTabHeaders('#tab2', h2);
+				        		}
+				        		alert("订单已完成");
+				        	}else{
+				        		alert("订单完成失败！");
+				        	}
+				        	
+				        },
+				        error:function(){
+				                alert('Request failed');
+				        }
+				    });
+				}
+				return false;
+			}
+			// 批量取消订单
+			function batCancelOrders(){
+				var orders = getBatOrders();
+				if(orders.length==0){
+					alert("请选择一个订单！");
+					return false;
+				}
+				ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/batCancelOrder';
+				if(currentTab=='#tab3'){
+					alert('该订单处于取消状态！');
+					return false;
+				}
+				if(ctUrl != '') {
+				    $.ajax({
+				        url      : ctUrl,
+				        type     : 'POST',
+				        dataType : 'json',
+				        data 	 : {orderIds:orders},
+				        cache    : false,
+				        success  : function(data)
+				        {
+				        	//alert(html);
+				        	if(data.success==1){
+				        		updateTabContent(currentTab);
+				        		// 预刷新头
+				        		var h1 = getTabHeaders('#tab1');
+				        		var h2 = getTabHeaders('#tab2');
+				        		var h3 = getTabHeaders('#tab3');
+				        		if(currentTab == '#tab1'){
+				        			h3 = parseInt(h3)+orders.length;
+				        			h1 = parseInt(h1)-orders.length;
+				        			updateTabHeaders('#tab1', h1);
+				        			updateTabHeaders('#tab3', h3);
+				        		}
+				        		if(currentTab == '#tab2'){
+				        			h2 = parseInt(h2)-orders.length;
+				        			h3 = parseInt(h3)+orders.length;
+				        			updateTabHeaders('#tab3', h3);
+				        			updateTabHeaders('#tab2', h2);
+				        		}
+				        		alert("取消成功！");
+				        	}else{
+				        		alert("取消失败！");
+				        	}
+				        },
+				        error:function(){
+				                alert('Request failed');
+				        }
+				    });
+				}
+				return false;
+			}
+			// 获取批量订单
+			function getBatOrders(){
+				var chosenOrders=[];
+				var ele = ' .order-body ul>li .order-item ul>li.order-content .order-checkbox input';
+				ele = currentTab + ele;
+			    $(ele).each(function(){
+    				if($(this).is(':checked')){
+    					chosenOrders.push($(this).attr("value"));
+    				}
+  				});
+  				return chosenOrders;
+			}
+			// 缓存选中订单
+			function setBatOrdersCache(){
+				var orders = getBatOrders();
+				//alert(orders);
+				$('.order-footer .batOrderCache').attr("id", orders);
+			}
+			// 获取缓存选中订单
+			function getBatOrdersCache(){
+				var orders = $('.order-footer .batOrderCache').attr("id");
+				//alert(orders);
+				var ele = ' .order-body ul>li .order-item ul>li.order-content .order-checkbox input';
+				var ele = currentTab + ele;
+			    $(ele).each(function(){
+    				if($.inArray($(this).attr('value'), orders) != -1){
+    					$(this).attr('checked', true);
+    				}
+  				});
+  				$('.order-footer .batOrderCache').attr("id", 0);
+			}
+			// 获取派送地区
+			function fetchAreas(){
+				var ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/fetchAreas';
+				$.ajax({
+				    url      : ctUrl,
+				    type     : 'POST',
+				    dataType : 'json',
+				    cache    : false,
+				    success  : function(data)
+				    {
+				    	//alert(html);
+				        if(data.success == 0){
+				        	var areas = data.area;
+				        	var html = '<li><a class="area "id='+0+'>全部</a></li>';
+				        	for (var i = 0; i < areas.length; i++) {
+				        		var id = areas[i]['id'];
+				        		var name = areas[i]['name'];
+				        		html = html+'<li><a class="area "id='+id+'>'+name+'</a></li>';
+				        	};
+				        	$('.order-footer #popup').html(html);
+				        } else{
+				        	alert('Request failed');
+				        }
+				    },
+				    error:function(){
+				            alert('Request failed');
+				    }
+				});
+			}
+			// 选择区域
+			function chooseArea(areaid, areaname){
+				$('.order-footer .order-area-container').attr('id', areaid);
+				if(areaid == 0){
+					$('.order-footer .footer-left-btn.area-picker').html('片区筛选');
+				}else{
+					$('.order-footer .footer-left-btn.area-picker').html(areaname);
+				}
+				updateOperate();
+				$(".order-footer #popup").toggle();
+			}
+			// 日期向后
 			function dayBack(){
 				var day = $('.order-footer .order-date-container').attr("id");
 				day = parseInt(day) -1;
@@ -144,11 +437,12 @@
 				a = a.valueOf();
 				a = a + parseInt(day) * 24 * 60 * 60 * 1000;
 				//a = new Date(a);
+				updateOperate();
 				var currentDate = new Date(a).Format("yyyy-MM-dd");
 				$('.order-footer .order-footer-wrap .order-footer-date').html(currentDate);
 				//alert(date);
 			}
-
+			// 日期向前
 			function dayFront(){
 				var day = $('.order-footer .order-date-container').attr("id");
 				if(parseInt(day)<0){
@@ -159,6 +453,7 @@
 					a = a.valueOf();
 					a = a + parseInt(day) * 24 * 60 * 60 * 1000;
 					//a = new Date(a);
+					updateOperate();
 					var currentDate = new Date(a).Format("yyyy-MM-dd");
 					$('.order-footer .order-footer-wrap .order-footer-date').html(currentDate);
 				}else{
@@ -166,29 +461,57 @@
 				}
 				//alert(date);
 			}
-
+			/*
+				实时更新
+			*/
+			function updateOperate(){
+			    var day = $('.order-footer .order-date-container').attr("id");
+			    var areaId = $('.order-footer .order-area-container').attr("id");
+			    $.ajax({
+			        type:'POST',
+			        dataType: 'json',
+			        url:  '/wcptf/index.php?r=takeAway/orderFlow/updateOperate',
+			        timeout: 60000,
+			        data:{day:day, areaId:areaId},
+			        success:function(data,textStatus){
+			            if(data.operate=='1'){
+			                updateTabContent(currentTab);
+			                updateTabHeaders("#tab1", data.header[0]);
+			                updateTabHeaders("#tab2", data.header[1]);
+			                updateTabHeaders("#tab3", data.header[2]);
+			            }
+			        },
+			        error:function(XMLHttpRequest,textStatus,errorThrown){    
+			            alert("更新超时");
+			        }  
+			    }); 
+			}
 			/*
 				当有新订单来时更新订单和TabTitle
 			*/
 			function updateListener(){
 			    var orders=[];
-			    var tempList = $('.order-body ul>li .order-item ul>li.order-content').each(function(){
+			    $(currentTab+' .order-body ul>li .order-item ul>li.order-content').each(function(){
     				//alert($(this).html());\
     				orders.push($(this).attr("id"));
   				});
   				//获取tab头
   				var nums = [];
-  				nums.push(getTabHeaders("#tab1"));
-  				nums.push(getTabHeaders("#tab2"));
-  				nums.push(getTabHeaders("#tab3"));
-			    var date = "xx";
-			    var place = "xx";
+  				var temp1 = getTabHeaders("#tab1");
+  				var temp2 = getTabHeaders("#tab2");
+  				var temp3 = getTabHeaders("#tab3");
+  				nums.push(temp1);
+  				nums.push(temp2);
+  				nums.push(temp3);
+  				//获取当前的偏移时间
+			    var day = $('.order-footer .order-date-container').attr("id");
+			    var areaId = $('.order-footer .order-area-container').attr("id");
 			    $.ajax({
 			        type:'POST',
 			        dataType: 'json',
 			        url:  '/wcptf/index.php?r=takeAway/orderFlow/update',
 			        timeout: 60000,
-			        data:{time:'2', existList:orders, nums:nums, date:date, place:place, filter:currentTab},
+			        data:{time:'1', existList:orders, nums:nums, day:day, areaId:areaId, filter:currentTab},
 			        success:function(data,textStatus){
 			            if(data.success=='1'){
 			                updateTabContent(currentTab);
@@ -196,22 +519,21 @@
 			                updateTabHeaders("#tab1", data.nums[0]);
 			                updateTabHeaders("#tab2", data.nums[1]);
 			                updateTabHeaders("#tab3", data.nums[2]);
-			                updateListener();
 			            }
 			            if(data.success=='2'){
 			            	updateTabHeaders("#tab1", data.nums[0]);
 			                updateTabHeaders("#tab2", data.nums[1]);
 			                updateTabHeaders("#tab3", data.nums[2]);
-			                updateListener();
 			            }
 			            if(data.success=='0'){
-			                updateListener();
 			            }
+			            setTimeout('updateListener()', 10000);
 			        },
 			        error:function(XMLHttpRequest,textStatus,errorThrown){    
-			            if(textStatus=="timeout"){    
-			                updateListener();    
-			            }    
+			            if(textStatus=="timeout"){  
+			                alert("更新超时");
+			            }
+			            setTimeout('updateListener()', 10000);
 			        }  
 			    });       
 			}
@@ -233,7 +555,7 @@
 				$('.order-header ul.nav.nav-tabs>li a').each(function(){
 					if(tabId==$(this).attr("href")){
 						var content = $(this).html();
-						var pattern = /\(\d*\)/;
+						var pattern = /\(\d+\)/;
 						content = content.replace(pattern, "("+num+")");
 						// alert(content);
 						$(this).html(content);
@@ -244,15 +566,16 @@
 			//更新订单内容
 			function updateTabContent(tabId){
 			    var ctUrl = ''; 
-			    currentTab = tabId;
+			    setBatOrdersCache();
 			   // alert(currentTab);
-			   var day = $('.order-footer .order-date-container').attr("id");
+			    var day = $('.order-footer .order-date-container').attr("id");
+			    var areaId = $('.order-footer .order-area-container').attr("id");
 			    if(tabId == '#tab1') {
 					ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/notSend';
 			    } else if(tabId == '#tab2') {
 			        ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/sended';
 			    } else if(tabId == '#tab3') {
-			    	ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/cancel';
+			    	ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/cancel'; 
 			    }
 
 			    if(ctUrl != '') {
@@ -260,12 +583,21 @@
 			            url      : ctUrl,
 			            type     : 'POST',
 			            dataType : 'html',
-			            data 	 : {day: day},
+			            data 	 : {day: day, areaId: areaId},
 			            cache    : false,
 			            success  : function(html)
 			            {
 			            	//alert(html);
 			                jQuery(tabId).html(html);
+			                $('.footer-right-btn.all-pick').html("全选");
+			                var orderId = $(tabId+' .order-body .order-list li .order-item .order-content').first().attr("id");
+							$((tabId+" .order-body ul>li .order-item ul>li.order-content")).first().css("background-color", "#e7e7e7");
+			                if(orderId != null){
+			                	getOrderItems(orderId);
+			                }else{
+			                	getOrderItems(-1);
+			                }
+			                getBatOrdersCache();
 			            },
 			            error:function(){
 			                    alert('Request failed');

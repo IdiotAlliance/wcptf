@@ -5,9 +5,6 @@
 	#product_types form{
 		margin-bottom: 0 !important;
 	}
-	.checkbox{
-		margin-top: -5px;
-	}
 	.input_label{
 		line-height: 28px;
 	}
@@ -22,9 +19,12 @@
 		cursor: default;
 		text-decoration: none;
 	}
+	.set_index{
+		color: red;
+	}
 	#seller_settings_container{
 		position: absolute;
-		left: 220px;
+		left: 200px;
 		top: 41px;
 		bottom: 0px;
 		overflow-y: auto;
@@ -32,8 +32,17 @@
 		width: expression(document.width - 200 + "px");
 	}
 	#seller_settings_actions{
+		position:fixed;
+		background-color: #ffffff;
 		width: 100%;
-		margin-top: 20px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		padding-left: 20px;
+		box-shadow: 0px 1px 3px #808080;
+	}
+	#seller_settings_main_container{
+		margin-top: 60px;
+		padding-left: 20px;
 	}
 </style>
 <div id="seller_settings_container">
@@ -46,38 +55,60 @@
 		<button id="seller_settings_save" class="btn btn-primary action_btn" onclick="submit()">保存</button>
 		<button id="seller_settings_cancel" class="btn action_btn" onclick="cancel()">放弃更改</button>
 	</div>
-	<hr>
-	<b><?php echo Utils::getDate('y-m-d w');?></b><br><br>
-	<div>
-		店铺状态：
-		<select name="store_status" id="store_status">
-			<option value="0">正常经营</option>
-			<option value="1">暂停外卖</option>
-			<option value="2">暂停营业</option>
-		</select>
+	
+	<div id="seller_settings_main_container">
+		<h4><?php echo Utils::getDate('y-m-d w');?></h4>
+		<div>
+			店铺状态：
+			<select name="store_status" id="store_status">
+				<option value="0">正常经营</option>
+				<option value="1">暂停外卖</option>
+				<option value="2">暂停营业</option>
+			</select>
+		</div>
+		<div class="row">
+			<div class="span1">店铺公告：</div>
+			<textarea id="broadcast" rows="5" cols="" class="span5"></textarea>
+		</div>
+		
+		
+		<hr>
+		<h4>品类促销</h4>
+		<div id="product_types"></div>
+		
+		<hr>
+		<h4>今日外送片区（请勾选外送片区）</h4>
+		<div id="districts" class="row"></div>
+		
+		<hr>
+		<h4>今日外送人员（请勾选外送人员）</h4>
+		<div id="posters" class="row"></div>
+		
+		<hr>
+		<div class="row">
+			<h4 class="span2">今日库存管理</h4>
+			<span class="btn span2" onclick="showEditModal()">
+				<span class="icon-edit"></span>&nbsp;编辑产品库存
+			</span>
+		</div><br>
+		<div id="instore_management"></div>
 	</div>
-	<div class="row">
-		<div class="span1">店铺公告：</div>
-		<textarea id="broadcast" rows="5" cols="" class="span5"></textarea>
-	</div>
-	
-	
-	<hr>
-	<h5>品类促销</h5>
-	<div id="product_types"></div>
-	
-	<hr>
-	<h5>今日外送片区（请勾选外送片区）</h5>
-	<div id="districts" class="row"></div>
-	
-	<hr>
-	<h5>今日外送人员（请勾选外送人员）</h5>
-	<div id="posters" class="row"></div>
-	
-	<hr>
-	<h5>今日库存管理（请勾选今日库存告急的产品）</h5>
-	<div id="instore_management"></div>
-	
+</div>
+
+<!-- Modal -->
+<div id="instore_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">修改库存</h3>
+  </div>
+  <div class="modal-body">
+  	<div id="instore_modal_info"></div><br>
+  	<input type="text" id="instore_modal_num">
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+    <button class="btn btn-primary" onclick="editInstore()">确认修改</button>
+  </div>
 </div>
 
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/jquery.form.js" charset="utf-8"></script>
@@ -86,12 +117,9 @@
 	
 	// 设置容器宽度，并使其随着窗口大小改变而改变
 	$(document).ready(function(){
-		setContainerWidth();
 		window.onresize = setContainerWidth;
 		initView();
 		$('#form_json_input').val(escape(JSON.stringify(data)));
-
-
 		for(typeindex in data['types']){
 			var type = data['types'][typeindex];
 			$("#fileupload_" + type.id).change(function(){
@@ -107,12 +135,13 @@
 					}
 				});
 			});
-		}	
+		}
+		setContainerWidth();
 	});
 
 	function setContainerWidth(){
-		width = document.body.clientWidth;
-		$('#seller_settings_container').css("width", width - 220 + "px");
+		var width = $('body').width();
+		$('#seller_settings_container').css("width", width - 200 + "px");
 	}
 
 	function initView(){
@@ -154,8 +183,10 @@
 				$('#fileupload_' + type.id).attr('disabled', true);
 				$('#set_index_' + type.id).addClass('index_switch_disabled');
 			}else{
-				if(type.onindex == '1')
+				if(type.onindex == '1'){
 					$('#set_index_' + type.id).html('首页推荐');
+					$('#set_index_' + type.id).addClass('set_index');
+				}
 			}
 			
 			/*图片上传*/
@@ -169,11 +200,11 @@
 		for(index in data['districts']){
 			var district = data['districts'][index];
 			districts.append(
-					('<div class="span2 textaligned">' + 
+					('<label class="checkbox span2 textaligned">' + 
 							'<input type="checkbox" id="dis_checkbox_' + 
 							+ district.id + '" ' + (district.daily_status=="0"?'checked':'') + '>' 
 							+ district.name +
-					'</div>'));
+					'</label>'));
 		}
 	}
 
@@ -182,11 +213,11 @@
 		var array = new Array();
 		for(index in data['posters']){
 			var poster = data['posters'][index];
-			posters.append('<div class="span2 textaligned">' +
+			posters.append('<label class="checkbox span2 textaligned">' +
 								'<input type="checkbox" id="pos_checkbox_' + 
 								+ poster.id + '" ' + (poster.daily_status=="0"?'checked':'') + '>' 
 								+ poster.name +
-						   '</div>');
+						   '</label>');
 		}
 	}
 
@@ -195,22 +226,24 @@
 		for(index1 in data['types']){
 			var type = data['types'][index1];
 			if(type)
-			instore.append('<div class="row">' +
-								'<div class="span1">' + 
-									'<input onclick="ontype(this)" type="checkbox" id="instore_type_cb_' + type.id + 
-									'" ' + (type.insufficient=="1"?'checked':'') + '>' +
+			instore.append('<div class="row-fluid">' +
+								'<label class="span2 checkbox">' + 
+									'<input onclick="ontype(this)" type="checkbox" id="instore_type_cb_' + type.id + '" ' + 
 									'<b>' + type.type_name + '</b>' +
-								'</div>' +
+								'</label>' +
 						   '</div>'
 					);
-			var html = '<div class="row" style="padding-left:20px;">';
+			var html = '<div class="row-fluid" style="padding-left:20px;">';
 			for(index2 in type['products']){
 				var product = type['products'][index2];
-				html += '<div class="span2">' + 
-							'<input onclick="onpro(this)" type="checkbox" id="instore_pro_cb_' + product.id + 
-							'" name="' + type.id + '"' +
-							'" ' + (product.insufficient=="1"?'checked':'') + '/>' + 
-							product.pname + 
+				html += '<div class="span3">' + 
+							'<label class="checkbox label">' +
+								'<input onclick="onpro(this)" type="checkbox" id="instore_pro_cb_' + 
+								product.id + '" name="' + type.id + '"/>' + 
+								product.pname +
+								'<div class="badge badge-' + (product.daily_instore>30?'success':(product.daily_instore>10?'warning':'important')) + 
+								'" id="daily_instore_' + product.id + '">' + product['daily_instore'] + '</div>' +
+							'</label>' +
 						'</div>'
 			}
 			html += '</div><br>';
@@ -262,13 +295,67 @@
 		}
 	}
 
+	// 设置产品首页
 	function setIndex(elem){
 		if($(elem).html() == '设为首页' && !$(elem).hasClass('index_switch_disabled')){
 			$('.index_switch').html('设为首页');
+			$('.index_switch').removeClass('set_index');
 			$(elem).html('首页推荐');
+			$(elem).addClass('set_index');
 		}
 	}
 
+	function showEditModal(){
+		var selection = 0;
+		var html = "修改&nbsp;<b>";
+		for(typeindex in data['types']){
+			var type = data['types'][typeindex];
+			for(proindex in type['products']){
+				var product = type['products'][proindex];
+				var proid   = product.id;
+				if($('#instore_pro_cb_' + proid).attr('checked')){
+					if(selection == 0)
+						html += product.pname;
+					selection ++;
+				}
+			}
+		}
+		if(selection > 0){
+			html += '</b>&nbsp;等&nbsp;<b>' + selection + '</b>&nbsp;件商品的库存为：';
+			$('#instore_modal_info').html(html);
+			$('#instore_modal').modal('show');
+		}else{
+			alert('您未选中任何商品');
+		}
+	}
+
+	// 编辑库存信息
+	function editInstore(){
+		var num = $('#instore_modal_num').val();
+		if(/\d+/.test(num)){
+			if(parseInt(num) < 0){
+				alert('无效的数字');
+				$('#instore_modal_num').val('');
+				return;
+			}else{
+				for(typeindex in data['types']){
+					var type = data['types'][typeindex];
+					for(proindex in type['products']){
+						var product = type['products'][proindex];
+						var proid   = product.id;
+						if($('#instore_pro_cb_' + proid).attr('checked'))
+							$('#daily_instore_' + proid).html(num);
+					}
+				}
+				$('#instore_modal_num').val('');
+				$('#instore_modal').modal('hide');
+			}
+		}else{
+			alert('无效的数字');
+			$('#instore_modal_num').val('');
+		}
+	}
+	
 	function submit(){
 		// 获得商铺信息
 		data['shopinfo']['status'] = $('#store_status').val();
@@ -280,7 +367,7 @@
 			var picurl = $('#pic_url_' + typeid).html();
 			var tag    = $('#select_' + typeid).val();
 			var index  = $('#set_index_' + typeid).html() == '首页推荐';
-			var insufficient = $('#instore_type_cb_' + typeid).attr('checked');
+			
 			if(picurl != '未上传图片')
 				data['types'][typeindex].picurl = picurl;
 			else
@@ -298,19 +385,11 @@
 				data['types'][typeindex].onindex = 1;
 			else
 				data['types'][typeindex].onindex = 0;
-			
-			if(insufficient)
-				data['types'][typeindex].insufficient = 1;
-			else
-				data['types'][typeindex].insufficient = 0;
 
 			for(proindex in data['types'][typeindex]['products']){
 				var proid = data['types'][typeindex]['products'][proindex].id;
-				var pinsufficient = $('#instore_pro_cb_' + proid).attr('checked');
-				if(pinsufficient)
-					data['types'][typeindex]['products'][proindex].insufficient = 1;
-				else
-					data['types'][typeindex]['products'][proindex].insufficient = 0;
+				var daily_instore = $('#daily_instore_' + proid).html();
+				data['types'][typeindex]['products'][proindex]['daily_instore'] = daily_instore;
 			}
 		}
 
