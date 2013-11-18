@@ -139,6 +139,7 @@ class OrdersAR extends CActiveRecord
 	public function setPoster($orderId, $posterId){
 		$order = OrdersAR::model()->find('id=:orderId', array(':orderId'=>$orderId));
 		$order->poster_id = $posterId;
+		$order->status = 2;
 		$order->save();
 	}
 	/*
@@ -163,20 +164,16 @@ class OrdersAR extends CActiveRecord
 	/*
 		获取已派送的订单
 	*/
-	public function filterSended($userId, $date, $place){
-		$orders = OrdersAR::model()->findAll(array('condition'=>'seller_id=:userId and status=:status1', 
-			'params'=>array(':userId'=>$userId, ':status1'=>1,), 'order'=>'ctime DESC',));
-		$orders = OrdersAR::model()->filterDate($orders, $date);
+	public function filterSended($userId, $date, $areaId){
+		$orders = OrdersAR::model()->filterBase($userId, $date, $areaId, "#tab2");
 		OrdersAR::model()->changeOrdersToView($orders);
 		return $orders;
 	}
 	/*
 		获取已取消的订单
 	*/
-	public function filterCancel($userId, $date, $place){
-		$orders = OrdersAR::model()->findAll(array('condition'=>'seller_id=:userId and status=:status1', 
-			'params'=>array(':userId'=>$userId, ':status1'=>3), 'order'=>'ctime DESC',));
-		$orders = OrdersAR::model()->filterDate($orders, $date);
+	public function filterCancel($userId, $date, $areaId){
+		$orders = OrdersAR::model()->filterBase($userId, $date, $areaId, "#tab3");
 		OrdersAR::model()->changeOrdersToView($orders);
 		return $orders;
 	}
@@ -200,10 +197,10 @@ class OrdersAR extends CActiveRecord
 		if($areaId == 0){
 		//不过滤
 			$query = "select * from orders where seller_id=:userId and TO_DAYS(ctime)=TO_DAYS(:date)".
-			" and (status=:status1 or status=:status2)";
+			" and (status=:status1 or status=:status2) order by ctime DESC";
 		}else{
 			$query = "select * from orders where seller_id=:userId and TO_DAYS(ctime)=TO_DAYS(:date)".
-			" and area_id=:areaId and (status=:status1 or status=:status2)";
+			" and area_id=:areaId and (status=:status1 or status=:status2) order by ctime DESC";
 		}
 		if ($stmt = $connection->createCommand($query)) {
 		    $stmt->bindParam(':userId', $userId);
@@ -274,20 +271,6 @@ class OrdersAR extends CActiveRecord
 	        return (float)($time1 - $time2) / $dividend;
 	    return false;
 	}
-	/*
-		过滤订单
-	*/
-	public function filterOrders($userId, $date, $areaId, $filter){
-		$orders = null;
-		if($filter=="#tab1"){
-			$orders = OrdersAR::model()->filterNotSend($userId, $date, $areaId);
-		}else if($filter=="#tab2"){
-			$orders = OrdersAR::model()->filterSended($userId, $date, $areaId);
-		}else if($filter=="#tab3"){
-			$orders = OrdersAR::model()->filterCancel($userId, $date, $areaId);
-		}
-		return $orders;
-	}
 	
 	/*
 		取消订单
@@ -314,10 +297,28 @@ class OrdersAR extends CActiveRecord
 		返回会员的订单
 	*/
 	public function getMemberOrders($memberId, $sellerId){
-		$orders = OrdersAR::model()->findAll('member_id=:memberid and seller_id=:sellerid', 
-			array(':memberid'=>$memberId, ':sellerid'=>$sellerId));
+		$orders = OrdersAR::model()->findAll(array('condition'=>'member_id=:memberid and seller_id=:sellerid', 
+			'params'=>array(':memberid'=>$memberId, ':sellerid'=>$sellerId), 'order'=>'ctime DESC',));
 		OrdersAR::model()->changeOrdersToView($orders);
 		return $orders;
+	}
+
+	/*
+		返回部分会员的订单
+	*/
+	public function getMemberPartOrders($memberId, $sellerId, $ctime){
+		$connection = OrdersAR::model()->getDbConnection();
+		$query = "select * from orders where seller_id=:sellerId and member_id:=memberId and".
+		"(ctime<:ctime or ctime=:ctime) order by ctime DESC";
+		if ($stmt = $connection->createCommand($query)) {
+		    $stmt->bindParam(':sellerId', $sellerId);
+		    $stmt->bindParam(':memberId', $memberId);
+		    $stmt->bindParam(':ctime', $ctime);
+		    $result = $stmt->queryAll();
+		    $orders = OrdersAR::model()->changeArrayToAR($result);
+		    OrdersAR::model()->changeOrdersToView($orders);
+		    return $orders;
+		}
 	}
 
 	/*
@@ -425,6 +426,22 @@ class OrdersAR extends CActiveRecord
 		}
 		foreach ($orders as $order) {
 			OrdersAR::model()->changeOrderToView($order);
+		}
+	}
+	/*
+		修改订单头
+	*/
+	public function headerModify($orderId ,$name, $phone, $desc, $total){
+		$order = OrdersAR::model()->findByPk($orderId);
+		if(!empty($order)){
+			$order->order_name = $name;
+			$order->phone = $phone;
+			$order->description = $desc;
+			$order->total = $total;
+			$order->update();
+			return true;
+		}else{
+			return false;
 		}
 	}
 

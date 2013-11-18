@@ -109,15 +109,27 @@ class OrderItemsAR extends CActiveRecord
 	*/
 	public function getItems($order_id){
 		$orderItems = OrderItemsAR::model()->findAll('order_id=:order_id', array(':order_id'=>$order_id));
+		OrderItemsAR::model()->changeItemsToView($orderItems);
+		return $orderItems;
+	}
+
+	/*
+		获取特定for-AR订单的子项
+	*/
+	public function getTrueItems($order_id){
+		$orderItems = OrderItemsAR::model()->findAll('order_id=:order_id', array(':order_id'=>$order_id));
 		return $orderItems;
 	}
 
 	public function generateItems($order_id){
-		$items = OrderItemsAR::model()->getItems($order_id);
+		$items = OrderItemsAR::model()->getTrueItems($order_id);
 		$result = "";
 		foreach ($items as $item) {
-			$pName = ProductsAR::model()->getProductById($item->product_id)->pname;
-			$result = $result.$pName.'*'.$item->number." ";
+			$product = ProductsAR::model()->getProductById($item->product_id);
+			if(!empty($product)){
+				$pName = ProductsAR::model()->getProductById($item->product_id)->pname;
+				$result = $result.$pName.'*'.$item->number." ";
+			}
 		}
 		return $result;
 	}
@@ -131,16 +143,37 @@ class OrderItemsAR extends CActiveRecord
 			$item->delete();
 		}
 	}
+	public function changeItemsToView($items){
+		foreach ($items as $item) {
+			OrderItemsAR::model()->changeItemToView($item);
+		}
+	}
 
 	public function changeItemToView($item){
-		 $product = ProductsAR::model()->getProduct($item->product_id, Yii::app()->user->sellerId);
-		 $item->product_id = $product->pname;
+		 $product = ProductsAR::model()->getProductById($item->product_id);
+		 if(!empty($product)){
+		 	$item->product_id = $product->pname;
+			$typeId = $product->type_id;
+			$typeName = ProductTypeAR::model()->getProductTypeById($typeId)->type_name;
+			$item->product_id = $item->product_id.":".$typeName;
+		}	
+	}
+	//获取item type
+	public function getItemsType($itemId){
+		$item = OrderItemsAR::model()->findByPk($itemId);
+		$product = ProductsAR::model()->getProductById($item->product_id);
+		if(!empty($product)){
+			$typeId = $product->type_id;
+			$typeName = ProductTypeAR::model()->getProductTypeById($typeId)->type_name;
+			return $typeName;
+		}
+		return " ";
 	}
 
 	/*
 		新建订单子项
 	*/
-	public function createItems($sellerId, $orderId, $productId, $num){
+	public function createItem($sellerId, $orderId, $productId, $num){
 		$product = ProductsAR::model()->getProductByIdSeller($productId, $sellerId);
 		if(!empty($product)){
 			if($product->instore>=$num){

@@ -20,8 +20,8 @@
 		<ul class="order-list">
 			<?php foreach ($orders as $order):?>
 				<li>
-					<div <?php if($order->status=="待派送"){
-						echo 'class="order-item item-wait"';}
+					<div <?php if($order->status=="已取消"){
+						echo 'class="order-item item-cancel"';}
 						else {
 							echo 'class="order-item item-produce"';
 						}
