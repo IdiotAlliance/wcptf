@@ -21,21 +21,21 @@
 			<?php foreach ($orders as $order):?>
 				<li>
 					<div <?php if($order->status=="待派送"){
-						echo 'class="order-item item-wait">';}
+						echo 'class="order-item item-wait"';}
 						else {
-							echo 'class="order-item item-produce">';
+							echo 'class="order-item item-produce"';
 						}
-						?>
+						?>>
 						<ul>
 							<li class="order-state ">
 								<div class="state">
 									<label><?php echo $order->status; ?></label>
 								</div>
 							</li>
-							<li class="order-content" <?php echo 'id = "'.$order->id.'">'; ?>
+							<li class="order-content" <?php echo 'id = "'.$order->id.'"'; ?>>
 								<div class="content">
 									<div class="item-line item-line1">
-										<label class="order-username">预约人：<?php echo $order->member_id; ?></label>
+										<label class="order-username">预约人：<?php echo $order->order_name; ?></label>
 										<label class="order-phonenumber">电话：<?php echo $order->phone; ?></label>
 										<label class="order-id">订单号：<?php echo $order->order_no; ?></label>
 										<span class="order-checkbox">

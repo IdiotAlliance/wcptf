@@ -10,7 +10,6 @@ class OrderFlowController extends Controller
     //显示的第一个订单的订单号
     public $firstOrderID = 0;
     public $userID = 0;
-    public $test = 0;
 
 	public function actionOrderFlow()
 	{
@@ -21,12 +20,12 @@ class OrderFlowController extends Controller
 	*/
 	public function init(){
 		$date = date("Y-m-d H:i:s");
-		$place = null;
+		$areaId = 0;
 		$this->userID = Yii::app()->user->sellerId;
 		//TODO when $userID is null
-		$orders = OrdersAR::model()->filterNotSend($this->userID, $date, $place);
-		$orders1 = OrdersAR::model()->filterSended($this->userID, $date, $place);
-		$orders2 = OrdersAR::model()->filterCancel($this->userID, $date, $place);
+		$orders = OrdersAR::model()->filterNotSend($this->userID, $date, $areaId);
+		$orders1 = OrdersAR::model()->filterSended($this->userID, $date, $areaId);
+		$orders2 = OrdersAR::model()->filterCancel($this->userID, $date, $areaId);
 		if(!empty($orders)){
 			$this->firstOrderID = $orders[0]->id;
 		}
@@ -39,9 +38,9 @@ class OrderFlowController extends Controller
 	*/
 	public function actionInit(){
 		$date = date("Y-m-d H:i:s");
-		$place = null;
-		$orders = OrdersAR::model()->filterNotSend($this->userID, $date, $place);
-		return $this->renderPartial('_orderList', array('orders'=>$orders), true, false);
+		$areaId = 0;
+		$orders = OrdersAR::model()->filterNotSend($this->userID, $date, $areaId);
+		return $this->renderPartial('_orderList1', array('orders'=>$orders), true, false);
 	}
 
 	/*
@@ -49,13 +48,16 @@ class OrderFlowController extends Controller
 	*/
 	public function actionNotSend(){
 		$day = 0;
+		$areaId = 0;
 		if(isset($_POST['day'])){
 			$day = $_POST['day'];
 		}
+		if(isset($_POST['areaId'])){
+			$areaId = $_POST['areaId'];
+		}
 		$date = date("Y-m-d H:i:s",strtotime($day." day"));
-		$place = null;
-		$orders = OrdersAR::model()->filterNotSend($this->userID, $date, $place);
-		echo $this->renderPartial('_orderList', array('orders'=>$orders), true, false);
+		$orders = OrdersAR::model()->filterNotSend($this->userID, $date, $areaId);
+		echo $this->renderPartial('_orderList1', array('orders'=>$orders), true, false);
 	}
 	/*
 		ajax获取已派送订单
@@ -68,7 +70,7 @@ class OrderFlowController extends Controller
 		$date = date("Y-m-d H:i:s",strtotime($day." day"));
 		$place = null;
 		$orders = OrdersAR::model()->filterSended($this->userID, $date, $place);
-		echo $this->renderPartial('_orderList', array('orders'=>$orders), true, false);
+		echo $this->renderPartial('_orderList2', array('orders'=>$orders), true, false);
 	}
 
 	/*
@@ -82,7 +84,7 @@ class OrderFlowController extends Controller
 		$date = date("Y-m-d H:i:s",strtotime($day." day"));
 		$place = null;
 		$orders = OrdersAR::model()->filterCancel($this->userID, $date, $place);
-		echo $this->renderPartial('_orderList', array('orders'=>$orders), true, false);
+		echo $this->renderPartial('_orderList3', array('orders'=>$orders), true, false);
 	}
 	
 	/*
@@ -124,30 +126,73 @@ class OrderFlowController extends Controller
 		$orderId = 1;
 		if(isset($_POST['orderId'])){
 			$orderId = $_POST['orderId'];
+			ordersAR::model()->cancelOrder($this->userID, $orderId);
+			$arr=array('success'=>'1');
+			echo json_encode($arr);
+		}else{
+			$arr=array('success'=>'0');
+			echo json_encode($arr);
 		}
-		$orderItems = ordersAR::model()->cancelOrder($this->userID, $orderId);
+		
+	}
+	/*
+		批量取消订单
+	*/
+	public function actionBatCancelOrder(){
+		if(isset($_POST['orderIds'])){
+			$orderIds = $_POST['orderIds'];
+			foreach ($orderIds as $orderId) {
+				ordersAR::model()->cancelOrder($this->userID, $orderId);
+			}
+			$arr=array('success'=>'1');
+			echo json_encode($arr);
+		}else{
+			$arr=array('success'=>'0');
+			echo json_encode($arr);
+		}
 	}
 	/*
 		完成订单
 	*/
-	public function actionfinishOrder(){
+	public function actionFinishOrder(){
 		$orderId = 0;
 		if(isset($_POST['orderId'])){
 			$orderId = $_POST['orderId'];
+			ordersAR::model()->finishOrder($this->userID, $orderId);
+			$arr=array('success'=>'1');
+			echo json_encode($arr);
+		}else{
+			$arr=array('success'=>'0');
+			echo json_encode($arr);
 		}
-		$orderItems = ordersAR::model()->finishOrder($this->userID, $orderId);	
+	}
+	/*
+		批量完成订单
+	*/
+	public function actionBatFinishOrder(){
+		if(isset($_POST['orderIds'])){
+			$orderIds = $_POST['orderIds'];
+			foreach ($orderIds as $orderId) {
+				ordersAR::model()->finishOrder($this->userID, $orderId);
+			}
+			$arr=array('success'=>'1');
+			echo json_encode($arr);
+		}else{
+			$arr=array('success'=>'0');
+			echo json_encode($arr);
+		}
 	}
 
 	/*
 		定期更新数据
 	*/
 	public function actionUpdate(){
-		$userID = $this->userID;
+		$userID = $this->getUserId();
 		$timeOut = 20;
 		$existList = null;
 		$nums = null;
-		$date = date('Y-m-d H:i:s');
-		$place = null;
+		$day = 0;
+		$areaId = 0;
 		$filter = "";
 		if(isset($_POST['time'])){
 			$timeOut = $_POST['time'];
@@ -161,50 +206,71 @@ class OrderFlowController extends Controller
 		if(isset($_POST['nums'])){
 			$nums = $_POST['nums'];
 		}
-		$this->test = $nums[0];
-		$this->updateListener($userID, $timeOut, $existList, $nums, $date, $place, $filter);
+		if(isset($_POST['day'])){
+			$day = $_POST['day'];
+		}
+		if(isset($_POST['areaId'])){
+			$areaId = $_POST['areaId'];
+		}
+		$this->updateListener($userID, $timeOut, $existList, $nums, $day, $areaId, $filter);
 	}
-
+	/*
+		主动更新操作
+	*/
+	public function actionUpdateOperate(){
+		$userID = $this->getUserId();
+		$day = 0;
+		$areaId = 0;
+		if(isset($_POST['areaId'])){
+			$areaId = $_POST['areaId'];
+		}
+		if(isset($_POST['day'])){
+			$day = $_POST['day'];
+		}
+		$date = date("Y-m-d H:i:s",strtotime($day." day"));
+		$notSendNum = count(OrdersAr::model()->filterNotSend($userID, $date, $areaId));
+        $sendedNum = count(OrdersAr::model()->filterSended($userID, $date, $areaId));
+        $cancelNum = count(OrdersAr::model()->filterCancel($userID, $date, $areaId));
+        $arr=array('operate'=>'1', 'header'=>array($notSendNum, $sendedNum, $cancelNum));
+        echo json_encode($arr);
+	}
 	/*
 		更新接口
+		success：1需要当前页刷新；2不需要当前页刷新只刷新头；
 	*/
-	public function updateListener($userID, $timeOut, $existList, $nums, $date, $place, $filter){
-        set_time_limit(0);
-        $index=0;
-        while(true){
-            usleep(600000);
-            $index++;
-            $currentList = OrdersAR::model()->filterOrders($userID, $date, $place, $filter);
-            $notSendNum = count(OrdersAr::model()->filterNotSend($userID, $date, $place));
-            $sendedNum = count(OrdersAr::model()->filterSended($userID, $date, $place));
-            $cancelNum = count(OrdersAr::model()->filterCancel($userID, $date, $place));
-            if(empty($existList)&&(!empty($currentList))){
-                 $arr=array('success'=>'1', 'nums'=>array($notSendNum, $sendedNum, $cancelNum));
-                 echo json_encode($arr);
-				 exit;
-            }
-            if((!empty($currentList))&& (!empty($existList))){
-                $count=count($currentList);
-                for($tmp=0;$tmp!=$count;$tmp++){
-                    if(!in_array($currentList[$tmp]->id, $existList)){
-                         $arr=array('success'=>'1', 'nums'=>array($notSendNum, $sendedNum, $cancelNum));
-                         echo json_encode($arr);
-						 exit;
-                    }
-                }
-                // || ($nums[1]!=strval($sendedNum)) || ($nums[2]!=strval($cancelNum))
-                if(strcmp(0, $sendedNum)!=0){
-                     $arr=array('success'=>'2', 'nums'=>array($notSendNum, $sendedNum, $cancelNum));
+	public function updateListener($userID, $timeOut, $existList, $nums, $day, $areaId, $filter){
+        $date = date("Y-m-d H:i:s",strtotime($day." day"));
+        $currentList = OrdersAR::model()->filterBase($userID, $date, $areaId, $filter);
+        $notSendNum = count(OrdersAr::model()->filterNotSend($userID, $date, $areaId));
+        $sendedNum = count(OrdersAr::model()->filterSended($userID, $date, $areaId));
+        $cancelNum = count(OrdersAr::model()->filterCancel($userID, $date, $areaId));
+        $currentLen = count($currentList);
+        $existLen = count($existList);
+        if($currentLen!=$existLen){
+        	$arr=array('success'=>'1', 'nums'=>array($notSendNum, $sendedNum, $cancelNum));
+            echo json_encode($arr);
+            exit;
+        }else {
+            //检测当前列表是否和数据库列表匹配
+            for($tmp=0;$tmp!=$currentLen;$tmp++){
+                if(!in_array($currentList[$tmp]->id, $existList)){
+                     $arr=array('success'=>'1', 'nums'=>array($notSendNum, $sendedNum, $cancelNum));
                      echo json_encode($arr);
 					 exit;
                 }
             }
-            if($index==$timeOut){
-                $arr=array('success'=>'0', 'data'=>array());
-                echo json_encode($arr);
-                exit;
-            }
+
         }
+        //检测页头相等
+        if((intval($nums[0][0])!= $notSendNum )|| (intval($nums[1][0])!=$sendedNum )|| (intval($nums[2][0])!=$cancelNum)){
+             $arr=array('success'=>'2', 'nums'=>array($notSendNum, $sendedNum, $cancelNum));
+             echo json_encode($arr);
+			 exit;
+        }
+        //没有需要更新
+        $arr=array('success'=>'0');
+        echo json_encode($arr);
+        exit;
     }
 
     public function actionGetPosters(){
@@ -243,8 +309,28 @@ class OrderFlowController extends Controller
     		$orderId = $_POST['orderId'];
     		$posterId = $_POST['posterId'];
     		OrdersAR::model()->setPoster($orderId, $posterId);
+    		$arr=array('success'=>'1');
+			echo json_encode($arr);
     	}else{
-
+    		$arr=array('success'=>'0');
+			echo json_encode($arr);
+    	}
+    }
+    /*
+    	批量设置派送人员
+    */
+    public function actionBatSetPosters(){
+    	if(isset($_POST['orderIds']) && isset($_POST['posterId'])){
+    		$orderIds = $_POST['orderIds'];
+    		$posterId = $_POST['posterId'];
+    		foreach ($orderIds as $orderId) {
+    			OrdersAR::model()->setPoster($orderId, $posterId);
+    		}
+    		$arr=array('success'=>'1');
+			echo json_encode($arr);
+    	}else{
+    		$arr=array('success'=>'0');
+			echo json_encode($arr);
     	}
     }
 
@@ -280,6 +366,94 @@ class OrderFlowController extends Controller
         }
         $this->renderPartial('_posters', array('model'=>$model, 'posterViews'=>$posterViews));
     }
+
+    //修改订单头
+    public function initModifyOrderHeaderForm(){
+    	 $model = new ModifyOrderHeaderForm;
+    	 $this->renderPartial('_orderHeaderForm', array('model'=>$model));
+    }
+	public function actionModifyOrderHeaderForm()
+    {
+    	if(isset($_POST['orderId'])&&isset($_POST['orderName'])
+    		&&isset($_POST['phone'])&&isset($_POST['desc'])&&isset($_POST['total'])){
+    		$orderId = $_POST['orderId'];
+    		$name = $_POST['orderName'];
+    		$phone = $_POST['phone'];
+    		$desc = $_POST['desc'];
+    		$total = $_POST['total'];
+    		$result = OrdersAR::model()->headerModify($orderId, $name, $phone, $desc, $total);
+    		if($result){
+    			$arr=array('success'=>'1');
+				echo json_encode($arr);
+    		}else{
+    			$arr=array('success'=>'0');
+				echo json_encode($arr);
+    		}
+    		
+    	}else{
+    		$arr=array('success'=>'0');
+			echo json_encode($arr);
+    	}
+    }
+    //添加订单子项
+    public function initOrderAddItemForm(){
+    	 $model = new OrderAddItemForm;
+    	 $this->renderPartial('_orderAddItemForm', array('model'=>$model));
+    }
+	public function actionOrderAddItemForm()
+    {
+    	if(isset($_POST['orderId'])&&isset($_POST['productId'])&&isset($_POST['num'])){
+    		$orderId = $_POST['orderId'];
+    		$productId = $_POST['productId'];
+    		$num = $_POST['num'];
+    		$result = OrderItemsAR::model()->createItem($sellerid, $order->id, $productId, $num);
+    		if($result =="ok"){
+    			$arr=array('success'=>'1');
+				echo json_encode($arr);
+    		}else{
+    			$arr=array('success'=>'0', 'error'=>$result);
+				echo json_encode($arr);
+    		}
+    		
+    	}else{
+    		$arr=array('success'=>'0', 'error'=>'网络错误');
+			echo json_encode($arr);
+    	}
+    }
+
+    /*
+    	获取区域
+    */
+    public function actionFetchAreas(){
+    	$userId = $this->getUserId();
+    	$areas = DistrictsAR::model()->getDistrictsByUserId($userId);
+    	$result = array();
+    	foreach ($areas as $area) {
+    		array_push($result, array('id'=>$area->id, 'name'=>$area->name));
+    	}
+    	$arr=array('success'=>'0', 'area'=>$result);
+    	echo json_encode($arr);
+    }
+
+    /*
+    	获取商家id
+    */
+    public function getUserId(){
+    	 $userId = Yii::app()->user->sellerId;
+    	 if(empty($userId)){
+    	 	Yii::app()->createUrl('accounts/login/login');
+    	 	exit;
+    	 }else{
+    	 	return $userId;
+    	 }
+    }
+
+    /*
+		测试接口
+    */
+	public function actionHongTest(){
+		OrdersAR::model()->getOrderNo(0, 9032222, null);
+	}
 
 	// Uncomment the following methods and override them if needed
 	/*
