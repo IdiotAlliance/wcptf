@@ -85,7 +85,6 @@
         .order-footer ul li div{
            width: 280px;
         }
-
         .order-footer .order-date-container{
             display: none;
         }
@@ -423,7 +422,7 @@
     		top: 40px;
     		left:850px;
     		bottom:0px;
-    		min-width: 330px;
+    		min-width: 350px;
     		right: 0;
 			background-color: #ffffff;
 			-webkit-box-sizing: border-box;
@@ -465,7 +464,8 @@
     	}
 
     	.order-detail-header .order-come-type {
-    		margin-left: 40%;
+    		float: right;
+            margin-right: 20px;
     	}
 
     	.order-detail-header .order-phone {
@@ -474,7 +474,7 @@
 
         .order-detail-header .order-date {
             float: right;
-            margin-right: 20px;
+            margin-right: 0px;
         }
 
     	.order-detail-header .order-setblack-menu {
@@ -601,6 +601,7 @@
         #modifyOrderHeaderModal .modal-body label .required{
             display: none;
         }
+
         /*增加订单子项*/
         #orderAddItemModal {
             width: 300px;

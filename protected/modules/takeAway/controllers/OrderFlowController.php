@@ -298,7 +298,6 @@ class OrderFlowController extends Controller
 			exit;
     	}
     	
-    	
     }
     /*
     	设置派送人员
@@ -406,8 +405,13 @@ class OrderFlowController extends Controller
     		$orderId = $_POST['orderId'];
     		$productId = $_POST['productId'];
     		$num = $_POST['num'];
-    		$result = OrderItemsAR::model()->createItem($sellerid, $order->id, $productId, $num);
+    		$sellerid = $this->getUserId();
+    		$result = OrderItemsAR::model()->createItem($sellerid, $orderId, $productId, $num);
     		if($result =="ok"){
+    			$price = ProductsAR::model()->findByPk($productId)->price;
+    			$total = OrdersAR::model()->findByPk($orderId)->total;
+    			$total = $total + (float)$price * (float)$num;
+    			OrdersAR::model()->setOrderTotal($orderId, $total);
     			$arr=array('success'=>'1');
 				echo json_encode($arr);
     		}else{
@@ -426,7 +430,7 @@ class OrderFlowController extends Controller
     */
     public function actionFetchAreas(){
     	$userId = $this->getUserId();
-    	$areas = DistrictsAR::model()->getDistrictsByUserId($userId);
+    	$areas = DistrictsAR::model()->getUndeletedDistrictsByUserId($userId);
     	$result = array();
     	foreach ($areas as $area) {
     		array_push($result, array('id'=>$area->id, 'name'=>$area->name));

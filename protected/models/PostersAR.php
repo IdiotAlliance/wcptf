@@ -134,7 +134,8 @@ class PostersAR extends CActiveRecord
 		查找有效的派送人员
 	*/
 	public function getWorkPosters($seller_id){
-		$posters = PostersAR::model()->findAll('seller_id=:seller_id', array(':seller_id'=>$seller_id));
+		$posters = PostersAR::model()->findAll('seller_id=:seller_id and deleted=:deleted and daily_status=:dailyStatus', 
+			array(':seller_id'=>$seller_id, ':deleted'=>0, ':dailyStatus'=>0));
 		return $posters;
 	}
 

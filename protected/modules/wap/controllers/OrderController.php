@@ -110,14 +110,43 @@ class OrderController extends Controller
 			echo json_encode($arr);
 			exit;
 		}
-		if(strcmp($member->wapKey, $wapKey) != 0){
+		if(strcmp($member->wapkey, $wapKey) != 0){
 			$result = "wapKey is out";
 			$arr=array('success'=>'2', 'result'=>$result);
 			echo json_encode($arr);
 			exit;
 		}
+		$area = DistrictsAR::model()->findByPk($areaid);
+		// 校验地址
+		if(empty($area)){
+			$result = "areaid is out";
+			$arr=array('success'=>'2', 'result'=>$result);
+			echo json_encode($arr);
+			exit;
+		}
+		$seller = UsersAR::model()->findByPk($sellerid);
+		if(!empty($seller)){
+			if($seller->status!=0){
+				$result = "service is out";
+				$arr=array('success'=>'2', 'result'=>$result);
+				echo json_encode($arr);
+				exit;
+			}
+			$nowTime = date('H:i:s');
+			if($seller->stime<$nowTime && $seller->etime>$nowTime){
+
+			}else{
+				$result = "service is out";
+				$arr=array('success'=>'2', 'result'=>$result);
+				echo json_encode($arr);
+				exit;
+			}
+
+		}else{
+
+		}
 		//订单
-		$order = OrdersAR::model()->makeOrder($sellerid, $member->id, $areaid, $areadesc, $phone, $tips);
+		$order = OrdersAR::model()->makeOrder($sellerid, $member->id, $areaid, $areadesc, $phone, $tips, $name);
 		//子项订单
 		$len = count($products);
 		$total = 0;
@@ -136,7 +165,6 @@ class OrderController extends Controller
 			foreach ($items as $item) {
 				$total = $total + $item->price;
 			}
-			$seller = UsersAR::model()->findByPk($sellerid);
 			if(!empty($sellerid)){
 				//是否免外送费
 				$threshold = $seller->threshold;
@@ -155,10 +183,9 @@ class OrderController extends Controller
 						$total = $total+ $takeawayFee;
 					}else{
 						//订单失败
-						$result = "订单费用没有超过起送费";
+						$result = "order total is low";
 						OrderItemsAR::model()->deleteItems($order->id);
 						OrdersAR::model()->deleteOrder($order->id);
-						OrdersAR::model()->setOrderTotal($order->id, $total);
 						$arr=array('success'=>'2', 'result'=>$result);
 						echo json_encode($arr);
 						exit;
@@ -227,7 +254,7 @@ class OrderController extends Controller
 			$member = MembersAR::model()->getMemberByOpenId($openid);
 			$nextTime = null;
 			if(!empty($member)){
-				if(strcmp($member->wapKey, $wapKey) != 0){
+				if(strcmp($member->wapkey, $wapKey) != 0){
 					$result = "wapKey is out";
 					$arr=array('success'=>'2', 'result'=>$result);
 					echo json_encode($arr);
@@ -240,7 +267,7 @@ class OrderController extends Controller
 
 					}else{
 						$nextTime = $orders[$num]->ctime;
-						$orders = getNumOrders($orders, $num);
+						$orders = $this->getNumOrders($orders, $num);
 					}
 				}else{
 					$orders = OrdersAR::model()->getMemberPartOrders($member->id, $sellerid, $endtime);
@@ -248,11 +275,17 @@ class OrderController extends Controller
 
 					}else{
 						$nextTime = $orders[$num]->ctime;
-						$orders = getNumOrders($orders, $num);
+						$orders = $this->getNumOrders($orders, $num);
 					}
 				}
 				$orderViews = array();
 				foreach ($orders as $order) {
+					$newOrder = OrdersAR::model()->findByPk($order->id);
+					$poster = PostersAR::model()->findByPk($newOrder->poster_id);
+					$posterPhone = "";
+					if(!empty($poster)){
+						$posterPhone = $poster->phone;
+					}
 					array_push($orderViews, 
 						array("name"=>$order->member_id,
 							 "phone"=>$order->phone,
@@ -263,6 +296,8 @@ class OrderController extends Controller
 							 "address"=>$order->address,
 							 "ctime"=>$order->ctime,
 							 "status"=>$order->status,
+							 "poster_name"=>$order->poster_id,
+							 'poster_phone'=>$posterPhone,
 							));
 				}
 				$arr=array('success'=>'1', 'result'=>$orderViews, 'nexttime'=>$nextTime);
