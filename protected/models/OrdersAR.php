@@ -51,7 +51,7 @@ class OrdersAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, member_id, ctime, status, total, phone, poster_id, order_name', 'required'),
+			array('seller_id, member_id, status, phone, order_name', 'required'),
 			array('status, type, poster_id', 'numerical', 'integerOnly'=>true),
 			array('total', 'numerical'),
 			array('seller_id, member_id', 'length', 'max'=>11),
@@ -279,8 +279,18 @@ class OrdersAR extends CActiveRecord
 	public function cancelOrder($userId, $orderId){
 		$order = OrdersAR::model()->find('seller_id=:userId and id=:orderId', 
 			array(':userId'=>$userId, ':orderId'=>$orderId));
+		OrdersAR::model()->backInstore($order);
 		$order->status=3;
 		$order->save();
+	}
+
+	public function backInstore($order){
+		if(!empty($order)){
+			$items = OrderItemsAR::model()->getTrueItems($order->id);
+			foreach ($items as $item) {
+				ProductsAR::model()->buyProduct($item->product_id, $order->seller_id, -$item->number);
+			}
+		}
 	}
 
 	/*
@@ -374,7 +384,7 @@ class OrdersAR extends CActiveRecord
 	/**
 	 *	订订单
 	 */
-	public function makeOrder($sellerid, $memberid, $areaid, $areadesc, $phone, $tips) {
+	public function makeOrder($sellerid, $memberid, $areaid, $areadesc, $phone, $tips, $name) {
 		$order = new OrdersAR;
 		$order->seller_id = $sellerid;
 		$order->member_id = $memberid;
@@ -385,6 +395,7 @@ class OrdersAR extends CActiveRecord
 		$order->status = 0;
 		$order->total = 0;
 		$order->description = $tips;
+		$order->order_name = $name;
 		$order->ctime = $date = date('Y-m-d H:i:s');
 		$order->save();
 		$order->order_no = OrdersAR::model()->getOrderNo($order->seller_id, $order->id, $order->ctime);
@@ -414,7 +425,9 @@ class OrdersAR extends CActiveRecord
 	*/
 	public function deleteOrder($orderID) {
 		$order = OrdersAR::model()->find('id=:orderID', array(':orderID'=>$orderID));
-		$order->delete();
+		if(!empty($order)){
+			$order->delete();
+		}
 	}
 
 	public function changeOrderToView($order) {
@@ -449,7 +462,12 @@ class OrdersAR extends CActiveRecord
 		if($posterId==0){
 			$order->poster_id = "无";
 		}else{
-			$order->poster_id = PostersAR::model()->getPoster($posterId)->name;
+			$poster = PostersAR::model()->getPoster($posterId);
+			if(!empty($poster)){
+				$order->poster_id = $poster->name;
+			}else{
+				$order->poster_id = "无";
+			}
 		};
 		$order->seller_id = OrderItemsAR::model()->generateItems($order->id);
 		$address = DistrictsAR::model()->getAreaName($order->area_id);

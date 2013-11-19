@@ -11,7 +11,6 @@
 		</div>
 		<div class="order-line line-3">
     		<label class="order-phone">手机：<?php echo $order->phone; ?></label>
-    		<a href="#" class='order-setblack-menu'>设为黑名单</a>
 		</div>
 		<div class="order-line line-4">
 			<label class="order-desc">备注：<?php echo $order->description;?></label>
@@ -67,8 +66,9 @@
 		});
 		//添加订单子项
 		function addItem(){
+			alert("add");
 			var orderId = $('.order-detail-header .order-name').attr("id");
-			ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/orderAddItemForm';
+			ctUrl = '/weChat/index.php?r=takeAway/orderFlow/orderAddItemForm';
 			var productId = $('#OrderAddItemForm_productId').attr("value");
 			var num = $('#OrderAddItemForm_num').attr("value");
 			if(ctUrl != '') {
@@ -76,7 +76,7 @@
 			        url      : ctUrl,
 			        type     : 'POST',
 			        dataType : 'json',
-			        data 	 : {orderId:orderId, productId:posterId, num:num},
+			        data 	 : {orderId:orderId, productId:productId, num:num},
 			        cache    : false,
 			        success  : function(data)
 			        {
@@ -93,7 +93,7 @@
 		//保存订单头修改
 		function saveOrderHeaderModify(){
 			var orderId = $('.order-detail-header .order-name').attr("id");
-			ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/modifyOrderHeaderForm';
+			ctUrl = '/weChat/index.php?r=takeAway/orderFlow/modifyOrderHeaderForm';
 			var name = $('#ModifyOrderHeaderForm_username').attr("value");
 			var phone = $('#ModifyOrderHeaderForm_phone').attr("value");
 			var desc = $('#ModifyOrderHeaderForm_desc').attr("value");
@@ -142,7 +142,7 @@
 		//获取派送人员
 		function getPosters(){
 			var orderId = $('.order-detail-header .order-name').attr("id");
-			ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/getPosters';
+			ctUrl = '/weChat/index.php?r=takeAway/orderFlow/getPosters';
 			if(ctUrl != '') {
 			    $.ajax({
 			        url      : ctUrl,
@@ -168,7 +168,7 @@
 			if(posterId==null){
 				alert("没有选择派送人员!");
 			}else{
-				ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/setPosters';
+				ctUrl = '/weChat/index.php?r=takeAway/orderFlow/setPosters';
 				if(ctUrl != '') {
 				    $.ajax({
 				        url      : ctUrl,
@@ -196,7 +196,7 @@
 		}
 		function cancel(){
 			var orderId = $('.order-detail-header .order-name').attr("id");
-			ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/cancelOrder';
+			ctUrl = '/weChat/index.php?r=takeAway/orderFlow/cancelOrder';
 			if(currentTab=='#tab3'){
 				alert('该订单处于取消状态！');
 				return false;
@@ -244,10 +244,14 @@
 		}
 		function finish(){
 			var orderId = $('.order-detail-header .order-name').attr("id");
-			ctUrl = '/wcptf/index.php?r=takeAway/orderFlow/finishOrder';
+			ctUrl = '/weChat/index.php?r=takeAway/orderFlow/finishOrder';
 			if(currentTab=='#tab2'){
 				alert('该订单已经完成');
 				return false;
+			}
+			if(currentTab=='#tab3'){
+					alert('该订单已经取消无法完成！');
+					return false;
 			}
 			if(ctUrl != '') {
 			    $.ajax({
@@ -343,7 +347,32 @@
 		    )); ?>
 		</div>
 	<?php $this->endWidget(); ?>
-	
+	<!-- 添加订单子项 -->
+	<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'orderAddItemModal')); ?>
+	 
+		<div class="modal-header">
+		    <a class="close" data-dismiss="modal">&times;</a>
+		    <h4>添加订单子项</h4>
+		</div>
+
+		<div class="modal-body">
+			<?php $this->initOrderAddItemForm(); ?>
+		</div>
+
+		<div class="modal-footer">
+	        <?php $this->widget('bootstrap.widgets.TbButton', array(
+		        'buttonType'=>'submit', 
+		        'type'=>'primary', 
+		        'htmlOptions'=>array('data-dismiss'=>'modal'),
+		        'label'=>'确定')); ?>
+
+		    <?php $this->widget('bootstrap.widgets.TbButton', array(
+		        'label'=>'关闭',
+		        'url'=>'#',
+		        'htmlOptions'=>array('data-dismiss'=>'modal'),
+		    )); ?>
+		</div>
+	<?php $this->endWidget(); ?>
 	<div class="order-detail-body">
 		<?php foreach ($orderItems as $item):?>
 			<div class="order-item item-1">
@@ -356,49 +385,16 @@
 						$pos = strpos($item->product_id, ':');
 						echo substr($item->product_id, $pos);
 					 ?></label>
-					<a class="modify" data-toggle="modal" href="#event-editor">修改</a>
 				</div>
 				<div class="order-line line-2">
 					<label class="number">数量：<?php echo $item->number; ?></label>
 					<label class="price">价格：<?php echo $item->price; ?></label>
-				</div>
-				<div class="order-line line-4">
-					<div class="discount-icon">
-						<span class='glyphicon glyphicon-trash'></span>
-					</div>
-					<label class="total">总价：<?php echo $item->price*$item->number; ?></label>
 				</div>
 			</div>
 		<?php endforeach;?>
 		<div class="order-item add-item">
 			<label class="add-item-text">添加条目</label>
 		</div>
-		<!-- 添加订单子项 -->
-		<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'orderAddItemModal')); ?>
-		 
-			<div class="modal-header">
-			    <a class="close" data-dismiss="modal">&times;</a>
-			    <h4>添加订单子项</h4>
-			</div>
-
-			<div class="modal-body">
-				<?php $this->initOrderAddItemForm(); ?>
-			</div>
-
-			<div class="modal-footer">
-		        <?php $this->widget('bootstrap.widgets.TbButton', array(
-			        'buttonType'=>'submit', 
-			        'type'=>'primary', 
-			        'htmlOptions'=>array('data-dismiss'=>'modal'),
-			        'label'=>'确定')); ?>
-
-			    <?php $this->widget('bootstrap.widgets.TbButton', array(
-			        'label'=>'关闭',
-			        'url'=>'#',
-			        'htmlOptions'=>array('data-dismiss'=>'modal'),
-			    )); ?>
-			</div>
-		<?php $this->endWidget(); ?>
 
 	</div>
 </div>

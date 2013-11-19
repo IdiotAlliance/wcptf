@@ -269,6 +269,10 @@
 					alert('该订单已经完成');
 					return false;
 				}
+				if(currentTab=='#tab3'){
+					alert('该订单已经取消无法完成！');
+					return false;
+				}
 				if(ctUrl != '') {
 				    $.ajax({
 				        url      : ctUrl,
