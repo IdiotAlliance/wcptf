@@ -233,6 +233,8 @@
 		$('#store_name').val(data['shopinfo']['store_name']);
 		$('#store_type').html(data['shopinfo']['store_type'] == '0' ? '外卖' : '其他');
 		$('#phone_number').val(data['shopinfo']['phone']);
+		data['shopinfo']['stime'] = data['shopinfo']['stime'].substr(0, 5);
+		data['shopinfo']['etime'] = data['shopinfo']['etime'].substr(0, 5);
 		$('#stime').val(data['shopinfo']['stime']);
 		$('#etime').val(data['shopinfo']['etime']);
 		$('#store_address').val(data['shopinfo']['address']);
@@ -349,11 +351,17 @@
 	 **/
 	function setStime(){
 		var stime = $('#stime').val();
-		if(/(([0-1]*[0-9])|2[0-4]):[0-5]*[0-9](:[0-5]*[0-9])*/.test(stime)){
+		if(/^([0-1][0-9]|2[0-3]):[0-5]*[0-9]$/.test(stime)){
+			stime = formatTime(stime);
+			if(stime > data['shopinfo']['etime']){
+				alert('开始时间不能晚于结束时间！');
+				$('#stime').val(data['shopinfo']['stime']);
+				return;
+			}
 			data['shopinfo']['stime'] = stime;
-		}else{
-			$('#stime').val(data['shopinfo']['stime']);
 		}
+		$('#stime').val(data['shopinfo']['stime']);
+		
 	}
 
 	/**
@@ -361,11 +369,24 @@
 	 */
 	function setEtime(){
 		var etime = $('#etime').val();
-		if(/(([0-1]*[0-9])|2[0-4]):[0-5]*[0-9](:[0-5]*[0-9])*/.test(etime)){
+		if(/^([0-1][0-9]|2[0-3]):[0-5]*[0-9]$/.test(etime)){
+			etime = formatTime(etime);
+			if(etime < data['shopinfo']['stime']){
+				alert('结束时间不能早于开始时间！');
+				$('#etime').val(data['shopinfo']['etime']);
+				return;
+			}
 			data['shopinfo']['etime'] = etime;
-		}else{
-			$('#etime').val(data['shopinfo']['etime']);
 		}
+		$('#etime').val(data['shopinfo']['etime']);
+	}
+
+	function formatTime(timestr){
+		var splits = timestr.split(':');
+		var result = "";
+		result = (splits[0].length==1?'0':'') + splits[0] + ':' +
+				 (splits[1].length==1?'0':'') + splits[1];
+		return result;
 	}
 
 	function setStoreAddress(){
