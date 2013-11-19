@@ -4,25 +4,31 @@ class ProductManagerController extends Controller
 {
 	public $layout = '/layouts/main';
     public $defaultAction = 'allProducts';
-
+    
 	public function actionAllProducts($typeId)
 	{	
-		if($typeId==0){
-			$typeId = Yii::app()->session['typeCount'][0]['typeId'];
+		if($typeId){
+			$productType = ProductTypeAR::model()->findByPK($typeId);
+			if($productType && !$productType->deleted){
+				$productList = ProductsAR::model()->getCategoryProducts($typeId);
+				$productInfo = null;
+				$prodList = null;
+				if($productList != null && !empty($productList)){
+					$prodList = ProductsAR::model()->getAllProducts($productList);
+					$productInfo = $productList[0];
+				}
+				$this->render('allProducts',array(
+						'productType'=>$productType,
+						'prodList'=>$prodList,
+						'productInfo'=>$productInfo,
+				));
+			}else{
+				$this->redirect(Yii::app()->createUrl('errors/error/404'));
+			}
+		}else{
+			// TODO 转到默认分类
+			$this->redirect(Yii::app()->createUrl('errors/error/404'));
 		}
-		$productList = ProductsAR::model()->getCategoryProducts($typeId,Yii::app()->user->sellerId);
-		$prodList = ProductsAR::model()->getAllProducts($productList);
-		$productInfo = null;
-		if($productList != null){
-			$productInfo = $productList[0];
-		}
-		$productType = ProductTypeAR::model()->findByPK($typeId);
-
-		$this->render('allProducts',array(
-			'productType'=>$productType,
-			'prodList'=>$prodList,
-			'productInfo'=>$productInfo,
-		));	
 	}
 
 	public function actionNoProducts()
@@ -34,7 +40,7 @@ class ProductManagerController extends Controller
 	{
 		if(isset($_POST['id']) && isset($_POST['changeName']) && isset($_POST['changeDesc'])){
 			$type = ProductTypeAR::model()->getCategoryByName($_POST["changeName"]);
-			if($type!=null){
+			if($type!=null && $type->id != $_POST['id']){
 				throw new CHttpException(500,'商品类别名字重复！');
 			}else{
 				ProductTypeAR::model()->updateProductType($_POST['id'],$_POST['changeName'],$_POST['changeDesc']);
@@ -46,7 +52,7 @@ class ProductManagerController extends Controller
 	public function actionGetProduct()
 	{
 		if(isset($_POST['id'])){
-			$product = ProductsAR::model()->getProduct($_POST['id']);
+			$product = ProductsAR::model()->getDetailProductById($_POST['id']);
 			$prodArray = ProductsAR::model()->getProductArray($product);
 			echo json_encode($prodArray);
 		}
@@ -114,9 +120,31 @@ class ProductManagerController extends Controller
             	}
                 $transaction->commit();
             	$this->updateSession();
+            	$types = ProductTypeAR::model()->getUndeletedProductTypeBySellerId(Yii::app()->user->sellerId);
+            	if(!empty($types)){
+            		echo json_encode(array('empty'=>0, 'id'=>$types[0]->id));
+            	}else{
+            		echo json_encode(array('empty'=>1));
+            	}
             }catch(Exception $e){
                 $transaction->rollback();
             } 
+		}
+	}
+	
+	public function actionDelTypeNone()
+	{
+		if(isset($_POST['id'])){
+			$category = ProductTypeAR::model()->findByPK($_POST['id']);
+			$category->deleted = 1;
+			$category->save();
+			$this->updateSession();
+			$types = ProductTypeAR::model()->getUndeletedProductTypeBySellerId(Yii::app()->user->sellerId);
+			if(!empty($types)){
+				echo json_encode(array('empty'=>0, 'id'=>$types[0]->id));
+			}else{
+				echo json_encode(array('empty'=>1));
+			}
 		}
 	}
 
@@ -256,7 +284,6 @@ class ProductManagerController extends Controller
 
 	private function updateSession()
 	{
-
 		$typeCount = ProductTypeAR::model()->getProductsByType(Yii::app()->user->sellerId);
 		Yii::app()->session[UserIdentity::SESSION_TYPECOUNT] = $typeCount;
 	}

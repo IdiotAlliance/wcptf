@@ -41,7 +41,7 @@ class ProductTypeAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('type_name, type_description', 'required'),
+			array('type_name', 'required'),
 			array('seller_id', 'length', 'max'=>11),
 			array('type_name', 'length', 'max'=>128),
 			array('type_description', 'length', 'max'=>512),
@@ -150,7 +150,7 @@ class ProductTypeAR extends CActiveRecord
 	}
 	
 	public function getCategoryByName($name){
-		$type = ProductTypeAR::model()->find('type_name=:type_name and seller_id=:sellerId',
+		$type = ProductTypeAR::model()->find('type_name=:type_name and seller_id=:sellerId and deleted=0',
 			array(':type_name'=>$name,':sellerId'=>Yii::app()->user->sellerId));
 		return $type;
 	}

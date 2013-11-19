@@ -125,10 +125,9 @@
 		                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+json.success;
 		                },
 		                error:function(json){
-		                	alert("商品类别名重复！");
 		                	$("#categoryInput").css('display','none');
 		                },
-		            }) 	
+		            })
 				}
 				else{
 					$("#categoryInput").css('display','none');

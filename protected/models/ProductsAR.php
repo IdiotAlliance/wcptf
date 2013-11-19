@@ -60,7 +60,7 @@ class ProductsAR extends CActiveRecord
 			array('price', 'numerical'),
 			array('seller_id, type_id, cover', 'length', 'max'=>11),
 			array('pname', 'length', 'max'=>256),
-			array('description, etime, richtext', 'safe'),
+			array('pname, description, etime, richtext', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, seller_id, type_id, pname, price, credit, description, stime, etime, status, instore, daily_instore, insufficient, richtext, cover', 'safe', 'on'=>'search'),
@@ -307,17 +307,17 @@ class ProductsAR extends CActiveRecord
 		}
 	}
 	
-// 	public function getProduct($pname){
-// 		$product = ProductsAR::model()->find(
-// 			'seller_id=:seller_id AND pname=:pname',
-// 			array(
-// 				':seller_id'=>Yii::app()->user->sellerId,
-// 				':pname'=>$pname,
-// 				)
-// 			);
-// 	}
+	public function getProduct($pname){
+		$product = ProductsAR::model()->find(
+			'seller_id=:seller_id AND pname=:pname',
+			array(
+				':seller_id'=>Yii::app()->user->sellerId,
+				':pname'=>$pname,
+				)
+			);
+	}
 	
-	public function getProduct($id){
+	public function getDetailProductById($id){
 		$product = ProductsAR::model()->findByPK($id);
 		$stime = new DateTime($product->stime);
 		$product->stime = $stime->format('Y-m-d');
