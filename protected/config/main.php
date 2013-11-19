@@ -77,13 +77,14 @@ return array(
 				'wechat/wechatAccess/<id:\d+>/<token:\w+>'=>'wechat/wechatAccess',
 					
 				'wap/index/<sellerId:\d+>'=>'wap/wap/index',
+				'wap/history'=>'wap/wap/history',
 				'wap/getData'=>'wap/wap/getData',
 					
 				'errors/404'=>'errors/error/404',
 			),
 		),
 		'db'=>array(
-			'connectionString' => 'mysql:host=192.168.1.196;dbname=wcptf_dev',
+			'connectionString' => 'mysql:host=127.0.0.1;dbname=wcptf_dev',
 			'emulatePrepare' => true,
 			'username' => 'wcadmin',
 			'password' => '123',

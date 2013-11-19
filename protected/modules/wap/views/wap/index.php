@@ -855,7 +855,10 @@ li:hover{
 	//身份key校验
 	function verifyidentitykey(){
 
-		if(identitykey==null || identitykey== "" || identitykey == ''){
+		if(identitykey==null 
+					//|| identitykey== "" 
+					//|| identitykey == ''
+		){
 			if (localStorage) {
 				if(localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey')){
 					identitykey=localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey');
@@ -882,7 +885,10 @@ li:hover{
 			}
 		}
 
-		if(identitykey==null || identitykey== "" || identitykey == ''){
+		if(identitykey==null 
+				//|| identitykey== "" 
+					//|| identitykey == ''
+		){
 			return false;
 		}else{
 			return true;

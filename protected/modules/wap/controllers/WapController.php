@@ -27,7 +27,7 @@ class WapController extends Controller{
 			
 			$key = null;
 			// 验证token
-			if(MemberTokenAR::validate($sellerId, $openid, $token)){
+			if(MemberTokenAR::validateToken($sellerId, $openid, $token)){
 				$key = $member->wapkey;
 			}
 			
@@ -48,6 +48,24 @@ class WapController extends Controller{
 // 			);
 			
 			$this->render('index', array('key'=>$key));
+		}else{
+			$this->redirect(Yii::app()->createUrl('errors/error/404'));
+		}
+	}
+	
+	public function actionHistory(){
+		// 获取商家id
+		$url = Yii::app()->request->getUrl();
+		// 用正则表达式从url获取seller id
+		preg_match('/.*wap\/history\/(\d+)[?](.*)/i', $url, $matches);
+		$sellerId = null;
+		$openid = null;
+		$token  = null;
+		if(isset($matches[1]) &&  isset($_GET['openid']) && isset($_GET['token'])){
+			$sellerId = $matches[1];
+			$openid = $_GET['openid'];
+			$token = $_GET['token'];
+			$this->render('history', array('sellerid'=>$sellerId, 'openid'=>$openid, 'token'=>$token));
 		}else{
 			$this->redirect(Yii::app()->createUrl('errors/error/404'));
 		}

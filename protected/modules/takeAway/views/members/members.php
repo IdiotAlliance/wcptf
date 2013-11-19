@@ -311,6 +311,7 @@
 							  '</span>' +
 							  '<table class="table">' +
 							  	'<tbody><tr><td>编号</td><td>下单日期</th><td>状态</td><td>总价</td><td>详情</td></tr>';
+			chartData = new Array();
 			for(index in orders){
 				var order = orders[index];
 				var status = order['status']=='1'?'已完成':(order['status']=='3'?'已取消':'进行中');
@@ -325,8 +326,8 @@
 				chartData[index] = new Array();
 				chartData[index].push(Date.parse(order['ctime']));
 				chartData[index].push(parseFloat(order['price']));
-				chartData.reverse();
 			}
+			chartData.sort(function(a, b){return a[0] > b[0]?1:-1});
 			html += '</tbody></table>'
 			$('#tab2').html(
 				html

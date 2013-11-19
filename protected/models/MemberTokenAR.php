@@ -86,7 +86,7 @@ class MemberTokenAR extends CActiveRecord
 		));
 	}
 	
-	public function validate($sellerId, $opendId, $token){
+	public function validateToken($sellerId, $opendId, $token){
 		$result = MemberTokenAR::model()->find('seller_id=:sellerId and openid=:openid and token=:token',
 											   array(':sellerId'=>$sellerId, ':openid'=>$opendId, ':token'=>$token));
 		if($result){
