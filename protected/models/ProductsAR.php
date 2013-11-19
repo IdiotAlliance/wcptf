@@ -299,7 +299,7 @@ class ProductsAR extends CActiveRecord
 				 " products.etime as etime, products.description as description, products.pname as pname,".
 				 " products.price as price, products.daily_instore as daily_instore, pictures.pic_url as picurl".
 				 " FROM products LEFT JOIN pictures ON products.cover=pictures.id".
-				 " WHERE products.seller_id=:sellerId";
+				 " WHERE products.seller_id=:sellerId and products.deleted<>1";
 		if($stmt = $connection->createCommand($query)){
 			$stmt->bindParam(':sellerId', $sellerId);
 			$result = $stmt->queryAll();

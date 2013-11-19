@@ -778,7 +778,7 @@ li:hover{
 	var sellerid=-1;
 	var openid=null;
 	var firstsortid=-1;
-	var identitykey=null;
+	var identitykey="<?php echo ($key?$key:'');?>";
 	//错误常量
 	var WRONGURL='wrongurl';
 	var WRONGKEY='wrongkey';
@@ -855,7 +855,7 @@ li:hover{
 	//身份key校验
 	function verifyidentitykey(){
 
-		if(identitykey==null){
+		if(identitykey==null || identitykey== "" || identitykey == ''){
 			if (localStorage) {
 				if(localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey')){
 					identitykey=localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey');
@@ -882,8 +882,7 @@ li:hover{
 			}
 		}
 
-		alert(identitykey);
-		if(identitykey==null){
+		if(identitykey==null || identitykey== "" || identitykey == ''){
 			return false;
 		}else{
 			return true;

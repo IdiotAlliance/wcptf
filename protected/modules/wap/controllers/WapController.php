@@ -31,23 +31,23 @@ class WapController extends Controller{
 				$key = $member->wapkey;
 			}
 			
-			// 构建json数据
-			$shopinfodata = $this->getShopInfo($sellerId);
-			$recommenddata = $this->getRecommendData($sellerId);
-			$sortdata = $this->getSortData($sellerId);
-			$productdata = $this->getProductData($sellerId);
-			$deliveryareadata = $this->getDeliveryAreaData($sellerId);
+// 			// 构建json数据
+// 			$shopinfodata = $this->getShopInfo($sellerId);
+// 			$recommenddata = $this->getRecommendData($sellerId);
+// 			$sortdata = $this->getSortData($sellerId);
+// 			$productdata = $this->getProductData($sellerId);
+// 			$deliveryareadata = $this->getDeliveryAreaData($sellerId);
 			
-			$json_data = array(
-				'shopinfodata'=>$shopinfodata,
-				'recommenddata'=>$recommenddata,
-				'sortdata'=>$sortdata,
-				'deliveryareadata'=>$deliveryareadata,
-				'productdata'=>$productdata,
-				'key'=>$key,
-			);
+// 			$json_data = array(
+// 				'shopinfodata'=>$shopinfodata,
+// 				'recommenddata'=>$recommenddata,
+// 				'sortdata'=>$sortdata,
+// 				'deliveryareadata'=>$deliveryareadata,
+// 				'productdata'=>$productdata,
+// 				'key'=>$key,
+// 			);
 			
-			$this->render('index', array('json_data'=>json_encode($json_data)));
+			$this->render('index', array('key'=>$key));
 		}else{
 			$this->redirect(Yii::app()->createUrl('errors/error/404'));
 		}
@@ -130,7 +130,7 @@ class WapController extends Controller{
 			$etime = $etime->format('Y-m-d');
 			$now   = date('Y-m-d');
 			if($now < $stime || $now > $etime || $product['status']!= 1)
-				break;
+				continue;
 			
 			$productdata[$i]->productid = $product['id'];
 			$productdata[$i]->sortid    = $product['type_id'];
