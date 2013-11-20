@@ -216,11 +216,11 @@ class WechatAccessController extends Controller {
 						}
 						$hots_url = $order_url.'&sortid='.$hot->product_id;
 					}
-					$personal_url = "";
+					$personal_url = Yii::app()->createAbsoluteUrl('wap/wap/history/'.$sellerId.'?openid='.$openid.'#mp.weixin.qq.com');
 					$propose_url = "";
 					$about_url = "";
 					$resultStr = sprintf( $textTpl, $msg->FromUserName, $msg->ToUserName, $time, 
-										  'http://www.v7fen.com'.$user->logo, 
+										  'http://www.v7fen.com/weChat/'.$user->logo, 
 										  $order_url, $order_url, $hots_url, $personal_url, 
 										  $propose_url, $about_url);
 					echo $resultStr;

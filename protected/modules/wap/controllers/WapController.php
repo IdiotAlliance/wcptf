@@ -61,11 +61,10 @@ class WapController extends Controller{
 		$sellerId = null;
 		$openid = null;
 		$token  = null;
-		if(isset($matches[1]) &&  isset($_GET['openid']) && isset($_GET['token'])){
+		if(isset($matches[1]) &&  isset($_GET['openid'])){
 			$sellerId = $matches[1];
 			$openid = $_GET['openid'];
-			$token = $_GET['token'];
-			$this->render('history', array('sellerid'=>$sellerId, 'openid'=>$openid, 'token'=>$token));
+			$this->render('history', array('sellerid'=>$sellerId, 'openid'=>$openid));
 		}else{
 			$this->redirect(Yii::app()->createUrl('errors/error/404'));
 		}

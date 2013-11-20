@@ -213,7 +213,7 @@
 			success: function(result) {
 				var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+result.pic_path;
 				$('#logoimg').attr('src', img);
-				data['shopinfo']['logo'] = img;
+				data['shopinfo']['logo'] = result.pic_path;
 			},
 			error:function(xhr){
 				alert("上传失败");
@@ -238,7 +238,7 @@
 		$('#stime').val(data['shopinfo']['stime']);
 		$('#etime').val(data['shopinfo']['etime']);
 		$('#store_address').val(data['shopinfo']['address']);
-		$('#logoimg').attr('src', data['shopinfo']['logo']);
+		$('#logoimg').attr('src', "<?php echo Yii::app()->baseUrl?>/" + data['shopinfo']['logo']);
 		$('#start_price').val(data['shopinfo']['start_price']);
 		$('#takeaway_fee').val(data['shopinfo']['takeaway_fee']);
 		if(data['shopinfo']['takeaway_fee'] > "0" && data['shopinfo']['threshold'] == "1")

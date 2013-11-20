@@ -130,7 +130,7 @@
 				$("#myupload_" + id).ajaxSubmit({
 					dataType:  'json',
 					success: function(data) {
-						var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+data.pic_path;
+						var img = data.pic_path;
 						$('#pic_url_'+id).html(img);
 					},
 					error:function(xhr){

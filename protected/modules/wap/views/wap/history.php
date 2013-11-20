@@ -1,90 +1,106 @@
 <?php ?>
 <style>
 body {
-	background-color: #f7f3f6;  font-size: 16px;
+	background-color: #f7f3f6;
+	font-size: 16px;
 	font-weight: normal;
 	font-family: "Arial", Helvetica, sans-serif;
-	padding:  0;
+	padding: 0;
 	margin: 0;
 }
-img{
-	padding:0;
-	border:0;
+
+img {
+	padding: 0;
+	border: 0;
 }
-a:link; a:visited; a:hover; a:active{
+
+a:link ; a:visited ; a:hover ; a:active {
 	text-decoration: none;
 	color: inherit;
 	font-weight: normal;
 }
-*{
+
+* {
 	-webkit-touch-callout: none;
 	-webkit-text-size-adjust: none;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	/*-webkit-user-select: none;
 		user-select: none;*/
 }
-a:focus,input:focus,textarea:focus{
-	-webkit-tap-highlight-color:rgba(0,0,0,0);
+
+a:focus,input:focus,textarea:focus {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
-p{
+
+p {
 	font-size: 13px;
 }
-.content-frame{
-	margin:0 0.5%;
+
+.content-frame {
+	margin: 0 0.5%;
 	width: 99%;
 	position: relative;
 }
-.tips{
+
+.tips {
 	background: #ecdaea;
 	margin: 1% 1%;
 	margin-top: 10px;
-	-webkit-box-shadow: 0 0px 3px rgba(0,0,0,0.2);
-	box-shadow: 0 0px 3px rgba(0,0,0,0.2);
+	-webkit-box-shadow: 0 0px 3px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 0px 3px rgba(0, 0, 0, 0.2);
 	border: none;
 }
-.tips header{
+
+.tips header {
 	padding: 8px 10px;
 }
-.tips h4, .tips-content p{
+
+.tips h4,.tips-content p {
 	color: #95067f;
 	margin: 0;
 }
-.tips-content{
+
+.tips-content {
 	padding: 8px 10px;
 	background: #f3eaf2;
-	-webkit-box-shadow: 0 0px 1px rgba(0,0,0,0.2);
-	box-shadow: 0 0px 1px rgba(0,0,0,0.2);
+	-webkit-box-shadow: 0 0px 1px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 0px 1px rgba(0, 0, 0, 0.2);
 }
-.btn-icon-text{
+
+.btn-icon-text {
 	padding: 0;
 	display: block;
 	margin: 0;
-	text-align:center;
+	text-align: center;
 	position: relative;
-	border:0;
+	border: 0;
 	background: #ecdaea;
 }
-.btn-icon-text:active{
+
+.btn-icon-text:active {
 	background: #fbe6f8;
 	box-shadow: none;
 }
-.btn-icon-text:disabled{
+
+.btn-icon-text:disabled {
 	background: #fbe6f8;
 	box-shadow: none;
 }
-.btn-icon-text>.text-in-btn{
+
+.btn-icon-text>.text-in-btn {
 	font-size: 16px;
 	margin-left: 10px;
 	margin-right: 8px;
 	padding-top: 1px;
-	margin-top:auto;
-	margin-bottom:auto;
+	margin-top: auto;
+	margin-bottom: auto;
 	vertical-align: text-top;
 	display: inline-block;
 	font-weight: 700;
 	color: #95067f;
 }
-.btn-icon-text>.img-in-btn{
+
+.btn-icon-text>.img-in-btn {
 	margin-right: 10px;
 	height: 20px;
 	width: 20px;
@@ -92,126 +108,133 @@ p{
 	display: inline-block;
 }
 
-#loadmore-btn,#reload-btn{
-width: 98%;
-margin: 1%;
-display: block;
-height: 50px;
-margin-top: 10px;
-border:none;
-box-shadow: -0.5px 0 1px rgba(0,0,0,0.2);
-}
-#loadmore-btn:active,#reload-btn:active{
-box-shadow: none;
-}
-#loadmore-btn:disabled,#reload-btn:disabled{
-box-shadow: none;
+#loadmore-btn,#reload-btn {
+	width: 98%;
+	margin: 1%;
+	display: block;
+	height: 50px;
+	margin-top: 10px;
+	border: none;
+	box-shadow: -0.5px 0 1px rgba(0, 0, 0, 0.2);
 }
 
-.toast{
-	background:rgba(0,0,0,0.5);
+#loadmore-btn:active,#reload-btn:active {
+	box-shadow: none;
+}
+
+#loadmore-btn:disabled,#reload-btn:disabled {
+	box-shadow: none;
+}
+
+.toast {
+	background: rgba(0, 0, 0, 0.5);
 	width: auto;
 	padding: 0 5px;
-	left:-150px;
-	min-width:100px;
-	min-height:40px;
-	color:#fff;
-	line-height:40px;
-	text-align:center;
-	position:fixed;
+	left: -150px;
+	min-width: 100px;
+	min-height: 40px;
+	color: #fff;
+	line-height: 40px;
+	text-align: center;
+	position: fixed;
 	float: center;
-	top:30px;
-	z-index:999999;
-	font-weight:bold;
+	top: 30px;
+	z-index: 999999;
+	font-weight: bold;
 }
 
-
-#loading{
-top:0;
-color: #95067f;
-background-color: rgba(247,243,246,0.75);
-}
-#loading>#loadingtips{
-position: absolute;
-padding: 0;
-margin: 0;
-font-size: 16px;
-padding-top: 75px;
-top: 40%;
+#loading {
+	top: 0;
+	color: #95067f;
+	background-color: rgba(247, 243, 246, 0.75);
 }
 
-#error{
-z-index: 1000;
-background-color: #f7f3f6;
+#loading>#loadingtips {
+	position: absolute;
+	padding: 0;
+	margin: 0;
+	font-size: 16px;
+	padding-top: 75px;
+	top: 40%;
 }
 
-#tips-orders{
-position: relative;
-width: 98%;
-margin: 1%;
-margin-top: 10px;
-top: 0;
+#error {
+	z-index: 1000;
+	background-color: #f7f3f6;
 }
 
-.up-frame{
+#tips-orders {
+	position: relative;
+	width: 98%;
+	margin: 1%;
+	margin-top: 10px;
+	top: 0;
+}
+
+.up-frame {
 	position: fixed;
 	height: 100%;
 	width: 100%;
-	left:0;
+	left: 0;
 	right: 0;
-	top:0;
+	top: 0;
 	bottom: 0;
 	z-index: 200;
-
 }
 
 .bar {
 	width: 50px;
 	height: 50px;
-	top:50%;
+	top: 50%;
 	-webkit-border-radius: 7.5em;
 	-moz-border-radius: 7.5em;
 	border-radius: 7.5em;
 	margin-right: 2px;
 	position: absolute;
-	-webkit-box-shadow: 0 3px 16px rgba(149,6,127,0.35);
-	box-shadow: 0 3px 16px rgba(149,6,127,0.35);
+	-webkit-box-shadow: 0 3px 16px rgba(149, 6, 127, 0.35);
+	box-shadow: 0 3px 16px rgba(149, 6, 127, 0.35);
 }
+
 #loadingshapedark {
-background: #f3eaf2;
-top: 40%;
-z-index: 1;
+	background: #f3eaf2;
+	top: 40%;
+	z-index: 1;
 }
+
 #loadingshapelight {
-background: #95067f;
-top: 40%;
-z-index: 0;
+	background: #95067f;
+	top: 40%;
+	z-index: 0;
 }
-
 </style>
-<div  id="order" class="content-frame" style="display:none;">
-<section class="tips" id='tips-orders'><header><h4 id="tips-title-orders">历史订单</h4></header></section>
-<section class="single-btnarea" id="newstart-btnarea">
-</section>
+<div id="order" class="content-frame" style="display: none;">
+	<section class="tips" id='tips-orders'>
+		<header>
+			<h4 id="tips-title-orders">历史订单</h4>
+		</header>
+	</section>
+	<section class="single-btnarea" id="newstart-btnarea"></section>
 </div>
-<div  id="error" class="up-frame" style="display:none;">
-<section class="tips" id='tips-error'>
-<header><h4 id="tips-title-error"> >_&lt;~ 出错了</h4></header>
-<div class="tips-content"><p id="tips-errordesc-error"></p>
-</div>
-</section>
-<button class="btn-icon-text" id="reload-btn">
-<p class="text-in-btn">重试</p>
-</button>
+<div id="error" class="up-frame" style="display: none;">
+	<section class="tips" id='tips-error'>
+		<header>
+			<h4 id="tips-title-error">>_&lt;~ 出错了</h4>
+		</header>
+		<div class="tips-content">
+			<p id="tips-errordesc-error"></p>
+		</div>
+	</section>
+	<button class="btn-icon-text" id="reload-btn">
+		<p class="text-in-btn">重试</p>
+	</button>
 </div>
 
-<div id="loading" class="up-frame" style="display:none;">
-<div id="loadingshapedark" class="bar"></div>
-<div id="loadingshapelight" class="bar"></div>
-<p id="loadingtips"></p>
+<div id="loading" class="up-frame" style="display: none;">
+	<div id="loadingshapedark" class="bar"></div>
+	<div id="loadingshapelight" class="bar"></div>
+	<p id="loadingtips"></p>
 </div>
-<footer class="footer-order" id="mainfooter" style="display:none;">
-</footer>
+<footer class="footer-order" id="mainfooter" style="display: none;"> </footer>
 <div class="toast" id="mytoast" style="display: none;"></div>
 </body>
 
@@ -275,21 +298,18 @@ window.onload = function(){
 	//基础id获取及url校验
 	function baseidinit(){
 		var baseidarray=window.location.href.substr(window.location.href.indexOf('index/')+6).split('?');
-		if(baseidarray.length!=2||baseidarray[0]==null){
+			if(baseidarray.length!=2||baseidarray[0]==''){
 			return false;
 		}else{
-			sellerid=baseidarray[0];
-			otheridarray=baseidarray[1].split('&');
-			if(otheridarray.length!=2){
+			var otheridarray=baseidarray[1].split('#');
+			var idtemp=otheridarray[0].split('=');
+			if(idtemp[0]=='openid'){
+				openid=idtemp[1];
+			}
+			if(openid==null||openid==''){
 				return false;
-			}else {
-				var openidarray=otheridarray[0].split('=');
-				if(openidarray[0]!='openid'){
-					return false;
-				}else{
-					openid=openidarray[1];
-					return true;
-				}
+			}else{
+				return true;
 			}
 		}
 	}
@@ -297,30 +317,30 @@ window.onload = function(){
 	//身份key校验
 	function verifyidentitykey(){
 
-		if(identitykey==null){
+		if(identitykey==null||identitykey==''){
 			if (localStorage) {
 				if(localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey')){
 					identitykey=localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey');
 				}
-			}else{
-				var cookiestring=document.cookie.split(';');
-				for(var i=0;i<cookiestring.length;i++){
+				}else{
+					var cookiestring=document.cookie.split(';');
+					for(var i=0;i<cookiestring.length;i++){
 					var cookieitem=cookiestring[i].split('&=');
 					if(cookieitem[0]==sellerid+'-'+openid+'-'+'identitykey'){
 						identitykey=cookieitem[1];
 					}
-				}
+				} 
 			}
 		}else{
 			if (localStorage) {
 				var identitykeystring=identitykey;
-				localStorage.setItem(sellerid+'-'+openid+'-'+'identitykey',identitykeystring);
+					localStorage.setItem(sellerid+'-'+openid+'-'+'identitykey',identitykeystring);
 			}else{
 				var cookiestring=sellerid+'-'+openid+'-'+'identitykey'+'&='+identitykey;
-				var date=new Date();
-				date.setTime(date.getTime()+30*24*3600*1000);
-				cookiestring=cookiestring+'; expires='+date.toGMTString();
-				document.cookie=cookiestring;
+				var date=new Date(); 
+				date.setTime(date.getTime()+30*24*3600*1000); 
+				cookiestring=cookiestring+'; expires='+date.toGMTString()+';path=/'; 
+				document.cookie=cookiestring; 
 			}
 		}
 
@@ -330,6 +350,7 @@ window.onload = function(){
 			return true;
 		}
 	}
+	
 
 	//等待script全部载入
 	function readytogo(ready){
