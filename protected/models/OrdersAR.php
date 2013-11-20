@@ -318,8 +318,8 @@ class OrdersAR extends CActiveRecord
 	*/
 	public function getMemberPartOrders($memberId, $sellerId, $ctime){
 		$connection = OrdersAR::model()->getDbConnection();
-		$query = "select * from orders where seller_id=:sellerId and member_id:=memberId and".
-		"(ctime<:ctime or ctime=:ctime) order by ctime DESC";
+		$query = "select * from orders where seller_id=:sellerId and member_id=:memberId and ".
+		" (ctime=:ctime or ctime<:ctime) order by ctime DESC";
 		if ($stmt = $connection->createCommand($query)) {
 		    $stmt->bindParam(':sellerId', $sellerId);
 		    $stmt->bindParam(':memberId', $memberId);

@@ -214,7 +214,7 @@ class OrderController extends Controller
 				$orderViews = array();
 				foreach ($orders as $order) {
 					array_push($orderViews, 
-						array("name"=>$order->member_id,
+						array("name"=>$order->order_name,
 							 "phone"=>$order->phone,
 							 "order_no"=>$order->order_no,
 							 "order_id"=>$order->id,
@@ -287,7 +287,7 @@ class OrderController extends Controller
 						$posterPhone = $poster->phone;
 					}
 					array_push($orderViews, 
-						array("name"=>$order->member_id,
+						array("name"=>$order->order_name,
 							 "phone"=>$order->phone,
 							 "order_no"=>$order->order_no,
 							 "order_id"=>$order->id,
