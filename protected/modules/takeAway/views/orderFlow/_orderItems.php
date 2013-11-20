@@ -108,8 +108,16 @@
 			        success  : function(data)
 			        {
 
-			        	alert('修改成功！');
-			        	updateTabContent(currentTab);
+			        	if(data.success==1){
+			        		alert('修改成功！');
+			        		updateTabContent(currentTab);
+			        		return false;
+			        	}else if(data.success==0){
+			        		alert('修改失败！');
+			        	}else{
+			        		alert('含有非法字符');
+			        	}
+			        	
 			        },
 			        error:function(){
 			            alert('修改失败！');
@@ -180,6 +188,16 @@
 				        {
 				        	if(data.success==1){
 				        		updateTabContent(currentTab);
+				        		// 预刷新头
+				        		var h1 = getTabHeaders('#tab1');
+				        		var h2 = getTabHeaders('#tab2');
+				        		var h3 = getTabHeaders('#tab3');
+				        		if(currentTab == '#tab1'){
+				        			h2 = parseInt(h2)+1;
+				        			h1 = parseInt(h1)-1;
+				        			updateTabHeaders('#tab1', h1);
+				        			updateTabHeaders('#tab2', h2);
+				        		}
 				        		alert("订单派送成功！");
 				        	}else{
 				        		alert("订单派送失败！");

@@ -204,41 +204,41 @@ class OrderController extends Controller
 	/*
 		获取会员订单
 	*/
-	public function actionGetOrders(){
-		if(isset($_POST['openid']) && isset($_POST['sellerid'])){
-			$openid = $_POST['openid'];
-			$sellerid = $_POST['sellerid'];
-			$member = MembersAR::model()->getMemberByOpenId($openid);
-			if(!empty($member)){
-				$orders = OrdersAR::model()->getMemberOrders($member->id, $sellerid);
-				$orderViews = array();
-				foreach ($orders as $order) {
-					array_push($orderViews, 
-						array("name"=>$order->order_name,
-							 "phone"=>$order->phone,
-							 "order_no"=>$order->order_no,
-							 "order_id"=>$order->id,
-							 "total"=>$order->total,
-							 "order_items"=>$order->seller_id,
-							 "address"=>$order->address,
-							 "ctime"=>$order->ctime,
-							 "status"=>$order->status,
-							));
-				}
-				$arr=array('success'=>'1', 'result'=>$orderViews);
-				echo json_encode($arr);
-			}else{
-				$result = "openid is no exist";
-				$arr=array('success'=>'2', 'result'=>$result);
-				echo json_encode($arr);
-			}
-		}else{
-			$result = "openid is null";
-			$arr=array('success'=>'0', 'result'=>$result);
-			echo json_encode($arr);
-		}
+	// public function actionGetOrders(){
+	// 	if(isset($_POST['openid']) && isset($_POST['sellerid'])){
+	// 		$openid = $_POST['openid'];
+	// 		$sellerid = $_POST['sellerid'];
+	// 		$member = MembersAR::model()->getMemberByOpenId($openid);
+	// 		if(!empty($member)){
+	// 			$orders = OrdersAR::model()->getMemberOrders($member->id, $sellerid);
+	// 			$orderViews = array();
+	// 			foreach ($orders as $order) {
+	// 				array_push($orderViews, 
+	// 					array("name"=>$order->order_name,
+	// 						 "phone"=>$order->phone,
+	// 						 "order_no"=>$order->order_no,
+	// 						 "order_id"=>$order->id,
+	// 						 "total"=>$order->total,
+	// 						 "order_items"=>$order->seller_id,
+	// 						 "address"=>$order->address,
+	// 						 "ctime"=>$order->ctime,
+	// 						 "status"=>$order->status,
+	// 						));
+	// 			}
+	// 			$arr=array('success'=>'1', 'result'=>$orderViews);
+	// 			echo json_encode($arr);
+	// 		}else{
+	// 			$result = "openid is no exist";
+	// 			$arr=array('success'=>'2', 'result'=>$result);
+	// 			echo json_encode($arr);
+	// 		}
+	// 	}else{
+	// 		$result = "openid is null";
+	// 		$arr=array('success'=>'0', 'result'=>$result);
+	// 		echo json_encode($arr);
+	// 	}
 
-	}
+	// }
 
 	/*
 		获取会员时间和数量订单
@@ -282,6 +282,7 @@ class OrderController extends Controller
 				foreach ($orders as $order) {
 					$newOrder = OrdersAR::model()->findByPk($order->id);
 					$poster = PostersAR::model()->findByPk($newOrder->poster_id);
+					$user = UsersAR::model()->findByPk($newOrder->seller_id);
 					$posterPhone = "";
 					if(!empty($poster)){
 						$posterPhone = $poster->phone;
@@ -298,6 +299,8 @@ class OrderController extends Controller
 							 "status"=>$order->status,
 							 "poster_name"=>$order->poster_id,
 							 'poster_phone'=>$posterPhone,
+							 'tips'=>$order->description,
+							 'seller_phone'=>$user->phone,
 							));
 				}
 				$arr=array('success'=>'1', 'result'=>$orderViews, 'nexttime'=>$nextTime);
