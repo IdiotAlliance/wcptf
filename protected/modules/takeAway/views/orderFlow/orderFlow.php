@@ -37,6 +37,7 @@
 
 				    var ctUrl = ''; 
 				    currentTab = tabId;
+				    var areaId = $('.order-footer .order-area-container').attr("id");
 				   // alert(currentTab);
 				    var day = $('.order-footer .order-date-container').attr("id");
 				    if(tabId == '#tab1') {
@@ -52,7 +53,7 @@
 				            url      : ctUrl,
 				            type     : 'POST',
 				            dataType : 'html',
-				            data	 :{day:day},
+				            data	 :{day:day, areaId:areaId},
 				            cache    : false,
 				            success  : function(html)
 				            {
@@ -227,7 +228,6 @@
 					return false;
 				}
 				var posterId = $("input[name='ChoosePosterForm[poster]']:checked").val();
-				alert(posterId);
 				if(posterId==null){
 					alert("没有选择派送人员!");
 				}else{
@@ -243,6 +243,16 @@
 					        {
 					        	if(data.success==1){
 					        		updateTabContent(currentTab);
+					        		// 预刷新头
+					        		var h1 = getTabHeaders('#tab1');
+					        		var h2 = getTabHeaders('#tab2');
+					        		var h3 = getTabHeaders('#tab3');
+					        		if(currentTab == '#tab1'){
+					        			h2 = parseInt(h2)+orders.length;
+					        			h1 = parseInt(h1)-orders.length;
+					        			updateTabHeaders('#tab1', h1);
+					        			updateTabHeaders('#tab2', h2);
+					        		}
 					        		alert("订单派送成功！");
 					        	}else{
 					        		alert("订单派送失败！");
