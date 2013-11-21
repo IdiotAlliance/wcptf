@@ -99,7 +99,33 @@ class OrderController extends Controller
 			echo json_encode($arr);
 			exit;
 		}
-
+		//sql && xss check
+		require "HtmLawed.php";
+		if($this->inject_check($name)){
+			$arr=array('success'=>'3');
+			echo json_encode($arr);
+			exit;
+		}
+		if($this->inject_check($tips)){
+			$arr=array('success'=>'3');
+			echo json_encode($arr);
+			exit;
+		}
+		if($this->inject_check($areadesc)){
+			$arr=array('success'=>'3');
+			echo json_encode($arr);
+			exit;
+		}
+		if($this->inject_check($wapKey)){
+			$arr=array('success'=>'3');
+			echo json_encode($arr);
+			exit;
+		}
+		$config = $config = array('safe'=>1, "elements"=>"-*");
+		$areadesc = htmLawed($areadesc, $config);
+		$name = htmLawed($name, $config);
+		$wapKey = htmLawed($wapKey, $config);
+		$tips = htmLawed($tips, $config);
 		//checkUser
 		$member = MembersAR::model()->getMemberByOpenId($openid);
 		// 用户不存在
@@ -300,10 +326,9 @@ class OrderController extends Controller
 							 "poster_name"=>$order->poster_id,
 							 'poster_phone'=>$posterPhone,
 							 'tips'=>$order->description,
-							 'seller_phone'=>$user->phone,
 							));
 				}
-				$arr=array('success'=>'1', 'result'=>$orderViews, 'nexttime'=>$nextTime);
+				$arr=array('success'=>'1', 'result'=>$orderViews, 'nexttime'=>$nextTime, 'sellerphone'=>$user->phone,);
 				echo json_encode($arr);
 			}else{
 				$result = "openid is no exist";
@@ -324,6 +349,10 @@ class OrderController extends Controller
 			array_push($newOrders, $orders[$i]);
 		}
 		return $newOrders;
+	}
+
+	function inject_check($sql_str) { 
+    	return preg_match('%select|insert|and|or|update|delete|\'|\/\*|\*|\.\.\/|\.\/|union|into|load_file|outfile%i', $sql_str);
 	}
 
 	public function actionTest(){

@@ -66,7 +66,6 @@
 		});
 		//添加订单子项
 		function addItem(){
-			alert("add");
 			var orderId = $('.order-detail-header .order-name').attr("id");
 			ctUrl = '/weChat/index.php?r=takeAway/orderFlow/orderAddItemForm';
 			var productId = $('#OrderAddItemForm_productId').attr("value");
@@ -397,7 +396,7 @@
 					?></label>
 					<label class="type">类型：<?php 
 						$pos = strpos($item->product_id, ':');
-						echo substr($item->product_id, $pos);
+						echo substr($item->product_id, $pos+1);
 					 ?></label>
 				</div>
 				<div class="order-line line-2">

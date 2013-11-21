@@ -400,14 +400,15 @@ class OrderFlowController extends Controller
 				echo json_encode($arr);
 				exit;
     		}
-    		$htmlOut = htmLawed($desc);
-    		if(strlen($htmlOut)==0){
+    		$config = array('safe'=>1, "elements"=>"-*");
+    		$desc = htmLawed($desc, $config);
+    		if(strlen($desc)==0){
     			$arr=array('success'=>'2');
 				echo json_encode($arr);
 				exit;
     		}
-    		$htmlOut = htmLawed($name);
-    		if(strlen($htmlOut)==0){
+    		$name = htmLawed($name, $config);
+    		if(strlen($name)==0){
     			$arr=array('success'=>'2');
 				echo json_encode($arr);
 				exit;

@@ -176,9 +176,9 @@ class OrderItemsAR extends CActiveRecord
 	public function createItem($sellerId, $orderId, $productId, $num){
 		$product = ProductsAR::model()->getProductByIdSeller($productId, $sellerId);
 		if(!empty($product)){
-			if($product->instore>=$num){
+			if($product->daily_instore>=$num){
 				$product = ProductsAR::model()->buyProduct($productId, $sellerId, $num);
-				if($product->instore>=0){
+				if($product->daily_instore>=0){
 					//成功购买
 					$item = new OrderItemsAR;
 					$item->order_id = $orderId;

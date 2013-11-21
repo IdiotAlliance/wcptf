@@ -162,7 +162,7 @@ class ProductsAR extends CActiveRecord
 	public function buyProduct($product_id, $sellerId, $num){
 		$product = ProductsAR::model()->find('id=:product_id and seller_id=:sellerId', 
 			array(':product_id'=>$product_id, ':sellerId'=>$sellerId));
-		$product->instore = $product->instore - $num;
+		$product->daily_instore = $product->daily_instore - $num;
 		$product->save();
 		return $product;
 	}
