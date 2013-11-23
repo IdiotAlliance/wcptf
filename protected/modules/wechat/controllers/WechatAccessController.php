@@ -181,7 +181,7 @@ class WechatAccessController extends Controller {
 										<Url><![CDATA[%s]]></Url>
 									</item>
 									<item>
-										<Title><![CDATA[热卖产品]]></Title>
+										<Title><![CDATA[聚划算]]></Title>
 										<PicUrl><![CDATA[]]></PicUrl>
 										<Url><![CDATA[%s]]></Url>
 									</item>
