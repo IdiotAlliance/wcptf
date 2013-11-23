@@ -19,6 +19,26 @@
             height: 100%;
 
 		}
+        .order-header .order-unread-num {
+            position: absolute;
+            top:4px;
+            left: 75px;
+            z-index: 1;
+            height: 2px;
+            width: 2px;
+        }
+        /*印章效果*/
+        .order-header .seal{
+          display: inline-block;
+          padding: 2px 2px 2px;
+          background-color: #ee0000;
+          color: #d45d51;
+          border-radius: 4px;
+          -moz-border-radius: 4px;
+          -webkit-border-radius: 4px;
+          font-size:12px;
+          vertical-align: middle;
+        }
         #order-header-content {
            height: 100%; 
         }
@@ -355,6 +375,14 @@
     		background-color: #f7f7f7;
             border-bottom: 1px solid #c8c8c8;
     	}
+
+        /**未读订单内容**/
+        .order-body ul>li .order-item ul>li.order-content.unread{
+            width: 94%;
+            height: 100%;
+            background-color: #ff0000;
+            border-bottom: 1px solid #c8c8c8;
+        }
     	.order-body ul>li .order-item ul>li.order-content .item-line {
     		line-height: 28px;
     		margin-left: 15px;

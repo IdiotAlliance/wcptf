@@ -1,6 +1,6 @@
 <?php ?>
 <style>
-body{background-color:#f7f3f6;font-size:16px;font-weight:normal;font-family:"Arial",Helvetica,sans-serif;padding:0;margin:0}img{padding:0;border:0}a:link;a:visited;a:hover;a:active{text-decoration:none;color:inherit;font-weight:normal}*{-webkit-touch-callout:none;-webkit-text-size-adjust:none;-webkit-tap-highlight-color:rgba(0,0,0,0)}a:focus,input:focus,textarea:focus{-webkit-tap-highlight-color:rgba(0,0,0,0)}p{font-size:13px}.content-frame{margin:0 0.5%;width:99%;margin-left:3px;position:relative}.tips{background:#ecdaea;margin:1% 1%;margin-top:10px;-webkit-box-shadow:0 0px 3px rgba(0,0,0,0.2);box-shadow:0 0px 3px rgba(0,0,0,0.2);border:none}#tips-title{height:100%;min-height:55px}#tips-error h4{margin:0;padding:0;margin-left:10px;padding:8px 0;color:#95067f;}#tips-title>h4,#tips-title>p{margin:0;padding:0;margin-left:10px}#tips-title>h4{padding-top:7.5px;color:#95067f}#tips-title>p{margin-top:3px;color:#d59ecc}.tips-content{padding:8px 10px;background:#f3eaf2;-webkit-box-shadow:0 0px 1px rgba(0,0,0,0.2);box-shadow:0 0px 1px rgba(0,0,0,0.2)}.tips-content p{color:#95067f;margin:0}.btn-icon-text{padding:0;display:block;margin:0;text-align:center;position:relative;border:0;background:#ecdaea}.btn-icon-text:active{background:#fbe6f8;box-shadow:none}.btn-icon-text:disabled{background:#fbe6f8;box-shadow:none}.btn-icon-text>.text-in-btn{font-size:16px;margin-left:10px;margin-right:8px;padding-top:1px;margin-top:auto;margin-bottom:auto;vertical-align:text-top;display:inline-block;font-weight:700;color:#95067f}.btn-icon-text>.img-in-btn{margin-right:10px;height:20px;width:20px;vertical-align:text-top;display:inline-block}#makecall-btn{height:40px;width:auto;position:absolute;top:7.5px;right:10px;border:none;-webkit-box-shadow:0 0 1px rgba(80,0,70,0.4);box-shadow:0 0 1px rgba(80,0,70,0.4)}#makecall-btn>.text-in-btn{margin-top:10px}#makecall-btn>.img-in-btn{margin-top:10px}#makecall-btn:active{box-shadow:none}#makecall-btn:disabled{box-shadow:none}#loadmore-btn,#reload-btn{width:98%;margin:1%;display:block;height:50px;margin-top:10px;border:none;box-shadow:-0.5px 0 1px rgba(0,0,0,0.2)}#loadmore-btn:active,#reload-btn:active{box-shadow:none}#loadmore-btn:disabled,#reload-btn:disabled{box-shadow:none}.toast{background:rgba(0,0,0,0.5);width:auto;padding:0 5px;left:-150px;min-width:100px;min-height:40px;color:#fff;line-height:40px;text-align:center;position:fixed;float:center;top:30px;z-index:999999;font-weight:bold}#loading{top:0;color:#95067f;background-color:rgba(247,243,246,0.75)}#loading>#loadingtips{position:absolute;padding:0;margin:0;font-size:16px;padding-top:75px;top:40%}#error{z-index:1000;background-color:#f7f3f6}#tips-orders{position:relative;width:98%;margin:1%;margin-top:10px;top:0}.up-frame{position:fixed;height:100%;width:100%;left:0;right:0;top:0;bottom:0;z-index:200}.bar{width:50px;height:50px;top:50%;-webkit-border-radius:7.5em;-moz-border-radius:7.5em;border-radius:7.5em;margin-right:2px;position:absolute;-webkit-box-shadow:0 3px 16px rgba(149,6,127,0.35);box-shadow:0 3px 16px rgba(149,6,127,0.35)}#loadingshapedark{background:#f3eaf2;top:40%;z-index:1}#loadingshapelight{background:#95067f;top:40%;z-index:0}
+body{background-color:#f7f3f6;font-size:16px;font-weight:normal;font-family:"Arial",Helvetica,sans-serif;padding:0;margin:0}img{padding:0;border:0}a:link;a:visited;a:hover;a:active{text-decoration:none;color:inherit;font-weight:normal}*{-webkit-touch-callout:none;-webkit-text-size-adjust:none;-webkit-tap-highlight-color:rgba(0,0,0,0)}a:focus,input:focus,textarea:focus{-webkit-tap-highlight-color:rgba(0,0,0,0)}p{font-size:13px}.content-frame{margin:0 0.5%;width:99%;margin-left:3px;position:relative}.tips{background:#ecdaea;margin:1% 1%;margin-top:10px;-webkit-box-shadow:0 0px 3px rgba(0,0,0,0.2);box-shadow:0 0px 3px rgba(0,0,0,0.2);border:none}#tips-title{height:100%;min-height:55px}#tips-error h4{margin:0;padding:0;margin-left:10px;padding:8px 0;color:#95067f;}#tips-title>h4,#tips-title>p{margin:0;padding:0;margin-left:10px}#tips-title>h4{padding-top:7.5px;color:#95067f}#tips-title>p{margin-top:3px;color:#d59ecc}.tips-content{padding:8px 10px;background:#f3eaf2;-webkit-box-shadow:0 0px 1px rgba(0,0,0,0.2);box-shadow:0 0px 1px rgba(0,0,0,0.2)}.tips-content p{color:#95067f;margin:0}.btn-icon-text{padding:0;display:block;margin:0;text-align:center;position:relative;border:0;background:#ecdaea}.btn-icon-text:active{background:#fbe6f8;box-shadow:none}.btn-icon-text:disabled{background:#fbe6f8;box-shadow:none}.btn-icon-text>.text-in-btn{font-size:16px;margin-left:10px;margin-right:8px;padding-top:1px;margin-top:auto;margin-bottom:auto;vertical-align:text-top;display:inline-block;font-weight:700;color:#95067f}.btn-icon-text>.img-in-btn{margin-right:10px;height:20px;width:20px;vertical-align:text-top;display:inline-block}#makecall-btn{height:40px;width:auto;position:absolute;top:7.5px;right:10px;border:none;-webkit-box-shadow:0 0 1px rgba(80,0,70,0.4);box-shadow:0 0 1px rgba(80,0,70,0.4)}#makecall-btn>.text-in-btn{margin-top:10px}#makecall-btn>.img-in-btn{margin-top:10px}#makecall-btn:active{box-shadow:none}#makecall-btn:disabled{box-shadow:none}#loadmore-btn,#reload-btn{width:98%;margin:1%;display:block;height:50px;margin-top:10px;border:none;box-shadow:-0.5px 0 1px rgba(0,0,0,0.2)}#loadmore-btn:active,#reload-btn:active{box-shadow:none}#loadmore-btn:disabled,#reload-btn:disabled{box-shadow:none}.toast{background:rgba(0,0,0,0.5);width:auto;padding:0 2.5%;left:-105%;min-width:100px;max-width: 100%; min-height:40px;color:#fff;line-height:40px;text-align:center;position:fixed;float:center;top:30px;z-index:999999;font-weight:bold}#loading{top:0;color:#95067f;background-color:rgba(247,243,246,0.75)}#loading>#loadingtips{position:absolute;padding:0;margin:0;font-size:16px;padding-top:75px;top:40%}#error{z-index:1000;background-color:#f7f3f6}#tips-orders{position:relative;width:98%;margin:1%;margin-top:10px;top:0}.up-frame{position:fixed;height:100%;width:100%;left:0;right:0;top:0;bottom:0;z-index:200}.bar{width:50px;height:50px;top:50%;-webkit-border-radius:7.5em;-moz-border-radius:7.5em;border-radius:7.5em;margin-right:2px;position:absolute;-webkit-box-shadow:0 3px 16px rgba(149,6,127,0.35);box-shadow:0 3px 16px rgba(149,6,127,0.35)}#loadingshapedark{background:#f3eaf2;top:40%;z-index:1}#loadingshapelight{background:#95067f;top:40%;z-index:0}
 </style>
 <div  id="ordercontent" class="content-frame" style="display:none;">
 	<section class="tips" id='tips-orders'><div id="tips-title"><h4>历史订单</h4><p>如有任何疑问，请直接联系商家</p></div></section>
@@ -23,13 +23,13 @@ body{background-color:#f7f3f6;font-size:16px;font-weight:normal;font-family:"Ari
 	<div id="loadingshapelight" class="bar"></div>
 	<p id="loadingtips"></p>
 </div> 
-<div class="toast" id="mytoast" style="display: none;"></div>
+<div class="toast" id="mytoast"></div>
 </body>
 
 <script type="text/javascript">
 //baseid
-var sellerid="<?php echo $sellerid;?>";
-var openid="<?php echo $openid; ?>";
+var sellerid=-1;
+var openid=null;
 var identitykey=null;
 //错误常量
 var WRONGURL='wrongurl';
@@ -54,16 +54,14 @@ var isownjsready=false;
 window.onload = function(){
 	startloading('正在初始化');
 	if(baseidinit()){
-		if(verifyidentitykey()){
-			jsloader.load(MYJQUERY , function () {
-				readytogo(MYJQUERY);
-			});
-			jsloader.load(MYOWNJS, function () {
-		    	readytogo(MYOWNJS);
-			});
-		}else{
-			callerror(WRONGKEY);
-		}
+		verifyidentitykey();
+		jsloader.load(MYJQUERY , function () {
+			readytogo(MYJQUERY);
+		});
+		jsloader.load(MYOWNJS, function () {
+	    	readytogo(MYOWNJS);
+		});
+		
 	}else{
 		callerror(WRONGURL);
 	}
@@ -73,10 +71,11 @@ window.onload = function(){
 
 	//基础id获取及url校验
 	function baseidinit(){
-		var baseidarray=window.location.href.substr(window.location.href.indexOf('index/')+6).split('?');
+		var baseidarray=window.location.href.substr(window.location.href.indexOf('history/')+8).split('?');
 			if(baseidarray.length!=2||baseidarray[0]==''){
 			return false;
 		}else{
+			sellerid=baseidarray[0];
 			var otheridarray=baseidarray[1].split('#');
 			var idtemp=otheridarray[0].split('=');
 			if(idtemp[0]=='openid'){
@@ -90,39 +89,42 @@ window.onload = function(){
 		}
 	}
 
+
 	//身份key校验
 	function verifyidentitykey(){
-
 		if(identitykey==null||identitykey==''){
-			if (localStorage) {
-				if(localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey')){
-					identitykey=localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey');
+			var iskeyready=false;
+			var cookiestring=document.cookie.split('; ');
+			for(var i=0;i<cookiestring.length;i++){
+				var cookieitem=cookiestring[i].split('&=');
+				if(cookieitem[0]==sellerid+'-'+openid+'-'+'identitykey'){
+					identitykey=cookieitem[1];
+					iskeyready=true;
 				}
-				}else{
-					var cookiestring=document.cookie.split(';');
-					for(var i=0;i<cookiestring.length;i++){
-					var cookieitem=cookiestring[i].split('&=');
-					if(cookieitem[0]==sellerid+'-'+openid+'-'+'identitykey'){
-						identitykey=cookieitem[1];
+			} 
+			if(!iskeyready){
+				if (localStorage) {
+					if(localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey')){
+						identitykey=localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey');
 					}
-				} 
+				}
 			}
 		}else{
+			var cookiestring=sellerid+'-'+openid+'-'+'identitykey'+'&='+identitykey;
+			var date=new Date(); 
+			date.setTime(date.getTime()+30*24*3600*1000); 
+			cookiestring=cookiestring+'; expires='+date.toGMTString()+';path=/'; 
+			document.cookie=cookiestring; 
 			if (localStorage) {
 				var identitykeystring=identitykey;
-					localStorage.setItem(sellerid+'-'+openid+'-'+'identitykey',identitykeystring);
-			}else{
-				var cookiestring=sellerid+'-'+openid+'-'+'identitykey'+'&='+identitykey;
-				var date=new Date(); 
-				date.setTime(date.getTime()+30*24*3600*1000); 
-				cookiestring=cookiestring+'; expires='+date.toGMTString()+';path=/'; 
-				document.cookie=cookiestring; 
+				localStorage.setItem(sellerid+'-'+openid+'-'+'identitykey',identitykeystring);
 			}
-		}
-
+		}		
 		if(identitykey==null||identitykey==''){
+			isverified=false;
 			return false;
 		}else{
+			isverified=true;
 			return true;
 		}
 	}
@@ -243,13 +245,14 @@ window.onload = function(){
 	    	}
 	    	darkleft=!darkleft;
 	    }
-	    this.start=function(tips){
+	    this.start=function(content,tips){
 			document.getElementById('loading').style.display='block';
 			document.getElementById('loadingtips').innerHTML=tips;
 			tipswidth=document.getElementById('loadingtips').clientWidth;
 			document.getElementById('loadingtips').style.left=(wwidth/2)-(tipswidth/2)+'px';
+			content.playanimation();
 			if(animation==null){
-		    	animation=window.setInterval('myanimation.playanimation()',800);
+		    	animation=window.setInterval(function(){content.playanimation();},800);
 		    }
 	    }
 	    this.stop=function(){
@@ -259,16 +262,15 @@ window.onload = function(){
 	    }
 	}
 
-
 	//全局唤起loading
-	function startloading(tips){
-		if(myanimation==null){
-			myanimation=new loadinganimation();
+    function startloading(tips){
+    	if(myanimation==null){
+    		myanimation=new loadinganimation();
 			myanimation.firstinit();
-		}
-		myanimation.start(tips==null?'载入中…':tips);
-		isloading=true;
-	}
+    	}
+    	myanimation.start(myanimation,tips==null?'载入中…':tips);
+    	isloading=true;
+    }
 
 	function stoploading(){
 		myanimation.stop();

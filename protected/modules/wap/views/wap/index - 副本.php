@@ -92,7 +92,7 @@ li:hover{
 	box-shadow: none;
 }
 .btn-icon:disabled{
-	background: #fbf3fa;
+	background: #fbe6f8;
 	box-shadow: none;
 }
 .btn-icon>.img-in-btn{
@@ -118,7 +118,7 @@ li:hover{
 	box-shadow: none;
 }
 .btn-icon-text:disabled{
-	background: #fbf3fa;
+	background: #fbe6f8;
 	box-shadow: none;
 }
 .btn-icon-text>.text-in-btn{
@@ -467,6 +467,7 @@ li:hover{
 		box-shadow: 1 0 1px rgba(80,0,70,0.4);
 	}
 	.button-minus:disabled,.button-plus:disabled{
+		background: #fbf3fa;
 		box-shadow: none;
 	}
 	.tipsarea-in-list{
@@ -658,10 +659,9 @@ li:hover{
 .toast{
 	background:rgba(0,0,0,0.5);
 	width: auto;
-	padding: 0 2.5%;
-	left:-105%;
+	padding: 0 5px;
+	left:-150px;
 	min-width:100px;
-	max-width: 100%;
 	min-height:40px;
 	color:#fff;
 	line-height:40px;
@@ -717,22 +717,6 @@ li:hover{
 
 }
 
-#warning{
-	background: #e7322c;
-	margin: 1% 1%;
-	margin-top: 10px;
-	padding: 8px 10px;
-	color: #fff;
-	-webkit-box-shadow: 0 0px 3px rgba(0,0,0,0.2);
-	box-shadow: 0 0px 3px rgba(0,0,0,0.2);
-	border: none;
-}
-#warning>h4{
-	margin: 0;
-	padding: 0;
-	font-size: 14px;
-}
-
 .bar {
     width: 50px;
     height: 50px;
@@ -756,7 +740,6 @@ li:hover{
     z-index: 0;
 }
 </style>
-<div id="warning" style="display:none"><h4>您当前处于非验证状态，页面仅供浏览。如需使用预约服务，敬请关注微信号:iFruits_cn。</h4></div>
 <div id="sortcontent" class="content-frame" style="display: none;">
 	<section class="tips" id='tips-sortcontent'>
 		<header>
@@ -824,7 +807,7 @@ li:hover{
 	<p id="loadingtips"></p>
 </div>
 <footer class="footer-order" id="mainfooter" style="display: none;"> </footer>
-<div class="toast" id="mytoast"></div>
+<div class="toast" id="mytoast" style="display: none;"></div>
 <script type="text/javascript">
 
 	//baseid
@@ -854,20 +837,22 @@ li:hover{
 	var isjqueryready=false;
 	var isownjsready=false;
 
-	//全局运行变量
-	var isverified=true;
+	var isverified=false;
 
 	window.onload = function(){
 		startloading('正在初始化');
 		
 		if(baseidinit()){
-			verifyidentitykey();
-			jsloader.load(MYJQUERY , function () {
-				readytogo(MYJQUERY);
-			});
-			jsloader.load(MYOWNJS, function () {
-		    	readytogo(MYOWNJS);
-			});
+			if(verifyidentitykey()){
+				jsloader.load(MYJQUERY , function () {
+					readytogo(MYJQUERY);
+				});
+				jsloader.load(MYOWNJS, function () {
+			    	readytogo(MYOWNJS);
+				});
+			}else{
+				callerror(WRONGKEY);
+			}
 		}else{
 			callerror(WRONGURL);
 		}
@@ -882,7 +867,7 @@ li:hover{
 		return false;
 	}else{
 		sellerid=baseidarray[0];
-		var otheridarray=baseidarray[1].split('&');
+		otheridarray=baseidarray[1].split('&');
 		if(otheridarray.length<2){
 			return false;
 		}else {
@@ -907,34 +892,21 @@ li:hover{
 	//身份key校验
 	function verifyidentitykey(){
 		if(identitykey==null||identitykey==''){
-			var iskeyready=false;
-			var cookiestring=document.cookie.split('; ');
+			var cookiestring=document.cookie.split(';');
 			for(var i=0;i<cookiestring.length;i++){
 				var cookieitem=cookiestring[i].split('&=');
 				if(cookieitem[0]==sellerid+'-'+openid+'-'+'identitykey'){
 					identitykey=cookieitem[1];
 				}
 			} 
-			if(!iskeyready){
-				if (localStorage) {
-					if(localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey')){
-						identitykey=localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey');
-					}
-				}
-			}
 		}else{
 			var cookiestring=sellerid+'-'+openid+'-'+'identitykey'+'&='+identitykey;
 			var date=new Date(); 
 			date.setTime(date.getTime()+30*24*3600*1000); 
 			cookiestring=cookiestring+'; expires='+date.toGMTString()+';path=/'; 
 			document.cookie=cookiestring; 
-			if (localStorage) {
-				var identitykeystring=identitykey;
-				localStorage.setItem(sellerid+'-'+openid+'-'+'identitykey',identitykeystring);
-			}
 		}		
 		if(identitykey==null||identitykey==''){
-			callwrongkey();
 			return false;
 		}else{
 			return true;
@@ -1119,11 +1091,5 @@ li:hover{
     	}
 
     }
-
-    //key错误
-	function callwrongkey(){
-		isverified=false;
-		document.getElementById('warning').style.display = 'block';
-	}
 	
 </script>

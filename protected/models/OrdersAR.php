@@ -419,6 +419,14 @@ class OrdersAR extends CActiveRecord
 		$orderId = str_pad($orderId, 6, "0", STR_PAD_LEFT);
 		return date('Ymd').$orderId;
 	}
+	/*
+		订单已读
+	*/
+	public function readOrder($orderId){
+		$order = OrdersAR::model()->findByPk($orderId);
+		$order->status = 0;
+		$order->save();
+	}
 
 	/*
 		删除订单
@@ -446,6 +454,9 @@ class OrdersAR extends CActiveRecord
 					break;
 				case 3: 
 					$order->status = "已取消";
+					break;
+				case 4:
+					$order->status = "未读";
 					break;
 		}
 		switch ($order->type) {
