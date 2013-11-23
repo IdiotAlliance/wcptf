@@ -22,6 +22,13 @@
 	.set_index{
 		color: red;
 	}
+	.config_card{
+		border: 1px solid #e0e0e0;
+		padding: 5px;
+		box-shadow: 0xp 1px 3px #808080;
+		-webkit-box-shadow: 0xp 1px 3px #808080;
+		margin-bottom: 10px;
+	}
 	#seller_settings_container{
 		position: absolute;
 		left: 200px;
@@ -45,6 +52,8 @@
 	#seller_settings_main_container{
 		margin-top: 60px;
 		padding-left: 20px;
+		padding-right: 20px;
+		padding-bottom: 20px;
 	}
 </style>
 <div id="seller_settings_container">
@@ -60,40 +69,45 @@
 	
 	<div id="seller_settings_main_container">
 		<h4><?php echo Utils::getDate('y-m-d w');?></h4>
-		<div>
-			店铺状态：
-			<select name="store_status" id="store_status">
-				<option value="0">正常经营</option>
-				<option value="1">暂停外卖</option>
-				<option value="2">暂停营业</option>
-			</select>
+		<div class="config_card">
+			<div>
+				店铺状态：
+				<select name="store_status" id="store_status">
+					<option value="0">正常经营</option>
+					<option value="1">暂停外卖</option>
+					<option value="2">暂停营业</option>
+				</select>
+			</div>
+			<div class="row">
+				<div class="span1">店铺公告：</div>
+				<textarea id="broadcast" rows="5" cols="" class="span5"></textarea>
+			</div>
 		</div>
-		<div class="row">
-			<div class="span1">店铺公告：</div>
-			<textarea id="broadcast" rows="5" cols="" class="span5"></textarea>
+		
+		<div class="config_card">
+			<h4>品类促销</h4>
+			<table class="table table-hover table-condensed" id="product_types"></table>
 		</div>
 		
+		<div class="config_card">
+			<h4>今日外送片区（请勾选外送片区）</h4>
+			<div id="districts" class="row"></div>
+		</div>
 		
-		<hr>
-		<h4>品类促销</h4>
-		<div id="product_types"></div>
+		<div class="config_card">
+			<h4>今日外送人员（请勾选外送人员）</h4>
+			<div id="posters" class="row"></div>
+		</div>
 		
-		<hr>
-		<h4>今日外送片区（请勾选外送片区）</h4>
-		<div id="districts" class="row"></div>
-		
-		<hr>
-		<h4>今日外送人员（请勾选外送人员）</h4>
-		<div id="posters" class="row"></div>
-		
-		<hr>
-		<div class="row">
-			<h4 class="span2">今日库存管理</h4>
-			<span class="btn span2" onclick="showEditModal()">
-				<span class="icon-edit"></span>&nbsp;编辑产品库存
-			</span>
-		</div><br>
-		<div id="instore_management"></div>
+		<div class="config_card">
+			<div class="row">
+				<h4 class="span2">今日库存管理</h4>
+				<span class="btn span2" onclick="showEditModal()">
+					<span class="icon-edit"></span>&nbsp;编辑产品库存
+				</span>
+			</div><br>
+			<div id="instore_management"></div>
+		</div>
 	</div>
 </div>
 
@@ -160,21 +174,35 @@
 		for(typeindex in data['types']){
 			var type = data['types'][typeindex];
 			console.log(type);
-			types.append('<div class="row">' + 
-							'<div class="span8 row">' + 
-								'<b class="span1">' + type.type_name + '</b>' +
-								'<div class="span3" id="pic_url_' + type.id + '">' + (type.picurl?type.picurl:"未上传图片") + '</div>' +
-								'<input type="file" id="fileupload_' + type.id +'" name="hots">' + 
-								'<div class="span1"></div>' + 
-								'<select onchange="select(this)" class="span1" id="select_' + type.id + '">' +
-									'<option value="无">无</option>' +
-									'<option value="热卖">热卖</option>' +
-									'<option value="推荐">推荐</option>' +
-									'<option value="新品">新品</option>' +
-								'</select>' +
-							'</div>' +
-							'<div onclick="setIndex(this)" href="#" class="span1 index_switch" id="set_index_' + type.id + '">设为首页</div>' +
-						 '</div>');
+// 			types.append('<div class="row">' + 
+// 							'<div class="span8 row">' + 
+// 								'<b class="span1">' + type.type_name + '</b>' +
+// 								'<div class="span3" id="pic_url_' + type.id + '">' + (type.picurl?type.picurl:"未上传图片") + '</div>' +
+// 								'<input type="file" id="fileupload_' + type.id +'" name="hots">' + 
+// 								'<div class="span1"></div>' + 
+// 								'<select onchange="select(this)" class="span1" id="select_' + type.id + '">' +
+// 									'<option value="无">无</option>' +
+// 									'<option value="热卖">热卖</option>' +
+// 									'<option value="推荐">推荐</option>' +
+// 									'<option value="新品">新品</option>' +
+// 								'</select>' +
+// 							'</div>' +
+// 							'<div onclick="setIndex(this)" href="#" class="span1 index_switch" id="set_index_' + type.id + '">设为首页</div>' +
+// 						 '</div>');
+			 types.append('<tr>' +
+						  		'<td><b>' + type.type_name + '</b></td>' +
+						  		'<td id="pic_url_' + type.id + '">' + (type.picurl?type.picurl:"未上传图片") + '</td>' + 
+						  		'<td>' + '<input type="file" id="fileupload_' + type.id +'" name="hots"></td>' +
+						  		'<td>' + 
+						  			'<select onchange="select(this)" id="select_' + type.id + '">' +
+										'<option value="无">无</option>' +
+										'<option value="热卖">热卖</option>' +
+										'<option value="推荐">推荐</option>' +
+										'<option value="新品">新品</option>' +
+									'</select>' +
+								'</td>' +
+								'<td onclick="setIndex(this)" href="#" class="index_switch" id="set_index_' + type.id + '">设为首页</td>' +
+						    '</tr>' );
 			//设置选项
 			$('#select_' + type.id).val(type.tag);
 			if(!type.hot){

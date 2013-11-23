@@ -114,7 +114,7 @@ class WechatAccessController extends Controller {
 							</xml>
 						";
 				$resultStr = sprintf($textTpl, $msg->FromUserName, $msg->ToUserName, $time,
-						     "感谢您关注".$user->store_name."!回复 菜单 以察看主菜单");
+						     "感谢您关注".$user->store_name."!回复 菜单 以查看主菜单");
 				echo $resultStr;
 				break;
 			}
@@ -170,7 +170,7 @@ class WechatAccessController extends Controller {
 								<ArticleCount>6</ArticleCount>
 								<Articles>
 									<item>
-										<Title><![CDATA[您好~(^O^)~,我是茹果！]]></Title> 
+										<Title><![CDATA[我们传递新鲜与健康]]></Title> 
 										<Description><![CDATA[欢迎使用茹果微信点单工具]]></Description>
 										<PicUrl><![CDATA[%s]]></PicUrl>
 										<Url><![CDATA[%s]]></Url>
@@ -186,7 +186,7 @@ class WechatAccessController extends Controller {
 										<Url><![CDATA[%s]]></Url>
 									</item>
 									<item>
-										<Title><![CDATA[个人中心]]></Title>
+										<Title><![CDATA[我的订单]]></Title>
 										<PicUrl><![CDATA[]]></PicUrl>
 										<Url><![CDATA[%s]]></Url>
 									</item>
