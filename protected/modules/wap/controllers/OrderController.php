@@ -116,6 +116,11 @@ class OrderController extends Controller
 			echo json_encode($arr);
 			exit;
 		}
+		if($this->inject_check($phone)){
+			$arr=array('success'=>'3');
+			echo json_encode($arr);
+			exit;
+		}
 		if($this->inject_check($wapKey)){
 			$arr=array('success'=>'3');
 			echo json_encode($arr);
@@ -124,6 +129,7 @@ class OrderController extends Controller
 		$config = $config = array('safe'=>1, "elements"=>"-*");
 		$areadesc = htmLawed($areadesc, $config);
 		$name = htmLawed($name, $config);
+		$phone = htmLawed($phone, $config);
 		$wapKey = htmLawed($wapKey, $config);
 		$tips = htmLawed($tips, $config);
 		//checkUser

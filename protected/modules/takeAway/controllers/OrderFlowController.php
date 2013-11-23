@@ -102,10 +102,13 @@ class OrderFlowController extends Controller
 			$orderId = $_POST['orderId'];
 		}
 		$orderItems = OrderItemsAR::model()->getItems($orderId);
-		$order = ordersAR::model()->getOrder($orderId);
+		$order = OrdersAR::model()->getOrder($orderId);
 		if(empty($order)){
 			echo "没有订单数据";
 		}else{
+			if($order->status == "未读"){
+				OrdersAR::model()->readOrder($orderId);
+			}
 			echo $this->renderPartial('_orderItems', array('order'=>$order, 'orderItems'=>$orderItems), true, false);
 		}
 		
@@ -400,19 +403,16 @@ class OrderFlowController extends Controller
 				echo json_encode($arr);
 				exit;
     		}
+    		if($this->inject_check($phone)){
+    			$arr=array('success'=>'2');
+				echo json_encode($arr);
+				exit;
+    		}
     		$config = array('safe'=>1, "elements"=>"-*");
     		$desc = htmLawed($desc, $config);
-    		if(strlen($desc)==0){
-    			$arr=array('success'=>'2');
-				echo json_encode($arr);
-				exit;
-    		}
     		$name = htmLawed($name, $config);
-    		if(strlen($name)==0){
-    			$arr=array('success'=>'2');
-				echo json_encode($arr);
-				exit;
-    		}
+    		$phone = htmLawed($phone, $config);
+    		
     		$result = OrdersAR::model()->headerModify($orderId, $name, $phone, $desc, $total);
     		if($result){
     			$arr=array('success'=>'1');
