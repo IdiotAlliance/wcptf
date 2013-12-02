@@ -30,29 +30,8 @@ class WapController extends Controller{
 			if(MemberTokenAR::model()->validateToken($sellerId, $openid, $token)){
 				$key = $member->wapkey;
 			}
-
-			//old
-			// if(MemberTokenAR::validateToken($sellerId, $openid, $token)){
-   //                  $key = $member->wapkey;
-   //          }
 			
-// 			// 构建json数据
-// 			$shopinfodata = $this->getShopInfo($sellerId);
-// 			$recommenddata = $this->getRecommendData($sellerId);
-// 			$sortdata = $this->getSortData($sellerId);
-// 			$productdata = $this->getProductData($sellerId);
-// 			$deliveryareadata = $this->getDeliveryAreaData($sellerId);
-			
-// 			$json_data = array(
-// 				'shopinfodata'=>$shopinfodata,
-// 				'recommenddata'=>$recommenddata,
-// 				'sortdata'=>$sortdata,
-// 				'deliveryareadata'=>$deliveryareadata,
-// 				'productdata'=>$productdata,
-// 				'key'=>$key,
-// 			);
-			
-			$this->render('index', array('key'=>$key));
+			$this->render('index', array('key'=>$key, 'sellerId'=>$sellerId, 'openId'=>$openid));
 		}else{
 			$this->redirect(Yii::app()->createUrl('errors/error/404'));
 		}

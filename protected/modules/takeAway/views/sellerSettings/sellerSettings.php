@@ -174,21 +174,6 @@
 		for(typeindex in data['types']){
 			var type = data['types'][typeindex];
 			console.log(type);
-// 			types.append('<div class="row">' + 
-// 							'<div class="span8 row">' + 
-// 								'<b class="span1">' + type.type_name + '</b>' +
-// 								'<div class="span3" id="pic_url_' + type.id + '">' + (type.picurl?type.picurl:"未上传图片") + '</div>' +
-// 								'<input type="file" id="fileupload_' + type.id +'" name="hots">' + 
-// 								'<div class="span1"></div>' + 
-// 								'<select onchange="select(this)" class="span1" id="select_' + type.id + '">' +
-// 									'<option value="无">无</option>' +
-// 									'<option value="热卖">热卖</option>' +
-// 									'<option value="推荐">推荐</option>' +
-// 									'<option value="新品">新品</option>' +
-// 								'</select>' +
-// 							'</div>' +
-// 							'<div onclick="setIndex(this)" href="#" class="span1 index_switch" id="set_index_' + type.id + '">设为首页</div>' +
-// 						 '</div>');
 			 types.append('<tr>' +
 						  		'<td><b>' + type.type_name + '</b></td>' +
 						  		'<td id="pic_url_' + type.id + '">' + (type.picurl?type.picurl:"未上传图片") + '</td>' + 

@@ -109,12 +109,21 @@ class WechatAccessController extends Controller {
 								<ToUserName><![CDATA[%s]]></ToUserName>
 								<FromUserName><![CDATA[%s]]></FromUserName>
 								<CreateTime>%s</CreateTime>
-								<MsgType><![CDATA[text]]></MsgType>
-								<Content><![CDATA[%s]]></Content>
+								<MsgType><![CDATA[news]]></MsgType>
+								<ArticleCount>1</ArticleCount>
+								<Articles>
+									<item>
+										<Title><![CDATA[关于我们&帮助]]></Title> 
+										<Description><![CDATA[果果家微信平台使用小tips]]></Description>
+										<PicUrl><![CDATA[%s]]></PicUrl>
+										<Url><![CDATA[%s]]></Url>
+									</item>
+								</Articles>
 							</xml>
 						";
+				$about_url = "http://mp.weixin.qq.com/mp/appmsg/show?__biz=MzA4MzA2MDgwMQ==&appmsgid=10000034&itemidx=1&sign=1e807c4e9afe16c97858e9539796000b#wechat_redirect";
 				$resultStr = sprintf($textTpl, $msg->FromUserName, $msg->ToUserName, $time,
-						     "感谢您关注".$user->store_name."!回复 菜单 以查看主菜单");
+							 'http://www.v7fen.com/weChat/'.$user->logo, $about_url);
 				echo $resultStr;
 				break;
 			}
@@ -196,7 +205,7 @@ class WechatAccessController extends Controller {
 										<Url><![CDATA[%s]]></Url>
 									</item>
 									<item>
-										<Title><![CDATA[关于我们]]></Title>
+										<Title><![CDATA[帮助&关于我们]]></Title>
 										<PicUrl><![CDATA[]]></PicUrl>
 										<Url><![CDATA[%s]]></Url>
 									</item>
@@ -218,7 +227,7 @@ class WechatAccessController extends Controller {
 					}
 					$personal_url = Yii::app()->createAbsoluteUrl('wap/wap/history/'.$sellerId.'?openid='.$openid.'#mp.weixin.qq.com');
 					$propose_url = "";
-					$about_url = "";
+					$about_url = "http://mp.weixin.qq.com/mp/appmsg/show?__biz=MzA4MzA2MDgwMQ==&appmsgid=10000034&itemidx=1&sign=1e807c4e9afe16c97858e9539796000b#wechat_redirect";
 					$resultStr = sprintf( $textTpl, $msg->FromUserName, $msg->ToUserName, $time, 
 										  'http://www.v7fen.com/weChat/'.$user->logo, 
 										  $order_url, $order_url, $hots_url, $personal_url, 

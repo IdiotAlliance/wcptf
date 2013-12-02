@@ -28,8 +28,8 @@ body{background-color:#f7f3f6;font-size:16px;font-weight:normal;font-family:"Ari
 
 <script type="text/javascript">
 //baseid
-var sellerid=-1;
-var openid=null;
+var sellerid="<?php echo $sellerid?>";
+var openid="<?php echo $openid?>";
 var identitykey=null;
 //错误常量
 var WRONGURL='wrongurl';
@@ -40,7 +40,7 @@ var BASEURL='/weChat/';
 var BASEURLICON='/weChat/img/wap/myicon-history.png';
 
 var MYJQUERY='http://libs.baidu.com/jquery/1.9.0/jquery.min.js';
-var MYOWNJS='<?php echo Yii::app()->baseUrl?>/js/wap/history.js';
+var MYOWNJS='<?php echo Yii::app()->baseUrl?>/js/wap/history1.0.js';
 
 var AJAXFORRESULT='/weChat/index.php/wap/order/getPartOrders';
 
@@ -71,22 +71,11 @@ window.onload = function(){
 
 	//基础id获取及url校验
 	function baseidinit(){
-		var baseidarray=window.location.href.substr(window.location.href.indexOf('history/')+8).split('?');
-			if(baseidarray.length!=2||baseidarray[0]==''){
+		if(openid==null||openid==''||sellerid==null||sellerid==''){
 			return false;
 		}else{
-			sellerid=baseidarray[0];
-			var otheridarray=baseidarray[1].split('#');
-			var idtemp=otheridarray[0].split('=');
-			if(idtemp[0]=='openid'){
-				openid=idtemp[1];
-			}
-			if(openid==null||openid==''){
-				return false;
-			}else{
-				return true;
-			}
-		}
+			return true;
+		}	
 	}
 
 
@@ -107,6 +96,11 @@ window.onload = function(){
 					if(localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey')){
 						identitykey=localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey');
 					}
+					var cookiestring=sellerid+'-'+openid+'-'+'identitykey'+'&='+identitykey;
+					var date=new Date(); 
+					date.setTime(date.getTime()+30*24*3600*1000); 
+					cookiestring=cookiestring+'; expires='+date.toGMTString()+';path=/'; 
+					document.cookie=cookiestring; 
 				}
 			}
 		}else{
@@ -146,57 +140,57 @@ window.onload = function(){
 		}
 	}
 
-	//工具 异步载入js
+    //工具 异步载入js
 	var jsloader = function(){
-		var scripts = {};
+		var scripts = {}; 
 		function getScript(url){
 			var script = scripts[url];
 			if (!script){
-				script = {loaded:false, funs:[]};
-				scripts[url] = script;
-				add(script, url);
-			}
+	            script = {loaded:false, funs:[]};
+	            scripts[url] = script;
+			}    
 			return script;
 		}
 		function run(script){
 			var funs = script.funs,
-			len = funs.length,
-			i = 0;
+			            len = funs.length,
+			            i = 0;
 			for (; i<len; i++){
-				var fun = funs.pop();
-				fun();
-			}
+			var fun = funs.pop();
+			            fun();
+		    }
 		}
 		function add(script, url){
 			var scriptdom = document.createElement('script');
-			scriptdom.type = 'text/javascript';
-			scriptdom.loaded = false;
-			scriptdom.src = url;
-			scriptdom.onload = function(){
-				scriptdom.loaded = true;
-				run(script);
-				scriptdom.onload = scriptdom.onreadystatechange = null;
-			};
-			document.getElementsByTagName('head')[0].appendChild(scriptdom);
-
+	        scriptdom.type = 'text/javascript';
+	        scriptdom.loaded = false;
+	        scriptdom.src = url;
+	        scriptdom.onload = function(){
+	            scriptdom.loaded = true;
+	            run(script);
+	            scriptdom.onload = scriptdom.onreadystatechange = null;
+	        };
+		    document.getElementsByTagName('head')[0].appendChild(scriptdom);
+		    
 		}
 		return {
 			load: function(url){
 				var arg = arguments,
-				len = arg.length,
-				i = 1,
-				script = getScript(url),
-				loaded = script.loaded;
+			    len = arg.length,
+			    i = 1,
+			    script = getScript(url),
+			    loaded = script.loaded;
 				for (; i<len; i++){
 					var fun = arg[i];
 					if (typeof fun === 'function'){
 						if (loaded) {
-							fun();
-						}else{
-							script.funs.push(fun);
-						}
+					        fun();
+					    }else{
+					        script.funs.push(fun);
+					    }
 					}
 				}
+	            add(script, url);
 			}
 		};
 	}();
