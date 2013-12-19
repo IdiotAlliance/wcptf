@@ -1,3 +1,5 @@
 assets/*
 protected/runtime/*.log
 upload/*
+upload/*.jpg
+upload/*.png
