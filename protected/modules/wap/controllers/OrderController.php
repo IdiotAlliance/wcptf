@@ -99,7 +99,39 @@ class OrderController extends Controller
 			echo json_encode($arr);
 			exit;
 		}
-
+		//sql && xss check
+		require "HtmLawed.php";
+		if($this->inject_check($name)){
+			$arr=array('success'=>'3');
+			echo json_encode($arr);
+			exit;
+		}
+		if($this->inject_check($tips)){
+			$arr=array('success'=>'3');
+			echo json_encode($arr);
+			exit;
+		}
+		if($this->inject_check($areadesc)){
+			$arr=array('success'=>'3');
+			echo json_encode($arr);
+			exit;
+		}
+		if($this->inject_check($phone)){
+			$arr=array('success'=>'3');
+			echo json_encode($arr);
+			exit;
+		}
+		if($this->inject_check($wapKey)){
+			$arr=array('success'=>'3');
+			echo json_encode($arr);
+			exit;
+		}
+		$config = $config = array('safe'=>1, "elements"=>"-*");
+		$areadesc = htmLawed($areadesc, $config);
+		$name = htmLawed($name, $config);
+		$phone = htmLawed($phone, $config);
+		$wapKey = htmLawed($wapKey, $config);
+		$tips = htmLawed($tips, $config);
 		//checkUser
 		$member = MembersAR::model()->getMemberByOpenId($openid);
 		// 用户不存在
@@ -110,14 +142,43 @@ class OrderController extends Controller
 			echo json_encode($arr);
 			exit;
 		}
-		if(strcmp($member->wapKey, $wapKey) != 0){
+		if(strcmp($member->wapkey, $wapKey) != 0){
 			$result = "wapKey is out";
 			$arr=array('success'=>'2', 'result'=>$result);
 			echo json_encode($arr);
 			exit;
 		}
+		$area = DistrictsAR::model()->findByPk($areaid);
+		// 校验地址
+		if(empty($area)){
+			$result = "areaid is out";
+			$arr=array('success'=>'2', 'result'=>$result);
+			echo json_encode($arr);
+			exit;
+		}
+		$seller = UsersAR::model()->findByPk($sellerid);
+		if(!empty($seller)){
+			if($seller->status!=0){
+				$result = "service is out";
+				$arr=array('success'=>'2', 'result'=>$result);
+				echo json_encode($arr);
+				exit;
+			}
+			$nowTime = date('H:i:s');
+			if($seller->stime<$nowTime && $seller->etime>$nowTime){
+
+			}else{
+				$result = "service is out";
+				$arr=array('success'=>'2', 'result'=>$result);
+				echo json_encode($arr);
+				exit;
+			}
+
+		}else{
+
+		}
 		//订单
-		$order = OrdersAR::model()->makeOrder($sellerid, $member->id, $areaid, $areadesc, $phone, $tips);
+		$order = OrdersAR::model()->makeOrder($sellerid, $member->id, $areaid, $areadesc, $phone, $tips, $name);
 		//子项订单
 		$len = count($products);
 		$total = 0;
@@ -136,7 +197,6 @@ class OrderController extends Controller
 			foreach ($items as $item) {
 				$total = $total + $item->price;
 			}
-			$seller = UsersAR::model()->findByPk($sellerid);
 			if(!empty($sellerid)){
 				//是否免外送费
 				$threshold = $seller->threshold;
@@ -155,10 +215,9 @@ class OrderController extends Controller
 						$total = $total+ $takeawayFee;
 					}else{
 						//订单失败
-						$result = "订单费用没有超过起送费";
+						$result = "order total is low";
 						OrderItemsAR::model()->deleteItems($order->id);
 						OrdersAR::model()->deleteOrder($order->id);
-						OrdersAR::model()->setOrderTotal($order->id, $total);
 						$arr=array('success'=>'2', 'result'=>$result);
 						echo json_encode($arr);
 						exit;
@@ -177,41 +236,41 @@ class OrderController extends Controller
 	/*
 		获取会员订单
 	*/
-	public function actionGetOrders(){
-		if(isset($_POST['openid']) && isset($_POST['sellerid'])){
-			$openid = $_POST['openid'];
-			$sellerid = $_POST['sellerid'];
-			$member = MembersAR::model()->getMemberByOpenId($openid);
-			if(!empty($member)){
-				$orders = OrdersAR::model()->getMemberOrders($member->id, $sellerid);
-				$orderViews = array();
-				foreach ($orders as $order) {
-					array_push($orderViews, 
-						array("name"=>$order->member_id,
-							 "phone"=>$order->phone,
-							 "order_no"=>$order->order_no,
-							 "order_id"=>$order->id,
-							 "total"=>$order->total,
-							 "order_items"=>$order->seller_id,
-							 "address"=>$order->address,
-							 "ctime"=>$order->ctime,
-							 "status"=>$order->status,
-							));
-				}
-				$arr=array('success'=>'1', 'result'=>$orderViews);
-				echo json_encode($arr);
-			}else{
-				$result = "openid is no exist";
-				$arr=array('success'=>'2', 'result'=>$result);
-				echo json_encode($arr);
-			}
-		}else{
-			$result = "openid is null";
-			$arr=array('success'=>'0', 'result'=>$result);
-			echo json_encode($arr);
-		}
+	// public function actionGetOrders(){
+	// 	if(isset($_POST['openid']) && isset($_POST['sellerid'])){
+	// 		$openid = $_POST['openid'];
+	// 		$sellerid = $_POST['sellerid'];
+	// 		$member = MembersAR::model()->getMemberByOpenId($openid);
+	// 		if(!empty($member)){
+	// 			$orders = OrdersAR::model()->getMemberOrders($member->id, $sellerid);
+	// 			$orderViews = array();
+	// 			foreach ($orders as $order) {
+	// 				array_push($orderViews, 
+	// 					array("name"=>$order->order_name,
+	// 						 "phone"=>$order->phone,
+	// 						 "order_no"=>$order->order_no,
+	// 						 "order_id"=>$order->id,
+	// 						 "total"=>$order->total,
+	// 						 "order_items"=>$order->seller_id,
+	// 						 "address"=>$order->address,
+	// 						 "ctime"=>$order->ctime,
+	// 						 "status"=>$order->status,
+	// 						));
+	// 			}
+	// 			$arr=array('success'=>'1', 'result'=>$orderViews);
+	// 			echo json_encode($arr);
+	// 		}else{
+	// 			$result = "openid is no exist";
+	// 			$arr=array('success'=>'2', 'result'=>$result);
+	// 			echo json_encode($arr);
+	// 		}
+	// 	}else{
+	// 		$result = "openid is null";
+	// 		$arr=array('success'=>'0', 'result'=>$result);
+	// 		echo json_encode($arr);
+	// 	}
 
-	}
+	// }
 
 	/*
 		获取会员时间和数量订单
@@ -227,7 +286,7 @@ class OrderController extends Controller
 			$member = MembersAR::model()->getMemberByOpenId($openid);
 			$nextTime = null;
 			if(!empty($member)){
-				if(strcmp($member->wapKey, $wapKey) != 0){
+				if(strcmp($member->wapkey, $wapKey) != 0){
 					$result = "wapKey is out";
 					$arr=array('success'=>'2', 'result'=>$result);
 					echo json_encode($arr);
@@ -240,7 +299,7 @@ class OrderController extends Controller
 
 					}else{
 						$nextTime = $orders[$num]->ctime;
-						$orders = getNumOrders($orders, $num);
+						$orders = $this->getNumOrders($orders, $num);
 					}
 				}else{
 					$orders = OrdersAR::model()->getMemberPartOrders($member->id, $sellerid, $endtime);
@@ -248,13 +307,20 @@ class OrderController extends Controller
 
 					}else{
 						$nextTime = $orders[$num]->ctime;
-						$orders = getNumOrders($orders, $num);
+						$orders = $this->getNumOrders($orders, $num);
 					}
 				}
 				$orderViews = array();
 				foreach ($orders as $order) {
+					$newOrder = OrdersAR::model()->findByPk($order->id);
+					$poster = PostersAR::model()->findByPk($newOrder->poster_id);
+					$user = UsersAR::model()->findByPk($newOrder->seller_id);
+					$posterPhone = "";
+					if(!empty($poster)){
+						$posterPhone = $poster->phone;
+					}
 					array_push($orderViews, 
-						array("name"=>$order->member_id,
+						array("name"=>$order->order_name,
 							 "phone"=>$order->phone,
 							 "order_no"=>$order->order_no,
 							 "order_id"=>$order->id,
@@ -263,9 +329,12 @@ class OrderController extends Controller
 							 "address"=>$order->address,
 							 "ctime"=>$order->ctime,
 							 "status"=>$order->status,
+							 "poster_name"=>$order->poster_id,
+							 'poster_phone'=>$posterPhone,
+							 'tips'=>$order->description,
 							));
 				}
-				$arr=array('success'=>'1', 'result'=>$orderViews, 'nexttime'=>$nextTime);
+				$arr=array('success'=>'1', 'result'=>$orderViews, 'nexttime'=>$nextTime, 'sellerphone'=>$user->phone,);
 				echo json_encode($arr);
 			}else{
 				$result = "openid is no exist";
@@ -282,10 +351,14 @@ class OrderController extends Controller
 	// 获取指定数量的订单
 	public function getNumOrders($orders, $num){
 		$newOrders = array();
-		for($i=0;$i<$num;i++){
+		for($i=0;$i<$num;$i++){
 			array_push($newOrders, $orders[$i]);
 		}
 		return $newOrders;
+	}
+
+	function inject_check($sql_str) { 
+    	return preg_match('%select|insert|and|or|update|delete|\'|\/\*|\*|\.\.\/|\.\/|union|into|load_file|outfile%i', $sql_str);
 	}
 
 	public function actionTest(){

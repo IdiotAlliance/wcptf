@@ -9,6 +9,7 @@
 	#seller_profile_config{
 		position: absolute;
 		left: 200px;
+		right: 0px;
 		top: 41px;
 		bottom: 0px;
 		overflow-y: auto;
@@ -29,6 +30,7 @@
 		padding-left: 20px;
 		background-color: #ffffff;
 		box-shadow: 0px 1px 3px #808080;
+		-moz-box-shadow: 0px 1px 3px #808080;
 	}
 </style>
 <div id="seller_profile_config">
@@ -103,7 +105,8 @@
 			<div>
 				配送片区：<select id="districts_select" onchange="setDistrict()">
 				</select>
-				&nbsp;&nbsp;<a href="#dismodal" role="button" data-toggle="modal">添加新片区</a>
+				&nbsp;&nbsp;<a href="#" onclick="editDistrict()">编辑</a>
+				&nbsp;<a href="#" onclick="showDistrictModal()">添加新片区</a>
 				&nbsp;<a href="#" onclick="deleteDistrict()">删除该片区</a>
 				<div class="row" >
 					<div class="span1">详细描述：</div>
@@ -113,8 +116,9 @@
 			<div>
 				配送人员：<select id="posters_select" onchange="setPoster()">
 				</select>
-				&nbsp;&nbsp;<a href="#posmodal" role="button" data-toggle="modal">添加新送货员</a>&nbsp;
-				<a href="#" onclick="deletePoster()">删除该送货员</a>
+				&nbsp;&nbsp;<a href="#" onclick="editPoster()">编辑</a>
+				&nbsp;<a href="#" onclick="showPosterModal()">添加新送货员</a>
+				&nbsp;<a href="#" onclick="deletePoster()">删除该送货员</a>
 				<div class="row">
 					<div class="span1">联系方式：</div>
 					<input type="text" class="span5" id="poster_phone" onkeyup="setPosPhone()"/>
@@ -128,15 +132,15 @@
 			<div id="dismodal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			  <div class="modal-header">
 			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			    <h3 id="myModalLabel">新建片区</h3>
+			    <h3 id="dismodal_label">新建片区</h3>
 			  </div>
 			  <div class="modal-body">
 			  	<label>片区名：</label><input type="text" id="add_district_name">
 			  	<label>详细描述：</label><textarea id="add_district_desc"></textarea>
 			  </div>
 			  <div class="modal-footer">
-			    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
-			    <button class="btn btn-primary" onclick="addDistrict()">添加片区</button>
+			    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+			    <button class="btn btn-primary" onclick="districtProxy()">确定</button>
 			  </div>
 			</div>
 			
@@ -144,7 +148,7 @@
 			<div id="posmodal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			  <div class="modal-header">
 			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			    <h3 id="myModalLabel">添加送货员</h3>
+			    <h3 id="posmodal_label">添加送货员</h3>
 			  </div>
 			  <div class="modal-body">
 			  	<label>姓名：</label><input type="text" id="add_poster_name">
@@ -153,7 +157,7 @@
 			  </div>
 			  <div class="modal-footer">
 			    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
-			    <button class="btn btn-primary" onclick="addPoster()">添加</button>
+			    <button class="btn btn-primary" onclick="posterProxy()">确定</button>
 			  </div>
 			</div>
 		</div>
@@ -164,13 +168,14 @@
 
 	var selected_dis = -1;
 	var selected_pos = -1;
+
+	var posterProxy;
+	var districtProxy;
 	
 	var data = eval('(' + '<?php echo $json_data?>' + ')');
 
 	// 设置容器宽度，并使其随着窗口大小改变而改变
 	$(document).ready(function(){
-		setContainerWidth();
-		window.onresize = setContainerWidth;
 		$('#form_json_input').val(escape(JSON.stringify(data)));
 		initView();
 		$('#store_name').focusout(function(){
@@ -208,7 +213,7 @@
 			success: function(result) {
 				var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+result.pic_path;
 				$('#logoimg').attr('src', img);
-				data['shopinfo']['logo'] = img;
+				data['shopinfo']['logo'] = result.pic_path;
 			},
 			error:function(xhr){
 				alert("上传失败");
@@ -216,11 +221,6 @@
 		});
 	}
 
-	function setContainerWidth(){
-		width = document.body.clientWidth;
-		$('#seller_profile_config').css("width", width - 200 + "px");
-	}
-		
 	function saveProxy(){
 		$('#seller_profile_submit').click();
 	}
@@ -233,10 +233,12 @@
 		$('#store_name').val(data['shopinfo']['store_name']);
 		$('#store_type').html(data['shopinfo']['store_type'] == '0' ? '外卖' : '其他');
 		$('#phone_number').val(data['shopinfo']['phone']);
+		data['shopinfo']['stime'] = data['shopinfo']['stime'].substr(0, 5);
+		data['shopinfo']['etime'] = data['shopinfo']['etime'].substr(0, 5);
 		$('#stime').val(data['shopinfo']['stime']);
 		$('#etime').val(data['shopinfo']['etime']);
 		$('#store_address').val(data['shopinfo']['address']);
-		$('#logoimg').attr('src', data['shopinfo']['logo']);
+		$('#logoimg').attr('src', "<?php echo Yii::app()->baseUrl?>/" + data['shopinfo']['logo']);
 		$('#start_price').val(data['shopinfo']['start_price']);
 		$('#takeaway_fee').val(data['shopinfo']['takeaway_fee']);
 		if(data['shopinfo']['takeaway_fee'] > "0" && data['shopinfo']['threshold'] == "1")
@@ -349,11 +351,17 @@
 	 **/
 	function setStime(){
 		var stime = $('#stime').val();
-		if(/(([0-1]*[0-9])|2[0-4]):[0-5]*[0-9](:[0-5]*[0-9])*/.test(stime)){
+		if(/^([0-1][0-9]|2[0-3]):[0-5]*[0-9]$/.test(stime)){
+			stime = formatTime(stime);
+			if(stime > data['shopinfo']['etime']){
+				alert('开始时间不能晚于结束时间！');
+				$('#stime').val(data['shopinfo']['stime']);
+				return;
+			}
 			data['shopinfo']['stime'] = stime;
-		}else{
-			$('#stime').val(data['shopinfo']['stime']);
 		}
+		$('#stime').val(data['shopinfo']['stime']);
+		
 	}
 
 	/**
@@ -361,11 +369,24 @@
 	 */
 	function setEtime(){
 		var etime = $('#etime').val();
-		if(/(([0-1]*[0-9])|2[0-4]):[0-5]*[0-9](:[0-5]*[0-9])*/.test(etime)){
+		if(/^([0-1][0-9]|2[0-3]):[0-5]*[0-9]$/.test(etime)){
+			etime = formatTime(etime);
+			if(etime < data['shopinfo']['stime']){
+				alert('结束时间不能早于开始时间！');
+				$('#etime').val(data['shopinfo']['etime']);
+				return;
+			}
 			data['shopinfo']['etime'] = etime;
-		}else{
-			$('#etime').val(data['shopinfo']['etime']);
 		}
+		$('#etime').val(data['shopinfo']['etime']);
+	}
+
+	function formatTime(timestr){
+		var splits = timestr.split(':');
+		var result = "";
+		result = (splits[0].length==1?'0':'') + splits[0] + ':' +
+				 (splits[1].length==1?'0':'') + splits[1];
+		return result;
 	}
 
 	function setStoreAddress(){
@@ -424,6 +445,94 @@
 		}else{
 			$('#es_time').val(data['shopinfo']['es_time']);
 		}
+	}
+
+	function showPosterModal(){
+		$('#add_poster_name').val('');
+		$('#add_poster_phone').val('');
+		$('#add_poster_desc').val('');
+		$('#posmodal').modal('show');
+		$('#posmodal_label').html('添加送货员');
+		posterProxy = addPoster;
+	}
+
+	function editPoster(){
+		if($('#posters_select').val()){
+			var index = $('#posters_select').val();
+			$('#posmodal').modal('show');
+			$('#add_poster_name').val(data['posters'][index].name);
+			$('#add_poster_phone').val(data['posters'][index].phone);
+			$('#add_poster_desc').val(data['posters'][index].desc);
+			$('#posmodal_label').html('编辑送货员');
+			posterProxy = editPos;
+		}
+	}
+
+	function editPos(){
+		var name = $('#add_poster_name').val();
+		var phone = $('#add_poster_phone').val();
+		var desc = $('#add_poster_desc').val();
+		var length = data['posters'].length;
+			
+		if(!name){
+			alert('派送员名称不能为空！');
+			return;
+		}
+
+		var length = $('#posters_select').val();
+		data['posters'][length].name = name;
+		data['posters'][length].phone = phone;
+		data['posters'][length].desc = desc;
+		$('#pos_option_' + length).html(name);
+		$('#poster_phone').val(phone);
+		$('#poster_desc').val(desc);
+		$('#posmodal').modal('hide');
+	}
+	
+	function showDistrictModal(){
+		$('#add_district_name').val('');
+		$('#add_district_desc').val('');
+		$('#dismodal').modal('show');
+		$('#dismodal_label').html('添加送货片区');
+		districtProxy = addDistrict;
+	}
+	
+	function editDistrict(){
+		if($('#districts_select').val()){
+			var index = $('#districts_select').val();
+			$('#dismodal').modal('show');
+			$('#add_district_name').val(data['districts'][index].name);
+			$('#add_district_desc').val(data['districts'][index].desc);
+			$('#dismodal_label').html('编辑送货片区');
+			districtProxy = editDis;
+		}
+	}
+
+	function editDis(){
+		var length = parseInt($('#districts_select').val());
+		var name = $('#add_district_name').val();
+		var desc = $('#add_district_desc').val();
+			
+		if(!name){
+			alert('片区名称不能为空！');
+			return;
+		}
+		if(!desc){
+			alert('片区描述不能为空！');
+			return;
+		}
+		for(disindex in data['districts']){
+			var district = data['districts'][disindex];
+			if(!district.deleted && district.name == name && disindex != length){
+				alert('该片区已存在！');
+				return;
+			}
+		}
+		data['districts'][length].name = name;
+		data['districts'][length].desc = desc;
+		$('#dis_option_' + length).html(name);
+		$('#district_desc').val(desc);
+		$('#dismodal').modal('hide');
 	}
 
 	function addDistrict(){
@@ -502,6 +611,34 @@
 	}
 
 	function submit(){
+		if(data['districts'].length == 0){
+			alert('您至少需要添加一个片区');
+			return;
+		}else{
+			var count = 0;
+			for(disindex in data['districts']){
+				if(!data['districts'][disindex].deleted)
+					count ++;
+			}
+			if(count == 0){
+				alert('您至少需要添加一个片区');
+				return;
+			}
+		}
+		if(data['posters'].length == 0){
+			alert('您至少需要一个配送人员');
+			return;
+		}else{
+			var count = 0;
+			for(posindex in data['posters']){
+				if(!data['posters'][posindex].deleted)
+					count ++;
+			}
+			if(count == 0){
+				alert('您至少需要一个配送人员');
+				return;
+			}
+		}
 		data['shopinfo']['threshold'] = ($('#threshold').attr('checked')?1:0);
 		$('#form_json_input').val(escape(JSON.stringify(data)));
 		$('#form_submit').click();

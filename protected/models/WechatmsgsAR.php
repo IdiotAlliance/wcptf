@@ -30,7 +30,7 @@ class WechatmsgsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, seller_id, openid, rawid, rawmsg, msgtype', 'required'),
+			array('id, seller_id, openid, rawmsg, msgtype', 'required'),
 			array('id', 'numerical', 'integerOnly'=>true),
 			array('seller_id, openid', 'length', 'max'=>11),
 			array('rawid', 'length', 'max'=>32),

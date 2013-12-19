@@ -10,6 +10,9 @@ class WechatAccessController extends Controller {
 		$url = Yii::app()->request->getUrl();
 		// 用正则表达式从url获取seller id
 		preg_match('/.*wechatAccess\/(\d+)\/(\w+)/i', $url, $matches);
+		if(!$matches){
+			$this->redirect(Yii::app()->createUrl('errors/error/404'));
+		}
 		$sellerId = $matches[1];
 		
 		if (Yii::app()->request->isPostRequest) {	
@@ -95,6 +98,7 @@ class WechatAccessController extends Controller {
  					$member = new MembersAR();
  					$member->seller_id = $sellerId;
  					$member->openid    = $openId;
+ 					$member->wapkey = SeriesGenerator::generateMemberKey();
  					$member->save();
  				}else{
  					$member->unsubscribed = 0;
@@ -105,12 +109,21 @@ class WechatAccessController extends Controller {
 								<ToUserName><![CDATA[%s]]></ToUserName>
 								<FromUserName><![CDATA[%s]]></FromUserName>
 								<CreateTime>%s</CreateTime>
-								<MsgType><![CDATA[text]]></MsgType>
-								<Content><![CDATA[%s]]></Content>
+								<MsgType><![CDATA[news]]></MsgType>
+								<ArticleCount>1</ArticleCount>
+								<Articles>
+									<item>
+										<Title><![CDATA[关于我们&帮助]]></Title> 
+										<Description><![CDATA[果果家微信平台使用小tips]]></Description>
+										<PicUrl><![CDATA[%s]]></PicUrl>
+										<Url><![CDATA[%s]]></Url>
+									</item>
+								</Articles>
 							</xml>
 						";
+				$about_url = "http://mp.weixin.qq.com/mp/appmsg/show?__biz=MzA4MzA2MDgwMQ==&appmsgid=10000034&itemidx=1&sign=1e807c4e9afe16c97858e9539796000b#wechat_redirect";
 				$resultStr = sprintf($textTpl, $msg->FromUserName, $msg->ToUserName, $time,
-						     "感谢您关注".$user->store_name."!回复 菜单 以察看主菜单");
+							 'http://www.v7fen.com/weChat/'.$user->logo, $about_url);
 				echo $resultStr;
 				break;
 			}
@@ -134,6 +147,29 @@ class WechatAccessController extends Controller {
 		if($content){
 			switch($content){
 				case '菜单':{
+					// 若没有该用户，先创建该用户
+					$member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid);
+					if(!$member){
+						$member = new MembersAR();
+						$member->openid = $openid;
+						$member->seller_id = $sellerId;
+						$member->wapkey = SeriesGenerator::generateMemberKey();
+						$member->save();
+					}else{
+						if($member->unsubscribed){
+							$member->unsubscribed = 0;
+							$member->update();
+						}
+					}
+					
+					// 为用户创建token
+					$token = SeriesGenerator::generateMemeberToken();
+					$memtoken = new MemberTokenAR();
+					$memtoken->seller_id = $sellerId;
+					$memtoken->openid = $openid;
+					$memtoken->token = $token;
+					$memtoken->save();
+					
 					// 返回消息
 					$textTpl = "<xml>
 								<ToUserName><![CDATA[%s]]></ToUserName>
@@ -143,7 +179,7 @@ class WechatAccessController extends Controller {
 								<ArticleCount>6</ArticleCount>
 								<Articles>
 									<item>
-										<Title><![CDATA[您好~(^O^)~,我是茹果！]]></Title> 
+										<Title><![CDATA[我们传递新鲜与健康]]></Title> 
 										<Description><![CDATA[欢迎使用茹果微信点单工具]]></Description>
 										<PicUrl><![CDATA[%s]]></PicUrl>
 										<Url><![CDATA[%s]]></Url>
@@ -154,12 +190,12 @@ class WechatAccessController extends Controller {
 										<Url><![CDATA[%s]]></Url>
 									</item>
 									<item>
-										<Title><![CDATA[热卖产品]]></Title>
+										<Title><![CDATA[聚划算]]></Title>
 										<PicUrl><![CDATA[]]></PicUrl>
 										<Url><![CDATA[%s]]></Url>
 									</item>
 									<item>
-										<Title><![CDATA[个人中心]]></Title>
+										<Title><![CDATA[我的订单]]></Title>
 										<PicUrl><![CDATA[]]></PicUrl>
 										<Url><![CDATA[%s]]></Url>
 									</item>
@@ -169,7 +205,7 @@ class WechatAccessController extends Controller {
 										<Url><![CDATA[%s]]></Url>
 									</item>
 									<item>
-										<Title><![CDATA[关于我们]]></Title>
+										<Title><![CDATA[帮助&关于我们]]></Title>
 										<PicUrl><![CDATA[]]></PicUrl>
 										<Url><![CDATA[%s]]></Url>
 									</item>
@@ -177,23 +213,23 @@ class WechatAccessController extends Controller {
 							</xml>
 						";
 					
-					$order_url = Yii::app()->createAbsoluteUrl('wap/index/'.$sellerId.'?'.$openid);
+					$order_url = Yii::app()->createAbsoluteUrl('wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token);
 					$hots_url = $order_url;
 					$hot_products = HotProductsAR::model()->getHotProductsById($sellerId);
 					$user = UsersAR::model()->getUserById($sellerId);
 					
 					foreach ($hot_products as $hot){
 						if($hot->onindex == 1){
-							$hots_url = $order_url.'?'.$hot->product_id;
+							$hots_url = $order_url.'&sortid='.$hot->product_id;
 							break;
 						}
-						$hots_url = $order_url.'?'.$hot->product_id;
+						$hots_url = $order_url.'&sortid='.$hot->product_id;
 					}
-					$personal_url = "";
+					$personal_url = Yii::app()->createAbsoluteUrl('wap/wap/history/'.$sellerId.'?openid='.$openid.'#mp.weixin.qq.com');
 					$propose_url = "";
-					$about_url = "";
+					$about_url = "http://mp.weixin.qq.com/mp/appmsg/show?__biz=MzA4MzA2MDgwMQ==&appmsgid=10000034&itemidx=1&sign=1e807c4e9afe16c97858e9539796000b#wechat_redirect";
 					$resultStr = sprintf( $textTpl, $msg->FromUserName, $msg->ToUserName, $time, 
-										  'http://210.209.70.43'.$user->logo, 
+										  'http://www.v7fen.com/weChat/'.$user->logo, 
 										  $order_url, $order_url, $hots_url, $personal_url, 
 										  $propose_url, $about_url);
 					echo $resultStr;

@@ -96,11 +96,21 @@ class DistrictsAR extends CActiveRecord
 	}
 
 	/**
-	 * 根据用户id获取配送片区
+	 * 根据用户id获取配送片区,包括已删除的地区
 	 * @param $userId 用户的id
 	 */
 	public function getDistrictsByUserId($userId){
 		$districts = DistrictsAR::model()->findAll('seller_id=:userId', array(':userId'=>$userId));
+		return $districts;
+	}
+	
+	/**
+	 * 根据用户id获取配送片区,不包括已删除的地区
+	 * @param $userId 用户的id
+	 */
+	public function getUndeletedDistrictsByUserId($userId){
+		$districts = DistrictsAR::model()->findAll('seller_id=:userId and deleted<>1', 
+												array(':userId'=>$userId));
 		return $districts;
 	}
 	
@@ -110,7 +120,11 @@ class DistrictsAR extends CActiveRecord
 	}
 	
 	public function deleteDistrictById($id){
-		DistrictsAR::model()->deleteByPK($id);
+		$district = $this->getDistrictById($id);
+		if($district){
+			$district->deleted = 1;
+			$district->update();
+		}
 	}
 
 	/*

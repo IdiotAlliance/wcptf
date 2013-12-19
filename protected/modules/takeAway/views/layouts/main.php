@@ -72,7 +72,7 @@
 				</ul>
 			</div>
 			<div class='menu'>
-				<h4><i class='icon-user'></i> &nbsp&nbsp会员管理</h4>
+				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/members');?>"><i class='icon-user'></i> &nbsp&nbsp会员管理</a></h4>
 			</div>
 			<div class='menu'>
 				<h4><i class='icon-star'></i> &nbsp&nbsp活动管理</h4>
@@ -125,10 +125,9 @@
 		                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+json.success+"/prodId/0";
 		                },
 		                error:function(json){
-		                	alert("商品类别名重复！");
 		                	$("#categoryInput").css('display','none');
 		                },
-		            }) 	
+		            })
 				}
 				else{
 					$("#categoryInput").css('display','none');

@@ -20,8 +20,8 @@
 		<ul class="order-list">
 			<?php foreach ($orders as $order):?>
 				<li>
-					<div <?php if($order->status=="待派送"){
-						echo 'class="order-item item-wait"';}
+					<div <?php if($order->status=="待派送" || $order->status =="未读"){
+							echo 'class="order-item item-wait"';}
 						else {
 							echo 'class="order-item item-produce"';
 						}
@@ -29,10 +29,25 @@
 						<ul>
 							<li class="order-state ">
 								<div class="state">
-									<label><?php echo $order->status; ?></label>
+									<label><?php 
+										if($order->status=="待派送" || $order->status =="未读"){
+											echo '待派送';
+										}
+										else {
+											echo $order->status;
+										}
+									?></label>
 								</div>
 							</li>
-							<li class="order-content" <?php echo 'id = "'.$order->id.'"'; ?>>
+							<li  <?php 
+							$output = 'class="order-content';
+							if($order->status=='未读'){
+								$output = $output.' unread"';
+							}else{
+								$output = $output.'"';
+							}
+							$output = $output.' id = "'.$order->id.'"';
+							echo $output; ?>>
 								<div class="content">
 									<div class="item-line item-line1">
 										<label class="order-username">预约人：<?php echo $order->order_name; ?></label>

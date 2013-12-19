@@ -51,7 +51,7 @@ class OrdersAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, member_id, ctime, status, total, phone, poster_id, order_name', 'required'),
+			array('seller_id, member_id, status, phone, order_name', 'required'),
 			array('status, type, poster_id', 'numerical', 'integerOnly'=>true),
 			array('total', 'numerical'),
 			array('seller_id, member_id', 'length', 'max'=>11),
@@ -279,8 +279,18 @@ class OrdersAR extends CActiveRecord
 	public function cancelOrder($userId, $orderId){
 		$order = OrdersAR::model()->find('seller_id=:userId and id=:orderId', 
 			array(':userId'=>$userId, ':orderId'=>$orderId));
+		OrdersAR::model()->backInstore($order);
 		$order->status=3;
 		$order->save();
+	}
+
+	public function backInstore($order){
+		if(!empty($order)){
+			$items = OrderItemsAR::model()->getTrueItems($order->id);
+			foreach ($items as $item) {
+				ProductsAR::model()->buyProduct($item->product_id, $order->seller_id, -$item->number);
+			}
+		}
 	}
 
 	/*
@@ -308,8 +318,8 @@ class OrdersAR extends CActiveRecord
 	*/
 	public function getMemberPartOrders($memberId, $sellerId, $ctime){
 		$connection = OrdersAR::model()->getDbConnection();
-		$query = "select * from orders where seller_id=:sellerId and member_id:=memberId and".
-		"(ctime<:ctime or ctime=:ctime) order by ctime DESC";
+		$query = "select * from orders where seller_id=:sellerId and member_id=:memberId and ".
+		" (ctime=:ctime or ctime<:ctime) order by ctime DESC";
 		if ($stmt = $connection->createCommand($query)) {
 		    $stmt->bindParam(':sellerId', $sellerId);
 		    $stmt->bindParam(':memberId', $memberId);
@@ -330,10 +340,51 @@ class OrdersAR extends CActiveRecord
 		return $order;
 	}
 
-	/*
-		订订单
-	*/
-	public function makeOrder($sellerid, $memberid, $areaid, $areadesc, $phone, $tips) {
+	/**
+	 * 根据sellerId获取订单
+	 * @param unknown $sellerId
+	 */
+	public function getOrdersBySellerId($sellerId){
+		$orders = OrdersAR::model()->findAll('seller_id=:sellerId', array(':sellerId'=>$sellerId));
+		return $orders;
+	}
+	
+	/**
+	 * 根据sellerId获取一个商家每个会员的订单数量
+	 * @param unknown $sellerId
+	 */
+	public function getOrdersCountBySellerId($sellerId){
+		$connection = OrdersAR::model()->getDbConnection();
+		$query = "SELECT orders.member_id as member_id, COUNT(*) AS order_count FROM orders ".
+				 "WHERE orders.seller_id=:sellerId GROUP BY orders.member_id";
+		$orders = array();
+		if($stmt = $connection->createCommand($query)){
+			$stmt->bindParam(':sellerId',$sellerId);
+			$result = $stmt->queryAll();
+			return $result;
+		}
+		return $orders;
+	}
+	
+	/**
+	 * 根据会员的id获取所有订单
+	 * @param $memberId
+	 */
+	public function getOrdersByMemeberId($memberId){
+		$orders = OrdersAR::model()->findAll(
+			array(
+				'condition'=>'member_id=:memberId',
+				'params'=>array(':memberId'=>$memberId),
+				'order'=>'ctime DESC',
+			)
+		);
+		return $orders;
+	}
+	
+	/**
+	 *	订订单
+	 */
+	public function makeOrder($sellerid, $memberid, $areaid, $areadesc, $phone, $tips, $name) {
 		$order = new OrdersAR;
 		$order->seller_id = $sellerid;
 		$order->member_id = $memberid;
@@ -344,6 +395,7 @@ class OrdersAR extends CActiveRecord
 		$order->status = 0;
 		$order->total = 0;
 		$order->description = $tips;
+		$order->order_name = $name;
 		$order->ctime = $date = date('Y-m-d H:i:s');
 		$order->save();
 		$order->order_no = OrdersAR::model()->getOrderNo($order->seller_id, $order->id, $order->ctime);
@@ -367,13 +419,23 @@ class OrdersAR extends CActiveRecord
 		$orderId = str_pad($orderId, 6, "0", STR_PAD_LEFT);
 		return date('Ymd').$orderId;
 	}
+	/*
+		订单已读
+	*/
+	public function readOrder($orderId){
+		$order = OrdersAR::model()->findByPk($orderId);
+		$order->status = 0;
+		$order->save();
+	}
 
 	/*
 		删除订单
 	*/
 	public function deleteOrder($orderID) {
 		$order = OrdersAR::model()->find('id=:orderID', array(':orderID'=>$orderID));
-		$order->delete();
+		if(!empty($order)){
+			$order->delete();
+		}
 	}
 
 	public function changeOrderToView($order) {
@@ -393,6 +455,9 @@ class OrdersAR extends CActiveRecord
 				case 3: 
 					$order->status = "已取消";
 					break;
+				case 4:
+					$order->status = "未读";
+					break;
 		}
 		switch ($order->type) {
 			case 0:
@@ -408,7 +473,12 @@ class OrdersAR extends CActiveRecord
 		if($posterId==0){
 			$order->poster_id = "无";
 		}else{
-			$order->poster_id = PostersAR::model()->getPoster($posterId)->name;
+			$poster = PostersAR::model()->getPoster($posterId);
+			if(!empty($poster)){
+				$order->poster_id = $poster->name;
+			}else{
+				$order->poster_id = "无";
+			}
 		};
 		$order->seller_id = OrderItemsAR::model()->generateItems($order->id);
 		$address = DistrictsAR::model()->getAreaName($order->area_id);

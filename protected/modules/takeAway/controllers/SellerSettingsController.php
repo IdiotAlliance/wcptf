@@ -59,10 +59,10 @@ class SellerSettingsController extends Controller {
 				
 			} else {
 				$user = UsersAR::model ()->getUserById ( $userId );
-				$posters = PostersAR::model ()->getPostersByUserId ( $userId );
-				$districts = DistrictsAR::model ()->getDistrictsByUserId ( $userId );
-				$types = ProductTypeAR::model ()->getSellerProductType ( $userId );
-				$products = ProductsAR::model ()->getProductsBySellerId ( $userId );
+				$posters = PostersAR::model ()->getUndeletedPostersByUserId($userId);
+				$districts = DistrictsAR::model ()->getUndeletedDistrictsByUserId($userId);
+				$types = ProductTypeAR::model ()->getUndeletedProductTypeBySellerId($userId);
+				$products = ProductsAR::model ()->getUndeletedProductsBySellerId($userId);
 				$hots = HotProductsAR::model ()->getHotProductsById ( $userId );
 				
 				$shopinfo = array ();

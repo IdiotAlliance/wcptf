@@ -30,7 +30,12 @@
 			<a href="javascript:;" id='editCategory'>编辑</a>
 		</div>
 		<div class='item'>
+			<?php if($prodList!=null):?>
 			<a href="#delCategoryModal" role="button" data-toggle="modal">删除</a>
+			<?php endif;?>
+			<?php if($prodList==null):?>
+			<a href="javascript:;" id='delTypeNone'>删除</a>
+			<?php endif;?>			
 		</div>
 	</div>
 
@@ -480,11 +485,33 @@
                 },
             })  
 		})
-
+		
+		
+		$("#delTypeNone").click(function(){
+			if(confirm('您确定要删除该空类别吗')){
+				$.ajax({
+	                type: 'POST',
+	                url: "<?php echo CHtml::normalizeUrl(array('productManager/delTypeNone'));?>",
+	                data: {'id':<?php echo $productType->id;?>},
+	                dataType: 'json',
+	                
+	                success:function(json){
+	                	if(json.empty == 1){
+							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/noProducts'); ?>";
+						}else{
+							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>/typeId/" + json.id;
+						}		            
+					},
+	                error:function(){
+	                	alert('保存失败');
+	                },				
+				})
+			}
+		});
 		$("#delCategory").click(function(){
 			var choice = $("#delCategoryModal select").find('option:selected').val();
 			var deleteOr = true;
-			if(choice != 0){
+			if(choice != '0'){
 				deleteOr = false;
 				$.ajax({
 	                type: 'POST',
@@ -493,8 +520,14 @@
 	                dataType: 'json',
 	                
 	                success:function(json){
+<<<<<<< HEAD
 	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+choice+"/prodId/0";
 	                },
+=======
+	                	$("#delCategoryModal").modal('hide');
+	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+choice;
+		            },
+>>>>>>> ad9471852d7b3b908150dcba05930d52625725db
 	                error:function(){
 	                	alert('保存失败');
 	                },				
@@ -508,9 +541,19 @@
 	                dataType: 'json',
 	                
 	                success:function(json){
+<<<<<<< HEAD
 
 	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>0,'prodId'=>0));?>";
 	                },
+=======
+	                	$("#delCategoryModal").modal('hide');
+						if(json.empty == 1){
+							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/noProducts'); ?>";
+						}else{
+							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>/typeId/" + json.id;
+						}
+		            },
+>>>>>>> ad9471852d7b3b908150dcba05930d52625725db
 	                error:function(){
 	                	alert('保存失败');
 	                },				

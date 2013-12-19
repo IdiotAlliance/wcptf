@@ -64,12 +64,15 @@ class OrderFlowController extends Controller
 	*/
 	public function actionSended(){
 		$day = 0;
+		$areaId = 0;
 		if(isset($_POST['day'])){
 			$day = $_POST['day'];
 		}
+		if(isset($_POST['areaId'])){
+			$areaId = $_POST['areaId'];
+		}
 		$date = date("Y-m-d H:i:s",strtotime($day." day"));
-		$place = null;
-		$orders = OrdersAR::model()->filterSended($this->userID, $date, $place);
+		$orders = OrdersAR::model()->filterSended($this->userID, $date, $areaId);
 		echo $this->renderPartial('_orderList2', array('orders'=>$orders), true, false);
 	}
 
@@ -78,12 +81,15 @@ class OrderFlowController extends Controller
 	*/
 	public function actionCancel(){
 		$day = 0;
+		$areaId = 0;
 		if(isset($_POST['day'])){
 			$day = $_POST['day'];
 		}
+		if(isset($_POST['areaId'])){
+			$areaId = $_POST['areaId'];
+		}
 		$date = date("Y-m-d H:i:s",strtotime($day." day"));
-		$place = null;
-		$orders = OrdersAR::model()->filterCancel($this->userID, $date, $place);
+		$orders = OrdersAR::model()->filterCancel($this->userID, $date, $areaId);
 		echo $this->renderPartial('_orderList3', array('orders'=>$orders), true, false);
 	}
 	
@@ -95,11 +101,14 @@ class OrderFlowController extends Controller
 		if(isset($_POST['orderId'])){
 			$orderId = $_POST['orderId'];
 		}
-		$orderItems = orderItemsAR::model()->getItems($orderId);
-		$order = ordersAR::model()->getOrder($orderId);
+		$orderItems = OrderItemsAR::model()->getItems($orderId);
+		$order = OrdersAR::model()->getOrder($orderId);
 		if(empty($order)){
 			echo "没有订单数据";
 		}else{
+			if($order->status == "未读"){
+				OrdersAR::model()->readOrder($orderId);
+			}
 			echo $this->renderPartial('_orderItems', array('order'=>$order, 'orderItems'=>$orderItems), true, false);
 		}
 		
@@ -298,7 +307,6 @@ class OrderFlowController extends Controller
 			exit;
     	}
     	
-    	
     }
     /*
     	设置派送人员
@@ -372,8 +380,12 @@ class OrderFlowController extends Controller
     	 $model = new ModifyOrderHeaderForm;
     	 $this->renderPartial('_orderHeaderForm', array('model'=>$model));
     }
+    function inject_check($sql_str) { 
+    	return preg_match('%select|insert|and|or|update|delete|\'|\/\*|\*|\.\.\/|\.\/|union|into|load_file|outfile%i', $sql_str);
+	}
 	public function actionModifyOrderHeaderForm()
     {
+    	require "HtmLawed.php";
     	if(isset($_POST['orderId'])&&isset($_POST['orderName'])
     		&&isset($_POST['phone'])&&isset($_POST['desc'])&&isset($_POST['total'])){
     		$orderId = $_POST['orderId'];
@@ -381,13 +393,35 @@ class OrderFlowController extends Controller
     		$phone = $_POST['phone'];
     		$desc = $_POST['desc'];
     		$total = $_POST['total'];
+    		if($this->inject_check($name)){
+    			$arr=array('success'=>'2');
+				echo json_encode($arr);
+				exit;
+    		}
+    		if($this->inject_check($desc)){
+    			$arr=array('success'=>'2');
+				echo json_encode($arr);
+				exit;
+    		}
+    		if($this->inject_check($phone)){
+    			$arr=array('success'=>'2');
+				echo json_encode($arr);
+				exit;
+    		}
+    		$config = array('safe'=>1, "elements"=>"-*");
+    		$desc = htmLawed($desc, $config);
+    		$name = htmLawed($name, $config);
+    		$phone = htmLawed($phone, $config);
+    		
     		$result = OrdersAR::model()->headerModify($orderId, $name, $phone, $desc, $total);
     		if($result){
     			$arr=array('success'=>'1');
 				echo json_encode($arr);
+				exit;
     		}else{
     			$arr=array('success'=>'0');
 				echo json_encode($arr);
+				exit;
     		}
     		
     	}else{
@@ -406,8 +440,13 @@ class OrderFlowController extends Controller
     		$orderId = $_POST['orderId'];
     		$productId = $_POST['productId'];
     		$num = $_POST['num'];
-    		$result = OrderItemsAR::model()->createItem($sellerid, $order->id, $productId, $num);
+    		$sellerid = $this->getUserId();
+    		$result = OrderItemsAR::model()->createItem($sellerid, $orderId, $productId, $num);
     		if($result =="ok"){
+    			$price = ProductsAR::model()->findByPk($productId)->price;
+    			$total = OrdersAR::model()->findByPk($orderId)->total;
+    			$total = $total + (float)$price * (float)$num;
+    			OrdersAR::model()->setOrderTotal($orderId, $total);
     			$arr=array('success'=>'1');
 				echo json_encode($arr);
     		}else{
@@ -426,7 +465,7 @@ class OrderFlowController extends Controller
     */
     public function actionFetchAreas(){
     	$userId = $this->getUserId();
-    	$areas = DistrictsAR::model()->getDistrictsByUserId($userId);
+    	$areas = DistrictsAR::model()->getUndeletedDistrictsByUserId($userId);
     	$result = array();
     	foreach ($areas as $area) {
     		array_push($result, array('id'=>$area->id, 'name'=>$area->name));

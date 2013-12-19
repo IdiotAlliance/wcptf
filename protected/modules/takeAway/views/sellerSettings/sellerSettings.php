@@ -22,9 +22,17 @@
 	.set_index{
 		color: red;
 	}
+	.config_card{
+		border: 1px solid #e0e0e0;
+		padding: 5px;
+		box-shadow: 0xp 1px 3px #808080;
+		-webkit-box-shadow: 0xp 1px 3px #808080;
+		margin-bottom: 10px;
+	}
 	#seller_settings_container{
 		position: absolute;
 		left: 200px;
+		right: 0px;
 		top: 41px;
 		bottom: 0px;
 		overflow-y: auto;
@@ -39,10 +47,13 @@
 		padding-bottom: 10px;
 		padding-left: 20px;
 		box-shadow: 0px 1px 3px #808080;
+		-moz-box-shadow: 0px 1px 3px #808080;
 	}
 	#seller_settings_main_container{
 		margin-top: 60px;
 		padding-left: 20px;
+		padding-right: 20px;
+		padding-bottom: 20px;
 	}
 </style>
 <div id="seller_settings_container">
@@ -58,40 +69,45 @@
 	
 	<div id="seller_settings_main_container">
 		<h4><?php echo Utils::getDate('y-m-d w');?></h4>
-		<div>
-			店铺状态：
-			<select name="store_status" id="store_status">
-				<option value="0">正常经营</option>
-				<option value="1">暂停外卖</option>
-				<option value="2">暂停营业</option>
-			</select>
+		<div class="config_card">
+			<div>
+				店铺状态：
+				<select name="store_status" id="store_status">
+					<option value="0">正常经营</option>
+					<option value="1">暂停外卖</option>
+					<option value="2">暂停营业</option>
+				</select>
+			</div>
+			<div class="row">
+				<div class="span1">店铺公告：</div>
+				<textarea id="broadcast" rows="5" cols="" class="span5"></textarea>
+			</div>
 		</div>
-		<div class="row">
-			<div class="span1">店铺公告：</div>
-			<textarea id="broadcast" rows="5" cols="" class="span5"></textarea>
+		
+		<div class="config_card">
+			<h4>品类促销</h4>
+			<table class="table table-hover table-condensed" id="product_types"></table>
 		</div>
 		
+		<div class="config_card">
+			<h4>今日外送片区（请勾选外送片区）</h4>
+			<div id="districts" class="row"></div>
+		</div>
 		
-		<hr>
-		<h4>品类促销</h4>
-		<div id="product_types"></div>
+		<div class="config_card">
+			<h4>今日外送人员（请勾选外送人员）</h4>
+			<div id="posters" class="row"></div>
+		</div>
 		
-		<hr>
-		<h4>今日外送片区（请勾选外送片区）</h4>
-		<div id="districts" class="row"></div>
-		
-		<hr>
-		<h4>今日外送人员（请勾选外送人员）</h4>
-		<div id="posters" class="row"></div>
-		
-		<hr>
-		<div class="row">
-			<h4 class="span2">今日库存管理</h4>
-			<span class="btn span2" onclick="showEditModal()">
-				<span class="icon-edit"></span>&nbsp;编辑产品库存
-			</span>
-		</div><br>
-		<div id="instore_management"></div>
+		<div class="config_card">
+			<div class="row">
+				<h4 class="span2">今日库存管理</h4>
+				<span class="btn span2" onclick="showEditModal()">
+					<span class="icon-edit"></span>&nbsp;编辑产品库存
+				</span>
+			</div><br>
+			<div id="instore_management"></div>
+		</div>
 	</div>
 </div>
 
@@ -114,10 +130,11 @@
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/jquery.form.js" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
 	var data = eval('(' + '<?php echo $json?>' + ')');
+	var info_threshold = 30;
+	var warn_threshold = 10;
 	
 	// 设置容器宽度，并使其随着窗口大小改变而改变
 	$(document).ready(function(){
-		window.onresize = setContainerWidth;
 		initView();
 		$('#form_json_input').val(escape(JSON.stringify(data)));
 		for(typeindex in data['types']){
@@ -127,7 +144,7 @@
 				$("#myupload_" + id).ajaxSubmit({
 					dataType:  'json',
 					success: function(data) {
-						var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+data.pic_path;
+						var img = data.pic_path;
 						$('#pic_url_'+id).html(img);
 					},
 					error:function(xhr){
@@ -136,13 +153,8 @@
 				});
 			});
 		}
-		setContainerWidth();
 	});
 
-	function setContainerWidth(){
-		var width = $('body').width();
-		$('#seller_settings_container').css("width", width - 200 + "px");
-	}
 
 	function initView(){
 		initShopInfo();
@@ -162,21 +174,20 @@
 		for(typeindex in data['types']){
 			var type = data['types'][typeindex];
 			console.log(type);
-			types.append('<div class="row">' + 
-							'<div class="span8 row">' + 
-								'<b class="span1">' + type.type_name + '</b>' +
-								'<div class="span3" id="pic_url_' + type.id + '">' + (type.picurl?type.picurl:"未上传图片") + '</div>' +
-								'<input type="file" id="fileupload_' + type.id +'" name="hots">' + 
-								'<div class="span1"></div>' + 
-								'<select onchange="select(this)" class="span1" id="select_' + type.id + '">' +
-									'<option value="无">无</option>' +
-									'<option value="热卖">热卖</option>' +
-									'<option value="推荐">推荐</option>' +
-									'<option value="新品">新品</option>' +
-								'</select>' +
-							'</div>' +
-							'<div onclick="setIndex(this)" href="#" class="span1 index_switch" id="set_index_' + type.id + '">设为首页</div>' +
-						 '</div>');
+			 types.append('<tr>' +
+						  		'<td><b>' + type.type_name + '</b></td>' +
+						  		'<td id="pic_url_' + type.id + '">' + (type.picurl?type.picurl:"未上传图片") + '</td>' + 
+						  		'<td>' + '<input type="file" id="fileupload_' + type.id +'" name="hots"></td>' +
+						  		'<td>' + 
+						  			'<select onchange="select(this)" id="select_' + type.id + '">' +
+										'<option value="无">无</option>' +
+										'<option value="热卖">热卖</option>' +
+										'<option value="推荐">推荐</option>' +
+										'<option value="新品">新品</option>' +
+									'</select>' +
+								'</td>' +
+								'<td onclick="setIndex(this)" href="#" class="index_switch" id="set_index_' + type.id + '">设为首页</td>' +
+						    '</tr>' );
 			//设置选项
 			$('#select_' + type.id).val(type.tag);
 			if(!type.hot){
@@ -241,7 +252,7 @@
 								'<input onclick="onpro(this)" type="checkbox" id="instore_pro_cb_' + 
 								product.id + '" name="' + type.id + '"/>' + 
 								product.pname +
-								'<div class="badge badge-' + (product.daily_instore>30?'success':(product.daily_instore>10?'warning':'important')) + 
+								'<div class="badge badge-' + (product.daily_instore>info_threshold?'success':(product.daily_instore>warn_threshold?'warning':'important')) + 
 								'" id="daily_instore_' + product.id + '">' + product['daily_instore'] + '</div>' +
 							'</label>' +
 						'</div>'
@@ -343,8 +354,19 @@
 					for(proindex in type['products']){
 						var product = type['products'][proindex];
 						var proid   = product.id;
-						if($('#instore_pro_cb_' + proid).attr('checked'))
+						if($('#instore_pro_cb_' + proid).attr('checked')){
 							$('#daily_instore_' + proid).html(num);
+							$('#daily_instore_' + proid + '.badge-success').removeClass('badge-success');
+							$('#daily_instore_' + proid + '.badge-warning').removeClass('badge-warning');
+							$('#daily_instore_' + proid + '.badge-important').removeClass('badge-important');
+							if(parseInt(num) > info_threshold){
+								$('#daily_instore_' + proid).addClass('badge-success');
+							}else if(parseInt(num) > warn_threshold){
+								$('#daily_instore_' + proid).addClass('badge-warning');
+							}else{
+								$('#daily_instore_' + proid).addClass('badge-important');
+							}
+						}
 					}
 				}
 				$('#instore_modal_num').val('');

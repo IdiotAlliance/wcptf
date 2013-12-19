@@ -60,7 +60,7 @@ class ProductsAR extends CActiveRecord
 			array('price', 'numerical'),
 			array('seller_id, type_id, cover', 'length', 'max'=>11),
 			array('pname', 'length', 'max'=>256),
-			array('description, etime, richtext', 'safe'),
+			array('pname, description, etime, richtext', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, seller_id, type_id, pname, price, credit, description, stime, etime, status, instore, daily_instore, insufficient, richtext, cover', 'safe', 'on'=>'search'),
@@ -162,7 +162,7 @@ class ProductsAR extends CActiveRecord
 	public function buyProduct($product_id, $sellerId, $num){
 		$product = ProductsAR::model()->find('id=:product_id and seller_id=:sellerId', 
 			array(':product_id'=>$product_id, ':sellerId'=>$sellerId));
-		$product->instore = $product->instore - $num;
+		$product->daily_instore = $product->daily_instore - $num;
 		$product->save();
 		return $product;
 	}
@@ -259,13 +259,66 @@ class ProductsAR extends CActiveRecord
 		return $prod;
 	}
 
+
+	//获取该商户未分类或者星标类的商品数
+	public function getSpCategoryNum($typeId){
+		$pdList = ProductsAR::model()->findAll(array(
+			'condition' => 'seller_id=:seller_id and type_id=:type_id',
+			'params' => array(':seller_id'=>Yii::app()->user->sellerId,':type_id'=>$typeId),
+		));
+		return count($pdList);
+	}
+	
+	/**
+	 * 取出一个商家的所有商品，包括已经被删除的商品
+	 * @param unknown $sellerId
+	 * @return unknown
+	 */
 	//获取某商家的所有商品
 	public function getProductsBySellerId($sellerId){
 		$products = ProductsAR::model()->findAll('seller_id=:sellerId and deleted=:deleted', array(':sellerId'=>$sellerId,':deleted'=>0));
 		return $products;
 	}
 
-	public function getProduct($id){
+	/**
+	 * 
+	 * @param unknown $sellerId
+	 */
+	public function getUndeletedProductsBySellerId($sellerId){
+		$products = ProductsAR::model()->findAll('seller_id=:sellerId and deleted<>1', 
+												 array(':sellerId'=>$sellerId));
+		return $products;
+	}
+	
+	/**
+	 * 根据sellerid获取产品，以及它们的图片url
+	 * @param unknown $sellerId
+	 */
+	public function getUndeletedProductsWithPicUrl($sellerId){
+		$connection = ProductsAR::model()->getDbConnection();
+		$query = "SELECT products.id as id, products.status as status, products.type_id as type_id, products.stime as stime,".
+				 " products.etime as etime, products.description as description, products.pname as pname,".
+				 " products.price as price, products.daily_instore as daily_instore, pictures.pic_url as picurl".
+				 " FROM products LEFT JOIN pictures ON products.cover=pictures.id".
+				 " WHERE products.seller_id=:sellerId and products.deleted<>1";
+		if($stmt = $connection->createCommand($query)){
+			$stmt->bindParam(':sellerId', $sellerId);
+			$result = $stmt->queryAll();
+			return $result;
+		}
+	}
+	
+	public function getProduct($pname){
+		$product = ProductsAR::model()->find(
+			'seller_id=:seller_id AND pname=:pname',
+			array(
+				':seller_id'=>Yii::app()->user->sellerId,
+				':pname'=>$pname,
+				)
+			);
+	}
+	
+	public function getDetailProductById($id){
 		$product = ProductsAR::model()->findByPK($id);
 		$stime = new DateTime($product->stime);
 		$product->stime = $stime->format('Y-m-d');

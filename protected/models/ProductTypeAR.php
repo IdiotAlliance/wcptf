@@ -41,7 +41,7 @@ class ProductTypeAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('type_name, type_description', 'required'),
+			array('type_name', 'required'),
 			array('seller_id', 'length', 'max'=>11),
 			array('type_name', 'length', 'max'=>128),
 			array('type_description', 'length', 'max'=>512),
@@ -111,14 +111,46 @@ class ProductTypeAR extends CActiveRecord
 		}
 	}
 
+	/**
+	 * 获取商家的所有产品品类，包括已删除的
+	 * @param unknown $sellerId
+	 * @return unknown
+	 */
 	public function getSellerProductType($sellerId)
 	{
 		$pdTypeList = ProductTypeAR::model()->findAll('seller_id=:sellerId and deleted=:deleted',array(':sellerId'=>$sellerId,':deleted'=>0));
 		return $pdTypeList;
 	}
 
+	/**
+	 * 获取商家未删除的商品品类
+	 * @param unknown $sellerId
+	 */
+	public function getUndeletedProductTypeBySellerId($sellerId){
+		$pdTypeList = ProductTypeAR::model()->findAll('seller_id=:sellerId and deleted<>1',
+													  array(':sellerId'=>$sellerId));
+		return $pdTypeList;
+	}
+	
+	//获取类别的描述
+	public function getProductDesc($typeName){
+		if($typeName=='未分类' || $typeName=='星标类')
+			return '默认分类';
+		else{
+			$pdType = ProductTypeAR::model()->find(
+					'seller_id=:seller_id AND type_name=:type_name',
+					array(
+						':seller_id'=>Yii::app()->user->sellerId,
+						':type_name'=>$typeName,
+					)
+				);
+			return $pdType->type_description;
+		}
+		
+	}
+	
 	public function getCategoryByName($name){
-		$type = ProductTypeAR::model()->find('type_name=:type_name and seller_id=:sellerId',
+		$type = ProductTypeAR::model()->find('type_name=:type_name and seller_id=:sellerId and deleted=0',
 			array(':type_name'=>$name,':sellerId'=>Yii::app()->user->sellerId));
 		return $type;
 	}
