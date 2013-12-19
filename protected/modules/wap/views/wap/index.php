@@ -145,6 +145,7 @@
 
 	//基础id获取及url校验
 	function baseidinit(){
+<<<<<<< HEAD
 		var urlarray=window.location.href.substr(window.location.href.indexOf('index/')+6).split('?');
 		if(urlarray.length>1){
 			var baseidarray=urlarray[1].split('&');
@@ -155,11 +156,17 @@
 				}
 			}
 		}
+=======
+>>>>>>> origin/master
 		if(openid==null||openid==''||sellerid==null||sellerid==''){
 			return false;
 		}else{
 			return true;
+<<<<<<< HEAD
 		}	
+=======
+		}
+>>>>>>> origin/master
 	}
 
 	//身份key校验
@@ -400,4 +407,8 @@
 	}
 	
 </script>
+<<<<<<< HEAD
 </body>
+=======
+</body>
+>>>>>>> origin/master
