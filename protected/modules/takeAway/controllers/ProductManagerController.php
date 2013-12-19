@@ -5,16 +5,38 @@ class ProductManagerController extends Controller
 	public $layout = '/layouts/main';
     public $defaultAction = 'allProducts';
 
-	public function actionAllProducts($typeId)
+	public function actionAllProducts($typeId,$prodId)
 	{	
 		if($typeId==0){
 			$typeId = Yii::app()->session['typeCount'][0]['typeId'];
 		}
+
 		$productList = ProductsAR::model()->getCategoryProducts($typeId,Yii::app()->user->sellerId);
 		$prodList = ProductsAR::model()->getAllProducts($productList);
 		$productInfo = null;
-		if($productList != null){
+		if($productList != null && $prodId==0){
 			$productInfo = $productList[0];
+		}
+		if($prodId!=0){
+			$productInfo = ProductsAR::model()->findByPK($prodId);
+			$now = date('Y-m-d');
+			if($now< $productInfo->stime )
+				$productInfo->status = "未到期";
+			else if($now > $productInfo->etime)
+				$productInfo->status = "已过期";
+			else{
+				switch ($productInfo->status) {
+					case 1:
+						$productInfo->status = '已上架';
+						break;
+					case 2:
+						$productInfo->status = '已下架';
+						break;
+					default:
+						$productInfo->status = '已上架';
+						break;
+				}
+			}
 		}
 		$productType = ProductTypeAR::model()->findByPK($typeId);
 
@@ -68,6 +90,10 @@ class ProductManagerController extends Controller
 			$product->instore = $_POST["instore"];
 			$product->daily_instore = $_POST["instore"];
 			$product->save();
+			$this->updateSession();
+			$info = array();
+			$info['prodId']=$product->id;
+			echo json_encode($info);
 		}else{
 			throw new CHttpException(500,'商品信息缺失！');
 		}
@@ -99,17 +125,18 @@ class ProductManagerController extends Controller
 	{
 		if(isset($_POST['id']) && isset($_POST['deleteOr'])){
 			$transaction = Yii::app()->db->beginTransaction();
+			$deleteOr = $_POST['deleteOr'];
             try{
             	$category = ProductTypeAR::model()->findByPK($_POST['id']);
             	$category->deleted = 1;
             	$category->save();
-            	if($_POST['deleteOr']){
+            	if($deleteOr=='true'){
     				ProductsAR::model()->updateAll(array('deleted'=>1),'type_id=:type_id',array(':type_id'=>$_POST['id']));
             	}else{
             		$products = ProductsAR::model()->findAll('type_id=:type_id and deleted=0',array(':type_id'=>$_POST["id"]));
             		foreach ($products as $product) {
             			$product->type_id = $_POST["newTypeId"];
-            			$product->save();
+            			$product->update();
             		}
             	}
                 $transaction->commit();
@@ -144,6 +171,7 @@ class ProductManagerController extends Controller
 			$product = ProductsAR::model()->findByPK($_POST["id"]);
 			$product->deleted = 1;
 			$product->update();
+			$this->updateSession();
 		}else{
 			throw new CHttpException(500,'删除失败！');
 		}
@@ -260,21 +288,4 @@ class ProductManagerController extends Controller
 		$typeCount = ProductTypeAR::model()->getProductsByType(Yii::app()->user->sellerId);
 		Yii::app()->session[UserIdentity::SESSION_TYPECOUNT] = $typeCount;
 	}
-
-
-
-	public function accessRules(){
-        return array(
-            array(
-                'allow',
-                'actions'=>array('allProducts'),
-                'users'=>array('?'),
-                ),
-            array(
-                'deny',
-                'actions'=>array('login'),
-                'users'=>array('@'),
-                ),
-            );
-    }
 }

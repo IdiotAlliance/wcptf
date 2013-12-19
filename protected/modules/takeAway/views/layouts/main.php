@@ -56,7 +56,7 @@
 				<h4>
 					<a href="<?php 
 					if(Yii::app()->session['typeCount']!=null){
-						echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>Yii::app()->session['typeCount'][0]['typeId']));
+						echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>Yii::app()->session['typeCount'][0]['typeId'],'prodId'=>0));
 					}else{
 						echo Yii::app()->createUrl('takeAway/productManager/noProducts');
 					}
@@ -65,7 +65,7 @@
 				</h4>
 				<ul id="category">
 					<?php foreach (Yii::app()->session['typeCount'] as $tc):?>
-					<li><a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$tc['typeId']));?>"><?php echo $tc['type_name'];?><i>(<?php echo $tc['product_count'];?>)</i></a></li>
+					<li><a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$tc['typeId'],'prodId'=>0));?>"><?php echo $tc['type_name'];?><i>(<?php echo $tc['product_count'];?>)</i></a></li>
 					<?php endforeach;?>					
 					<li id='categoryInput' style="display:none"><input type="text" placeholder='输入分组名'></input></li>
 					<li><a id='newCategory'><i class='icon-plus'></i> 添加类别</a></li>
@@ -122,7 +122,7 @@
 		                dataType: 'json',
 		                
 		                success:function(json){
-		                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+json.success;
+		                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+json.success+"/prodId/0";
 		                },
 		                error:function(json){
 		                	alert("商品类别名重复！");

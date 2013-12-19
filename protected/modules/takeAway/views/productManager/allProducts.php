@@ -47,10 +47,11 @@
 		<div class='inline-display'>
 			<label class='inline-display'>筛选：</label>
 			<select class='sp-select' id='filt'>
-				<option value='0'>未到期</option>
-				<option value='1'>已上架</option>
-				<option value='2'>已下架</option>
-				<option value='3'>已过期</option>
+				<option value='0'>全部</option>			
+				<option value='1'>未到期</option>
+				<option value='2'>已上架</option>
+				<option value='3'>已下架</option>
+				<option value='4'>已过期</option>
 			</select>
 		</div>
 		<div class='inline-display'>
@@ -61,7 +62,7 @@
 	<?php if($prodList != null):?>
 	<ul id='product-list'>
 		<?php foreach($prodList as $product):?>
-		<li class='product'>
+		<li class='product <?php if($productInfo->id==$product['id']) echo 'active';?>'>
             <div class='left shift'><input name="chkItem" type="checkbox" value="<?php echo $product['id']?>"></div>
             <img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl."/".$product['cover'];?>'>
             <a class="left prod-link">
@@ -226,7 +227,7 @@
 	</div>	
 </div>
 
-<div id="change-area">
+<div id="change-area" tabindex='-3'>
 <div class='task-detail'>
 	<?php if($productInfo!=null):?>
     <div class='prod'>
@@ -302,20 +303,23 @@
 				<?php endif;?>								
 			</li>
 			<li><a href="javascript:;" id='saveProd'>保存</a></li>
+			<li><a href="javascript:;" id='cancelChange'>取消修改</a></li>			
 			<li><a href="javascript:;" id='delProd'>删除</a></li>
 		</ul>
 	</div>
 	<?php endif;?>
 </div>
 </div>
-
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/ueditor/ueditor.config.js"></script>
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/ueditor/ueditor.all.js"></script>
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/jquery.form.js"></script>
 <script type="text/javascript">
-	$(document).ready(function(){
-		var pdinfo = <?php echo json_encode($productInfo);?>;
+	$(document).ready(function(event){
+		var pdinfo = <?php echo CJSON::encode($productInfo);?>;//商品信息的全局变量
+		var isfocus = false;//当前编辑区域是否被选中
+		var prodList = <?php echo json_encode($prodList);?>;//类别下的商品列表
+
 		var editor = new UE.ui.Editor();
 	    editor.render("myEditor");
 		editor.addListener("ready", function () {
@@ -340,6 +344,56 @@
 			minView:2,
 			language:'zh-CN',
 		}).on('changeDate', function(ev){});
+
+		$(document).delegate('*','click',function(event){
+			if(isfocus){
+				var target = event.target;
+				var isin = false;
+				while(!$(target).is('body')){
+					if($(target).is("#change-area")){
+						isin = true;
+					}
+					target = $(target).parent();
+				}
+				if(!isin){
+					isfocus = false;
+					var prodId = $("#prod-id").html();
+					var pname = $(".prod input").eq(0).val();
+					var typeId = $(".prod .sp-select").find('option:selected').val();
+					var price = $(".prod input").eq(1).val();
+					var credit = $(".prod input").eq(2).val();
+					var description = $(".prod input").eq(4).val();
+					var stime = $(".prod input").eq(5).val();
+					var etime = $(".prod input").eq(6).val();
+					var instore = $(".prod input").eq(7).val();	
+					var richtext = editor.getContent();
+					pdinfo.price = pdinfo.price+"￥";
+				
+					if(pname!=pdinfo.pname || typeId!=pdinfo.type_id || price!=pdinfo.price ||
+					   credit!=pdinfo.credit || description!=pdinfo.description || stime!=pdinfo.stime ||
+					   etime!=pdinfo.etime || instore!=pdinfo.instore || richtext!=pdinfo.richtext){
+						if(confirm("您对商品作了修改，在结束商品编辑前，请先保存商品")){
+							$.ajax({
+				                type: 'POST',
+				                url: "<?php echo CHtml::normalizeUrl(array('productManager/updateProduct'));?>",
+				                data: {'id':prodId,'pname':pname,'typeId':typeId,'price':price,
+				                		'credit':credit,'description':description,'stime':stime,'etime':etime,'instore':instore,
+				            			'richtext':richtext},
+				                dataType: 'json',
+				                
+				                success:function(json){
+				                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+typeId+"/prodId/"+prodId;
+				                },	
+				                error:function(){
+				                	alert('保存失败');
+				                },				
+							})
+						}
+					}
+				}
+			}
+		})
+
 
 		/*图片上传*/
 		var prodId = $("#prod-id").html();
@@ -392,40 +446,6 @@
 			});
 		})
 
-		// $("#changeArea").live('blur',function(){
-		// 	var pname = $(".prod input").eq(0).val();
-		// 	var typeId = $(".prod .sp-select").find('option:selected').val();
-		// 	var price = $(".prod input").eq(1).val();
-		// 	var credit = $(".prod input").eq(2).val();
-		// 	var description = $(".prod input").eq(4).val();
-		// 	var stime = $(".prod input").eq(5).val();
-		// 	var etime = $(".prod input").eq(6).val();
-		// 	var instore = $(".prod input").eq(7).val();	
-		// 	var richtext = editor.getContent();
-		// 	if(pdInfo.pname!=pname || pdInfo.typeId!=typeId || pdInfo.price!=price 
-		// 		|| pdInfo.credit!=credit || pdInfo.description!=description || pdInfo.stime!=stime
-		// 		|| pdInfo.etime!=etime || pdInfo.instore!=instore || pdInfo.richtext!=richtext){
-		// 		if(confirm("您对商品"+pname+"作了修改，是否保存该商品")){
-		// 			$.ajax({
-		//                 type: 'POST',
-		//                 url: "<?php echo CHtml::normalizeUrl(array('productManager/updateProduct'));?>",
-		//                 data: {'id':prodId,'pname':pname,'typeId':typeId,'price':price,
-		//                 		'credit':credit,'description':description,'stime':stime,'etime':etime,'instore':instore,
-		//             			'richtext':richtext},
-		//                 dataType: 'json',
-		                
-		//                 success:function(json){
-		//                 	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>";
-		//                 },
-		//                 error:function(){
-		//                 	alert('保存失败');
-		//                 },				
-		// 			})
-
-		// 		}
-		// 	}
-		// })
-
 		/*
 			编辑、保存、取消类别的修改
 		*/
@@ -453,7 +473,7 @@
                 dataType: 'json',
                 
                 success:function(json){
-					window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>";
+					window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id,'prodId'=>0));?>";
                 },
                 error:function(){
                 	alert('商品类别名重复');
@@ -473,8 +493,7 @@
 	                dataType: 'json',
 	                
 	                success:function(json){
-	                	$("#delCategoryModal").modal('hide');
-	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+choice;
+	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+choice+"/prodId/0";
 	                },
 	                error:function(){
 	                	alert('保存失败');
@@ -489,9 +508,8 @@
 	                dataType: 'json',
 	                
 	                success:function(json){
-	                	$("#delCategoryModal").modal('hide');
 
-	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>0));?>";
+	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>0,'prodId'=>0));?>";
 	                },
 	                error:function(){
 	                	alert('保存失败');
@@ -501,7 +519,7 @@
 
 
 		})
-
+		
 		$("#product-list li").live('click',function(){
 			var id = $(this).find('input:checkbox').val();
 			$("#product-list li").removeClass('active');
@@ -524,18 +542,19 @@
                 	$(".task-detail input").eq(6).val(json.etime);
                 	$(".task-detail input").eq(7).val(json.instore);
                 	if(json.status=='未到期' || json.status=='已过期')
-		               	$("#shelfProd").val("当前不在有效期内");
+		               	$("#shelfProd").html("当前不在有效期内");
 		            else if(json.status=='已上架')
-		               	$("#shelfProd").val("下架产品");
+		               	$("#shelfProd").html("下架产品");
 		            else if(json.status=='已下架')
-		               	$("#shelfProd").val("上架产品");
+		               	$("#shelfProd").html("上架产品");
                 	var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+json.cover;
 					$("#showimg").html("<img  width='200' class='left img-rounded'  src='"+img+"'>");
         			editor.ready(function(){
         				editor.setContent(json.richtext);
         			})
 
-        			pdInfo = json;
+        			pdinfo = json;
+
                 },
                 error:function(){
                 	alert('更新失败！');
@@ -553,7 +572,7 @@
 	                data: {'id':prodId,'status':1},
 	                dataType: 'json',	                
 	                success:function(json){
-	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>";
+	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>"+"/prodId/"+prodId;
 	                },
 	                error:function(){
 	                	alert('保存失败');
@@ -567,13 +586,18 @@
 	                data: {'id':prodId,'status':2},
 	                dataType: 'json',	                
 	                success:function(json){
-	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>";
+	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>"+"/prodId/"+prodId;
 	                },
 	                error:function(){
 	                	alert('保存失败');
 	                },				
 				})				
-			}		})
+			}
+		})
+		
+		$("#change-area").click(function(){
+			isfocus = true;
+		})
 
 		$("#saveProd").click(function(){
 			var prodId = $("#prod-id").html();
@@ -603,12 +627,23 @@
                 dataType: 'json',
                 
                 success:function(json){
-                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>";
-                },
+                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+typeId+"/prodId/"+prodId;
+                },	
                 error:function(){
                 	alert('保存失败');
                 },				
 			})
+		})
+		
+		$("#cancelChange").click(function(){
+			$(".prod input").eq(0).val(pdinfo.pname);
+			$(".prod .sp-select").val(pdinfo.type_id);
+			$(".prod input").eq(1).val(pdinfo.price);
+			$(".prod input").eq(2).val(pdinfo.credit);
+			$(".prod input").eq(4).val(pdinfo.description);
+			$(".prod input").eq(5).val(pdinfo.stime);
+			$(".prod input").eq(6).val(pdinfo.etime);
+			$(".prod input").eq(7).val(pdinfo.instore);	
 		})
 
 		$("#delProd").click(function(){
@@ -621,7 +656,7 @@
 	                dataType: 'json',
 	                
 	                success:function(json){
-	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>";
+	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id,'prodId'=>0));?>";
 	                },
 	                error:function(){
 	                	alert('删除失败');
@@ -700,7 +735,6 @@
 		}
 
 		$("#sort").change(function(){
-			var prodList = <?php echo json_encode($prodList);?>;
 			prodList = eval(prodList);
 			var option = $(this).find("option:selected").text();
 			switch(option){
@@ -721,58 +755,65 @@
 			}
 			var content="";
 			for(var i=0;i<prodList.length;i++){
-
-				if(prodList[i].status=='未到期' || prodList[i].status=='已过期')
-					content ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
-					+prodList[i].cover+"'><a class='left prod-link'><div class='prod-name'>"
-					+prodList[i].pname+"</div><div class='prod-price'>价格："
-					+prodList[i].price+"</div><div class='prod-price'>有效期：<span class='label label-info'>"
-					+prodList[i].stime+"</span> 至<span class='label label-info'>"
-					+prodList[i].etime+"</span></div></a><a class='grey-seal'>"
-					+prodList[i].status+"</a></li>" +content;
-				else
-					content ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
-					+prodList[i].cover+"'><a class='left prod-link'><div class='prod-name'>"
-					+prodList[i].pname+"</div><div class='prod-price'>价格："
-					+prodList[i].price+"</div><div class='prod-price'>有效期：<span class='label label-info'>"
-					+prodList[i].stime+"</span> 至<span class='label label-info'>"
-					+prodList[i].etime+"</span></div></a><a class='seal'>"
-					+prodList[i].status+"</a></li>" +content;
+				if(prodList[i].display=='break'){
+					if(prodList[i].status=='未到期' || prodList[i].status=='已过期')
+						content ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox' value='"+prodList[i].id+"'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
+						+prodList[i].cover+"'><a class='left prod-link'><div class='prod-name'>"
+						+prodList[i].pname+"</div><div class='prod-price'>价格："
+						+prodList[i].price+"</div><div class='prod-price'>有效期：<span class='label label-info'>"
+						+prodList[i].stime+"</span> 至<span class='label label-info'>"
+						+prodList[i].etime+"</span></div></a><a class='grey-seal'>"
+						+prodList[i].status+"</a></li>" +content;
+					else
+						content ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox' value='"+prodList[i].id+"'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
+						+prodList[i].cover+"'><a class='left prod-link'><div class='prod-name'>"
+						+prodList[i].pname+"</div><div class='prod-price'>价格："
+						+prodList[i].price+"</div><div class='prod-price'>有效期：<span class='label label-info'>"
+						+prodList[i].stime+"</span> 至<span class='label label-info'>"
+						+prodList[i].etime+"</span></div></a><a class='seal'>"
+						+prodList[i].status+"</a></li>" +content;
+					}
 			}
 			$("#product-list").html(content);
 		})
 		
 
 		$("#filt").change(function(){
-			var prodList = <?php echo json_encode($prodList);?>;
-			prodList = eval(prodList);	
+			for (var i = 0; i < prodList.length; i++) {
+				prodList[i].display = 'break';
+			};
 			var option = $(this).find("option:selected").text();
 			switch(option){
+				case '全部':
+					for(var i=0;i<prodList.length;i++){
+						prodList[i].display = 'break';
+					}
+					break;
 				case '未到期':
 					for(var i=0;i<prodList.length;i++){
 						if(prodList[i].status!='未到期'){
-							delete prodList[i];
+							prodList[i].display='none';
 						}
 					}
 					break;
 				case '已上架':
 					for(var i=0;i<prodList.length;i++){
 						if(prodList[i].status!='已上架'){
-							delete prodList[i];
+							prodList[i].display='none';
 						}
 					}
 					break;
 				case '已下架':
 					for(var i=0;i<prodList.length;i++){
 						if(prodList[i].status!='已下架'){
-							delete prodList[i];
+							prodList[i].display='none';
 						}
 					}
 					break;
 				case '已过期':
 					for(var i=0;i<prodList.length;i++){
 						if(prodList[i].status!='已过期'){
-							delete prodList[i];
+							prodList[i].display='none';
 						}
 					}
 					break;
@@ -781,9 +822,9 @@
 			}
 			var content="";
 			for(var i=0;i<prodList.length;i++){
-				if(prodList[i]!=null)
+				if(prodList[i].display=='break')
 					if(prodList[i].status=='未到期' || prodList[i].status=='已过期')
-						content ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
+						content ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox' value='"+prodList[i].id+"'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
 						+prodList[i].cover+"'><a class='left prod-link'><div class='prod-name'>"
 						+prodList[i].pname+"</div><div class='prod-price'>价格："
 						+prodList[i].price+"</div><div class='prod-price'>有效期：<span class='label label-info'>"
@@ -791,7 +832,7 @@
 						+prodList[i].etime+"</span></div></a><a class='grey-seal'>"
 						+prodList[i].status+"</a></li>" +content;
 					else
-						content ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
+						content ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox' value='"+prodList[i].id+"'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
 						+prodList[i].cover+"'><a class='left prod-link'><div class='prod-name'>"
 						+prodList[i].pname+"</div><div class='prod-price'>价格："
 						+prodList[i].price+"</div><div class='prod-price'>有效期：<span class='label label-info'>"
@@ -809,12 +850,11 @@
 				if(content==null)
 					alert("搜索内容那个不能为空");
 				else{
-					var prodList = <?php echo json_encode($prodList);?>;
 					var pageContent = "";
 					for(var i=0;i<prodList.length;i++){
 						if(prodList[i].pname.indexOf(content)>=0){
 							if(prodList[i].status=='未到期' || prodList[i].status=='已过期')
-								pageContent ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
+								pageContent ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox' value='"+prodList[i].id+"'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
 								+prodList[i].cover+"'><a class='left prod-link'><div class='prod-name'>"
 								+prodList[i].pname+"</div><div class='prod-price'>价格："
 								+prodList[i].price+"</div><div class='prod-price'>有效期：<span class='label label-info'>"
@@ -822,7 +862,7 @@
 								+prodList[i].etime+"</span></div></a><a class='seal'>"
 								+prodList[i].status+"</a></li>" +pageContent;
 							else
-								pageContent ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
+								pageContent ="<li class='product'><div class='left shift'><input name='chkItem' type='checkbox' value='"+prodList[i].id+"'></div><img class='img-rounded left avatar' src='<?php echo Yii::app()->baseUrl;?>"+"/"
 								+prodList[i].cover+"'><a class='left prod-link'><div class='prod-name'>"
 								+prodList[i].pname+"</div><div class='prod-price'>价格："
 								+prodList[i].price+"</div><div class='prod-price'>有效期：<span class='label label-info'>"
@@ -882,7 +922,7 @@
                 
                 success:function(json){
                 	$("#stockModal").modal('hide');
-                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>";
+                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id,'prodId'=>0));?>";
                 },
                 error:function(){
                 	alert('保存失败');
@@ -910,8 +950,7 @@
                 dataType: 'json',
                 
                 success:function(json){
-                	$("#categoryModal").modal('hide');
-                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+typeId;
+                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+typeId+'/prodId/0';
                 },
                 error:function(){
                 	alert('保存失败');
@@ -924,9 +963,9 @@
 			var price = $("#addModal input").eq(1).val();
 			var credit = $("#addModal input").eq(2).val();
 			var description = $("#addModal input").eq(3).val();
-			var stime = $("#addModal input").eq(5).val();
-			var etime = $("#addModal input").eq(6).val();
-			var instore = $("#addModal input").eq(4).val();	
+			var stime = $("#addModal input").eq(4).val();
+			var etime = $("#addModal input").eq(5).val();
+			var instore = $("#addModal input").eq(6).val();	
 			$.ajax({
                 type: 'POST',
                 url: "<?php echo CHtml::normalizeUrl(array('productManager/addProduct'));?>",
@@ -935,8 +974,8 @@
                 dataType: 'json',
                 
                 success:function(json){
-                	$("#categoryModal").modal('hide');
-                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>";
+
+                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>"+"/prodId/"+json.prodId;
                 },
                 error:function(){
                 	alert('保存失败');
@@ -973,7 +1012,7 @@
                 dataType: 'json',
                 
                 success:function(json){
-                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>";
+                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id,'prodId'=>0));?>";
                 },
                 error:function(){
                 	alert('保存失败');
@@ -1012,7 +1051,7 @@
                 dataType: 'json',
                 
                 success:function(json){
-                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>";
+                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id,'prodId'=>0));?>";
                 },
                 error:function(){
                 	alert('保存失败');
@@ -1039,7 +1078,7 @@
                 dataType: 'json',
                 
                 success:function(json){
-                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id));?>";
+                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$productType->id,'prodId'=>0));?>";
                 },
                 error:function(){
                 	alert('保存失败');

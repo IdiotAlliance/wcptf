@@ -78,7 +78,7 @@ return array(
 			),
 		),
 		'db'=>array(
-			'connectionString' => 'mysql:host=192.168.1.100;dbname=wcptf_dev',
+			'connectionString' => 'mysql:host=127.0.0.1;dbname=wcptf_dev',
 			'emulatePrepare' => true,
 			'username' => 'wcadmin',
 			'password' => '123',

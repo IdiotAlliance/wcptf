@@ -231,7 +231,7 @@ class ProductsAR extends CActiveRecord
 		$prod['stime'] = $product->stime;
 		$prod['etime'] = $product->etime;
 		$prod['credit'] = $product->credit;
-
+		$prod['type_id'] = $product->type_id;
 		$now = date('Y-m-d');
 		if($now< $product->stime )
 			$product->status = "未到期";
@@ -250,6 +250,7 @@ class ProductsAR extends CActiveRecord
 					break;
 			}
 		}
+		$prod['status'] = $product->status;
 		$prod['description'] = $product->description;
 		$prod['price'] = $product->price;
 		$prod['cover'] = $product->cover0->pic_url;
