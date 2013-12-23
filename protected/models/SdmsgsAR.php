@@ -1,25 +1,25 @@
 <?php
 
 /**
- * This is the model class for table "wechatmsgs".
+ * This is the model class for table "sdmsgs".
  *
- * The followings are the available columns in table 'wechatmsgs':
- * @property integer $id
- * @property string $seller_id
- * @property string $openid
- * @property string $rawid
- * @property string $rawmsg
- * @property string $msgtype
- * @property biginteger $createtime
+ * The followings are the available columns in table 'sdmsgs':
+ * @property string $id
+ * @property string $keyword_id
+ * @property integer $type
+ *
+ * The followings are the available model relations:
+ * @property SdmsgItems[] $sdmsgItems
+ * @property Keywords $keyword
  */
-class WechatmsgsAR extends CActiveRecord
+class SdmsgsAR extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'wechatmsgs';
+		return 'sdmsgs';
 	}
 
 	/**
@@ -30,13 +30,12 @@ class WechatmsgsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, openid, rawmsg, msgtype', 'required'),
-			array('id', 'numerical', 'integerOnly'=>true),
-			array('rawid', 'length', 'max'=>32),
-			array('msgtype', 'length', 'max'=>16),
+			array('keyword_id, type', 'required'),
+			array('type', 'numerical', 'integerOnly'=>true),
+			array('keyword_id', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, seller_id, openid, rawid, rawmsg, msgtype', 'safe', 'on'=>'search'),
+			array('id, keyword_id, type', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -48,6 +47,8 @@ class WechatmsgsAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'sdmsgItems' => array(self::HAS_MANY, 'SdmsgItems', 'sdmsg_id'),
+			'keyword' => array(self::BELONGS_TO, 'Keywords', 'keyword_id'),
 		);
 	}
 
@@ -58,11 +59,8 @@ class WechatmsgsAR extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'seller_id' => 'Seller',
-			'openid' => 'Openid',
-			'rawid' => 'Rawid',
-			'rawmsg' => 'Rawmsg',
-			'msgtype' => 'Msgtype',
+			'keyword_id' => 'Keyword',
+			'type' => 'Type',
 		);
 	}
 
@@ -84,12 +82,9 @@ class WechatmsgsAR extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('seller_id',$this->seller_id,true);
-		$criteria->compare('openid',$this->openid,true);
-		$criteria->compare('rawid',$this->rawid,true);
-		$criteria->compare('rawmsg',$this->rawmsg,true);
-		$criteria->compare('msgtype',$this->msgtype,true);
+		$criteria->compare('id',$this->id,true);
+		$criteria->compare('keyword_id',$this->keyword_id,true);
+		$criteria->compare('type',$this->type);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -100,10 +95,11 @@ class WechatmsgsAR extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return WechatmsgsAR the static model class
+	 * @return SdmsgsAR the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
+
 }

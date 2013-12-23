@@ -140,114 +140,160 @@ class WechatAccessController extends Controller {
 		
 	}
 	
+	/**
+	 * Handle msgs with the type 'text'. 
+	 */
 	public function handleTextMsg($rawmsg, $msg, $sellerId){
 		$openid = $msg->FromUserName;
+		$selfid = $msg->ToUserName;
 		$content = trim($msg->Content);
 		$time = time();
 		if($content){
-			switch($content){
-				case '菜单':{
-					// 若没有该用户，先创建该用户
-					$member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid);
-					if(!$member){
-						$member = new MembersAR();
-						$member->openid = $openid;
-						$member->seller_id = $sellerId;
-						$member->wapkey = SeriesGenerator::generateMemberKey();
-						$member->save();
+			$wcmsg = new WechatmsgsAR();
+			$wcmsg->seller_id = $sellerId;
+			$wcmsg->openid  = $openid;
+			$wcmsg->rawid   = $msg->MsgId;
+			$wcmsg->rawmsg  = $rawmsg;
+			$wcmsg->msgtype = $msg->MsgType;
+			$wcmsg->createtime = $msg->CreateTime;
+
+			$matchId = KeywordsAR::model()->findMatch($sellerId, $content);
+			$msg = null;
+			if($matchId >= 0){
+				// get related sdmsg from db
+				$msg = SdmsgsAR::model()->findByPK($matchId);
+			}else{
+				// get default msg from db
+				$user = UsersAR::model()->findByPK($sellerId);
+				if($user && $user->default_id)
+					$msg  = SdmsgsAR::model()->findByPK($user->default_id);
+			}
+			$msgtpl = null;
+			if($msg){
+				$items = SdmsgItemsAR::model()->getByMsgId($msg->id);
+				if($items && !empty($items)){
+					if(count($items) == 1){
+						$item = $items[0];
+						switch ($item->type) {
+							case 0:
+								// dan tiao mu chun wen ben
+								$msgtpl = "<xml>
+											<ToUserName><![CDATA[%s]]></ToUserName>
+											<FromUserName><![CDATA[%s]]></FromUserName>
+											<CreateTime>%s</CreateTime>
+											<MsgType><![CDATA[text]]></MsgType>
+											<Content><![CDATA[%s]]></Content>
+										   </xml>";
+								sprintf($msgtpl, $openid, $selfid, $time, $item->content);
+								break;
+							case 1:
+								// dan tiao mu tu wen
+								$msgtpl = "<xml>
+											<ToUserName><![CDATA[%s]]></ToUserName>
+											<FromUserName><![CDATA[%s]]></FromUserName>
+											<CreateTime>%s</CreateTime>
+											<MsgType><![CDATA[news]]></MsgType>
+											<ArticleCount>1</ArticleCount>
+											<Articles>
+												<item>
+													<Title><![CDATA[%s]]></Title> 
+													<Description><![CDATA[%s]]></Description>
+													<PicUrl><![CDATA[%s]]></PicUrl>
+													<Url><![CDATA[%s]]></Url>
+												</item>
+											</Articles>
+											</xml> ";
+								sprintf($msgtpl, $openid, $selfid, $time, 
+										$item->title, $item->content, $item->picurl, $item->url);
+								break;
+						}
 					}else{
-						if($member->unsubscribed){
-							$member->unsubscribed = 0;
-							$member->update();
+						$msgtpl = "<xml>
+									<ToUserName><![CDATA[%s]]></ToUserName>
+									<FromUserName><![CDATA[%s]]></FromUserName>
+									<CreateTime>%s</CreateTime>
+									<MsgType><![CDATA[news]]></MsgType>
+									<ArticleCount>%s</ArticleCount>
+									<Articles>%s</Articles>
+								   </xml>
+								   ";
+
+						$msgitems = array();
+						$token = null;
+						foreach ($items as $item) {
+						 	$itemtpl = "<item>
+						 					<Title><![CDATA[%s]]></Title>
+						 					<Description><![CDATA[%s]]></Description>
+											<PicUrl><![CDATA[%s]]></PicUrl>
+											<Url><![CDATA[%s]]></Url>
+						 				</item>";
+						 	$type = $item->type & 0xFF;
+						 	$index = ($item->type >> 8) & 0xFF;
+						 	if($type & 0x80 > 0){
+						 		// functional item
+						 		// generate and save token
+						 		if(!$token)
+						 			$token = SeriesGenerator::generateMemberToken();
+						 		
+						 		$url = "";
+						 		switch ($type) {
+						 			case 0x80:
+						 				# order
+						 				$url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId, 
+						 													 array('openid' => $openid, 'token' => $token));
+						 				break;
+						 			case 0x81:
+						 				# history
+										$url = Yii::app()->createAbsoluteUrl('/wap/wap/history/'.$sellerId, 
+																			 array('openid' => $openid)).'#mp.weixin.qq.com';					 				
+						 				break;
+						 			case 0x82:
+						 				# promotions
+						 				$hot_url = $url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId, 
+						 													 array('openid' => $openid, 'token' => $token));
+						 				$hot_products = HotProductsAR::model()->getHotProductsById($sellerId);
+						 				foreach ($hot_products as $hot) {
+						 					$hot_url = $url.'&sortid='.$hot->product_id;
+						 					if($hot->onindex == 1){
+						 						break;
+						 					}
+						 				}
+						 				$url = $hot_url;
+						 				break;
+						 			case 0x83:
+						 				# contact us
+
+						 				break;
+						 		}
+						 		sprintf($itemtpl, $item->title, $item->content, $item->picurl, $url);
+						 	}else{
+						 		// non functional item
+						 		sprintf($itemtpl, $item->title, $item->content, $item->picurl, $item->url);
+						 	}
+						 	$msgitems[$index] = $itemtpl;
 						}
-					}
-					
-					// 为用户创建token
-					$token = SeriesGenerator::generateMemeberToken();
-					$memtoken = new MemberTokenAR();
-					$memtoken->seller_id = $sellerId;
-					$memtoken->openid = $openid;
-					$memtoken->token = $token;
-					$memtoken->save();
-					
-					// 返回消息
-					$textTpl = "<xml>
-								<ToUserName><![CDATA[%s]]></ToUserName>
-								<FromUserName><![CDATA[%s]]></FromUserName>
-								<CreateTime>%s</CreateTime>
-								<MsgType><![CDATA[news]]></MsgType>
-								<ArticleCount>6</ArticleCount>
-								<Articles>
-									<item>
-										<Title><![CDATA[我们传递新鲜与健康]]></Title> 
-										<Description><![CDATA[欢迎使用茹果微信点单工具]]></Description>
-										<PicUrl><![CDATA[%s]]></PicUrl>
-										<Url><![CDATA[%s]]></Url>
-									</item>
-									<item>
-										<Title><![CDATA[在线点单]]></Title>
-										<PicUrl><![CDATA[]]></PicUrl>
-										<Url><![CDATA[%s]]></Url>
-									</item>
-									<item>
-										<Title><![CDATA[聚划算]]></Title>
-										<PicUrl><![CDATA[]]></PicUrl>
-										<Url><![CDATA[%s]]></Url>
-									</item>
-									<item>
-										<Title><![CDATA[我的订单]]></Title>
-										<PicUrl><![CDATA[]]></PicUrl>
-										<Url><![CDATA[%s]]></Url>
-									</item>
-									<item>
-										<Title><![CDATA[提出建议]]></Title>
-										<PicUrl><![CDATA[]]></PicUrl>
-										<Url><![CDATA[%s]]></Url>
-									</item>
-									<item>
-										<Title><![CDATA[帮助&关于我们]]></Title>
-										<PicUrl><![CDATA[]]></PicUrl>
-										<Url><![CDATA[%s]]></Url>
-									</item>
-								</Articles>
-							</xml>
-						";
-					
-					$order_url = Yii::app()->createAbsoluteUrl('wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token);
-					$hots_url = $order_url;
-					$hot_products = HotProductsAR::model()->getHotProductsById($sellerId);
-					$user = UsersAR::model()->getUserById($sellerId);
-					
-					foreach ($hot_products as $hot){
-						if($hot->onindex == 1){
-							$hots_url = $order_url.'&sortid='.$hot->product_id;
-							break;
+						if($token){
+							$memtoken = new MemberTokenAR();
+							$memtoken->seller_id = $sellerId;
+							$memtoken->openid    = $openid;
+							$memtoken->token     = $token;
+							$memtoken->save();
 						}
-						$hots_url = $order_url.'&sortid='.$hot->product_id;
+						$itemstr = "";
+						foreach ($msgitems as $msgitem) {
+							$itemstr += $msgitem;
+						}
+						sprintf($msgtpl, $openid, $selfid, $time, count($items), $itemstr);
 					}
-					$personal_url = Yii::app()->createAbsoluteUrl('wap/wap/history/'.$sellerId.'?openid='.$openid.'#mp.weixin.qq.com');
-					$propose_url = "";
-					$about_url = "http://mp.weixin.qq.com/mp/appmsg/show?__biz=MzA4MzA2MDgwMQ==&appmsgid=10000034&itemidx=1&sign=1e807c4e9afe16c97858e9539796000b#wechat_redirect";
-					$resultStr = sprintf( $textTpl, $msg->FromUserName, $msg->ToUserName, $time, 
-										  'http://www.v7fen.com/weChat/'.$user->logo, 
-										  $order_url, $order_url, $hots_url, $personal_url, 
-										  $propose_url, $about_url);
-					echo $resultStr;
-					break;
-				}
-				default:{
-					// 存储消息
-					$wcmsg = new WechatmsgsAR();
-					$wcmsg->seller_id = $sellerId;
-					$wcmsg->openid = $openid;
-					$wcmsg->rawid  = $msg->MsgId;
-					$wcmsg->msgtype = $msg->MsgType;
-					$wcmsg->createtime = $msg->CreateTime;
-					$wcmsg->rawmsg = $rawmsg;
-					$wcmsg->save();
-					break;
+					echo $msgtpl;
+					// mark the msg as replied
+					$wcmsg->replied = 1;
 				}
 			}
+			$wcmsg->save();
+
+			// notify admin of the comming msg
+			// TODO 
 		}
 	}
 }
