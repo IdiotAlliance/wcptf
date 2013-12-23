@@ -119,8 +119,7 @@ class WechatAccessController extends Controller {
 										<Url><![CDATA[%s]]></Url>
 									</item>
 								</Articles>
-							</xml>
-						";
+							</xml>";
 				$about_url = "http://mp.weixin.qq.com/mp/appmsg/show?__biz=MzA4MzA2MDgwMQ==&appmsgid=10000034&itemidx=1&sign=1e807c4e9afe16c97858e9539796000b#wechat_redirect";
 				$resultStr = sprintf($textTpl, $msg->FromUserName, $msg->ToUserName, $time,
 							 'http://www.v7fen.com/weChat/'.$user->logo, $about_url);
@@ -147,30 +146,33 @@ class WechatAccessController extends Controller {
 		$openid = $msg->FromUserName;
 		$selfid = $msg->ToUserName;
 		$content = trim($msg->Content);
+		
+		$msgtpl = null;
 		$time = time();
 		if($content){
 			$wcmsg = new WechatmsgsAR();
-			$wcmsg->seller_id = $sellerId;
-			$wcmsg->openid  = $openid;
-			$wcmsg->rawid   = $msg->MsgId;
-			$wcmsg->rawmsg  = $rawmsg;
-			$wcmsg->msgtype = $msg->MsgType;
+			$wcmsg->seller_id  = $sellerId;
+			$wcmsg->openid     = $openid;
+			$wcmsg->rawid      = $msg->MsgId;
+			$wcmsg->rawmsg     = $rawmsg;
+			$wcmsg->msgtype    = $msg->MsgType;
 			$wcmsg->createtime = $msg->CreateTime;
-
+			
+			$sdmsg = null;
 			$matchId = KeywordsAR::model()->findMatch($sellerId, $content);
-			$msg = null;
 			if($matchId >= 0){
 				// get related sdmsg from db
-				$msg = SdmsgsAR::model()->findByPK($matchId);
+				$sdmsg = SdmsgsAR::model()->findByPK($matchId);
 			}else{
 				// get default msg from db
 				$user = UsersAR::model()->findByPK($sellerId);
 				if($user && $user->default_id)
-					$msg  = SdmsgsAR::model()->findByPK($user->default_id);
+					$sdmsg  = SdmsgsAR::model()->findByPK($user->default_id);
 			}
-			$msgtpl = null;
-			if($msg){
-				$items = SdmsgItemsAR::model()->getByMsgId($msg->id);
+			
+			if($sdmsg){
+				// var_dump($msg->type);
+				$items = SdmsgItemsAR::model()->getByMsgId($sdmsg->id);
 				if($items && !empty($items)){
 					if(count($items) == 1){
 						$item = $items[0];
@@ -184,7 +186,7 @@ class WechatAccessController extends Controller {
 											<MsgType><![CDATA[text]]></MsgType>
 											<Content><![CDATA[%s]]></Content>
 										   </xml>";
-								sprintf($msgtpl, $openid, $selfid, $time, $item->content);
+								$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, $item->content);
 								break;
 							case 1:
 								// dan tiao mu tu wen
@@ -203,8 +205,8 @@ class WechatAccessController extends Controller {
 												</item>
 											</Articles>
 											</xml> ";
-								sprintf($msgtpl, $openid, $selfid, $time, 
-										$item->title, $item->content, $item->picurl, $item->url);
+								$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, 
+												  $item->title, $item->content, $item->picurl, $item->url);
 								break;
 						}
 					}else{
@@ -265,10 +267,10 @@ class WechatAccessController extends Controller {
 
 						 				break;
 						 		}
-						 		sprintf($itemtpl, $item->title, $item->content, $item->picurl, $url);
+						 		$itemtpl = sprintf($itemtpl, $item->title, $item->content, $item->picurl, $url);
 						 	}else{
 						 		// non functional item
-						 		sprintf($itemtpl, $item->title, $item->content, $item->picurl, $item->url);
+						 		$itemtpl = sprintf($itemtpl, $item->title, $item->content, $item->picurl, $item->url);
 						 	}
 						 	$msgitems[$index] = $itemtpl;
 						}
@@ -283,14 +285,14 @@ class WechatAccessController extends Controller {
 						foreach ($msgitems as $msgitem) {
 							$itemstr += $msgitem;
 						}
-						sprintf($msgtpl, $openid, $selfid, $time, count($items), $itemstr);
+						$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, count($items), $itemstr);
 					}
 					echo $msgtpl;
 					// mark the msg as replied
 					$wcmsg->replied = 1;
 				}
 			}
-			$wcmsg->save();
+			// $wcmsg->save();
 
 			// notify admin of the comming msg
 			// TODO 
