@@ -17,7 +17,7 @@
 	<?php $this->widget('bootstrap.widgets.TbNavbar',array(
         'type'=>'inverse',
         'brand'=>'微积分',
-        'brandUrl'=>Yii::app()->createUrl('index'),
+        'brandUrl'=>array('/site/index'),
         'fixed'=>'top', 
         'items'=>array(
             array(
@@ -36,7 +36,7 @@
                             )),
                         array('label'=>'设置','url'=>'#','items'=>array(
                                 array('label'=>'个人设置','url'=>'#'),
-                                array('label'=>'退出','url'=>Yii::app()->createUrl("site/logout")),
+                                array('label'=>'退出','url'=>array("/site/logout")),
                             )),
                     ),
             ),

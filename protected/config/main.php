@@ -38,6 +38,7 @@ return array(
 		'wechat',
 		'wap',
 		'errors',
+		'weiXinReply',
 	),
 
 	// application components
@@ -53,7 +54,7 @@ return array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
 			'loginUrl'=>array('accounts/login/login'),
-			'returnUrl'=>array('site/index'),
+			'returnUrl'=>array('/site/index'),
 		),
 		'session'=>array(
 		   'autoStart'=>true,
@@ -84,7 +85,7 @@ return array(
 			),
 		),
 		'db'=>array(
-			'connectionString' => 'mysql:host=127.0.0.1;dbname=wcptf',
+			'connectionString' => 'mysql:host=192.168.1.107;dbname=wcptf_dev',
 			'emulatePrepare' => true,
 			'username' => 'wcadmin',
 			'password' => '123',

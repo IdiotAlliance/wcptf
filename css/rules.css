@@ -1,0 +1,97 @@
+  #rule-list{
+    margin-bottom: 20px;
+    max-height: 90%;
+    overflow: scroll;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  #rule-list li{
+  	overflow: hidden;
+    border-bottom: 1px solid #d3d3d3;
+  }
+
+  #rule-list li:nth-child(1),#rule-list li:nth-child(2){
+    padding-left:35px;   
+  }
+
+  #rule-list li.active{
+    background-color:#ecf2f5;
+    background-image:-moz-linear-gradient(top, #f4fafd, #e0e5e8);
+    background-image:-ms-linear-gradient(top, #f4fafd, #e0e5e8);
+    background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#f4fafd), to(#e0e5e8));
+    background-image:-webkit-linear-gradient(top, #f4fafd, #e0e5e8);
+    background-image:-o-linear-gradient(top, #f4fafd, #e0e5e8);
+    background-image:linear-gradient(top, #f4fafd, #e0e5e8);
+  }
+
+  #rule-list li:hover{
+    cursor: pointer;
+    background-color:#ecf2f5;
+    background-image:-moz-linear-gradient(top, #f4fafd, #e0e5e8);
+    background-image:-ms-linear-gradient(top, #f4fafd, #e0e5e8);
+    background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#f4fafd), to(#e0e5e8));
+    background-image:-webkit-linear-gradient(top, #f4fafd, #e0e5e8);
+    background-image:-o-linear-gradient(top, #f4fafd, #e0e5e8);
+    background-image:linear-gradient(top, #f4fafd, #e0e5e8);
+  }
+
+
+  #product-list li:last-child{
+    border-bottom: none;
+  }
+
+  .title-change{
+  	margin: 8px 0 8px 22px;
+  }
+
+  .reply-detail{
+  	height: -webkit-calc(100% - 37px);
+  	height:calc(100% - 37px);
+  	overflow: scroll;
+  	overflow-x:auto !important;
+  	overflow-y:auto !important; 
+  }
+
+  .reply-content input[type='text']{
+  	width: 90%;
+  }
+
+  .reply-content{
+  	  margin: 10px 0 10px 30px;
+  }
+
+  .resize{
+  	font-size: 14px;
+  	font-weight: bold;
+  }
+
+  .reply-content .sp-select{
+  	width: 90%;
+  }
+
+  .image-text{
+  	border-top: 1px solid #d3d3d3;
+  }
+
+  .imagetext-add{
+  	text-align: center;
+  	padding-top: 12px;
+  	width: 90%;
+  }
+
+  .imagetext-add a{
+  	padding-top: 7px;
+  	display: block;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border: 3px dotted #b8b8b8;
+	height: 22px;
+	font-size: 16px;
+  }
+
+  .reply-checkbox{
+  	margin: 15px 10px 0 13px;
+  	float: left;
+  }
