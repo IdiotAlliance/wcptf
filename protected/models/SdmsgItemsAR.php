@@ -34,7 +34,7 @@ class SdmsgItemsAR extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('sdmsg_id, type', 'required'),
-			array('type, url', 'numerical', 'integerOnly'=>true),
+			array('type', 'numerical', 'integerOnly'=>true),
 			array('sdmsg_id', 'length', 'max'=>11),
 			array('title', 'length', 'max'=>128),
 			array('content, picurl', 'length', 'max'=>255),
@@ -112,5 +112,15 @@ class SdmsgItemsAR extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+	/**
+	 * Find items related to a sdmsg with specified id
+	 * @param int $msgId the id of the msg
+	 */
+	public static function getByMsgId($msgId){
+		$items = SdmsgItemsAR::model()->findAll('sdmsg_id=:msgId',
+									    		array(':msgId' => $msgId));
+		return $items;
 	}
 }

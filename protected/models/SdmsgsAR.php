@@ -101,4 +101,5 @@ class SdmsgsAR extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
 }
