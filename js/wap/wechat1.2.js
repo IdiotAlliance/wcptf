@@ -75,7 +75,6 @@ function baseeventbind(){
 	$(document).ajaxError(function () { 
 		stoploading(); 
 	}); 
-	
 }
 
 //ajax获取源数据
@@ -245,8 +244,6 @@ function writeinfolocal(name1,number1,areaid1,areadesc){
 	}
 }
 
-
-
 /*订单增减与清空*/
 function deleteorder(productid){
 	var orderindex = findorderbyid(productid);
@@ -333,7 +330,7 @@ function calctotalpay(){
 			var productindex=findproductbyid(orderarray[i].productid);
 			if(productindex>=0){
 				mytotalordernum+=parseInt(orderarray[i].count);
-				mytotalpay+=((productarray[productindex].price*100)*orderarray[i].count)/100;//防止js浮点计算bug
+				mytotalpay+=((productarray[productindex].price*1000)*orderarray[i].count)/1000;//防止js浮点计算bug
 				if(orderarray[i].count>productarray[productindex].productleft){
 					myoverleft=true;
 				}
@@ -547,8 +544,9 @@ function personalinfoprepare(){
 	$('#number').val(mypersonalinfo.phonenumber);
 	$('#select-area').val(mypersonalinfo.areaid);
 	$('#areadesc').val(mypersonalinfo.areadesc);
-	checkselect('#select-area');
-
+	if(!(mypersonalinfo.areaid==null||mypersonalinfo.areaid=='')){
+		checkselect('#select-area');
+	}
 }
 
 function footerprepare(){
@@ -559,7 +557,7 @@ function footerprepare(){
     '<button onclick = callsort() id="sort-btn" class="btn-icon">'+
     '<span class="img-in-btn" style="background:'+getbackground(SORTBTN)+';"></span></button>';
     $('#mainfooter .left-footer').html(insert);
-    insert='<h4 id="paytitle">订单中心</h4>';
+    insert='<h4 id="paytitle"></h4>';
     $('#mainfooter .center-footer').html(insert);
     insert='<button onclick = topay() id="pay-btn" class="btn-icon-text">'+
     '<span class="text-in-btn">结算 ￥0</span>'+
@@ -731,7 +729,7 @@ function fillsortcontent(){
 		if(recommendarray[i].recommendtype==RECSORT){
 			for(var t=0;t<sortarray.length;t++){
 				if(sortarray[t].sortid==recommendarray[i].objectid){
-					insert+='<li calss="sort-item-rec" onclick = showproductcontent(\''+sortarray[t].sortid+'\') >'+
+					insert+='<li class="sort-item-rec" onclick = showproductcontent(\''+sortarray[t].sortid+'\') >'+
 					'<img src="'+BASEURL+recommendarray[i].recommendimg+'" alt="无真相>_<~">'+
 					'<div class="mainarea-in-list">'+
 					'<h4>'+sortarray[t].sortname+'</h4>'+
@@ -786,6 +784,7 @@ function fillproductcontent(sortid1){
 		        '<h5>￥'+productarray[i].price+'</h5>'+
 	    		'</div>'+
 	    		'<p class="p-aside"></p>'+
+	    		'<p class="showmore">···</p>'+
         		'</li>';
             }
 		}
@@ -884,7 +883,7 @@ function setcontentframeshow(contenttype){
 		setfootershow(contenttype);
 		break;
 		case PAYCONTENT:
-		setfootershow(contenttype);
+		setfootershow(contenttype,'订单中心');
 		if(ispayable==false){
     		$('#order-first-item').children('.mainarea-in-list').children('h4').html('休息中');
     		$('#order-first-item').children('.mainarea-in-list').children('h5').html('当前无法交易');
@@ -916,7 +915,7 @@ function setcontentframeshow(contenttype){
 	}
 }
 
-function setfootershow(contenttype){
+function setfootershow(contenttype,title){
 	switch(contenttype){
 		case SORTCONTENT:
 		$(BACKBTN).hide();
@@ -924,7 +923,7 @@ function setfootershow(contenttype){
 		$(PAYBTN).show();
 		$('body').removeClass();
 		$('body').addClass('body-with-footer');
-		$('#paytitle').hide();
+		$('#paytitle').html(title!=null?title:'');
 		$('#mainfooter').removeClass();
 		$('#mainfooter').addClass('footer-to-bottom');
 		break;
@@ -934,7 +933,7 @@ function setfootershow(contenttype){
 		$(PAYBTN).show();
 		$('body').removeClass();
 		$('body').addClass('body-with-footer');
-		$('#paytitle').hide();
+		$('#paytitle').html(title!=null?title:'');
 		$('#mainfooter').removeClass();
 		$('#mainfooter').addClass('footer-to-bottom');
 		break;
@@ -944,7 +943,7 @@ function setfootershow(contenttype){
 	 	$(PAYBTN).hide();
 	 	$('body').removeClass();
 		$('body').addClass('body-with-header');
-	 	$('#paytitle').show();
+		$('#paytitle').html(title!=null?title:'');
 	 	$('#mainfooter').removeClass();
 		$('#mainfooter').addClass('footer-to-top');
 		break;
@@ -1347,10 +1346,16 @@ function checkselect(element1){
 	if(areaindex>=0&&deliveryareaarray[areaindex].areastatus){
 		$(element1).next('label').html(deliveryareaarray[areaindex].areadesc);
 		$(element1).prev('label').html('');
+		$(element1).prev('label').hide();
 		return true;
 	}else {
 		$(element1).next('label').html('');
-		$(element1).prev('label').html('该片区今日不外送，请重新选择');
+		$(element1).prev('label').show();
+		if($(element1).val()==null){
+			$(element1).prev('label').html('尚未选中任何片区');
+		}else{
+			$(element1).prev('label').html('该片区今日不外送，请重新选择');
+		}
 		return false;
 	}
 }
@@ -1391,17 +1396,19 @@ function initdesc(element1){
 	}
 	$(element1).addClass('product-item-showdesc');
 	$(element1).data('descexist',DESCSHOW);
-
+	$(element1).children('.showmore').hide();
 }
 function hidedesc(element1){
 	$(element1).children('.descarea-in-list').hide();
 	$(element1).removeClass('product-item-showdesc');
 	$(element1).data('descexist',DESCHIDE);
+	$(element1).children('.showmore').show();
 }
 function showdesc(element1){
 	$(element1).children('.descarea-in-list').show();
 	$(element1).addClass('product-item-showdesc');
 	$(element1).data('descexist',DESCSHOW);
+	$(element1).children('.showmore').hide();
 }
 
 function errorajust(element1){
@@ -1451,4 +1458,3 @@ function getbackground(btnname){
 	var bgset='url('+BASEURLICON+') no-repeat '+positionx+'px 0'
 	return bgset;
 }
-

@@ -187,7 +187,32 @@ class OrdersAR extends CActiveRecord
 		}
 		return $newOrder;
 	}
-
+	/*
+		#new	过滤函数
+	*/
+	public function filterOrder($userId, $date, $filter){
+		$connection = OrdersAR::model()->getDbConnection();
+		$query = "select * from orders where seller_id=:userId and TO_DAYS(ctime)=TO_DAYS(:date)".
+			" and (status=:status1 or status=:status2) order by ctime DESC";
+		if ($stmt = $connection->createCommand($query)) {
+		    $stmt->bindParam(':userId', $userId);
+		    $stmt->bindParam(':date', $date);
+		    if($filter == "#tab3"){
+		    	$stmt->bindValue(':status1', 3);
+		    	$stmt->bindValue(':status2', 3);
+		    }else if($filter == "#tab2"){
+		    	$stmt->bindValue(':status1', 1);
+		    	$stmt->bindValue(':status2', 2);
+		    }else{
+		    	$stmt->bindValue(':status1', 0);
+		    	$stmt->bindValue(':status2', 4);
+		    }
+		    $result = $stmt->queryAll();
+		    $orders = OrdersAR::model()->changeArrayToAR($result);
+		    OrdersAR::model()->changeOrdersToView($orders);
+		    return $orders;
+		}
+	}
 	/*
 		过滤函数
 	*/
