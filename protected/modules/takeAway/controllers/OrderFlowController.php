@@ -1,6 +1,8 @@
 <?php
 
-class OrderFlowController extends Controller
+include 'TakeAwayController.php';
+
+class OrderFlowController extends TakeAwayController
 {
 	public $layout = '/layouts/main';
     public $defaultAction = 'orderFlow';

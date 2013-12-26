@@ -1,6 +1,9 @@
 <?php
 
-class SellerProfileController extends Controller{
+// include the base class for takeaway module
+include 'TakeAwayController.php';
+
+class SellerProfileController extends TakeAwayController{
 
 	public $layout = "/layouts/main";
 	public $defaultAction = "sellerProfile";
@@ -11,7 +14,10 @@ class SellerProfileController extends Controller{
 			// 当前用户是游客，需要先登陆,跳转到登陆界面
 			$this->redirect('index.php/accounts/login');
 		}
-		else{
+		else if(isset($_GET['sid'])){
+			$sid    = $_GET['sid'];
+			$this->setCurrentStore($sid);
+
 			$userId = Yii::app()->user->sellerId;
 			if (isset ( $_POST ['json'] )){
 				$json = $_POST ['json'];
@@ -80,27 +86,26 @@ class SellerProfileController extends Controller{
 			// 获取邮递员信息
 			$posters = PostersAR::model()->getUndeletedPostersByUserId($userId);
 
-			$shopinfo = array();
-			$shopinfo[0]->store_name = $user->store_name;
-			$shopinfo[0]->store_type = $user->type;
-			$shopinfo[0]->phone       = $user->phone;
-			$shopinfo[0]->stime      = $user->stime;
-			$shopinfo[0]->etime      = $user->etime;
-			$shopinfo[0]->address    = $user->store_address;
-			$shopinfo[0]->logo       = $user->logo;
-			$shopinfo[0]->start_price = $user->start_price;
-			$shopinfo[0]->takeaway_fee = $user->takeaway_fee;
-			$shopinfo[0]->threshold  = $user->threshold;
-			$shopinfo[0]->es_time    = $user->estimated_time;
+			$shopinfo = array('store_name'=>$user->store_name,
+							  'store_type' => $user->type,
+							  'phone' => $user->phone,
+							  'stime' => $user->stime,
+							  'etime' => $user->etime,
+							  'address' => $user->store_address,
+							  'logo' => $user->logo,
+							  'start_price' => $user->start_price,
+							  'takeaway_fee' => $user->takeaway_fee,
+							  'threshold' => $user->threshold,
+							  'es_time' => $user->estimated_time);
 			
 			// 获取邮递员信息
 			$postarr = array ();
 			$i = 0;
 			foreach ( $posters as $poster ) {
-				$postarr [$i]->id = $poster->id;
-				$postarr [$i]->name = $poster->name;
-				$postarr [$i]->phone = $poster->phone;
-				$postarr [$i]->desc = $poster->description;
+				$postarr[$i] = array('id' => $poster->id,
+									 'name' => $poster->name,
+									 'phone' => $poster->phone,
+									 'desc' => $poster->description);
 				$i ++;
 			}
 			
@@ -108,18 +113,22 @@ class SellerProfileController extends Controller{
 			$districtarr = array ();
 			$i = 0;
 			foreach ( $districts as $district ) {
-				$districtarr [$i]->id = $district->id;
-				$districtarr [$i]->name = $district->name;
-				$districtarr [$i]->desc = $district->description;
+				$districtarr[$i] = array('id' => $district->id, 
+										 'name' => $district->name,
+										 'desc' => $district->description);
 				$i ++;
 			}
 			
 			$json_data = json_encode(array(
-				'shopinfo'=>$shopinfo[0],
+				'shopinfo'=>$shopinfo,
 				'districts'=>$districtarr,
 				'posters'=>$postarr,
 			));
-			$this->render('sellerProfile', array('json_data'=>$json_data));
+			$this->render('sellerProfile', array('json_data'=>$json_data, 'test'=>1));
+		}
+		// go to 404 page
+		else{
+			$this->redirect(Yii::app()->createUrl('errors/error/404'));
 		}
 	}
 	
