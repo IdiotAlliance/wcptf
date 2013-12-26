@@ -157,17 +157,20 @@ class WechatAccessController extends Controller {
 			$wcmsg->rawmsg     = $rawmsg;
 			$wcmsg->msgtype    = $msg->MsgType;
 			$wcmsg->createtime = $msg->CreateTime;
+			$wcmsg->replied    = Constants::REPLIED_NONE;
 			
 			$sdmsg = null;
 			$matchId = KeywordsAR::model()->findMatch($sellerId, $content);
 			if($matchId >= 0){
 				// get related sdmsg from db
 				$sdmsg = SdmsgsAR::model()->findByPK($matchId);
+				$wcmsg->replied = Constants::REPLIED_KEYWORD;
 			}else{
 				// get default msg from db
 				$user = UsersAR::model()->findByPK($sellerId);
 				if($user && $user->default_id)
 					$sdmsg  = SdmsgsAR::model()->findByPK($user->default_id);
+				$wcmsg->replied = Constants::REPLIED_DEFAULT;
 			}
 			
 			if($sdmsg){
@@ -288,14 +291,18 @@ class WechatAccessController extends Controller {
 						$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, count($items), $itemstr);
 					}
 					echo $msgtpl;
-					// mark the msg as replied
-					$wcmsg->replied = 1;
 				}
+				else $wcmsg->replied = Constants::REPLIED_NONE;
 			}
-			// $wcmsg->save();
-
-			// notify admin of the comming msg
-			// TODO 
+			else $wcmsg->replied = Constants::REPLIED_NONE;
+			if($wcmsg->save()){
+				// create a message queue entry and insert into msg_queue table
+				$mq    = new MsgQueueAR();
+				$mq->seller_id = $sellerId;
+				$mq->msg_id    = $wcmsg->attributes['id'];
+				$mq->type      = Constants::MSG_WECHAT;
+				$mq->save();
+			}
 		}
 	}
 }

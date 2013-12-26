@@ -9,12 +9,20 @@
     <?php Yii::app()->bootstrap->register(); ?>
 
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
-    <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/wechat.css" rel="stylesheet" type="text/css">
+    <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/main_v0_7.css" rel="stylesheet" type="text/css">
 
 </head>
 
 <body>
-	<?php $this->widget('bootstrap.widgets.TbNavbar',array(
+	<?php
+	
+	// echo $this->stores;
+	foreach ($this->stores as $store) {
+
+	}
+	// echo $this->currentStore->name;
+
+	$this->widget('bootstrap.widgets.TbNavbar',array(
         'type'=>'inverse',
         'brand'=>'微积分',
         'brandUrl'=>Yii::app()->createUrl('index'),
@@ -25,9 +33,12 @@
                 'htmlOptions'=>array('class'=>'pull-right'),
                 'items'=>array(
                 		array('label'=>'消息','url'=>'#','items'=>array(
-                                array('label'=>'消息1','url'=>'#'),
-                                array('label'=>'消息2','url'=>'#'),
-                                array('label'=>'消息3','url'=>'#'),
+                                array('label'=>'system','url'=>'#'),
+                                array('label'=>'orders','url'=>'#', 'items'=>array()),
+                                array('label'=>'members','url'=>'#', 'items'=>array(
+                                	array('label'=>'test1', 'url'=>'#'),
+                                	array('label'=>'test2', 'url'=>'#'),
+                                	)),
                             )),
                         array('label'=>'帮助','url'=>'#','items'=>array(
                                 array('label'=>'功能向导','url'=>'#'),
@@ -35,7 +46,10 @@
                                 array('label'=>'联系我们','url'=>'#'),
                             )),
                         array('label'=>'设置','url'=>'#','items'=>array(
-                                array('label'=>'个人设置','url'=>'#'),
+                        		array('label'=>'切换店铺', 'url'=>'#', 'items'=>array(
+
+                        			)),
+                                array('label'=>'账户信息','url'=>'#'),
                                 array('label'=>'退出','url'=>Yii::app()->createUrl("site/logout")),
                             )),
                     ),
@@ -45,6 +59,7 @@
 
 	<div class='main'>
 		<div class='sidebar'>
+			<div class='menuHeader'>当前店铺：<?php ?></div>
 			<div class='menu'>
 				<h4><i class='icon-list-alt'></i> &nbsp&nbsp订单管理</a></h4>
 				<ul>

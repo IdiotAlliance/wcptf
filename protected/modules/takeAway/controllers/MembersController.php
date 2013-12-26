@@ -1,5 +1,7 @@
 <?php
-class MembersController extends Controller{
+include 'TakeAwayController.php';
+
+class MembersController extends TakeAwayController{
 	
 	public $layout = "/layouts/main";
 	public $defaultAction = "members";
