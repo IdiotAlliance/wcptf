@@ -47,29 +47,4 @@ class LoginController extends Controller
             $this->redirect(Yii::app()->user->returnUrl);
         }
     }
-
- /*
-    public function filters()
-    {
-        return array(
-            'accessControl',
-            );
-    }
-
-    public function accessRules(){
-        return array(
-            array(
-                'allow',
-                'actions'=>array('login'),
-                'users'=>array('?'),
-                ),
-            array(
-                'deny',
-                'actions'=>array('login'),
-                'users'=>array('@'),
-                ),
-            );
-    }
- */
-
 }

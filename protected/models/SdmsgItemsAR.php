@@ -1,25 +1,28 @@
 <?php
 
 /**
- * This is the model class for table "wechatmsgs".
+ * This is the model class for table "sdmsg_items".
  *
- * The followings are the available columns in table 'wechatmsgs':
- * @property integer $id
- * @property string $seller_id
- * @property string $openid
- * @property string $rawid
- * @property string $rawmsg
- * @property string $msgtype
- * @property biginteger $createtime
+ * The followings are the available columns in table 'sdmsg_items':
+ * @property string $id
+ * @property string $sdmsg_id
+ * @property integer $type
+ * @property string $title
+ * @property string $content
+ * @property string $picurl
+ * @property integer $url
+ *
+ * The followings are the available model relations:
+ * @property Sdmsgs $sdmsg
  */
-class WechatmsgsAR extends CActiveRecord
+class SdmsgItemsAR extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'wechatmsgs';
+		return 'sdmsg_items';
 	}
 
 	/**
@@ -30,13 +33,14 @@ class WechatmsgsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, openid, rawmsg, msgtype', 'required'),
-			array('id', 'numerical', 'integerOnly'=>true),
-			array('rawid', 'length', 'max'=>32),
-			array('msgtype', 'length', 'max'=>16),
+			array('sdmsg_id, type', 'required'),
+			array('type', 'numerical', 'integerOnly'=>true),
+			array('sdmsg_id', 'length', 'max'=>11),
+			array('title', 'length', 'max'=>128),
+			array('content, picurl', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, seller_id, openid, rawid, rawmsg, msgtype', 'safe', 'on'=>'search'),
+			array('id, sdmsg_id, type, title, content, picurl, url', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -48,6 +52,7 @@ class WechatmsgsAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'sdmsg' => array(self::BELONGS_TO, 'Sdmsgs', 'sdmsg_id'),
 		);
 	}
 
@@ -58,11 +63,12 @@ class WechatmsgsAR extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'seller_id' => 'Seller',
-			'openid' => 'Openid',
-			'rawid' => 'Rawid',
-			'rawmsg' => 'Rawmsg',
-			'msgtype' => 'Msgtype',
+			'sdmsg_id' => 'Sdmsg',
+			'type' => 'Type',
+			'title' => 'Title',
+			'content' => 'Content',
+			'picurl' => 'Picurl',
+			'url' => 'Url',
 		);
 	}
 
@@ -84,12 +90,13 @@ class WechatmsgsAR extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('seller_id',$this->seller_id,true);
-		$criteria->compare('openid',$this->openid,true);
-		$criteria->compare('rawid',$this->rawid,true);
-		$criteria->compare('rawmsg',$this->rawmsg,true);
-		$criteria->compare('msgtype',$this->msgtype,true);
+		$criteria->compare('id',$this->id,true);
+		$criteria->compare('sdmsg_id',$this->sdmsg_id,true);
+		$criteria->compare('type',$this->type);
+		$criteria->compare('title',$this->title,true);
+		$criteria->compare('content',$this->content,true);
+		$criteria->compare('picurl',$this->picurl,true);
+		$criteria->compare('url',$this->url);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -100,10 +107,20 @@ class WechatmsgsAR extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return WechatmsgsAR the static model class
+	 * @return SdmsgItemsAR the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+	/**
+	 * Find items related to a sdmsg with specified id
+	 * @param int $msgId the id of the msg
+	 */
+	public static function getByMsgId($msgId){
+		$items = SdmsgItemsAR::model()->findAll('sdmsg_id=:msgId',
+									    		array(':msgId' => $msgId));
+		return $items;
 	}
 }

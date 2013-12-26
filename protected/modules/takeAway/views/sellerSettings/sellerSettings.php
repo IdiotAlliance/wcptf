@@ -129,7 +129,9 @@
 
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/jquery.form.js" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
-	var data = eval('(' + '<?php echo $json?>' + ')');
+	var data = '<?php echo $json?>';
+	data = data.replace(/[\r\n]/g, '\\n');
+	data = JSON.parse(data);
 	var info_threshold = 30;
 	var warn_threshold = 10;
 	

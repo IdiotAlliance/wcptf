@@ -18,10 +18,11 @@ class EmailHelper {
                             'code'=>$userAr->verify_code,
                             )
                         )."\r\n";
-        $headers = 'From:玉米地<yumifield@yumifield.com>'."\r\n".
-                   'Reply-To:yumifield@yumifield.com'."\r\n".
-                   'MIME-Version:1.0'."\r\n".
-                   'Content-type:text/html; charset=utf-8'."\r\n";
+        // $headers = 'From:玉米地<yumifield@.com>'."yumifield\r\n".
+        //            'Reply-To:yumifield@yumifield.com'."\r\n".
+        //            'MIME-Version:1.0'."\r\n".
+        //            'Content-type:text/html; charset=utf-8'."\r\n";
+        $headers = "From:weijifen@v7fen.com"."\r\n";
 
         return mail($to, $subject, $message, $headers);
     }

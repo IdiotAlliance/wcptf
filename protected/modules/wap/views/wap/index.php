@@ -1018,7 +1018,7 @@ function callerror(error, method){
 		document.getElementById('reload-btnarea').style.display='block';
 		document.getElementById('tips-errordesc-error').innerHTML='数据载入错误，请检查您当前的网络环境，并重试';
 		document.getElementById("reload-btn").onclick=function(){
-			document.getElementById('error').style.display='none';
+		document.getElementById('error').style.display='none';
 			method();
 		};
 		break;
@@ -1028,7 +1028,7 @@ function callerror(error, method){
 		document.getElementById('reload-btnarea').style.display='block';
 		document.getElementById('tips-errordesc-error').innerHTML='初始化失败，请检查您当前的网络环境，并重试';
 		document.getElementById("reload-btn").onclick=function(){
-			document.getElementById('error').style.display='none';
+		document.getElementById('error').style.display='none';
 			method();
 		};
 		break;
@@ -1043,3 +1043,4 @@ function callwrongkey(){
 }
 </script>
 </body>
+

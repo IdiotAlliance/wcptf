@@ -1,25 +1,28 @@
 <?php
 
 /**
- * This is the model class for table "wechatmsgs".
+ * This is the model class for table "brand".
  *
- * The followings are the available columns in table 'wechatmsgs':
- * @property integer $id
- * @property string $seller_id
- * @property string $openid
- * @property string $rawid
- * @property string $rawmsg
- * @property string $msgtype
- * @property biginteger $createtime
+ * The followings are the available columns in table 'brand':
+ * @property string $id
+ * @property string $wx_id
+ * @property integer $type
+ * @property string $name
+ * @property string $description
+ * @property integer $deleted
+ *
+ * The followings are the available model relations:
+ * @property MemberBound[] $memberBounds
+ * @property Store[] $stores
  */
-class WechatmsgsAR extends CActiveRecord
+class BrandAR extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'wechatmsgs';
+		return 'brand';
 	}
 
 	/**
@@ -30,13 +33,14 @@ class WechatmsgsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, openid, rawmsg, msgtype', 'required'),
-			array('id', 'numerical', 'integerOnly'=>true),
-			array('rawid', 'length', 'max'=>32),
-			array('msgtype', 'length', 'max'=>16),
+			array('wx_id, name', 'required'),
+			array('type, deleted', 'numerical', 'integerOnly'=>true),
+			array('wx_id', 'length', 'max'=>11),
+			array('name', 'length', 'max'=>128),
+			array('description', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, seller_id, openid, rawid, rawmsg, msgtype', 'safe', 'on'=>'search'),
+			array('id, wx_id, type, name, description, deleted', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -48,6 +52,8 @@ class WechatmsgsAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'memberBounds' => array(self::HAS_MANY, 'MemberBound', 'brand_id'),
+			'stores' => array(self::HAS_MANY, 'Store', 'brand_id'),
 		);
 	}
 
@@ -58,11 +64,11 @@ class WechatmsgsAR extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'seller_id' => 'Seller',
-			'openid' => 'Openid',
-			'rawid' => 'Rawid',
-			'rawmsg' => 'Rawmsg',
-			'msgtype' => 'Msgtype',
+			'wx_id' => 'Wx',
+			'type' => 'Type',
+			'name' => 'Name',
+			'description' => 'Description',
+			'deleted' => 'Deleted',
 		);
 	}
 
@@ -84,12 +90,12 @@ class WechatmsgsAR extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('seller_id',$this->seller_id,true);
-		$criteria->compare('openid',$this->openid,true);
-		$criteria->compare('rawid',$this->rawid,true);
-		$criteria->compare('rawmsg',$this->rawmsg,true);
-		$criteria->compare('msgtype',$this->msgtype,true);
+		$criteria->compare('id',$this->id,true);
+		$criteria->compare('wx_id',$this->wx_id,true);
+		$criteria->compare('type',$this->type);
+		$criteria->compare('name',$this->name,true);
+		$criteria->compare('description',$this->description,true);
+		$criteria->compare('deleted',$this->deleted);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -100,7 +106,7 @@ class WechatmsgsAR extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return WechatmsgsAR the static model class
+	 * @return BrandAR the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
