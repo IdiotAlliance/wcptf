@@ -11,7 +11,8 @@ class OrderController extends Controller
 		$openid=0;
 		$name="";
 		$areaid = 0;
-		$sellerid = 0;
+		$storeid = 0;
+		$usecard = false;
 		$areadesc = "";
 		$phone = 0;
 		$tips = "";
@@ -43,10 +44,18 @@ class OrderController extends Controller
 			echo json_encode($arr);
 			exit;
 		}
-		if(isset($_POST['sellerid'])){
-			$sellerid = $_POST['sellerid'];
+		if(isset($_POST['storeid'])){
+			$storeid = $_POST['storeid'];
 		}else{
-			$result = "sellerid is null";
+			$result = "storeid is null";
+			$arr=array('success'=>'0', 'result'=>$result);
+			echo json_encode($arr);
+			exit;
+		}
+		if(isset($_POST['use_card'])){
+			$usecard = $_POST['use_card'];
+		}else{
+			$result = "use_card is null";
 			$arr=array('success'=>'0', 'result'=>$result);
 			echo json_encode($arr);
 			exit;
@@ -136,7 +145,7 @@ class OrderController extends Controller
 		$member = MembersAR::model()->getMemberByOpenId($openid);
 		// 用户不存在
 		if(empty($member)){
-			//$member = MembersAR::model()->createMember($sellerid, $openid, $name);
+			//$member = MembersAR::model()->createMember($storeid, $openid, $name);
 			$result = "user not exsit";
 			$arr=array('success'=>'2', 'result'=>$result);
 			echo json_encode($arr);
@@ -156,7 +165,7 @@ class OrderController extends Controller
 			echo json_encode($arr);
 			exit;
 		}
-		$seller = UsersAR::model()->findByPk($sellerid);
+		$seller = UsersAR::model()->findByPk($storeid);
 		if(!empty($seller)){
 			if($seller->status!=0){
 				$result = "service is out";
@@ -178,12 +187,12 @@ class OrderController extends Controller
 
 		}
 		//订单
-		$order = OrdersAR::model()->makeOrder($sellerid, $member->id, $areaid, $areadesc, $phone, $tips, $name);
+		$order = OrdersAR::model()->makeOrder($storeid, $member->id, $areaid, $areadesc, $phone, $tips, $name);
 		//子项订单
 		$len = count($products);
 		$total = 0;
 		for($tmp=0; $tmp<$len; $tmp++){
-			$result = OrderItemsAR::model()->createItem($sellerid, $order->id, $products[$tmp], $nums[$tmp]);
+			$result = OrderItemsAR::model()->createItem($storeid, $order->id, $products[$tmp], $nums[$tmp]);
 			if(strcmp("ok", $result)!=0){
 					OrderItemsAR::model()->deleteItems($order->id);
 					OrdersAR::model()->deleteOrder($order->id);
@@ -197,7 +206,7 @@ class OrderController extends Controller
 			foreach ($items as $item) {
 				$total = $total + $item->price;
 			}
-			if(!empty($sellerid)){
+			if(!empty($storeid)){
 				//是否免外送费
 				$threshold = $seller->threshold;
 				$takeawayFee = $seller->takeaway_fee;
@@ -237,12 +246,12 @@ class OrderController extends Controller
 		获取会员订单
 	*/
 	// public function actionGetOrders(){
-	// 	if(isset($_POST['openid']) && isset($_POST['sellerid'])){
+	// 	if(isset($_POST['openid']) && isset($_POST['storeid'])){
 	// 		$openid = $_POST['openid'];
-	// 		$sellerid = $_POST['sellerid'];
+	// 		$storeid = $_POST['storeid'];
 	// 		$member = MembersAR::model()->getMemberByOpenId($openid);
 	// 		if(!empty($member)){
-	// 			$orders = OrdersAR::model()->getMemberOrders($member->id, $sellerid);
+	// 			$orders = OrdersAR::model()->getMemberOrders($member->id, $storeid);
 	// 			$orderViews = array();
 	// 			foreach ($orders as $order) {
 	// 				array_push($orderViews, 
@@ -276,10 +285,10 @@ class OrderController extends Controller
 		获取会员时间和数量订单
 	*/
 	public function actionGetPartOrders(){
-		if(isset($_POST['openid']) && isset($_POST['sellerid'])
+		if(isset($_POST['openid']) && isset($_POST['storeid'])
 		 && isset($_POST['wapKey']) && isset($_POST['num'])){
 			$openid = $_POST['openid'];
-			$sellerid = $_POST['sellerid'];
+			$storeid = $_POST['storeid'];
 			$wapKey = $_POST['wapKey'];
 			$endtime = $_POST['endtime'];
 			$num = $_POST['num'];
@@ -294,7 +303,7 @@ class OrderController extends Controller
 				}
 				$orders = null;
 				if($endtime == null){
-					$orders = OrdersAR::model()->getMemberOrders($member->id, $sellerid);
+					$orders = OrdersAR::model()->getMemberOrders($member->id, $storeid);
 					if(count($orders)<=$num){
 
 					}else{
@@ -302,7 +311,7 @@ class OrderController extends Controller
 						$orders = $this->getNumOrders($orders, $num);
 					}
 				}else{
-					$orders = OrdersAR::model()->getMemberPartOrders($member->id, $sellerid, $endtime);
+					$orders = OrdersAR::model()->getMemberPartOrders($member->id, $storeid, $endtime);
 					if(count($orders)<=$num){
 
 					}else{
