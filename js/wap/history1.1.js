@@ -6,6 +6,7 @@ var MAKECALLBTN='#makecall-btn';
 var BACKBTN='#back-btn';
 var RIGHTARROR='rightarror';
 
+var MAINCONTENT='#maincontent';
 var ORDERCONTENT='#ordercontent';
 
 //icon大小
@@ -32,6 +33,19 @@ function baseeventbind(){
 	}); 
 	
 }
+/*界面调取方法*/
+function showmiancontent(){
+	basecontentprepare(SORTCONTENT);
+	contentshow(SORTCONTENT);
+}
+function footerprepare(){
+	var insert='';
+	insert='<button onclick = payback() id="back-btn" class="btn-icon" >'+
+	'<span class="img-in-btn" style="background:'+getbackground(BACKBTN)+';"></span></button>';
+    $('#personalcenterfooter .left-footer').html(insert);
+    insert='<h4 id="paytitle"></h4>';
+    $('#personalcenterfooter .center-footer').html(insert);
+}
 function orderload(endtime,num){
 	$.ajax({
         type:'POST',
@@ -56,6 +70,10 @@ function orderload(endtime,num){
         }  
     });    
 }
+function firstcallcontent(){
+	footerprepare();
+    showmaincontent();
+}
 function callmyorderlist(orders,sellerphone){
 	if(!isorderlistprepared){
 		orderlistprepared(sellerphone);
@@ -65,28 +83,28 @@ function callmyorderlist(orders,sellerphone){
 		insert='';
 		order=orders[i];
 		if(order!=null){
-			insert+='<div class="tips-content">'+
-			'<p style="font-size:16px;font-weight:700;">订单号：'+order.order_no+'</p>'+
-			'<p class="tips-orderdesc-orders">'+
-			'<br />订餐者姓名：'+order.name+
+			insert+='<li class="orderhistory-item">'+
+			'<div class="mainarea-in-list">'+
+			'<h4>订单号：'+order.order_no+'</h4>'+
+			'<h5>姓名：'+order.name+
 			'<br />联系电话：'+order.phone+
 			'<br />收货地点：'+order.address+
-			'<br />下单时间：'+order.ctime+
 			'<br />订单备注：'+(order.tips!=''?order.tips:'无')+
-			'<br />'+
+			'<br />下单时间：'+order.ctime+
+			'<br />------------------------------------'+
 			'<br />订单明细：'+order.order_items+
 			'<br />订单总价：￥'+order.total+
-			'<br />'+
+			'<br />------------------------------------'+
 			'<br />订单状态：'+order.status;
 			if(order.status=='派送中'){
 				insert+='<br />送餐员：'+order.poster_name+
 				'<br />送餐员电话：<a href="tel:'+order.poster_phone+'">'+order.poster_phone+'</a>';
 			}
-			insert+='</p></div>';
+			insert+='</h5></div></li>';
 		}else{
 			insert+='订单获取失败';
 		}
-		$('#tips-orders').append(insert);
+		$('#orderhistory-list').append(insert);
 	}
 	if(nexttime==null||nexttime==''){
 		$('#loadmore-btnarea').hide();
@@ -100,10 +118,10 @@ function callmyorderlist(orders,sellerphone){
 }
 function orderlistprepared(sellerphone){
 	var insert='<a class="btn-icon-text" href="tel:'+sellerphone+'" id="makecall-btn">'+
-		'<p class="text-in-btn" id="havelook">拨号</p>'+
-		'<div class="img-in-btn" style="background:'+getbackground(MAKECALLBTN)+';"></div>'+
+		'<span class="text-in-btn" id="makecall">拨号</span>'+
+		'<span class="img-in-btn" style="background:'+getbackground(MAKECALLBTN)+';"></span>'+
 		'</a>';
-	$('#tips-title').append(insert);
+	$('#orderhistory-first-item .btnarea-in-list').append(insert);
 	insert='<button class="btn-icon-text" id="loadmore-btn">'+
 	'<p class="text-in-btn">加载更多</p>'+
 	'<div class="img-in-btn" style="background:'+getbackground(LOADMOREBTN)+';"></div>'+

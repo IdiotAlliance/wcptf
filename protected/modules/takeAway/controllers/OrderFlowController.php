@@ -23,7 +23,7 @@ class OrderFlowController extends TakeAwayController
 	public function init(){
 		$date = date("Y-m-d H:i:s");
 		$areaId = 0;
-		$this->userID = Yii::app()->user->sellerId;
+		$this->userID = $this->getUserId();
 		//TODO when $userID is null
 		$orders = OrdersAR::model()->filterNotSend($this->userID, $date, $areaId);
 		$orders1 = OrdersAR::model()->filterSended($this->userID, $date, $areaId);
@@ -43,6 +43,102 @@ class OrderFlowController extends TakeAwayController
 		$areaId = 0;
 		$orders = OrdersAR::model()->filterNotSend($this->userID, $date, $areaId);
 		return $this->renderPartial('_orderList1', array('orders'=>$orders), true, false);
+	}
+	/*
+		#new ajax获取订单列表
+	*/
+	public function actionFilterOrderList(){
+		$day = 0;
+		$filter = "";
+		if(isset($_POST['day'])){
+			$day = $_POST['day'];
+		}
+		if(isset($_POST['filter'])){
+			$filter = $_POST['filter'];
+		}
+		$date = date("Y-m-d H:i:s",strtotime($day." day"));
+		$orders = OrdersAR::model()->filterOrder($this->userID, $date, $filter);
+		$orderViews = array();
+		foreach ($orders as $order) {
+			$newOrder = OrdersAR::model()->findByPk($order->id);
+			$poster = PostersAR::model()->findByPk($newOrder->poster_id);
+			$user = UsersAR::model()->findByPk($newOrder->seller_id);
+			$posterPhone = "";
+			if(!empty($poster)){
+				$posterPhone = $poster->phone;
+			}
+			array_push($orderViews, 
+				array("name"=>$order->order_name,
+					 "phone"=>$order->phone,
+					 "order_no"=>$order->order_no,
+					 "orderType"=>$order->type,
+					 "order_id"=>$order->id,
+					 "total"=>$order->total,
+					 "order_items"=>$order->seller_id,
+					 "address"=>$order->address,
+					 "areaId"=>$order->area_id,
+					 "ctime"=>$order->ctime,
+					 "status"=>$order->status,
+					 "poster_name"=>$order->poster_id,
+					 'desc'=>$order->description,
+					));
+		}
+		$arr=array('success'=>'1', 'orderList'=>$orderViews);
+		echo json_encode($arr);
+	}
+	/*
+		#new ajax获取订单
+	*/
+	public function actionFilterOrder(){
+		$orderId = 0;
+		if(isset($_POST['orderId'])){
+			$orderId = $_POST['orderId'];
+			$order = OrdersAR::model()->getOrder($orderId);
+			$orderView = array("name"=>$order->order_name,
+						 "phone"=>$order->phone,
+						 "order_no"=>$order->order_no,
+						 "orderType"=>$order->type,
+						 "order_id"=>$order->id,
+						 "total"=>$order->total,
+						 "order_items"=>$order->seller_id,
+						 "address"=>$order->address,
+						 "areaId"=>$order->area_id,
+						 "ctime"=>$order->ctime,
+						 "status"=>$order->status,
+						 "orderType"=>$order->type,
+						 "poster_name"=>$order->poster_id,
+						 'desc'=>$order->description,
+						);
+			$arr=array('success'=>'1', 'order'=>$orderView);
+		}else{
+			$arr=array('success'=>'0');
+		}
+		echo json_encode($arr);
+	}
+	/*
+		#new ajax获取订单子项
+	*/
+	public function actionFilterOrderItems(){
+		$orderId = 0;
+		if(isset($_POST['orderId'])){
+			$orderId = $_POST['orderId'];
+			$orderItems = OrderItemsAR::model()->getItems($orderId);
+			$itemViews = array();
+			foreach ($orderItems as $item) {
+				$pos = strpos($item->product_id, ':');
+				array_push($itemViews, array(
+						"itemId" => $item->id,
+						"product" => substr($item->product_id, 0, $pos),
+						"productType" => substr($item->product_id, $pos+1),
+						"number" => $item->number,
+						"price" => $item->price,
+					));
+			}
+			$arr=array('success'=>'1', 'itemList'=>$itemViews);
+		}else{
+			$arr=array('success'=>'0');
+		}
+		echo json_encode($arr);
 	}
 
 	/*
@@ -200,19 +296,22 @@ class OrderFlowController extends TakeAwayController
 	public function actionUpdate(){
 		$userID = $this->getUserId();
 		$timeOut = 20;
-		$existList = null;
+		$tabOneOrderList = null;
+		$tabTwoOrderList = null;
+		$tabThreeOrderList = null;
 		$nums = null;
 		$day = 0;
-		$areaId = 0;
-		$filter = "";
 		if(isset($_POST['time'])){
 			$timeOut = $_POST['time'];
 		}	
-		if(isset($_POST['existList'])){
-			$existList = $_POST['existList'];
+		if(isset($_POST['tabOneOrderList'])){
+			$tabOneOrderList = $_POST['tabOneOrderList'];
 		}
-		if(isset($_POST['filter'])){
-			$filter = $_POST['filter'];
+		if(isset($_POST['tabTwoOrderList'])){
+			$tabTwoOrderList = $_POST['tabTwoOrderList'];
+		}
+		if(isset($_POST['tabThreeOrderList'])){
+			$tabThreeOrderList = $_POST['tabThreeOrderList'];
 		}
 		if(isset($_POST['nums'])){
 			$nums = $_POST['nums'];
@@ -220,10 +319,7 @@ class OrderFlowController extends TakeAwayController
 		if(isset($_POST['day'])){
 			$day = $_POST['day'];
 		}
-		if(isset($_POST['areaId'])){
-			$areaId = $_POST['areaId'];
-		}
-		$this->updateListener($userID, $timeOut, $existList, $nums, $day, $areaId, $filter);
+		$this->updateListener($userID, $day);
 	}
 	/*
 		主动更新操作
@@ -249,39 +345,68 @@ class OrderFlowController extends TakeAwayController
 		更新接口
 		success：1需要当前页刷新；2不需要当前页刷新只刷新头；
 	*/
-	public function updateListener($userID, $timeOut, $existList, $nums, $day, $areaId, $filter){
+	public function updateListener($userID, $day){
         $date = date("Y-m-d H:i:s",strtotime($day." day"));
-        $currentList = OrdersAR::model()->filterBase($userID, $date, $areaId, $filter);
-        $notSendNum = count(OrdersAr::model()->filterNotSend($userID, $date, $areaId));
-        $sendedNum = count(OrdersAr::model()->filterSended($userID, $date, $areaId));
-        $cancelNum = count(OrdersAr::model()->filterCancel($userID, $date, $areaId));
-        $currentLen = count($currentList);
-        $existLen = count($existList);
-        if($currentLen!=$existLen){
-        	$arr=array('success'=>'1', 'nums'=>array($notSendNum, $sendedNum, $cancelNum));
-            echo json_encode($arr);
-            exit;
-        }else {
-            //检测当前列表是否和数据库列表匹配
-            for($tmp=0;$tmp!=$currentLen;$tmp++){
-                if(!in_array($currentList[$tmp]->id, $existList)){
-                     $arr=array('success'=>'1', 'nums'=>array($notSendNum, $sendedNum, $cancelNum));
-                     echo json_encode($arr);
-					 exit;
-                }
-            }
-
+        $tabOneOrders = OrdersAR::model()->filterOrder($this->userID, $date, "#tab1");
+        $tabTwoOrders = OrdersAR::model()->filterOrder($this->userID, $date, "#tab2");
+        $tabThreeOrders = OrdersAR::model()->filterOrder($this->userID, $date, "#tab3");
+        $tempLen = count($tabOneOrders);
+        $tabOneOrderIdList = array();
+        $tabTwoOrderIdList = array();
+        $tabThreeOrderIdList = array();
+        for($i=0; $i<$tempLen; $i++){
+        	array_push($tabOneOrderIdList, $tabOneOrders[$i]->id);
         }
-        //检测页头相等
-        if((intval($nums[0][0])!= $notSendNum )|| (intval($nums[1][0])!=$sendedNum )|| (intval($nums[2][0])!=$cancelNum)){
-             $arr=array('success'=>'2', 'nums'=>array($notSendNum, $sendedNum, $cancelNum));
-             echo json_encode($arr);
-			 exit;
+        $tempLen = count($tabTwoOrders);
+        for($i=0; $i<$tempLen; $i++){
+        	array_push($tabTwoOrderIdList, $tabTwoOrders[$i]->id);
         }
-        //没有需要更新
-        $arr=array('success'=>'0');
+        $tempLen = count($tabThreeOrders);
+        for($i=0; $i<$tempLen; $i++){
+        	array_push($tabThreeOrderIdList, $tabThreeOrders[$i]->id);
+        }
+        $arr=array('success'=>'1', "tabOneOrderIdList"=>$tabOneOrderIdList,
+        							"tabTwoOrderIdList"=>$tabTwoOrderIdList,
+        							"tabThreeOrderIdList"=>$tabThreeOrderIdList);
         echo json_encode($arr);
         exit;
+
+   //      $currentList = OrdersAR::model()->filterBase($userID, $date, $areaId, $filter);
+   //      $notSendNum = count(OrdersAr::model()->filterNotSend($userID, $date, $areaId));
+   //      $sendedNum = count(OrdersAr::model()->filterSended($userID, $date, $areaId));
+   //      $cancelNum = count(OrdersAr::model()->filterCancel($userID, $date, $areaId));
+   //      $currentLen = count($currentList);
+   //      $existLen = count($existList);
+   //      $updateOrderList = array();
+   //      //检测当前列表是否和数据库列表匹配
+   //      if($existList!=null){
+   //      	for($tmp=0;$tmp!=$currentLen;$tmp++){
+   //      	    if(!in_array($currentList[$tmp]->id, $existList)){
+   //      	    	array_push($updateOrderList, $currentList[$tmp]->id);
+   //      	    }
+   //      	}
+   //      }else{
+   //      	for($tmp=0;$tmp!=$currentLen;$tmp++){
+   //  	    	array_push($updateOrderList, $currentList[$tmp]->id);
+   //      	}
+   //      }
+   //      if(count($updateOrderList)>0){
+	  //       $arr=array('success'=>'1', 
+	  //       			'updateOrders'=>$updateOrderList,
+	  //       			'nums'=>array($notSendNum, $sendedNum, $cancelNum));
+	  //       echo json_encode($arr);
+			// exit;
+   //      }
+   //      //检测页头相等
+   //      if((intval($nums[0][0])!= $notSendNum )|| (intval($nums[1][0])!=$sendedNum )|| (intval($nums[2][0])!=$cancelNum)){
+   //           $arr=array('success'=>'2', 'nums'=>array($notSendNum, $sendedNum, $cancelNum));
+   //           echo json_encode($arr);
+			//  exit;
+   //      }
+   //      //没有需要更新
+   //      $arr=array('success'=>'0');
+   //      echo json_encode($arr);
+   //      exit;
     }
 
     public function actionGetPosters(){
@@ -295,7 +420,7 @@ class OrderFlowController extends TakeAwayController
     		$posterViews = array();
     		foreach ($posters as $poster)
     		{
-    			$posterViews[$poster->id] = $poster->name." 电话：".$poster->phone.count($posters).$this->userID;
+    			$posterViews[$poster->id] = $poster->name." 电话：".$poster->phone;
     		   //array_push($posterViews, $poster->id=>"name:".$poster->name." 电话：".$poster->phone.count($posters).$this->userID);
     		}
     		//$arr=array('success'=>'0', 'html'=>$this->renderPartial('_posters', array('model'=>$model, 'posterViews'=>$posterViews)));
@@ -307,8 +432,7 @@ class OrderFlowController extends TakeAwayController
 			// echo json_encode($arr);
 			echo "poster is not find";
 			exit;
-    	}
-    	
+    	}	
     }
     /*
     	设置派送人员
@@ -480,13 +604,15 @@ class OrderFlowController extends TakeAwayController
     	获取商家id
     */
     public function getUserId(){
-    	 $userId = Yii::app()->user->sellerId;
-    	 if(empty($userId)){
-    	 	Yii::app()->createUrl('accounts/login/login');
-    	 	exit;
-    	 }else{
+    	 if(!empty(Yii::app()->user->sellerId)){
+    	 	$userId = Yii::app()->user->sellerId;
     	 	return $userId;
+    	 }else{
+    	 	 $url = Yii::app()->createUrl('accounts/login/login');
+	    	 $this->redirect($url);
+	    	 exit;
     	 }
+    	
     }
 
     /*

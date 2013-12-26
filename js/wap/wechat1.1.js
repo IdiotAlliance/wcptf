@@ -245,8 +245,6 @@ function writeinfolocal(name1,number1,areaid1,areadesc){
 	}
 }
 
-
-
 /*订单增减与清空*/
 function deleteorder(productid){
 	var orderindex = findorderbyid(productid);
@@ -560,7 +558,7 @@ function footerprepare(){
     '<button onclick = callsort() id="sort-btn" class="btn-icon">'+
     '<span class="img-in-btn" style="background:'+getbackground(SORTBTN)+';"></span></button>';
     $('#mainfooter .left-footer').html(insert);
-    insert='<h4 id="paytitle">订单中心</h4>';
+    insert='<h4 id="paytitle"></h4>';
     $('#mainfooter .center-footer').html(insert);
     insert='<button onclick = topay() id="pay-btn" class="btn-icon-text">'+
     '<span class="text-in-btn">结算 ￥0</span>'+
@@ -886,7 +884,7 @@ function setcontentframeshow(contenttype){
 		setfootershow(contenttype);
 		break;
 		case PAYCONTENT:
-		setfootershow(contenttype);
+		setfootershow(contenttype,'订单中心222');
 		if(ispayable==false){
     		$('#order-first-item').children('.mainarea-in-list').children('h4').html('休息中');
     		$('#order-first-item').children('.mainarea-in-list').children('h5').html('当前无法交易');
@@ -918,7 +916,7 @@ function setcontentframeshow(contenttype){
 	}
 }
 
-function setfootershow(contenttype){
+function setfootershow(contenttype,title){
 	switch(contenttype){
 		case SORTCONTENT:
 		$(BACKBTN).hide();
@@ -926,7 +924,7 @@ function setfootershow(contenttype){
 		$(PAYBTN).show();
 		$('body').removeClass();
 		$('body').addClass('body-with-footer');
-		$('#paytitle').hide();
+		$('#paytitle').html(title!=null?title:'');
 		$('#mainfooter').removeClass();
 		$('#mainfooter').addClass('footer-to-bottom');
 		break;
@@ -936,7 +934,7 @@ function setfootershow(contenttype){
 		$(PAYBTN).show();
 		$('body').removeClass();
 		$('body').addClass('body-with-footer');
-		$('#paytitle').hide();
+		$('#paytitle').html(title!=null?title:'');
 		$('#mainfooter').removeClass();
 		$('#mainfooter').addClass('footer-to-bottom');
 		break;
@@ -946,7 +944,7 @@ function setfootershow(contenttype){
 	 	$(PAYBTN).hide();
 	 	$('body').removeClass();
 		$('body').addClass('body-with-header');
-	 	$('#paytitle').show();
+		$('#paytitle').html(title!=null?title:'');
 	 	$('#mainfooter').removeClass();
 		$('#mainfooter').addClass('footer-to-top');
 		break;
@@ -1461,5 +1459,3 @@ function getbackground(btnname){
 	var bgset='url('+BASEURLICON+') no-repeat '+positionx+'px 0'
 	return bgset;
 }
-
-

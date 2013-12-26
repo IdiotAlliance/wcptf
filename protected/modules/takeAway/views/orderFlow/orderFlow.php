@@ -1,4 +1,44 @@
 <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/order-flow.css" rel="stylesheet" type="text/css">
+<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/jquery.json-2.4.min.js"></script>
+<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/jsrender.min.js"></script>
+<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/orderFlow/orderFlow.js"></script>
+<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/orderFlow/operate.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		//点击订单
+		$('.order-header').delegate('.order-body ul>li .order-item ul>li.order-content', 'mousedown', function(e){
+			if($(this).css("background-color") == 'rgb(247, 247, 247)'){
+				$('.order-body ul>li .order-item ul>li.order-content').css("background-color", "#f7f7f7");
+			}
+			$(this).css("background-color", "#e7e7e7");
+		});
+
+		$('.order-header').delegate('.order-body ul>li .order-item ul>li.order-content', 'mouseup', function(e){
+			//更新订单详情
+			var orderId = $(this).attr("id");
+			//alert(orderId);
+			fetchAndRenderOrderItems(orderId);
+			// getOrderItems(orderId);
+		});
+		initTab();
+	});
+	// 初始化加载订单列表
+	function initTab(){
+		var tabId = "#tab1";
+		var day = $('.order-footer .order-date-container').attr("id");
+		fetchAndRenderOrderList(day, tabId);
+		fetchOrderList(day, "#tab2");
+		fetchOrderList(day, "#tab3");
+	}
+	//加载页面日期
+	function loadTab(tabId){
+		var day = $('.order-footer .order-date-container').attr("id");
+		fetchAndRenderOrderList(day, tabId);
+		fetchOrderList(day, "#tab1");
+		fetchOrderList(day, "#tab2");
+		fetchOrderList(day, "#tab3");
+	}
+</script>
 <div id="action-name">
 </div>
 <div class="order">
@@ -13,8 +53,7 @@
 		    'tabs'=>array(
 		        array(
 		        	'id'=>'tab1',
-		        	'label'=>'未派送('.$this->notSendNum.')', 
-		        	'content'=>$this->actionInit(),
+		        	'label'=>'未派送('.$this->notSendNum.')',
 		        	'active'=>true),
 		        array(
 		        	'id'=>'tab2',
@@ -31,10 +70,164 @@
 		    ),
 		    'events'=>array('shown'=>'js:loadContent'),
 		)); ?>
+		<!-- Templates -->
+		<!-- 订单模板 -->
+		<script type="text/x-jsrender" id="orderListTemplate">
+			<div class="order-body">
+				<div class="order-body-scroll">
+					<ul class="order-list">
+					    {{for list}}
+					    	<li>
+					    		<div class="order-item item-wait" id={{:orderData.areaId}}>
+					    			<ul>
+					    				<li class="order-state ">
+					    					<div class="state">
+					    						<label>{{:orderData.status}}</label>
+					    					</div>
+					    				</li>
+					    				<li class="order-content" id={{:orderData.order_id}}>
+					    					<div class="content">
+					    						<div class="item-line item-line1">
+					    							<label class="order-username">预约人：{{:orderData.name}}</label>
+					    							<label class="order-phonenumber">电话：{{:orderData.phone}}</label>
+					    							<label class="order-id">订单号：{{:orderData.order_no}}</label>
+					    							<span class="order-checkbox">
+					    								<input type="checkbox" value ={{:orderData.order_id}}>
+					    								</span>
+					    						</div>
+					    						<div class="item-line item-line2">
+					    							<label class="order-address">配送地址：{{:orderData.address}}</label>
+					    						</div>
+					    						<div class="item-line item-line3">
+					    							<label class="order-total">订单总价：{{:orderData.total}}</label>
+					    							<label class="order-discount">派送人员：{{:orderData.poster_name}}</label>
+					    							<div class="discount-icon">
+					    								<span class='glyphicon glyphicon-trash'></span>
+					    							</div>
+					    						</div>
+					    						<div class="item-line item-line4">
+					    						</div>
+					    						<div class="item-line item-line5">
+					    							<label class="order-subitem-header">订单子项：</label>
+					    							<label class="order-subitem order-1">{{:orderData.order_item}}</label>
+					    						</div>
+					    						<div class="item-line item-line6">
+					    							<label class="order-desc">备注：{{:orderData.desc}}</label>
+					    							<label class="order-date">下单时间：{{:orderData.ctime}}</label>
+					    						</div>
+					    					</div>
+					    				</li>
+					    			</ul>
+					    		</div>
+					    	</li>
+					    {{/for}}
+		    		</ul>
+		    	</div>
+		    </div>
+		</script>
+		<!-- 单个订单模板 -->
+		<script type="text/x-jsrender" id="orderTemplate">
+    		<div class="order-item item-wait" id={{:orderData.areaId}}>
+    			<ul>
+    				<li class="order-state ">
+    					<div class="state">
+    						<label>{{:orderData.status}}</label>
+    					</div>
+    				</li>
+    				<li class="order-content" id={{:orderData.order_id}}>
+    					<div class="content">
+    						<div class="item-line item-line1">
+    							<label class="order-username">预约人：{{:orderData.name}}</label>
+    							<label class="order-phonenumber">电话：{{:orderData.phone}}</label>
+    							<label class="order-id">订单号：{{:orderData.order_no}}</label>
+    							<span class="order-checkbox">
+    								<input type="checkbox" value ={{:orderData.order_id}}>
+    								</span>
+    						</div>
+    						<div class="item-line item-line2">
+    							<label class="order-address">配送地址：{{:orderData.address}}</label>
+    						</div>
+    						<div class="item-line item-line3">
+    							<label class="order-total">订单总价：{{:orderData.total}}</label>
+    							<label class="order-discount">派送人员：{{:orderData.poster_name}}</label>
+    							<div class="discount-icon">
+    								<span class='glyphicon glyphicon-trash'></span>
+    							</div>
+    						</div>
+    						<div class="item-line item-line4">
+    						</div>
+    						<div class="item-line item-line5">
+    							<label class="order-subitem-header">订单子项：</label>
+    							<label class="order-subitem order-1">{{:orderData.order_item}}</label>
+    						</div>
+    						<div class="item-line item-line6">
+    							<label class="order-desc">备注：{{:orderData.desc}}</label>
+    							<label class="order-date">下单时间：{{:orderData.ctime}}</label>
+    						</div>
+    					</div>
+    				</li>
+    			</ul>
+    		</div>
+		</script>
+		<!-- 订单详情模板 -->
+		<script type="text/x-jsrender" id="orderDetailTemplate">
+		   <div class="order-detail-scroll">
+			   	<div class='order-detail-header'>
+			   		<div class="order-name" id={{:head.orderData.order_id}}></div>
+			   		<div class="order-line line-1">
+			   			<label class="order-id">订单号：{{:head.orderData.order_no}}</label>
+			   			<label class="order-come-type">{{:head.orderData.orderType}}</label>
+			   		</div>
+			   		<div class="order-line line-2">
+			   			<label class="order-username">姓名：{{:head.orderData.name}}</label>
+			   			<label class="order-date">下单时间：{{:head.orderData.ctime}}</label>
+			   		</div>
+			   		<div class="order-line line-3">
+			       		<label class="order-phone">手机：{{:head.orderData.phone}}</label>
+			   		</div>
+			   		<div class="order-line line-4">
+			   			<label class="order-desc">备注：{{:head.orderData.desc}}</label>
+			   		</div>
+			   		<div class="order-line line-5">
+			   			<label class="order-total">总价：{{:head.orderData.total}}</label>
+			   		</div>
+			   		<div class="order-line line-6">
+			   			<a href="#" class='order-cancel-menu'>取消订单</a>
+			   			<a href="#" data-toggle='modal' data-target='#choosePosterModal' class='order-modify-menu'>指定派送人员</a>
+			   			<a href="#" data-toggle='modal' data-target='#modifyOrderHeaderModal' class='order-modify-menu'>修改</a>
+			   			<button type="button" id="btn-confirm" class="btn btn-default btn-xs">完成</button>
+			   		</div>
+			   	</div>
+		   		<div class="order-detail-body">
+		   			{{for list}}
+		   				<div class="order-item item-1">
+		   					<div class="order-line line-1">
+		   						<label class="name">名称：{{:itemData.product}}</label>
+		   						<label class="type">类型：{{:itemData.productType}}</label>
+		   					</div>
+		   					<div class="order-line line-2">
+		   						<label class="number">数量：{{:itemData.number}}</label>
+		   						<label class="price">价格：{{:itemData.price}}</label>
+		   					</div>
+		   				</div>
+		   			{{/for}}
+		   			<div class="order-item add-item">
+		   				<label class="add-item-text">添加条目</label>
+		   			</div>
+		   		</div>
+		   	</div>
+		</script>
 		<script type="text/javascript">
 		var currentTab = "#tab1";
 		//加载订单列表
 		function loadContent(e){
+			//test
+			// var myOrder = MyOrder.createNew();
+			// myOrder.save();
+			// alert(myOrder.get());
+			// myOrder.orderDelete();
+			// alert(myOrder.get());
+			//test
 
 		    var tabId = e.target.getAttribute("href");
 
@@ -50,28 +243,8 @@
 		    } else if(tabId == '#tab3') {
 		    	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/cancel';
 		    }
-
-		    if(ctUrl != '') {
-		        $.ajax({
-		            url      : ctUrl,
-		            type     : 'POST',
-		            dataType : 'html',
-		            data	 :{day:day, areaId:areaId},
-		            cache    : false,
-		            success  : function(html)
-		            {
-		            	//alert(html);
-		                jQuery(tabId).html(html);
-		                $('.footer-right-btn.all-pick').html("全选");
-		                var orderId = $((tabId+" .order-body ul>li .order-item ul>li.order-content")).attr("id");
-		                $((tabId+" .order-body ul>li .order-item ul>li.order-content")).first().css("background-color", "#e7e7e7");
-		            	getOrderItems(orderId);
-		            },
-		            error:function(){
-		                    alert('Request failed');
-		            }
-		        });
-		    }
+		    fetchAndRenderOrderList(day, tabId);
+		    $('.footer-right-btn.all-pick').html("全选");
 		    return false;
 		}
 		</script>
@@ -117,10 +290,87 @@
 	</div>
 </div>
 <div class='order-detail'>
-	<?php 
-		echo $this->actionfirstGetOrderItems();
-	?>
 </div>
+
+<!-- 选择派送人员 -->
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'choosePosterModal')); ?>
+ 
+	<div class="modal-header">
+	    <a class="close" data-dismiss="modal">&times;</a>
+	    <h4>选取派送人员</h4>
+	</div>
+
+	<div class="modal-body">
+		
+	</div>
+	 
+	<div class="modal-footer">
+        <?php $this->widget('bootstrap.widgets.TbButton', array(
+	        'buttonType'=>'submit', 
+	        'type'=>'primary', 
+	        'htmlOptions'=>array('data-dismiss'=>'modal'),
+	        'label'=>'确定')); ?>
+
+	    <?php $this->widget('bootstrap.widgets.TbButton', array(
+	        'label'=>'关闭',
+	        'url'=>'#',
+	        'htmlOptions'=>array('data-dismiss'=>'modal'),
+	    )); ?>
+	</div>
+ 
+<?php $this->endWidget(); ?>
+<!-- 修改订单头 -->
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modifyOrderHeaderModal')); ?>
+ 
+	<div class="modal-header">
+	    <a class="close" data-dismiss="modal">&times;</a>
+	    <h4>修改订单</h4>
+	</div>
+
+	<div class="modal-body">
+		<?php $this->initModifyOrderHeaderForm(); ?>
+	</div>
+
+	<div class="modal-footer">
+        <?php $this->widget('bootstrap.widgets.TbButton', array(
+	        'buttonType'=>'submit', 
+	        'type'=>'primary', 
+	        'htmlOptions'=>array('data-dismiss'=>'modal'),
+	        'label'=>'确定')); ?>
+
+	    <?php $this->widget('bootstrap.widgets.TbButton', array(
+	        'label'=>'关闭',
+	        'url'=>'#',
+	        'htmlOptions'=>array('data-dismiss'=>'modal'),
+	    )); ?>
+	</div>
+<?php $this->endWidget(); ?>
+<!-- 添加订单子项 -->
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'orderAddItemModal')); ?>
+ 
+	<div class="modal-header">
+	    <a class="close" data-dismiss="modal">&times;</a>
+	    <h4>添加订单子项</h4>
+	</div>
+
+	<div class="modal-body">
+		<?php $this->initOrderAddItemForm(); ?>
+	</div>
+
+	<div class="modal-footer">
+        <?php $this->widget('bootstrap.widgets.TbButton', array(
+	        'buttonType'=>'submit', 
+	        'type'=>'primary', 
+	        'htmlOptions'=>array('data-dismiss'=>'modal'),
+	        'label'=>'确定')); ?>
+
+	    <?php $this->widget('bootstrap.widgets.TbButton', array(
+	        'label'=>'关闭',
+	        'url'=>'#',
+	        'htmlOptions'=>array('data-dismiss'=>'modal'),
+	    )); ?>
+	</div>
+<?php $this->endWidget(); ?>
 <script type="text/javascript">
 	var lastIntervalId = "weChat_default";
 
@@ -191,6 +441,11 @@
 			}
 			// batDispatchOrders();
 		});
+		//test clean all localstorge
+		$(".footer-left-btn.new-order").click(function(){
+			cleanAllLocalCache();
+			alert("clean all the cache!");
+		});
 		$('#batOperate .bat-cancel').click(function(){
 			$('#batOperate').toggle();
 			batCancelOrders();
@@ -209,209 +464,11 @@
 		resetUnread();
 	});
 
-	// 全选订单 或取消
-	function pickAll(){
-		var menu = $('.footer-right-btn.all-pick').html();
-		var ele = ' .order-body ul>li .order-item ul>li.order-content .order-checkbox input';
-		ele = currentTab + ele;
-		if(menu=='全选'){
-			$(ele).each(function(){
-			//alert($(this).html());
-				$(this).attr("checked", true);
-				$('.footer-right-btn.all-pick').html("取消全选");
-				});
-		}else{
-			$(ele).each(function(){
-			//alert($(this).html());
-				$(this).attr("checked", false);
-				$('.footer-right-btn.all-pick').html("全选");
-				});
-		}
+	//clean all the localstorage
+	function cleanAllLocalCache(){
+		localStorage.clear();
 	}
 
-	// 批量派送订单
-	function batDispatchOrders(){
-		var orders = getBatOrders();
-		if(orders.length==0){
-			alert("请选择一个订单！");
-			return false;
-		}
-		var posterId = $("input[name='ChoosePosterForm[poster]']:checked").val();
-		if(posterId==null){
-			alert("没有选择派送人员!");
-		}else{
-			ctUrl = '/weChat/index.php/takeAway/orderFlow/batSetPosters';
-			if(ctUrl != '') {
-			    $.ajax({
-			        url      : ctUrl,
-			        type     : 'POST',
-			        dataType : 'json',
-			        data 	 : {orderIds:orders, posterId:posterId},
-			        cache    : false,
-			        success  : function(data)
-			        {
-			        	if(data.success==1){
-			        		updateTabContent(currentTab);
-			        		// 预刷新头
-			        		var h1 = getTabHeaders('#tab1');
-			        		var h2 = getTabHeaders('#tab2');
-			        		var h3 = getTabHeaders('#tab3');
-			        		if(currentTab == '#tab1'){
-			        			h2 = parseInt(h2)+orders.length;
-			        			h1 = parseInt(h1)-orders.length;
-			        			updateTabHeaders('#tab1', h1);
-			        			updateTabHeaders('#tab2', h2);
-			        		}
-			        		alert("订单派送成功！");
-			        	}else{
-			        		alert("订单派送失败！");
-			        	}
-			        	
-			        },
-			        error:function(){
-			                alert('Request failed');
-			        }
-			    });
-			}
-		}
-		return false;
-	}
-	// 批量完成订单
-	function batfinishOrders(){
-		var orders = getBatOrders();
-		if(orders.length==0){
-			alert("请选择一个订单！");
-			return false;
-		}
-		ctUrl = '/weChat/index.php/takeAway/orderFlow/batFinishOrder';
-		if(currentTab=='#tab3'){
-			alert('该订单已经取消无法完成！');
-			return false;
-		}
-		if(ctUrl != '') {
-		    $.ajax({
-		        url      : ctUrl,
-		        type     : 'POST',
-		        dataType : 'json',
-		        data 	 : {orderIds:orders},
-		        cache    : false,
-		        success  : function(data)
-		        {
-		        	//alert(html);
-		        	if(data.success==1){
-		        		updateTabContent(currentTab);
-		        		// 预刷新头
-		        		var h1 = getTabHeaders('#tab1');
-		        		var h2 = getTabHeaders('#tab2');
-		        		var h3 = getTabHeaders('#tab3');
-		        		if(currentTab == '#tab1'){
-		        			h2 = parseInt(h2)+orders.length;
-		        			h1 = parseInt(h1)-orders.length;
-		        			updateTabHeaders('#tab1', h1);
-		        			updateTabHeaders('#tab2', h2);
-		        		}
-		        		if(currentTab == '#tab3'){
-		        			h2 = parseInt(h2)+orders.length;
-		        			h3 = parseInt(h3)-orders.length;
-		        			updateTabHeaders('#tab3', h3);
-		        			updateTabHeaders('#tab2', h2);
-		        		}
-		        		alert("订单已完成");
-		        	}else{
-		        		alert("订单完成失败！");
-		        	}
-		        	
-		        },
-		        error:function(){
-		                alert('Request failed');
-		        }
-		    });
-		}
-		return false;
-	}
-	// 批量取消订单
-	function batCancelOrders(){
-		var orders = getBatOrders();
-		if(orders.length==0){
-			alert("请选择一个订单！");
-			return false;
-		}
-		ctUrl = '/weChat/index.php/takeAway/orderFlow/batCancelOrder';
-		if(currentTab=='#tab3'){
-			alert('该订单处于取消状态！');
-			return false;
-		}
-		if(ctUrl != '') {
-		    $.ajax({
-		        url      : ctUrl,
-		        type     : 'POST',
-		        dataType : 'json',
-		        data 	 : {orderIds:orders},
-		        cache    : false,
-		        success  : function(data)
-		        {
-		        	//alert(html);
-		        	if(data.success==1){
-		        		updateTabContent(currentTab);
-		        		// 预刷新头
-		        		var h1 = getTabHeaders('#tab1');
-		        		var h2 = getTabHeaders('#tab2');
-		        		var h3 = getTabHeaders('#tab3');
-		        		if(currentTab == '#tab1'){
-		        			h3 = parseInt(h3)+orders.length;
-		        			h1 = parseInt(h1)-orders.length;
-		        			updateTabHeaders('#tab1', h1);
-		        			updateTabHeaders('#tab3', h3);
-		        		}
-		        		if(currentTab == '#tab2'){
-		        			h2 = parseInt(h2)-orders.length;
-		        			h3 = parseInt(h3)+orders.length;
-		        			updateTabHeaders('#tab3', h3);
-		        			updateTabHeaders('#tab2', h2);
-		        		}
-		        		alert("取消成功！");
-		        	}else{
-		        		alert("取消失败！");
-		        	}
-		        },
-		        error:function(){
-		                alert('Request failed');
-		        }
-		    });
-		}
-		return false;
-	}
-	// 获取批量订单
-	function getBatOrders(){
-		var chosenOrders=[];
-		var ele = ' .order-body ul>li .order-item ul>li.order-content .order-checkbox input';
-		ele = currentTab + ele;
-	    $(ele).each(function(){
-			if($(this).is(':checked')){
-				chosenOrders.push($(this).attr("value"));
-			}
-			});
-			return chosenOrders;
-	}
-	// 缓存选中订单
-	function setBatOrdersCache(){
-		var orders = getBatOrders();
-		//alert(orders);
-		$('.order-footer .batOrderCache').attr("id", orders);
-	}
-	// 获取缓存选中订单
-	function getBatOrdersCache(){
-		var orders = $('.order-footer .batOrderCache').attr("id");
-		//alert(orders);
-		var ele = ' .order-body ul>li .order-item ul>li.order-content .order-checkbox input';
-		var ele = currentTab + ele;
-	    $(ele).each(function(){
-			if($.inArray($(this).attr('value'), orders) != -1){
-				$(this).attr('checked', true);
-			}
-			});
-			$('.order-footer .batOrderCache').attr("id", 0);
-	}
 	// 获取派送地区
 	function fetchAreas(){
 		var ctUrl = '/weChat/index.php/takeAway/orderFlow/fetchAreas';
@@ -449,7 +506,10 @@
 		}else{
 			$('.order-footer .footer-left-btn.area-picker').html(areaname);
 		}
-		updateOperate();
+		dynamicAreaOrderList(currentTab);
+		//更新头
+		updateTabHeadersByLocal();
+		//updateOperate();
 		$(".order-footer #popup").toggle();
 	}
 	// 日期向后
@@ -462,10 +522,10 @@
 		a = a.valueOf();
 		a = a + parseInt(day) * 24 * 60 * 60 * 1000;
 		//a = new Date(a);
-		updateOperate();
 		var currentDate = new Date(a).Format("yyyy-MM-dd");
 		$('.order-footer .order-footer-wrap .order-footer-date').html(currentDate);
-		//alert(date);
+		loadTab(currentTab);
+		updateTabHeadersByLocal();
 	}
 	// 日期向前
 	function dayFront(){
@@ -478,9 +538,10 @@
 			a = a.valueOf();
 			a = a + parseInt(day) * 24 * 60 * 60 * 1000;
 			//a = new Date(a);
-			updateOperate();
 			var currentDate = new Date(a).Format("yyyy-MM-dd");
 			$('.order-footer .order-footer-wrap .order-footer-date').html(currentDate);
+			loadTab(currentTab);
+			updateTabHeadersByLocal();
 		}else{
 			alert("已经是最新的日期");
 		}
@@ -508,59 +569,305 @@
 	        },
 	        error:function(XMLHttpRequest,textStatus,errorThrown){    
 	            alert("更新超时");
-	        }  
-	    }); 
+	        }
+	    });
 	}
 	/*
 		当有新订单来时更新订单和TabTitle
 	*/
+	// function updateListener(){
+	//     var orders=[];
+	//     $(currentTab+' .order-body ul>li .order-item ul>li.order-content').each(function(){
+	// 		//alert($(this).html());\
+	// 		orders.push($(this).attr("id"));
+	// 		});
+	// 		//获取tab头
+	// 		var nums = [];
+	// 		var temp1 = getTabHeaders("#tab1");
+	// 		var temp2 = getTabHeaders("#tab2");
+	// 		var temp3 = getTabHeaders("#tab3");
+	// 		nums.push(temp1);
+	// 		nums.push(temp2);
+	// 		nums.push(temp3);
+	// 		//获取当前的偏移时间
+	//     var day = $('.order-footer .order-date-container').attr("id");
+	//     var areaId = $('.order-footer .order-area-container').attr("id");
+	//     $.ajax({
+	//         type:'POST',
+	//         dataType: 'json',
+	//         url:  '/weChat/index.php/takeAway/orderFlow/update',
+	//         timeout: 60000,
+	//         data:{time:'1', existList:orders, nums:nums, day:day, areaId:areaId, filter:currentTab},
+	//         success:function(data,textStatus){
+	//             if(data.success=='1'){
+	//                 updateTabContent(currentTab);
+	//               //  alert(nums[1]!=(data.nums[1]));
+	//                 updateTabHeaders("#tab1", data.nums[0]);
+	//                 updateTabHeaders("#tab2", data.nums[1]);
+	//                 updateTabHeaders("#tab3", data.nums[2]);
+	//             }
+	//             if(data.success=='2'){
+	//             	updateTabHeaders("#tab1", data.nums[0]);
+	//                 updateTabHeaders("#tab2", data.nums[1]);
+	//                 updateTabHeaders("#tab3", data.nums[2]);
+	//             }
+	//             if(data.success=='0'){
+	//             }
+	//             setTimeout('updateListener()', 10000);
+	//         },
+	//         error:function(XMLHttpRequest,textStatus,errorThrown){    
+	//             if(textStatus=="timeout"){  
+	//                 alert("更新超时");
+	//             }
+	//             setTimeout('updateListener()', 10000);
+	//         }  
+	//     });       
+	// }
+	// /*#new 新的订单更新接口*/
+	// function updateListener(){
+	//     var orders=[];
+	//     $(currentTab+' .order-body ul>li .order-item ul>li.order-content').each(function(){
+	// 		//alert($(this).html());\
+	// 		orders.push($(this).attr("id"));
+
+	// 	});
+	// 	//获取tab头
+	// 	var nums = [];
+	// 	var temp1 = getTabHeaders("#tab1");
+	// 	var temp2 = getTabHeaders("#tab2");
+	// 	var temp3 = getTabHeaders("#tab3");
+	// 	nums.push(temp1);
+	// 	nums.push(temp2);
+	// 	nums.push(temp3);
+	// 	//获取当前的偏移时间
+	//     var day = $('.order-footer .order-date-container').attr("id");
+	//     var areaId = $('.order-footer .order-area-container').attr("id");
+	//     $.ajax({
+	//         type:'POST',
+	//         dataType: 'json',
+	//         url:  '/weChat/index.php/takeAway/orderFlow/update',
+	//         timeout: 60000,
+	//         data:{time:'1', existList:orders, nums:nums, day:day, areaId:areaId, filter:currentTab},
+	//         success:function(data,textStatus){
+	//             if(data.success=='1'){
+	//                 // updateTabContent(currentTab);
+	//                 var len = data.updateOrders.length;
+	//                 for(var i=0; i<len; i++){
+	//                 	fetchAndRenderOrder(day, currentTab, data.updateOrders[i]);
+	//                 }
+	//                 // alert(data.updateOrders);
+	//               //  alert(nums[1]!=(data.nums[1]));
+	//                 updateTabHeaders("#tab1", data.nums[0]);
+	//                 updateTabHeaders("#tab2", data.nums[1]);
+	//                 updateTabHeaders("#tab3", data.nums[2]);
+	//             }
+	//             if(data.success=='2'){
+	//             	updateTabHeaders("#tab1", data.nums[0]);
+	//                 updateTabHeaders("#tab2", data.nums[1]);
+	//                 updateTabHeaders("#tab3", data.nums[2]);
+	//             }
+	//             if(data.success=='0'){
+	//             }
+	//             setTimeout('updateListener()', 10000);
+	//         },
+	//         error:function(XMLHttpRequest,textStatus,errorThrown){    
+	//             if(textStatus=="timeout"){
+	//                 alert("更新超时");
+	//             }
+	//             setTimeout('updateListener()', 10000);
+	//         }
+	//     });
+	// }
+	/*#new 新的订单更新接口*/
 	function updateListener(){
-	    var orders=[];
-	    $(currentTab+' .order-body ul>li .order-item ul>li.order-content').each(function(){
-			//alert($(this).html());\
-			orders.push($(this).attr("id"));
-			});
-			//获取tab头
-			var nums = [];
-			var temp1 = getTabHeaders("#tab1");
-			var temp2 = getTabHeaders("#tab2");
-			var temp3 = getTabHeaders("#tab3");
-			nums.push(temp1);
-			nums.push(temp2);
-			nums.push(temp3);
-			//获取当前的偏移时间
+		//获取当前的偏移时间
 	    var day = $('.order-footer .order-date-container').attr("id");
 	    var areaId = $('.order-footer .order-area-container').attr("id");
+	    var tabOneOrderList = null;
+	    var tabTwoOrderList = null;
+	    var tabThreeOrderList = null;
+	    if(MyOrderList.getList(day, "#tab1") != null || MyOrderList.getList(day, "#tab1") != undefined){
+	    	tabOneOrderList =  MyOrderList.getList(day, "#tab1").list;
+	    }else{
+	    	setTimeout('updateListener()', 10000);
+	    	return;
+	    }
+	    if(MyOrderList.getList(day, "#tab2") != null || MyOrderList.getList(day, "#tab2") != undefined){
+	    	tabTwoOrderList =  MyOrderList.getList(day, "#tab2").list;
+	    }else{
+	    	setTimeout('updateListener()', 10000);
+	    	return;
+	    }
+	    if(MyOrderList.getList(day, "#tab3") != null || MyOrderList.getList(day, "#tab3") != undefined){
+	    	tabThreeOrderList =  MyOrderList.getList(day, "#tab3").list;
+	    }else{
+	    	setTimeout('updateListener()', 10000);
+	    	return;
+	    }
+		//获取tab头
+		var nums = [];
+		var temp1 = getTabHeaders("#tab1");
+		var temp2 = getTabHeaders("#tab2");
+		var temp3 = getTabHeaders("#tab3");
+		nums.push(temp1);
+		nums.push(temp2);
+		nums.push(temp3);
+		
 	    $.ajax({
 	        type:'POST',
 	        dataType: 'json',
 	        url:  '/weChat/index.php/takeAway/orderFlow/update',
 	        timeout: 60000,
-	        data:{time:'1', existList:orders, nums:nums, day:day, areaId:areaId, filter:currentTab},
+	        data:{time:'1', day:day},
 	        success:function(data,textStatus){
 	            if(data.success=='1'){
-	                updateTabContent(currentTab);
+	                // updateTabContent(currentTab);  
+	                if(currentTab == "#tab1"){
+	                	var len  = data.tabOneOrderIdList.length;
+	                	//current tab update
+	                	if (data.tabOneOrderIdList!=null && len>0) {
+	                		//add & render order
+	                		for(var i=0; i<len; i++){
+	                			if($.inArray(data.tabOneOrderIdList[i], tabOneOrderList) == -1){
+	                				fetchAndRenderOrder(day, currentTab, data.tabOneOrderIdList[i]);
+	                			}
+	                		}
+	                		//delete order
+	                		if(tabOneOrderList!=null){
+	                			len = tabOneOrderList.length;
+	                			for(var i=0; i<len; i++){
+	                				if($.inArray(tabOneOrderList[i]+"", data.tabOneOrderIdList) == -1){
+	                					renderDeleOrder(day, currentTab, tabOneOrderList[i]);
+	                				}
+	                			}
+	                		}
+	                	};
+	                	// 更新订单
+	                	//#tab2
+	                	len = data.tabTwoOrderIdList.length;
+	                	for (var i = 0; i < len; i++) {
+	                		fetchOrder(data.tabTwoOrderIdList[i]);
+	                	};
+	                	var myOrderList = MyOrderList.getList(day, "#tab2");
+	                	myOrderList.list = data.tabTwoOrderIdList;
+	                	myOrderList.save();
+	                	//#tab3
+	                	len = data.tabThreeOrderIdList.length;
+	                	for (var i = 0; i < len; i++) {
+	                		fetchOrder(data.tabThreeOrderIdList[i]);
+	                	};
+	                	myOrderList = MyOrderList.getList(day, "#tab3");
+	                	myOrderList.list = data.tabThreeOrderIdList;
+	                	myOrderList.save();
+	                }
+	                if(currentTab == "#tab2"){
+	                	var len  = data.tabTwoOrderIdList.length;
+	                	//current tab update
+	                	if (data.tabTwoOrderIdList!=null && len>0) {
+	                		//add & render order
+	                		for(var i=0; i<len; i++){
+	                			if($.inArray(data.tabTwoOrderIdList[i], tabTwoOrderList) == -1){
+	                				// alert("update #tab2");
+	                				fetchAndRenderOrder(day, currentTab, data.tabTwoOrderIdList[i]);
+	                			}
+	                		}
+	                		//delete order
+	                		if(tabTwoOrderList!=null){
+	                			len = tabTwoOrderList.length;
+	                			for(var i=0; i<len; i++){
+	                				if($.inArray(tabTwoOrderList[i], data.tabTwoOrderIdList) == -1){
+	                					renderDeleOrder(day, currentTab, tabTwoOrderList[i]);
+	                				}
+	                			}
+	                		}
+	                	};
+	                	// 更新订单 
+	                	//#tab1
+	                	len = data.tabOneOrderIdList.length;
+	                	for (var i = 0; i < len; i++) {
+	                		fetchOrder(data.tabOneOrderIdList[i]);
+	                	};
+	                	var myOrderList = MyOrderList.getList(day, "#tab1");
+	                	myOrderList.list = data.tabOneOrderIdList;
+	                	myOrderList.save();
+	                	//#tab3
+	                	len = data.tabThreeOrderIdList.length;
+	                	for (var i = 0; i < len; i++) {
+	                		fetchOrder(data.tabThreeOrderIdList[i]);
+	                	};
+	                	myOrderList = MyOrderList.getList(day, "#tab3");
+	                	myOrderList.list = data.tabThreeOrderIdList;
+	                	myOrderList.save();
+	                }
+	                if(currentTab == "#tab3"){
+	                	var len  = data.tabThreeOrderIdList.length;
+	                	//current tab update
+	                	if (data.tabThreeOrderIdList!=null && len>0) {
+	                		//add & render order
+	                		
+	                		for(var i=0; i<len; i++){
+	                			if($.inArray(data.tabThreeOrderIdList[i], tabThreeOrderList) == -1){
+	                				fetchAndRenderOrder(day, currentTab, data.tabThreeOrderIdList[i]);
+	                			}
+	                		}
+	                		//delete order
+	                		if(tabThreeOrderList!=null){
+	                			len = tabThreeOrderList.length;
+	                			for(var i=0; i<len; i++){
+	                				if($.inArray(tabThreeOrderList[i], data.tabThreeOrderIdList) == -1){
+	                					renderDeleOrder(day, currentTab, tabThreeOrderList[i]);
+	                				}
+	                			}
+	                		}
+	                	};
+	                	// 更新订单 
+	                	//#tab1
+	                	len = data.tabOneOrderIdList.length;
+	                	for (var i = 0; i < len; i++) {
+	                		fetchOrder(data.tabOneOrderIdList[i]);
+	                	};
+	                	myOrderList = MyOrderList.getList(day, "#tab1");
+	                	myOrderList.list = data.tabOneOrderIdList;
+	                	myOrderList.save();
+	                	//#tab2
+	                	len = data.tabTwoOrderIdList.length;
+	                	for (var i = 0; i < len; i++) {
+	                		fetchOrder(data.tabTwoOrderIdList[i]);
+	                	};
+	                	var myOrderList = MyOrderList.getList(day, "#tab2");
+	                	myOrderList.list = data.tabTwoOrderIdList;
+	                	myOrderList.save();
+	                }
+
+	            }
+	                // var len = data.updateOrders.length;
+	                // for(var i=0; i<len; i++){
+	                // 	fetchAndRenderOrder(day, currentTab, data.updateOrders[i]);
+	                // }
+	                // alert(data.updateOrders);
 	              //  alert(nums[1]!=(data.nums[1]));
-	                updateTabHeaders("#tab1", data.nums[0]);
-	                updateTabHeaders("#tab2", data.nums[1]);
-	                updateTabHeaders("#tab3", data.nums[2]);
-	            }
-	            if(data.success=='2'){
-	            	updateTabHeaders("#tab1", data.nums[0]);
-	                updateTabHeaders("#tab2", data.nums[1]);
-	                updateTabHeaders("#tab3", data.nums[2]);
-	            }
-	            if(data.success=='0'){
-	            }
+	            //     updateTabHeaders("#tab1", data.nums[0]);
+	            //     updateTabHeaders("#tab2", data.nums[1]);
+	            //     updateTabHeaders("#tab3", data.nums[2]);
+	            // }
+	            // if(data.success=='2'){
+	            // 	updateTabHeaders("#tab1", data.nums[0]);
+	            //     updateTabHeaders("#tab2", data.nums[1]);
+	            //     updateTabHeaders("#tab3", data.nums[2]);
+	            // }
+	            // if(data.success=='0'){
+	            // }
+	            //更新头
+	            updateTabHeadersByLocal();
 	            setTimeout('updateListener()', 10000);
 	        },
 	        error:function(XMLHttpRequest,textStatus,errorThrown){    
-	            if(textStatus=="timeout"){  
+	            if(textStatus=="timeout"){
 	                alert("更新超时");
 	            }
 	            setTimeout('updateListener()', 10000);
-	        }  
-	    });       
+	        }
+	    });
 	}
 	//获取订单Tab头num
 	function getTabHeaders(tabId){
@@ -574,6 +881,60 @@
 	    	//alert($(this).attr("href"));
 	    });
 	    return content;
+	}
+	// 根据本地数据更新头
+	function updateTabHeadersByLocal(){
+		var day = $('.order-footer .order-date-container').attr("id");
+		var areaId = $('.order-footer .order-area-container').attr("id");
+		var tabOneOrderList = MyOrderList.getList(day, "#tab1");
+		var tabTwoOrderList = MyOrderList.getList(day, "#tab2");
+		var tabThreeOrderList = MyOrderList.getList(day, "#tab3");
+		//所有区域
+		if(areaId == 0){
+			if(tabOneOrderList!=null && tabOneOrderList!=undefined){
+				updateTabHeaders("#tab1", tabOneOrderList.list.length);
+			}
+			if(tabTwoOrderList!=null && tabTwoOrderList!=undefined){
+				updateTabHeaders("#tab2", tabTwoOrderList.list.length);
+			}
+			if(tabThreeOrderList!=null && tabThreeOrderList!=undefined){
+				updateTabHeaders("#tab3", tabThreeOrderList.list.length);
+			}
+		}else{
+			if(tabOneOrderList!=null && tabOneOrderList!=undefined){
+				var len = tabOneOrderList.list.length;
+				var size = 0;
+				for(var i=0; i<len; i++){
+					var myOrder = MyOrder.getOrder(tabOneOrderList.list[i]);
+					if(myOrder.orderData.areaId == areaId){
+						size++;
+					}
+				}
+				updateTabHeaders("#tab1", size);
+			}
+			if(tabTwoOrderList!=null && tabTwoOrderList!=undefined){
+				var len = tabTwoOrderList.list.length;
+				var size = 0;
+				for(var i=0; i<len; i++){
+					var myOrder = MyOrder.getOrder(tabTwoOrderList.list[i]);
+					if(myOrder.orderData.areaId == areaId){
+						size++;
+					}
+				}
+				updateTabHeaders("#tab2", size);
+			}
+			if(tabThreeOrderList!=null && tabThreeOrderList!=undefined){
+				var len = tabThreeOrderList.list.length;
+				var size = 0;
+				for(var i=0; i<len; i++){
+					var myOrder = MyOrder.getOrder(tabThreeOrderList.list[i]);
+					if(myOrder.orderData.areaId == areaId){
+						size++;
+					}
+				}
+				updateTabHeaders("#tab3", size);
+			}
+		}
 	}
 	//更新订单Tab头
 	function updateTabHeaders(tabId, num){
@@ -649,34 +1010,42 @@
 	}
 	//获取订单Items
 	function getOrderItems(orderId){
+		fetchOrderItems(orderId);
+		
 
-	    var ctUrl = ''; 
+	 //    var ctUrl = ''; 
 
-		ctUrl = '/weChat/index.php/takeAway/orderFlow/getOrderItems'; 
+		// ctUrl = '/weChat/index.php/takeAway/orderFlow/filterOrderItems'; 
 
-	    if(ctUrl != '') {
-	        $.ajax({
-	            url      : ctUrl,
-	            type     : 'POST',
-	            data     :  {'orderId': orderId},
-	            dataType : 'html',
-	            cache    : false,
-	            success  : function(html)
-	            {
-	            	//alert(html);
-	                jQuery('.order-detail').html(html);
-	                if(currentTab == "#tab3"){
-	                	$('.order-detail-header .order-line.line-6').hide();
-	                }else{
-	                	$('.order-detail-header .order-line.line-6').show();
-	                }
-	                resetUnread();
-	            },
-	            error:function(){
-	                    alert('Request failed');
-	            }
-	        });
-	    }
+	 //    if(ctUrl != '') {
+	 //        $.ajax({
+	 //            url      : ctUrl,
+	 //            type     : 'POST',
+	 //            data     :  {'orderId': orderId},
+	 //            dataType : 'json',
+	 //            cache    : false,
+	 //            success  : function(data)
+	 //            {
+	 //            	//alert(html);
+	 //            	var myOrderItemList = MyOrderItemList.createNew(orderId, itemList);
+	 //            	if(data.success == 1){
+
+	 //            	}else{
+
+	 //            	}
+	 //                // jQuery('.order-detail').html(html);
+	 //                // if(currentTab == "#tab3"){
+	 //                // 	$('.order-detail-header .order-line.line-6').hide();
+	 //                // }else{
+	 //                // 	$('.order-detail-header .order-line.line-6').show();
+	 //                // }
+	 //                // resetUnread();
+	 //            },
+	 //            error:function(){
+	 //                    alert('Request failed');
+	 //            }
+	 //        });
+	 //    }
 	    return false;
 	}
 </script>
