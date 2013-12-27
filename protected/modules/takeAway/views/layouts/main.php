@@ -59,35 +59,43 @@
 
 	<div class='main'>
 		<div class='sidebar'>
-			<div class='menuHeader'>当前店铺：<?php ?></div>
+			<div class='menuHeader'>当前店铺：<b><?php echo $this->currentStore->name?></b></div>
 			<div class='menu'>
 				<h4><i class='icon-list-alt'></i> &nbsp&nbsp订单管理</a></h4>
 				<ul>
-					<li><a href="<?php echo Yii::app()->createUrl('takeAway/orderFlow/orderFlow')?>">订单流</a></li>
+					<li><a href="<?php echo Yii::app()->createUrl('takeAway/orderFlow/orderFlow').'?sid='.$this->currentStore->id?>">订单流</a></li>
 					<li><a href="#">订单2</a></li>					
 				</ul>
 			</div>
 			<div class='menu'>
 				<h4>
-					<a href="<?php 
-					if(Yii::app()->session['typeCount']!=null){
-						echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>Yii::app()->session['typeCount'][0]['typeId'],'prodId'=>0));
-					}else{
-						echo Yii::app()->createUrl('takeAway/productManager/noProducts');
-					}
-
-					?>"><i class='icon-shopping-cart'></i> &nbsp&nbsp商品管理<a>
+					<a href=
+						"<?php 
+							if(Yii::app()->session['typeCount']!=null){
+							echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>Yii::app()->session['typeCount'][0]['typeId'],'prodId'=>0)).'?sid='.$this->currentStore->id;
+						}else{
+							echo Yii::app()->createUrl('takeAway/productManager/noProducts').'?sid='.$this->currentStore->id;
+						}
+						?>"
+						><i class='icon-shopping-cart'></i> &nbsp&nbsp商品管理</a>
 				</h4>
 				<ul id="category">
 					<?php foreach (Yii::app()->session['typeCount'] as $tc):?>
-					<li><a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$tc['typeId'],'prodId'=>0));?>"><?php echo $tc['type_name'];?><i>(<?php echo $tc['product_count'];?>)</i></a></li>
+						<li>
+							<a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$tc['typeId'],'prodId'=>0)).'?sid='.$this->currentStore->id;?>">
+								<?php echo $tc['type_name'];?>
+								<i>(<?php echo $tc['product_count'];?>)</i>
+							</a>
+						</li>
 					<?php endforeach;?>					
 					<li id='categoryInput' style="display:none"><input type="text" placeholder='输入分组名'></input></li>
 					<li><a id='newCategory'><i class='icon-plus'></i> 添加类别</a></li>
 				</ul>
 			</div>
 			<div class='menu'>
-				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/members');?>"><i class='icon-user'></i> &nbsp&nbsp会员管理</a></h4>
+				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/members').'?sid='.$this->currentStore->id;?>">
+					<i class='icon-user'></i> &nbsp&nbsp会员管理</a>
+				</h4>
 			</div>
 			<div class='menu'>
 				<h4><i class='icon-star'></i> &nbsp&nbsp活动管理</h4>
@@ -101,10 +109,12 @@
 				</ul>
 			</div>
 			<div class='menu'>
-				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/sellerProfile');?>"><i class='icon-edit'></i> &nbsp&nbsp店铺信息</a></h4>
+				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/sellerProfile').'?sid='.$this->currentStore->id;?>">
+					<i class='icon-edit'></i> &nbsp&nbsp店铺信息</a></h4>
 			</div>
 			<div class='menu'>
-				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/sellerSettings');?>"><i class='icon-wrench'></i> &nbsp&nbsp店铺设置</a></h4>
+				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/sellerSettings').'?sid='.$this->currentStore->id;?>">
+					<i class='icon-wrench'></i> &nbsp&nbsp店铺设置</a></h4>
 			</div>
 			<div class='menuAction'>
 				<ul>

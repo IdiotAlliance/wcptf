@@ -1,26 +1,25 @@
 <?php
 
 /**
- * This is the model class for table "hot_products".
+ * This is the model class for table "member_bound".
  *
- * The followings are the available columns in table 'hot_products':
+ * The followings are the available columns in table 'member_bound':
+ * @property integer $id
+ * @property string $member_id
  * @property string $store_id
- * @property string $desc
- * @property string $pic_id
- * @property string $product_id
- * @property string $picurl
+ * @property string $cardno
+ * @property integer $credit
+ * @property string $phone
  *
  * The followings are the available model relations:
- * @property Pictures $pic
- * @property Users $seller
- * @property Products $product
+ * @property Members $member
  */
-class HotProductsAR extends CActiveRecord
+class MemberBoundAR extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return HotProductsAR the static model class
+	 * @return MemberBoundAR the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -32,7 +31,7 @@ class HotProductsAR extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'hot_products';
+		return 'member_bound';
 	}
 
 	/**
@@ -43,12 +42,14 @@ class HotProductsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('store_id, product_id', 'required'),
-			array('store_id, pic_id, product_id', 'length', 'max'=>11),
-			array('desc', 'length', 'max'=>128),
+			array('member_id, store_id', 'required'),
+			array('id, credit', 'numerical', 'integerOnly'=>true),
+			array('member_id, store_id', 'length', 'max'=>11),
+			array('cardno', 'length', 'max'=>32),
+			array('phone', 'length', 'max'=>16),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('store_id, desc, pic_id, product_id', 'safe', 'on'=>'search'),
+			array('id, member_id, store_id, cardno, credit, phone', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,9 +61,7 @@ class HotProductsAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'pic' => array(self::BELONGS_TO, 'PicturesAR', 'pic_id'),
-			'seller' => array(self::BELONGS_TO, 'UsersAR', 'store_id'),
-			'product' => array(self::BELONGS_TO, 'ProductsAR', 'product_id'),
+			'member' => array(self::BELONGS_TO, 'Members', 'member_id'),
 		);
 	}
 
@@ -72,10 +71,12 @@ class HotProductsAR extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'store_id' => 'Seller',
-			'desc' => 'Desc',
-			'pic_id' => 'Pic',
-			'product_id' => 'Product',
+			'id' => 'ID',
+			'member_id' => 'Member',
+			'store_id' => 'Store',
+			'cardno' => 'Cardno',
+			'credit' => 'Credit',
+			'phone' => 'Phone',
 		);
 	}
 
@@ -90,29 +91,28 @@ class HotProductsAR extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+		$criteria->compare('id',$this->id);
+		$criteria->compare('member_id',$this->member_id,true);
 		$criteria->compare('store_id',$this->store_id,true);
-		$criteria->compare('desc',$this->desc,true);
-		$criteria->compare('pic_id',$this->pic_id,true);
-		$criteria->compare('product_id',$this->product_id,true);
+		$criteria->compare('cardno',$this->cardno,true);
+		$criteria->compare('credit',$this->credit);
+		$criteria->compare('phone',$this->phone,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
-	
+
 	/**
-	 * @deprecated
+	 * Get bound members by store id
 	 */
-	public function getHotProductsById($sellerId){
-		$hots = HotProductsAR::model()->findAll('store_id=:sellerId', array(':sellerId'=>$sellerId));
-		return $hots;
+	public static function getBoundByStoreId($sid){
+		$bounds = MemberBoundAR::model()->findAll('store_id=:sid', array(':sid' => $sid));
+		return $bounds;
 	}
 
-	public function getHotProductsByStoreId($sid){
-		return HotProductsAR::model()->findAll('store_id=:sid', array(':sid'=>$sid));
-	}
-	
-	public function deleteHotProductsByUserId($userId){
-		HotProductsAR::model()->deleteAll('store_id=:store_id', array(':store_id'=>$userId));
+	public static function getBoundByStoreAndMember($sid, $memberId){ 
+		return MemberBoundAR::model()->find('store_id=:sid and member_id=:memberId', 
+											   array(':sid' => $sid, ':memberId' => $memberId));
 	}
 }

@@ -14,27 +14,26 @@ class SellerProfileController extends TakeAwayController{
 			// 当前用户是游客，需要先登陆,跳转到登陆界面
 			$this->redirect('index.php/accounts/login');
 		}
-		else if(isset($_GET['sid'])){
+		else if(isset($_GET['sid']) && $_GET['sid'] >= 0 && $this->setCurrentStore($_GET['sid'])){
 			$sid    = $_GET['sid'];
-			$this->setCurrentStore($sid);
-
 			$userId = Yii::app()->user->sellerId;
 			if (isset ( $_POST ['json'] )){
 				$json = $_POST ['json'];
 				$obj = json_decode ($this->unescape($json));
-				
-				$user = UsersAR::model()->getUserById($userId);
-				$user->store_name = $obj->shopinfo->store_name;
-				$user->phone = $obj->shopinfo->phone;
-				$user->stime = $obj->shopinfo->stime;
-				$user->etime = $obj->shopinfo->etime;
-				$user->store_address = $obj->shopinfo->address;
-				$user->logo        = $obj->shopinfo->logo;
-				$user->start_price = (float)$obj->shopinfo->start_price;
-				$user->takeaway_fee = (float)$obj->shopinfo->takeaway_fee;
-				$user->threshold = (float)$obj->shopinfo->threshold;
-				$user->estimated_time = (int)$obj->shopinfo->es_time;
-				$user->update();
+			
+				$store = StoreAR::model()->findByPK($sid);	
+				// $store = UsersAR::model()->getUserById($userId);
+				$store->name = $obj->shopinfo->store_name;
+				$store->phone = $obj->shopinfo->phone;
+				$store->stime = $obj->shopinfo->stime;
+				$store->etime = $obj->shopinfo->etime;
+				$store->address = $obj->shopinfo->address;
+				$store->logo        = $obj->shopinfo->logo;
+				$store->start_price = (float)$obj->shopinfo->start_price;
+				$store->takeaway_fee = (float)$obj->shopinfo->takeaway_fee;
+				$store->threshold = (float)$obj->shopinfo->threshold;
+				$store->estimated_time = (int)$obj->shopinfo->es_time;
+				$store->update();
 				
 				foreach ($obj->posters as $poster){
 					if(isset($poster->deleted) && isset($poster->id)){
@@ -49,7 +48,7 @@ class SellerProfileController extends TakeAwayController{
 						}else if(!isset($poster->deleted)){
 							$dbposter = new PostersAR();
 							$dbposter->name = $poster->name;
-							$dbposter->seller_id = $userId;
+							$dbposter->store_id = $userId;
 							$dbposter->phone = $poster->phone;
 							$dbposter->description  = $poster->desc;
 							$dbposter->save();
@@ -68,7 +67,7 @@ class SellerProfileController extends TakeAwayController{
 							$dbdistrict->update();
 						}else if(!isset($district->deleted)){
 							$dbdistrict = new DistrictsAR();
-							$dbdistrict->seller_id = $userId;
+							$dbdistrict->store_id = $userId;
 							$dbdistrict->name = $district->name;
 							$dbdistrict->description = $district->desc;
 							$dbdistrict->save();
@@ -78,25 +77,25 @@ class SellerProfileController extends TakeAwayController{
 			}
 			
 			$model = array();
-			$user = UsersAR::model()->getUserById($userId);
+			$store = StoreAR::model()->findByPK($sid);
 			// 获取用户的配送地址信息
-			$districts = DistrictsAR::model()->getUndeletedDistrictsByUserId($userId);
+			$districts = DistrictsAR::model()->getUndeletedDistrictsByUserId($sid);
 			// 获取用户的店内环境信息
-			$env = StoreEnvAR::model()->getStoreEnvByUserId($userId);
+			$env = StoreEnvAR::model()->getStoreEnvByUserId($sid);
 			// 获取邮递员信息
-			$posters = PostersAR::model()->getUndeletedPostersByUserId($userId);
+			$posters = PostersAR::model()->getUndeletedPostersByUserId($sid);
 
-			$shopinfo = array('store_name'=>$user->store_name,
-							  'store_type' => $user->type,
-							  'phone' => $user->phone,
-							  'stime' => $user->stime,
-							  'etime' => $user->etime,
-							  'address' => $user->store_address,
-							  'logo' => $user->logo,
-							  'start_price' => $user->start_price,
-							  'takeaway_fee' => $user->takeaway_fee,
-							  'threshold' => $user->threshold,
-							  'es_time' => $user->estimated_time);
+			$shopinfo = array('store_name'=>$store->name,
+							  'store_type' => $store->type,
+							  'phone' => $store->phone,
+							  'stime' => $store->stime,
+							  'etime' => $store->etime,
+							  'address' => $store->address,
+							  'logo' => $store->logo,
+							  'start_price' => $store->start_price,
+							  'takeaway_fee' => $store->takeaway_fee,
+							  'threshold' => $store->threshold,
+							  'es_time' => $store->estimated_time);
 			
 			// 获取邮递员信息
 			$postarr = array ();
@@ -124,7 +123,7 @@ class SellerProfileController extends TakeAwayController{
 				'districts'=>$districtarr,
 				'posters'=>$postarr,
 			));
-			$this->render('sellerProfile', array('json_data'=>$json_data, 'test'=>1));
+			$this->render('sellerProfile', array('json_data'=>$json_data));
 		}
 		// go to 404 page
 		else{

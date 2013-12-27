@@ -58,7 +58,7 @@
 </style>
 <div id="seller_settings_container">
 	<form style="display: none" id="settings_json_form" 
-		  action="<?php echo Yii::app()->createUrl('takeAway/sellerSettings/sellerSettings')?>" method="post">
+		  action="<?php echo Yii::app()->createUrl('takeAway/sellerSettings/sellerSettings').'?sid='.$this->currentStore->id?>" method="post">
 		<input type="text" name="json" id="form_json_input">
 		<input type="submit" id="form_json_submit">
 	</form>
