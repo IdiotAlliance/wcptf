@@ -19,15 +19,18 @@ class TakeAwayController extends Controller{
 	 * Set the current store
 	 */
 	public function setCurrentStore($storeId=-1){
+		$set = false;
 		if($storeId >= 0){
 			foreach ($this->stores as $store) {
 				# code...
 				if($store->id == $storeId){
 					$this->currentStore = $store;
+					$set = true;
 					break;
-				}	
+				}
 			}
 		}
+		return $set;
 	}
 
 }

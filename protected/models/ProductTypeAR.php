@@ -5,7 +5,7 @@
  *
  * The followings are the available columns in table 'product_type':
  * @property string $id
- * @property string $seller_id
+ * @property string $store_id
  * @property string $type_name
  * @property string $type_description
  *
@@ -42,12 +42,12 @@ class ProductTypeAR extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('type_name', 'required'),
-			array('seller_id', 'length', 'max'=>11),
+			array('store_id', 'length', 'max'=>11),
 			array('type_name', 'length', 'max'=>128),
 			array('type_description', 'length', 'max'=>512),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, seller_id, type_name, type_description', 'safe', 'on'=>'search'),
+			array('id, store_id, type_name, type_description', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -59,7 +59,7 @@ class ProductTypeAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'seller' => array(self::BELONGS_TO, 'UsersAR', 'seller_id'),
+			'seller' => array(self::BELONGS_TO, 'UsersAR', 'store_id'),
 			'products' => array(self::HAS_MANY, 'ProductsAR', 'type_id'),
 		);
 	}
@@ -71,7 +71,7 @@ class ProductTypeAR extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'seller_id' => 'Seller',
+			'store_id' => 'Seller',
 			'type_name' => 'Type Name',
 			'type_description' => 'Type Description',
 		);
@@ -89,7 +89,7 @@ class ProductTypeAR extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id,true);
-		$criteria->compare('seller_id',$this->seller_id,true);
+		$criteria->compare('store_id',$this->store_id,true);
 		$criteria->compare('type_name',$this->type_name,true);
 		$criteria->compare('type_description',$this->type_description,true);
 
@@ -118,29 +118,35 @@ class ProductTypeAR extends CActiveRecord
 	 */
 	public function getSellerProductType($sellerId)
 	{
-		$pdTypeList = ProductTypeAR::model()->findAll('seller_id=:sellerId and deleted=:deleted',array(':sellerId'=>$sellerId,':deleted'=>0));
+		$pdTypeList = ProductTypeAR::model()->findAll('store_id=:sellerId and deleted=:deleted',array(':sellerId'=>$sellerId,':deleted'=>0));
 		return $pdTypeList;
 	}
 
 	/**
 	 * 获取商家未删除的商品品类
 	 * @param unknown $sellerId
+	 * @deprecated
 	 */
 	public function getUndeletedProductTypeBySellerId($sellerId){
-		$pdTypeList = ProductTypeAR::model()->findAll('seller_id=:sellerId and deleted<>1',
+		$pdTypeList = ProductTypeAR::model()->findAll('store_id=:sellerId and deleted<>1',
 													  array(':sellerId'=>$sellerId));
 		return $pdTypeList;
 	}
 	
+	public function getUndeletedProductTypeByStoreId($storeId){
+		return ProductTypeAR::model()->findAll('store_id=:storeId and deleted<>1',
+											   array(':storeId'=>$storeId));
+	}
+
 	//获取类别的描述
 	public function getProductDesc($typeName){
 		if($typeName=='未分类' || $typeName=='星标类')
 			return '默认分类';
 		else{
 			$pdType = ProductTypeAR::model()->find(
-					'seller_id=:seller_id AND type_name=:type_name',
+					'store_id=:store_id AND type_name=:type_name',
 					array(
-						':seller_id'=>Yii::app()->user->sellerId,
+						':store_id'=>Yii::app()->user->sellerId,
 						':type_name'=>$typeName,
 					)
 				);
@@ -150,7 +156,7 @@ class ProductTypeAR extends CActiveRecord
 	}
 	
 	public function getCategoryByName($name){
-		$type = ProductTypeAR::model()->find('type_name=:type_name and seller_id=:sellerId and deleted=0',
+		$type = ProductTypeAR::model()->find('type_name=:type_name and store_id=:sellerId and deleted=0',
 			array(':type_name'=>$name,':sellerId'=>Yii::app()->user->sellerId));
 		return $type;
 	}
@@ -159,9 +165,9 @@ class ProductTypeAR extends CActiveRecord
 	public function getProductsByType($sellerId){
 		$connection = ProductsAR::model()->getDbConnection();
         $query = "select count(*) as product_count, product_type.id as typeId,
-        product_type.type_name from product_type left join (select * from products where products.deleted<>1) as products_view on products_view.type_id = product_type.id where product_type.seller_id=:seller_id and product_type.deleted = 0  group by product_type.id";
+        product_type.type_name from product_type left join (select * from products where products.deleted<>1) as products_view on products_view.type_id = product_type.id where product_type.store_id=:store_id and product_type.deleted = 0  group by product_type.id";
         if ($stmt = $connection->createCommand($query)) {
-            $stmt->bindParam(':seller_id',$sellerId);
+            $stmt->bindParam(':store_id',$sellerId);
             $result = $stmt->queryAll();
 
            	$products = ProductsAR::model()->getProductsBySellerId(Yii::app()->user->sellerId);

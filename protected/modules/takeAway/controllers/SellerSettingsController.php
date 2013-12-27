@@ -12,7 +12,8 @@ class SellerSettingsController extends TakeAwayController {
 		if (Yii::app ()->user->isGuest) {
 			// 当前用户是游客，需要先登陆,跳转到登陆界面
 			$this->redirect ( 'index.php?r=accounts/login' );
-		} else if(isset($_GET['sid'])){
+		} else if(isset($_GET['sid']) && $_GET['sid'] >= 0 && $this->setCurrentStore($_GET['sid'])){
+			$sid  = $_GET['sid'];
 			$json = null;
 			$userId = Yii::app ()->user->sellerId;
 			if (isset ( $_POST ['json'] )) {
@@ -21,19 +22,17 @@ class SellerSettingsController extends TakeAwayController {
 				$json = json_encode($obj);
 				
 				// 更新店铺信息
-				$dbuser = UsersAR::model()->getUserById($userId);
-				$dbuser->status    = (int)$obj->shopinfo->status;
-				$dbuser->broadcast = $obj->shopinfo->broadcast;
-				$dbuser->update();
+				$store = StoreAR::model()->findByPK($sid);
+				$store->status    = (int)$obj->shopinfo->status;
+				$store->broadcast = $obj->shopinfo->broadcast;
+				$store->update();
 				
 				// 更新商品信息
-				HotProductsAR::model()->deleteHotProductsByUserId($userId);
+				HotProductsAR::model()->deleteHotProductsByUserId($sid);
 				foreach ($obj->types as $type){
-					$dbtype = ProductTypeAR::model()->getProductTypeById($type->id);
-					$dbtype->update();
 					if(isset($type->tag) && $type->tag){
 						$dbhot = new HotProductsAR();
-						$dbhot->seller_id = $userId;
+						$dbhot->store_id = $sid;
 						$dbhot->product_id = $type->id;
 						if(isset($type->picurl) && $type->picurl)
 							$dbhot->pic_url = $type->picurl;
@@ -64,16 +63,16 @@ class SellerSettingsController extends TakeAwayController {
 				}
 				
 			} else {
-				$user = UsersAR::model ()->getUserById ( $userId );
-				$posters = PostersAR::model ()->getUndeletedPostersByUserId($userId);
-				$districts = DistrictsAR::model ()->getUndeletedDistrictsByUserId($userId);
-				$types = ProductTypeAR::model ()->getUndeletedProductTypeBySellerId($userId);
-				$products = ProductsAR::model ()->getUndeletedProductsBySellerId($userId);
-				$hots = HotProductsAR::model ()->getHotProductsById ( $userId );
+				$store = StoreAR::model()->findByPK($sid);
+				$posters = PostersAR::model ()->getUndeletedPostersByUserId($sid);
+				$districts = DistrictsAR::model ()->getUndeletedDistrictsByUserId($sid);
+				$types = ProductTypeAR::model ()->getUndeletedProductTypeBySellerId($sid);
+				$products = ProductsAR::model ()->getUndeletedProductsBySellerId($sid);
+				$hots = HotProductsAR::model ()->getHotProductsById ($sid);
 				
 				$shopinfo = array (
-					'status'=>$user->status,
-					'broadcast'=>$user->broadcast,
+					'status'=>$store->status,
+					'broadcast'=>$store->broadcast,
 					);
 
 				
@@ -151,6 +150,10 @@ class SellerSettingsController extends TakeAwayController {
 			$this->render ( 'sellerSettings', array (
 					'json' => $json, 'sid' => $sid,
 			));
+		}
+		// go to 404 page
+		else{
+			$this->redirect(Yii::app()->createUrl('errors/error/404'));
 		}
 	}
 	

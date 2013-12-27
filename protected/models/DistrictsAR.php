@@ -7,7 +7,7 @@
  * @property string $id
  * @property string $name
  * @property string $description
- * @property integer $seller_id
+ * @property integer $store_id
  * @property integer $daily_status
  */
 class DistrictsAR extends CActiveRecord
@@ -38,13 +38,13 @@ class DistrictsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, seller_id', 'required'),
-			array('seller_id, daily_status', 'numerical', 'integerOnly'=>true),
+			array('name, store_id', 'required'),
+			array('store_id, daily_status', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>64),
 			array('description', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name, description, seller_id, daily_status', 'safe', 'on'=>'search'),
+			array('id, name, description, store_id, daily_status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -68,7 +68,7 @@ class DistrictsAR extends CActiveRecord
 			'id' => 'ID',
 			'name' => 'Name',
 			'description' => 'Description',
-			'seller_id' => 'Seller',
+			'store_id' => 'Store',
 			'daily_status' => 'Daily Status',
 		);
 	}
@@ -87,7 +87,7 @@ class DistrictsAR extends CActiveRecord
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('description',$this->description,true);
-		$criteria->compare('seller_id',$this->seller_id);
+		$criteria->compare('store_id',$this->store_id);
 		$criteria->compare('daily_status',$this->daily_status);
 
 		return new CActiveDataProvider($this, array(
@@ -98,22 +98,32 @@ class DistrictsAR extends CActiveRecord
 	/**
 	 * 根据用户id获取配送片区,包括已删除的地区
 	 * @param $userId 用户的id
+	 * @deprecated
 	 */
 	public function getDistrictsByUserId($userId){
-		$districts = DistrictsAR::model()->findAll('seller_id=:userId', array(':userId'=>$userId));
+		$districts = DistrictsAR::model()->findAll('store_id=:userId', array(':userId'=>$userId));
 		return $districts;
 	}
 	
 	/**
 	 * 根据用户id获取配送片区,不包括已删除的地区
 	 * @param $userId 用户的id
+	 * @deprecated
 	 */
 	public function getUndeletedDistrictsByUserId($userId){
-		$districts = DistrictsAR::model()->findAll('seller_id=:userId and deleted<>1', 
+		$districts = DistrictsAR::model()->findAll('store_id=:userId and deleted<>1', 
 												array(':userId'=>$userId));
 		return $districts;
 	}
 	
+	/**
+	 * 
+	 */
+	public function getUndeletedDistrictsByStoreId($sid){
+		return DistrictsAR::model()->findAll('store_id=:sid and deleted <> 1',
+											 array(':sid'=>$sid));
+	}
+
 	public function getDistrictById($id){
 		$district = DistrictsAR::model()->find('id=:id', array(':id'=>$id));
 		return $district;

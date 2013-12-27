@@ -39,7 +39,9 @@
 		<button id="seller_profile_cancel" class="btn action_btn" onclick="window.location.reload()">放弃更改</button>
 	</div>
 	<div id="seller_profile_main_container">
-		<form style="display: none" action="<?php echo Yii::app()->createUrl('takeAway/sellerProfile')?>" method="post">
+		<form style="display: none" 
+			action="<?php echo Yii::app()->createUrl('takeAway/sellerProfile').'?sid='.$this->currentStore->id?>" 
+			method="post">
 			<input type="text" name="json" id="form_json_input"/>
 			<input type="submit" id="form_submit">
 		</form>
