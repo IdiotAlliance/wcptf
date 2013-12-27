@@ -726,6 +726,7 @@ footer {
 <div class="toast" id="mytoast"></div>
 <script type="text/javascript">
 
+var storeid=1;
 //baseid
 var sellerid="<?php echo $sellerId?>";
 var openid="<?php echo $openId?>";
@@ -744,7 +745,10 @@ var BASEURLICON='/weChat/img/wap/myicon.png';
 var MYJQUERY='http://libs.baidu.com/jquery/2.0.3/jquery.min.js';
 var MYOWNJS='<?php echo Yii::app()->baseUrl?>/js/wap/wechat1.2.js';
 
-var AJAXFORDATA='<?php echo Yii::app()->createUrl('wap/wap/getData'); ?>';
+//fake
+var AJAXFORDATA='http://192.168.1.107/weChat/index.php/wap/wap/getData';
+
+//var AJAXFORDATA='<?php echo Yii::app()->createUrl('wap/wap/getData'); ?>';
 var AJAXFORSUBMIT='<?php echo Yii::app()->createUrl('wap/order/order'); ?>';
 var AJAXFORRESULT='<?php echo Yii::app()->createUrl('wap/order/getPartOrders'); ?>';
 

@@ -62,7 +62,7 @@ class OrdersAR extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('order_no, status, total, ctime, store_id, member_id, member_no, member_phone, order_name, phone, poster_id, poster_name, poster_phone, area_id, area_name, area_description, update_time', 'required'),
-			array('status, type, poster_id', 'numerical', 'integerOnly'=>true),
+			array('status, , use_card, type, poster_id', 'numerical', 'integerOnly'=>true),
 			array('total, discount', 'numerical'),
 			array('order_no, member_phone, phone, poster_name, poster_phone, area_name', 'length', 'max'=>32),
 			array('store_id, member_id, area_id', 'length', 'max'=>11),
@@ -104,6 +104,7 @@ class OrdersAR extends CActiveRecord
 			'ctime' => 'Ctime',
 			'duetime' => 'Duetime',
 			'description' => 'Description',
+			'use_card' => 'Is memberId use card',
 			'store_id' => 'Store',
 			'member_id' => 'Member',
 			'member_no' => 'Member No',
@@ -141,6 +142,7 @@ class OrdersAR extends CActiveRecord
 		$criteria->compare('ctime',$this->ctime,true);
 		$criteria->compare('duetime',$this->duetime,true);
 		$criteria->compare('description',$this->description,true);
+		$criteria->compare('use_card',$this->use_card,true);
 		$criteria->compare('store_id',$this->store_id,true);
 		$criteria->compare('member_id',$this->member_id,true);
 		$criteria->compare('member_no',$this->member_no,true);
@@ -355,9 +357,9 @@ class OrdersAR extends CActiveRecord
 	/*
 		返回会员的订单
 	*/
-	public function getMemberOrders($memberId, $sellerId){
-		$orders = OrdersAR::model()->findAll(array('condition'=>'member_id=:memberid and store_id=:sellerid', 
-			'params'=>array(':memberid'=>$memberId, ':sellerid'=>$sellerId), 'order'=>'ctime DESC',));
+	public function getMemberOrders($memberId, $storeid){
+		$orders = OrdersAR::model()->findAll(array('condition'=>'member_id=:memberid and store_id=:storeid', 
+			'params'=>array(':memberid'=>$memberId, ':storeid'=>$storeid), 'order'=>'ctime DESC',));
 		OrdersAR::model()->changeOrdersToView($orders);
 		return $orders;
 	}
@@ -365,12 +367,12 @@ class OrdersAR extends CActiveRecord
 	/*
 		返回部分会员的订单
 	*/
-	public function getMemberPartOrders($memberId, $sellerId, $ctime){
+	public function getMemberPartOrders($memberId, $storeid, $ctime){
 		$connection = OrdersAR::model()->getDbConnection();
-		$query = "select * from orders where store_id=:sellerId and member_id=:memberId and ".
+		$query = "select * from orders where store_id=:storeid and member_id=:memberId and ".
 		" (ctime=:ctime or ctime<:ctime) order by ctime DESC";
 		if ($stmt = $connection->createCommand($query)) {
-		    $stmt->bindParam(':sellerId', $sellerId);
+		    $stmt->bindParam(':storeid', $storeid);
 		    $stmt->bindParam(':memberId', $memberId);
 		    $stmt->bindParam(':ctime', $ctime);
 		    $result = $stmt->queryAll();
@@ -390,25 +392,25 @@ class OrdersAR extends CActiveRecord
 	}
 
 	/**
-	 * 根据sellerId获取订单
-	 * @param unknown $sellerId
+	 * 根据storeid获取订单
+	 * @param unknown $storeid
 	 */
-	public function getOrdersBySellerId($sellerId){
-		$orders = OrdersAR::model()->findAll('store_id=:sellerId', array(':sellerId'=>$sellerId));
+	public function getOrdersBystoreid($storeid){
+		$orders = OrdersAR::model()->findAll('store_id=:storeid', array(':storeid'=>$storeid));
 		return $orders;
 	}
 	
 	/**
-	 * 根据sellerId获取一个商家每个会员的订单数量
-	 * @param unknown $sellerId
+	 * 根据storeid获取一个商家每个会员的订单数量
+	 * @param unknown $storeid
 	 */
-	public function getOrdersCountBySellerId($sellerId){
+	public function getOrdersCountBystoreid($storeid){
 		$connection = OrdersAR::model()->getDbConnection();
 		$query = "SELECT orders.member_id as member_id, COUNT(*) AS order_count FROM orders ".
-				 "WHERE orders.store_id=:sellerId GROUP BY orders.member_id";
+				 "WHERE orders.store_id=:storeid GROUP BY orders.member_id";
 		$orders = array();
 		if($stmt = $connection->createCommand($query)){
-			$stmt->bindParam(':sellerId',$sellerId);
+			$stmt->bindParam(':storeid',$storeid);
 			$result = $stmt->queryAll();
 			return $result;
 		}
@@ -433,9 +435,9 @@ class OrdersAR extends CActiveRecord
 	/**
 	 *	订订单
 	 */
-	public function makeOrder($sellerid, $memberid, $areaid, $areadesc, $phone, $tips, $name) {
+	public function makeOrder($storeid, $memberid, $areaid, $areadesc, $phone, $tips, $name, $useCard) {
 		$order = new OrdersAR;
-		$order->store_id = $sellerid;
+		$order->store_id = $storeid;
 		$order->member_id = $memberid;
 		$order->area_id = $areaid;
 		$order->address = $areadesc;
@@ -445,6 +447,7 @@ class OrdersAR extends CActiveRecord
 		$order->total = 0;
 		$order->description = $tips;
 		$order->order_name = $name;
+		$order->use_card = $useCard;
 		$order->ctime = $date = date('Y-m-d H:i:s');
 		$order->save();
 		$order->order_no = OrdersAR::model()->getOrderNo($order->store_id, $order->id, $order->ctime);
@@ -462,7 +465,7 @@ class OrdersAR extends CActiveRecord
 	/*
 		订单编号
 	*/
-	public function getOrderNo($sellerId, $orderId, $ctime){
+	public function getOrderNo($storeid, $orderId, $ctime){
 		//每天的订单对1000000取余减伤0位
 		$orderId = $orderId % 1000000;
 		$orderId = str_pad($orderId, 6, "0", STR_PAD_LEFT);

@@ -144,7 +144,7 @@ var MyOrderFilter = {
 };
 
 // 获取订单列表&并且刷新界面inclue cache
-function fetchAndRenderOrderList(day, filter){
+function fetchAndRenderOrderList(storeid, day, filter){
 	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/filterOrderList';
 	var myOrderList = MyOrderList.getList(day, filter);
 	//检查本地缓存是否
@@ -153,7 +153,7 @@ function fetchAndRenderOrderList(day, filter){
             url      : ctUrl,
             type     : 'POST',
             dataType : 'json',
-            data	 :{day:day, filter:filter},
+            data	 :{storeid:storeid, day:day, filter:filter},
             cache    : false,
             success  : function(data)
             {
@@ -193,7 +193,7 @@ function fetchAndRenderOrderList(day, filter){
     return false;
 }
 // 获取订单列表inclue cache
-function fetchOrderList(day, filter){
+function fetchOrderList(storeid, day, filter){
 	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/filterOrderList';
 	var myOrderList = MyOrderList.getList(day, filter);
 	//检查本地缓存是否
@@ -202,7 +202,7 @@ function fetchOrderList(day, filter){
             url      : ctUrl,
             type     : 'POST',
             dataType : 'json',
-            data	 :{day:day, filter:filter},
+            data	 :{storeid:storeid, day:day, filter:filter},
             cache    : false,
             success  : function(data)
             {

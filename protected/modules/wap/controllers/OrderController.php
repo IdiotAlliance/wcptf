@@ -187,7 +187,7 @@ class OrderController extends Controller
 
 		}
 		//订单
-		$order = OrdersAR::model()->makeOrder($storeid, $member->id, $areaid, $areadesc, $phone, $tips, $name);
+		$order = OrdersAR::model()->makeOrder($storeid, $member->id, $areaid, $areadesc, $phone, $tips, $name, $usecard);
 		//子项订单
 		$len = count($products);
 		$total = 0;

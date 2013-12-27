@@ -4,8 +4,10 @@
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/orderFlow/orderFlow.js"></script>
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/orderFlow/operate.js"></script>
 <script type="text/javascript">
-	$(document).ready(function(){
+	var currentTab = "#tab1";
+	$(document).ready(function(){	
 		//点击订单
+		//var storeid = <?php $this->currentStore; ?>;
 		$('.order-header').delegate('.order-body ul>li .order-item ul>li.order-content', 'mousedown', function(e){
 			if($(this).css("background-color") == 'rgb(247, 247, 247)'){
 				$('.order-body ul>li .order-item ul>li.order-content').css("background-color", "#f7f7f7");
@@ -38,9 +40,32 @@
 		fetchOrderList(day, "#tab2");
 		fetchOrderList(day, "#tab3");
 	}
+	//加载切换TAB订单列表
+	function loadContent(e){
+	    var tabId = e.target.getAttribute("href");
+	    var ctUrl = ''; 
+	    currentTab = tabId;
+	    var areaId = $('.order-footer .order-area-container').attr("id");
+	    var day = $('.order-footer .order-date-container').attr("id");
+	    if(tabId == '#tab1') {
+			ctUrl = '/weChat/index.php?r=takeAway/orderFlow/notSend';
+	    } else if(tabId == '#tab2') {
+	        ctUrl = '/weChat/index.php?r=takeAway/orderFlow/sended';
+	    } else if(tabId == '#tab3') {
+	    	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/cancel';
+	    }
+	    fetchAndRenderOrderList(day, tabId);
+	    $('.footer-right-btn.all-pick').html("全选");
+	    return false;
+	}
+	//获取当前店铺id
+	function getStoreId(){
+		return $('.store-id').attr("id");
+	}
 </script>
 <div id="action-name">
 </div>
+<?php echo '<div class="store-id" id='.$this->currentStore->id.'></div>'; ?>
 <div class="order">
 	<div class="order-header">
 		<div class="order-unread-num seal">
@@ -216,37 +241,6 @@
 		   			</div>
 		   		</div>
 		   	</div>
-		</script>
-		<script type="text/javascript">
-		var currentTab = "#tab1";
-		//加载订单列表
-		function loadContent(e){
-			//test
-			// var myOrder = MyOrder.createNew();
-			// myOrder.save();
-			// alert(myOrder.get());
-			// myOrder.orderDelete();
-			// alert(myOrder.get());
-			//test
-
-		    var tabId = e.target.getAttribute("href");
-
-		    var ctUrl = ''; 
-		    currentTab = tabId;
-		    var areaId = $('.order-footer .order-area-container').attr("id");
-		   // alert(currentTab);
-		    var day = $('.order-footer .order-date-container').attr("id");
-		    if(tabId == '#tab1') {
-				ctUrl = '/weChat/index.php?r=takeAway/orderFlow/notSend';
-		    } else if(tabId == '#tab2') {
-		        ctUrl = '/weChat/index.php?r=takeAway/orderFlow/sended';
-		    } else if(tabId == '#tab3') {
-		    	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/cancel';
-		    }
-		    fetchAndRenderOrderList(day, tabId);
-		    $('.footer-right-btn.all-pick').html("全选");
-		    return false;
-		}
 		</script>
 	</div>
 	<div class="order-footer">
@@ -480,18 +474,18 @@
 		    success  : function(data)
 		    {
 		    	//alert(html);
-		        if(data.success == 0){
-		        	var areas = data.area;
-		        	var html = '<li><a class="area "id='+0+'>全部</a></li>';
-		        	for (var i = 0; i < areas.length; i++) {
-		        		var id = areas[i]['id'];
-		        		var name = areas[i]['name'];
-		        		html = html+'<li><a class="area "id='+id+'>'+name+'</a></li>';
-		        	};
-		        	$('.order-footer #popup').html(html);
-		        } else{
-		        	alert('Request failed');
-		        }
+		        // if(data.success == 0){
+		        // 	var areas = data.area;
+		        // 	var html = '<li><a class="area "id='+0+'>全部</a></li>';
+		        // 	for (var i = 0; i < areas.length; i++) {
+		        // 		var id = areas[i]['id'];
+		        // 		var name = areas[i]['name'];
+		        // 		html = html+'<li><a class="area "id='+id+'>'+name+'</a></li>';
+		        // 	};
+		        // 	$('.order-footer #popup').html(html);
+		        // } else{
+		        // 	alert('Request failed');
+		        // }
 		    },
 		    error:function(){
 		            alert('Request failed');
@@ -1011,41 +1005,6 @@
 	//获取订单Items
 	function getOrderItems(orderId){
 		fetchOrderItems(orderId);
-		
-
-	 //    var ctUrl = ''; 
-
-		// ctUrl = '/weChat/index.php/takeAway/orderFlow/filterOrderItems'; 
-
-	 //    if(ctUrl != '') {
-	 //        $.ajax({
-	 //            url      : ctUrl,
-	 //            type     : 'POST',
-	 //            data     :  {'orderId': orderId},
-	 //            dataType : 'json',
-	 //            cache    : false,
-	 //            success  : function(data)
-	 //            {
-	 //            	//alert(html);
-	 //            	var myOrderItemList = MyOrderItemList.createNew(orderId, itemList);
-	 //            	if(data.success == 1){
-
-	 //            	}else{
-
-	 //            	}
-	 //                // jQuery('.order-detail').html(html);
-	 //                // if(currentTab == "#tab3"){
-	 //                // 	$('.order-detail-header .order-line.line-6').hide();
-	 //                // }else{
-	 //                // 	$('.order-detail-header .order-line.line-6').show();
-	 //                // }
-	 //                // resetUnread();
-	 //            },
-	 //            error:function(){
-	 //                    alert('Request failed');
-	 //            }
-	 //        });
-	 //    }
 	    return false;
 	}
 </script>
