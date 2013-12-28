@@ -388,6 +388,29 @@
 				'<div>这位用户还木有发表过评论</div>'
 			);
 		}
+
+		// 
+		if(messages.length > 1){
+			var html = '<table class="table">' + 
+					   		'<thead><tr><th>历史消息</th></tr></thead>' +
+					   		'<thead><tr><th>发送日期</th><th>消息内容</th><th>回复状态</th></tr></thead>';
+			for(index in messages){
+				var message = messages[index];
+				html += '<tr><td>' + message['ctime'] + '</td>' +
+						    '<td>' + message['content']['0'] + '</td>' +
+						    '<td>' + message['replied'] + '</td>' + 
+						'</tr>';
+				console.log(message['content']);
+			}
+			html += '</table>';
+			$('#tab4').html(
+					html
+			);
+		}else{
+			$('#tab4').html(
+				'<div>这位用户还木有发过消息</div>'
+			);
+		}
 	}
 	
 	function filterMembers(){
