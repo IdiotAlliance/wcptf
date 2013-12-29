@@ -288,6 +288,26 @@
   border-bottom: 1px solid #808080;
 }
 
+.main .sidebar .menuHeader:hover{
+  cursor: pointer; 
+}
+
+.main .sidebar .menuHeader .store_switch{
+  display: none;
+}
+
+.main .sidebar .menuHeader .store_item{
+  border-top: 1px solid #f0f0f0;
+  padding: 3px;
+  margin-top: 5px;
+  margin-right: 5px;
+}
+
+.main .sidebar .menuHeader .store_item:hover{
+  cursor: pointer;
+  background-color: #f4fafd;
+}
+
 .main .sidebar .menuAction,
   #task .batch-menu,
   #change-area .batch-menu{

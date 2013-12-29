@@ -167,6 +167,10 @@ class ProductsAR extends CActiveRecord
 		return $product;
 	}
 
+	public function getUndeletedProductsByProductType($typeId){
+		return ProductsAR::model()->findAll('type_id=:typeId and deleted <> 1', array(':typeId'=>$typeId));
+	}
+
 	/*
 		获取特定类别的商品
 	*/
