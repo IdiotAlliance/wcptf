@@ -110,11 +110,17 @@ class PostersAR extends CActiveRecord
 	/**
 	 * 根据用户的id获取未删除的送货员id
 	 * @param unknown $userId
+	 * @deprecated
 	 */
 	public function getUndeletedPostersByUserId($userId){
 		$posters = PostersAR::model()->findAll('store_id=:userId and deleted<>1', 
 									array(':userId'=>$userId));
 		return $posters;
+	}
+
+	public function getUndeletedPostersByStoreId($sid){
+		return PostersAR::model()->findAll('store_id=:sid and deleted <> 1',
+										   array(':sid'=>$sid));
 	}
 	
 	public function getPosterById($id){

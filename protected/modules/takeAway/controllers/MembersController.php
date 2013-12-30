@@ -135,11 +135,16 @@ class MembersController extends TakeAwayController{
 				$i = 0;
 				foreach ($dbmessages as $message) {
 					# code...
-					if($message->type == 'text'){
+					if($message->msgtype == 'text'){
 						$xml = simplexml_load_string($message->rawmsg, 'SimpleXMLElement', LIBXML_NOCDATA);
-						$messages[$i]['ctime']   = $message->createtime;
-						$messages[$i]['content'] = $xml->Content;
-						$messages[$i]['replied'] = $message->replied;
+						$messages[$i] = array(
+							'ctime'=>$message->createtime,
+							'content'=>$xml->Content,
+							'replied'=>$message->replied,
+						);
+						// $messages[$i]['ctime']   = $message->createtime;
+						// $messages[$i]['content'] = $xml->Content;
+						// $messages[$i]['replied'] = $message->replied;
 					}
 					$i ++;
 				}
@@ -152,7 +157,7 @@ class MembersController extends TakeAwayController{
 				);
 				echo json_encode($data);
 			}else{
-
+				throw new CHttpException(404, "Requested member is not found");
 			}
 		} else{
 			$this->redirect(Yii::app()->createUrl('errors/error/404'));

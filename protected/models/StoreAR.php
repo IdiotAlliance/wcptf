@@ -131,9 +131,8 @@ class StoreAR extends CActiveRecord
 
 	public static function getStoreByUserId($userId){
 		if($userId && $userId >= 0){
-			$stores = StoreAR::model()->findAll('seller_id=:userId',
+			return StoreAR::model()->findAll('seller_id=:userId',
 									  array(':userId'=>$userId));
-			return $stores;
 		}
 	}
 }

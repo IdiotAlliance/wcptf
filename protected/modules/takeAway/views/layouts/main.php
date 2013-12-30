@@ -15,13 +15,6 @@
 
 <body>
 	<?php
-	
-	// echo $this->stores;
-	foreach ($this->stores as $store) {
-
-	}
-	// echo $this->currentStore->name;
-
 	$this->widget('bootstrap.widgets.TbNavbar',array(
         'type'=>'inverse',
         'brand'=>'微积分',
@@ -59,7 +52,20 @@
 
 	<div class='main'>
 		<div class='sidebar'>
-			<div class='menuHeader'>当前店铺：<b><?php echo $this->currentStore->name?></b></div>
+			<div class='menuHeader' onclick="expandStoreSwitch()">
+				当前店铺：<b><?php echo $this->currentStore->name?></b>
+				<div class="store_switch">
+					<?php 
+						foreach ($this->stores as $store) {
+							if($store->id != $this->currentStore->id){
+								$url = Yii::app()->request->url;
+								$url = preg_replace('/(\d+)$/', $store->id, $url);
+								echo '<div class="store_item" onclick="window.location='.$url.'">'.$store->name.'</div>';
+							}
+						}
+					?>
+				</div>
+			</div>
 			<div class='menu'>
 				<h4><i class='icon-list-alt'></i> &nbsp&nbsp订单管理</a></h4>
 				<ul>
@@ -160,8 +166,7 @@
 			}				
 		});
 		
-			//实现菜单的折叠效果
-
+		//实现菜单的折叠效果
 		$(".menu ul").hide();
 		$(".menu h4").click(function(){
 			if($(this).next("ul").css("display") == "block"){
@@ -184,9 +189,16 @@
 			default:
 				break;
 		}
-
-
 	});
+
+	function expandStoreSwitch(){
+		$('.store_switch').slideToggle('fast');
+	}
+
+	function loadMessages(){
+		
+	}
+
 </script>
 </body>
 </html>
