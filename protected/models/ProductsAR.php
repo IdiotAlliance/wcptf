@@ -280,7 +280,7 @@ class ProductsAR extends CActiveRecord
 	 * @return unknown
 	 */
 	//获取某商家的所有商品
-	public function getProductsBystoreId($storeId){
+	public function getProductsBySellerId($storeId){
 		$products = ProductsAR::model()->findAll('store_id=:storeId and deleted=:deleted', array(':storeId'=>$storeId,':deleted'=>0));
 		return $products;
 	}

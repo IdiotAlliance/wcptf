@@ -412,13 +412,13 @@ class OrdersAR extends CActiveRecord
 	 * 根据storeid获取一个商家每个会员的订单数量
 	 * @param unknown $storeid
 	 */
-	public function getOrdersCountBystoreid($storeid){
+	public function getOrdersCountBySellerId($sellerId){
 		$connection = OrdersAR::model()->getDbConnection();
 		$query = "SELECT orders.member_id as member_id, COUNT(*) AS order_count FROM orders ".
-				 "WHERE orders.store_id=:storeid GROUP BY orders.member_id";
+				 "WHERE orders.store_id=:sellerId GROUP BY orders.member_id";
 		$orders = array();
 		if($stmt = $connection->createCommand($query)){
-			$stmt->bindParam(':storeid',$storeid);
+			$stmt->bindParam(':sellerId',$sellerId);
 			$result = $stmt->queryAll();
 			return $result;
 		}

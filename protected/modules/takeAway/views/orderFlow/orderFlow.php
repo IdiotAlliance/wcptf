@@ -6,8 +6,9 @@
 <script type="text/javascript">
 	var currentTab = "#tab1";
 	$(document).ready(function(){	
+		//清除缓存
+		cleanAllLocalCache();
 		//点击订单
-		//var storeid = <?php $this->currentStore; ?>;
 		$('.order-header').delegate('.order-body ul>li .order-item ul>li.order-content', 'mousedown', function(e){
 			if($(this).css("background-color") == 'rgb(247, 247, 247)'){
 				$('.order-body ul>li .order-item ul>li.order-content').css("background-color", "#f7f7f7");
@@ -459,9 +460,16 @@
 		resetUnread();
 	});
 
-	//clean all the localstorage
+	//clean all order the localstorage
 	function cleanAllLocalCache(){
-		localStorage.clear();
+		var storage = window.localStorage;
+		len = storage.length;
+		for (var i=storage.length; i >=0; i--){
+			var key = storage.key(i);
+			if(key!=null && key!= undefined && key.substring(0,5) == 'order'){
+				storage.removeItem(key);
+			}
+		}
 	}
 
 	// 获取派送地区
@@ -725,6 +733,7 @@
 	                	if (data.tabOneOrderIdList!=null && len>0) {
 	                		//add & render order
 	                		for(var i=0; i<len; i++){
+	                			updateAndRenderOrder(day, currentTab, data.tabOneUpdateQueue[i], data.tabOneOrderIdList[i]);
 	                			if($.inArray(data.tabOneOrderIdList[i], tabOneOrderList) == -1){
 	                				fetchAndRenderOrder(day, currentTab, data.tabOneOrderIdList[i]);
 	                			}
@@ -736,7 +745,6 @@
 	                				if($.inArray(tabOneOrderList[i]+"", data.tabOneOrderIdList) == -1){
 	                					renderDeleOrder(day, currentTab, tabOneOrderList[i]);
 	                				}
-	                				if(data.tabOneUpdateQueue[i])
 	                			}
 	                		}
 	                	};
@@ -745,6 +753,7 @@
 	                	len = data.tabTwoOrderIdList.length;
 	                	for (var i = 0; i < len; i++) {
 	                		fetchOrder(data.tabTwoOrderIdList[i]);
+	                		updateOrder(data.tabTwoUpdateQueue[i], data.tabTwoOrderIdList[i]);
 	                	};                               
 	                	var myOrderList = MyOrderList.getList(getStoreId(), day, "#tab2");
 	                	myOrderList.list = data.tabTwoOrderIdList;
@@ -753,6 +762,7 @@
 	                	len = data.tabThreeOrderIdList.length;
 	                	for (var i = 0; i < len; i++) {
 	                		fetchOrder(data.tabThreeOrderIdList[i]);
+	                		updateOrder(data.tabThreeUpdateQueue[i], data.tabThreeOrderIdList[i]);
 	                	};
 	                	myOrderList = MyOrderList.getList(getStoreId(), day, "#tab3");
 	                	myOrderList.list = data.tabThreeOrderIdList;
@@ -764,6 +774,7 @@
 	                	if (data.tabTwoOrderIdList!=null && len>0) {
 	                		//add & render order
 	                		for(var i=0; i<len; i++){
+	                			updateAndRenderOrder(day, currentTab, data.tabTwoUpdateQueue[i], data.tabTwoOrderIdList[i]);
 	                			if($.inArray(data.tabTwoOrderIdList[i], tabTwoOrderList) == -1){
 	                				// alert("update #tab2");
 	                				fetchAndRenderOrder(day, currentTab, data.tabTwoOrderIdList[i]);
@@ -784,6 +795,7 @@
 	                	len = data.tabOneOrderIdList.length;
 	                	for (var i = 0; i < len; i++) {
 	                		fetchOrder(data.tabOneOrderIdList[i]);
+	                		updateOrder(data.tabOneUpdateQueue[i], data.tabOneOrderIdList[i]);
 	                	};
 	                	var myOrderList = MyOrderList.getList(getStoreId(), day, "#tab1");
 	                	myOrderList.list = data.tabOneOrderIdList;
@@ -792,6 +804,7 @@
 	                	len = data.tabThreeOrderIdList.length;
 	                	for (var i = 0; i < len; i++) {
 	                		fetchOrder(data.tabThreeOrderIdList[i]);
+	                		updateOrder(data.tabThreeUpdateQueue[i], data.tabThreeOrderIdList[i]);
 	                	};
 	                	myOrderList = MyOrderList.getList(getStoreId(), day, "#tab3");
 	                	myOrderList.list = data.tabThreeOrderIdList;
@@ -802,8 +815,8 @@
 	                	//current tab update
 	                	if (data.tabThreeOrderIdList!=null && len>0) {
 	                		//add & render order
-	                		
 	                		for(var i=0; i<len; i++){
+	                			updateAndRenderOrder(day, currentTab, data.tabThreeUpdateQueue[i], data.tabThreeOrderIdList[i]);
 	                			if($.inArray(data.tabThreeOrderIdList[i], tabThreeOrderList) == -1){
 	                				fetchAndRenderOrder(day, currentTab, data.tabThreeOrderIdList[i]);
 	                			}
@@ -823,6 +836,7 @@
 	                	len = data.tabOneOrderIdList.length;
 	                	for (var i = 0; i < len; i++) {
 	                		fetchOrder(data.tabOneOrderIdList[i]);
+	                		updateOrder(data.tabOneUpdateQueue[i], data.tabOneOrderIdList[i]);
 	                	};
 	                	myOrderList = MyOrderList.getList(getStoreId(), day, "#tab1");
 	                	myOrderList.list = data.tabOneOrderIdList;
@@ -831,6 +845,7 @@
 	                	len = data.tabTwoOrderIdList.length;
 	                	for (var i = 0; i < len; i++) {
 	                		fetchOrder(data.tabTwoOrderIdList[i]);
+	                		updateOrder(data.tabTwoUpdateQueue[i], data.tabTwoOrderIdList[i]);
 	                	};
 	                	var myOrderList = MyOrderList.getList(getStoreId(), day, "#tab2");
 	                	myOrderList.list = data.tabTwoOrderIdList;

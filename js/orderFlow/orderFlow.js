@@ -101,20 +101,20 @@ var MyOrderItemInfo = {
 		orderItem.itemId = itemId;
 		orderItem.itemData = itemData;
 		orderItem.save = function(){
-			localStorage.setItem('itemId'+this.itemId, $.toJSON(this.itemData));
+			localStorage.setItem('orderItemId'+this.itemId, $.toJSON(this.itemData));
 		};
 		orderItem.get = function(){
-			var data = localStorage.getItem('itemId'+this.itemId);
+			var data = localStorage.getItem('orderItemId'+this.itemId);
 			data = $.evalJSON(data);
 			return data;
 		}
 		orderItem.orderDelete = function(){
-			localStorage.removeItem('itemId'+this.itemId);
+			localStorage.removeItem('orderItemId'+this.itemId);
 		} 
 　　　　　　return orderItem;
 　　　　},
 	getItemInfo : function(itemId){
-		var data = localStorage.getItem('itemId'+itemId);
+		var data = localStorage.getItem('orderItemId'+itemId);
 		if(data!=null && data!=undefined){
 			data = $.evalJSON(data);
 			var orderItem = this.createNew(itemId, data);
@@ -298,7 +298,7 @@ function updateOrder(updateTime, orderId){
 	// alert("fetchAndRenderOrder");
 	var myOrder = MyOrder.getOrder(orderId);
 	if(myOrder !=null && myOrder != undefined){
-		alert(parseInt(updateTime));
+		// alert(parseInt(updateTime));
 		if(parseInt(myOrder.orderData.update_time)<parseInt(updateTime)){
 	        $.ajax({
 	            url      : ctUrl,
@@ -325,12 +325,11 @@ function updateOrder(updateTime, orderId){
 }
 
 //更新订单内容 并且刷新订单显示
-function updateAndRenderOrder(orderId){
+function updateAndRenderOrder(day, filter, updateTime, orderId){
 	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/filterOrder';
-	// alert("fetchAndRenderOrder");
 	var myOrder = MyOrder.getOrder(orderId);
 	if(myOrder !=null && myOrder != undefined){
-		alert(parseInt(updateTime));
+		// alert(parseInt(updateTime));
 		if(parseInt(myOrder.orderData.update_time)<parseInt(updateTime)){
 	        $.ajax({
 	            url      : ctUrl,
@@ -344,6 +343,11 @@ function updateAndRenderOrder(orderId){
 	            	if(data.success == 1){
 	            		myOrder.orderData = data.order;
 	            		myOrder.save();
+	            		var ele = filter+" .order-body .order-list";
+	            		var s= $(ele);
+	            		var t = s.children().length;
+	            		var pos = dynamicQueryOrderToList(day, filter, orderId)
+	            		$(s.children()[pos]).html($("#orderTemplate").render(myOrder));
 	            	}
 	            },
 	            error:function(){
@@ -354,6 +358,25 @@ function updateAndRenderOrder(orderId){
 	}
     return myOrder;
 }
+//动态查询订单在列表&&h获取订单在列表中的位置
+function dynamicQueryOrderToList(day, filter, orderId){
+	var myOrderList = MyOrderList.getList(getStoreId(), day, filter);
+	var pos = -1;
+	if(myOrderList!=null){
+		var len = myOrderList.list.length;
+		// alert(len);
+		for(var i=0; i<len; i++){
+			if(myOrderList.list[i] == orderId){
+				pos = i;
+				break;
+			}
+		}
+	}else{
+		//
+	}
+	return pos;
+}
+
 // 获取订单子项&刷新订单子项
 function fetchAndRenderOrderItems(orderId){
 	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/filterOrderItems';
