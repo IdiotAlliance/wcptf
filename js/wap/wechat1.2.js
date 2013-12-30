@@ -1142,7 +1142,7 @@ function submit(){
 		writeinfolocal(myuesrname,myphonenumber,myareaid,myareadesc);
 
 		//fake
-		usecard=false;
+		usecard=0;
 
 		if(confirm('确认提交订单？')){
 			$.ajax({

@@ -143,9 +143,9 @@ class ProductsAR extends CActiveRecord
 	/*
 		获取特定商品
 	*/
-	public function getProductByIdSeller($product_id, $sellerId){
-		$product = ProductsAR::model()->find('id=:product_id and store_id=:sellerId', 
-			array(':product_id'=>$product_id, ':sellerId'=>$sellerId));
+	public function getProductByIdSeller($product_id, $storeId){
+		$product = ProductsAR::model()->find('id=:product_id and store_id=:storeId', 
+			array(':product_id'=>$product_id, ':storeId'=>$storeId));
 		return $product;
 	}
 	/*
@@ -159,9 +159,9 @@ class ProductsAR extends CActiveRecord
 	/*
 		购买特定商品
 	*/
-	public function buyProduct($product_id, $sellerId, $num){
-		$product = ProductsAR::model()->find('id=:product_id and store_id=:sellerId', 
-			array(':product_id'=>$product_id, ':sellerId'=>$sellerId));
+	public function buyProduct($product_id, $storeId, $num){
+		$product = ProductsAR::model()->find('id=:product_id and store_id=:storeId', 
+			array(':product_id'=>$product_id, ':storeId'=>$storeId));
 		$product->daily_instore = $product->daily_instore - $num;
 		$product->save();
 		return $product;
@@ -264,47 +264,47 @@ class ProductsAR extends CActiveRecord
 	public function getSpCategoryNum($typeId){
 		$pdList = ProductsAR::model()->findAll(array(
 			'condition' => 'store_id=:store_id and type_id=:type_id',
-			'params' => array(':store_id'=>Yii::app()->user->sellerId,':type_id'=>$typeId),
+			'params' => array(':store_id'=>Yii::app()->user->storeId,':type_id'=>$typeId),
 		));
 		return count($pdList);
 	}
 	
 	/**
 	 * 取出一个商家的所有商品，包括已经被删除的商品
-	 * @param unknown $sellerId
+	 * @param unknown $storeId
 	 * @deprecated
 	 * @return unknown
 	 */
 	//获取某商家的所有商品
-	public function getProductsBySellerId($sellerId){
-		$products = ProductsAR::model()->findAll('store_id=:sellerId and deleted=:deleted', array(':sellerId'=>$sellerId,':deleted'=>0));
+	public function getProductsBystoreId($storeId){
+		$products = ProductsAR::model()->findAll('store_id=:storeId and deleted=:deleted', array(':storeId'=>$storeId,':deleted'=>0));
 		return $products;
 	}
 
 	/**
-	 * @param unknown $sellerId
+	 * @param unknown $storeId
 	 * @deprecated
 	 */
-	public function getUndeletedProductsBySellerId($sellerId){
-		$products = ProductsAR::model()->findAll('store_id=:sellerId and deleted<>1', 
-												 array(':sellerId'=>$sellerId));
+	public function getUndeletedProductsBystoreId($storeId){
+		$products = ProductsAR::model()->findAll('store_id=:storeId and deleted<>1', 
+												 array(':storeId'=>$storeId));
 		return $products;
 	}
 	
 	/**
-	 * 根据sellerid获取产品，以及它们的图片url
-	 * @param unknown $sellerId
+	 * 根据storeId获取产品，以及它们的图片url
+	 * @param unknown $storeId
 	 * @deprecated
 	 */
-	public function getUndeletedProductsWithPicUrl($sellerId){
+	public function getUndeletedProductsWithPicUrl($storeId){
 		$connection = ProductsAR::model()->getDbConnection();
 		$query = "SELECT products.id AS id, products.status AS status, products.type_id AS type_id, products.stime AS stime,".
 				 " products.etime AS etime, products.description AS description, products.pname AS pname,".
 				 " products.price AS price, products.daily_instore AS daily_instore, pictures.pic_url AS picurl".
 				 " FROM products LEFT JOIN pictures ON products.cover=pictures.id".
-				 " WHERE products.store_id=:sellerId and products.deleted<>1";
+				 " WHERE products.store_id=:storeId and products.deleted<>1";
 		if($stmt = $connection->createCommand($query)){
-			$stmt->bindParam(':sellerId', $sellerId);
+			$stmt->bindParam(':storeId', $storeId);
 			$result = $stmt->queryAll();
 			return $result;
 		}
@@ -332,7 +332,7 @@ class ProductsAR extends CActiveRecord
 		$product = ProductsAR::model()->find(
 			'store_id=:store_id AND pname=:pname',
 			array(
-				':store_id'=>Yii::app()->user->sellerId,
+				':store_id'=>Yii::app()->user->storeId,
 				':pname'=>$pname,
 				)
 			);
@@ -350,11 +350,11 @@ class ProductsAR extends CActiveRecord
 	}
 
 	//获取商家各类别的商品数量和类别id和名字，若该类别没有商品将不会显示该类别
-	public function getProductsByType($sellerId){
+	public function getProductsByType($storeId){
 		$connection = ProductsAR::model()->getDbConnection();
         $query = "select count(*) AS product_count,product_type.id AS typeId,product_type.type_name from products left join product_type on products.type_id = product_type.id where products.store_id=:store_id group by products.type_id";
         if ($stmt = $connection->createCommand($query)) {
-            $stmt->bindParam(':store_id',$sellerId);
+            $stmt->bindParam(':store_id',$storeId);
             $result = $stmt->queryAll();
             return $result;
         }

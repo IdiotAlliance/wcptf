@@ -13,6 +13,7 @@
 				$('.order-body ul>li .order-item ul>li.order-content').css("background-color", "#f7f7f7");
 			}
 			$(this).css("background-color", "#e7e7e7");
+			$(this).css("color", "#000000");
 		});
 
 		$('.order-header').delegate('.order-body ul>li .order-item ul>li.order-content', 'mouseup', function(e){
@@ -28,17 +29,17 @@
 	function initTab(){
 		var tabId = "#tab1";
 		var day = $('.order-footer .order-date-container').attr("id");
-		fetchAndRenderOrderList(day, tabId);
-		fetchOrderList(day, "#tab2");
-		fetchOrderList(day, "#tab3");
+		fetchAndRenderOrderList(getStoreId(), day, tabId);
+		fetchOrderList(getStoreId(), day, "#tab2");
+		fetchOrderList(getStoreId(), day, "#tab3");
 	}
 	//加载页面日期
 	function loadTab(tabId){
 		var day = $('.order-footer .order-date-container').attr("id");
-		fetchAndRenderOrderList(day, tabId);
-		fetchOrderList(day, "#tab1");
-		fetchOrderList(day, "#tab2");
-		fetchOrderList(day, "#tab3");
+		fetchAndRenderOrderList(getStoreId(), day, tabId);
+		fetchOrderList(getStoreId(), day, "#tab1");
+		fetchOrderList(getStoreId(), day, "#tab2");
+		fetchOrderList(getStoreId(), day, "#tab3");
 	}
 	//加载切换TAB订单列表
 	function loadContent(e){
@@ -54,7 +55,7 @@
 	    } else if(tabId == '#tab3') {
 	    	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/cancel';
 	    }
-	    fetchAndRenderOrderList(day, tabId);
+	    fetchAndRenderOrderList(getStoreId(), day, tabId);
 	    $('.footer-right-btn.all-pick').html("全选");
 	    return false;
 	}
@@ -470,22 +471,23 @@
 		    url      : ctUrl,
 		    type     : 'POST',
 		    dataType : 'json',
+		    data 	 : {storeid: getStoreId()},
 		    cache    : false,
 		    success  : function(data)
 		    {
 		    	//alert(html);
-		        // if(data.success == 0){
-		        // 	var areas = data.area;
-		        // 	var html = '<li><a class="area "id='+0+'>全部</a></li>';
-		        // 	for (var i = 0; i < areas.length; i++) {
-		        // 		var id = areas[i]['id'];
-		        // 		var name = areas[i]['name'];
-		        // 		html = html+'<li><a class="area "id='+id+'>'+name+'</a></li>';
-		        // 	};
-		        // 	$('.order-footer #popup').html(html);
-		        // } else{
-		        // 	alert('Request failed');
-		        // }
+		        if(data.success == 1){
+		        	var areas = data.area;
+		        	var html = '<li><a class="area "id='+0+'>全部</a></li>';
+		        	for (var i = 0; i < areas.length; i++) {
+		        		var id = areas[i]['id'];
+		        		var name = areas[i]['name'];
+		        		html = html+'<li><a class="area "id='+id+'>'+name+'</a></li>';
+		        	};
+		        	$('.order-footer #popup').html(html);
+		        } else{
+		        	alert('Request failed');
+		        }
 		    },
 		    error:function(){
 		            alert('Request failed');
@@ -674,26 +676,27 @@
 	// }
 	/*#new 新的订单更新接口*/
 	function updateListener(){
+
 		//获取当前的偏移时间
 	    var day = $('.order-footer .order-date-container').attr("id");
 	    var areaId = $('.order-footer .order-area-container').attr("id");
 	    var tabOneOrderList = null;
 	    var tabTwoOrderList = null;
 	    var tabThreeOrderList = null;
-	    if(MyOrderList.getList(day, "#tab1") != null || MyOrderList.getList(day, "#tab1") != undefined){
-	    	tabOneOrderList =  MyOrderList.getList(day, "#tab1").list;
+	    if(MyOrderList.getList(getStoreId(), day, "#tab1") != null || MyOrderList.getList(getStoreId(), day, "#tab1") != undefined){
+	    	tabOneOrderList =  MyOrderList.getList(getStoreId(), day, "#tab1").list;
 	    }else{
 	    	setTimeout('updateListener()', 10000);
 	    	return;
 	    }
-	    if(MyOrderList.getList(day, "#tab2") != null || MyOrderList.getList(day, "#tab2") != undefined){
-	    	tabTwoOrderList =  MyOrderList.getList(day, "#tab2").list;
+	    if(MyOrderList.getList(getStoreId(), day, "#tab2") != null || MyOrderList.getList(getStoreId(), day, "#tab2") != undefined){
+	    	tabTwoOrderList =  MyOrderList.getList(getStoreId(), day, "#tab2").list;
 	    }else{
 	    	setTimeout('updateListener()', 10000);
 	    	return;
 	    }
-	    if(MyOrderList.getList(day, "#tab3") != null || MyOrderList.getList(day, "#tab3") != undefined){
-	    	tabThreeOrderList =  MyOrderList.getList(day, "#tab3").list;
+	    if(MyOrderList.getList(getStoreId(), day, "#tab3") != null || MyOrderList.getList(getStoreId(), day, "#tab3") != undefined){
+	    	tabThreeOrderList =  MyOrderList.getList(getStoreId(), day, "#tab3").list;
 	    }else{
 	    	setTimeout('updateListener()', 10000);
 	    	return;
@@ -712,7 +715,7 @@
 	        dataType: 'json',
 	        url:  '/weChat/index.php/takeAway/orderFlow/update',
 	        timeout: 60000,
-	        data:{time:'1', day:day},
+	        data:{storeid: getStoreId(), time:'1', day:day},
 	        success:function(data,textStatus){
 	            if(data.success=='1'){
 	                // updateTabContent(currentTab);  
@@ -733,6 +736,7 @@
 	                				if($.inArray(tabOneOrderList[i]+"", data.tabOneOrderIdList) == -1){
 	                					renderDeleOrder(day, currentTab, tabOneOrderList[i]);
 	                				}
+	                				if(data.tabOneUpdateQueue[i])
 	                			}
 	                		}
 	                	};
@@ -741,8 +745,8 @@
 	                	len = data.tabTwoOrderIdList.length;
 	                	for (var i = 0; i < len; i++) {
 	                		fetchOrder(data.tabTwoOrderIdList[i]);
-	                	};
-	                	var myOrderList = MyOrderList.getList(day, "#tab2");
+	                	};                               
+	                	var myOrderList = MyOrderList.getList(getStoreId(), day, "#tab2");
 	                	myOrderList.list = data.tabTwoOrderIdList;
 	                	myOrderList.save();
 	                	//#tab3
@@ -750,7 +754,7 @@
 	                	for (var i = 0; i < len; i++) {
 	                		fetchOrder(data.tabThreeOrderIdList[i]);
 	                	};
-	                	myOrderList = MyOrderList.getList(day, "#tab3");
+	                	myOrderList = MyOrderList.getList(getStoreId(), day, "#tab3");
 	                	myOrderList.list = data.tabThreeOrderIdList;
 	                	myOrderList.save();
 	                }
@@ -781,7 +785,7 @@
 	                	for (var i = 0; i < len; i++) {
 	                		fetchOrder(data.tabOneOrderIdList[i]);
 	                	};
-	                	var myOrderList = MyOrderList.getList(day, "#tab1");
+	                	var myOrderList = MyOrderList.getList(getStoreId(), day, "#tab1");
 	                	myOrderList.list = data.tabOneOrderIdList;
 	                	myOrderList.save();
 	                	//#tab3
@@ -789,7 +793,7 @@
 	                	for (var i = 0; i < len; i++) {
 	                		fetchOrder(data.tabThreeOrderIdList[i]);
 	                	};
-	                	myOrderList = MyOrderList.getList(day, "#tab3");
+	                	myOrderList = MyOrderList.getList(getStoreId(), day, "#tab3");
 	                	myOrderList.list = data.tabThreeOrderIdList;
 	                	myOrderList.save();
 	                }
@@ -820,7 +824,7 @@
 	                	for (var i = 0; i < len; i++) {
 	                		fetchOrder(data.tabOneOrderIdList[i]);
 	                	};
-	                	myOrderList = MyOrderList.getList(day, "#tab1");
+	                	myOrderList = MyOrderList.getList(getStoreId(), day, "#tab1");
 	                	myOrderList.list = data.tabOneOrderIdList;
 	                	myOrderList.save();
 	                	//#tab2
@@ -828,7 +832,7 @@
 	                	for (var i = 0; i < len; i++) {
 	                		fetchOrder(data.tabTwoOrderIdList[i]);
 	                	};
-	                	var myOrderList = MyOrderList.getList(day, "#tab2");
+	                	var myOrderList = MyOrderList.getList(getStoreId(), day, "#tab2");
 	                	myOrderList.list = data.tabTwoOrderIdList;
 	                	myOrderList.save();
 	                }
@@ -880,9 +884,9 @@
 	function updateTabHeadersByLocal(){
 		var day = $('.order-footer .order-date-container').attr("id");
 		var areaId = $('.order-footer .order-area-container').attr("id");
-		var tabOneOrderList = MyOrderList.getList(day, "#tab1");
-		var tabTwoOrderList = MyOrderList.getList(day, "#tab2");
-		var tabThreeOrderList = MyOrderList.getList(day, "#tab3");
+		var tabOneOrderList = MyOrderList.getList(getStoreId(), day, "#tab1");
+		var tabTwoOrderList = MyOrderList.getList(getStoreId(), day, "#tab2");
+		var tabThreeOrderList = MyOrderList.getList(getStoreId(), day, "#tab3");
 		//所有区域
 		if(areaId == 0){
 			if(tabOneOrderList!=null && tabOneOrderList!=undefined){

@@ -52,8 +52,8 @@ class OrderController extends Controller
 			echo json_encode($arr);
 			exit;
 		}
-		if(isset($_POST['use_card'])){
-			$usecard = $_POST['use_card'];
+		if(isset($_POST['usecard'])){
+			$usecard = $_POST['usecard'];
 		}else{
 			$result = "use_card is null";
 			$arr=array('success'=>'0', 'result'=>$result);
@@ -165,16 +165,16 @@ class OrderController extends Controller
 			echo json_encode($arr);
 			exit;
 		}
-		$seller = UsersAR::model()->findByPk($storeid);
-		if(!empty($seller)){
-			if($seller->status!=0){
+		$store = StoreAR::model()->findByPk($storeid);
+		if(!empty($store)){
+			if($store->status!=0){
 				$result = "service is out";
 				$arr=array('success'=>'2', 'result'=>$result);
 				echo json_encode($arr);
 				exit;
 			}
 			$nowTime = date('H:i:s');
-			if($seller->stime<$nowTime && $seller->etime>$nowTime){
+			if($store->stime<$nowTime && $store->etime>$nowTime){
 
 			}else{
 				$result = "service is out";
@@ -206,11 +206,11 @@ class OrderController extends Controller
 			foreach ($items as $item) {
 				$total = $total + $item->price;
 			}
-			if(!empty($storeid)){
+			if(!empty($storeid)){                         
 				//是否免外送费
-				$threshold = $seller->threshold;
-				$takeawayFee = $seller->takeaway_fee;
-				$startPrice = $seller->start_price;
+				$threshold = $store->threshold;
+				$takeawayFee = $store->takeaway_fee;
+				$startPrice = $store->start_price;
 				if($threshold){
 					//超过免外卖费，不超过送+外卖费
 					if($total>=$startPrice){
@@ -223,8 +223,8 @@ class OrderController extends Controller
 					if($total>=$startPrice){
 						$total = $total+ $takeawayFee;
 					}else{
-						//订单失败
-						$result = "order total is low";
+						// 订单失败
+						$result = "order total is low".$total;
 						OrderItemsAR::model()->deleteItems($order->id);
 						OrdersAR::model()->deleteOrder($order->id);
 						$arr=array('success'=>'2', 'result'=>$result);
@@ -239,6 +239,7 @@ class OrderController extends Controller
 		} else{
 			$arr=array('success'=>'2', 'result'=>$result);
 		}
+		// $arr=array('success'=>'1', 'result'=>'ok');
 		echo json_encode($arr);
 	}
 
@@ -260,7 +261,7 @@ class OrderController extends Controller
 	// 						 "order_no"=>$order->order_no,
 	// 						 "order_id"=>$order->id,
 	// 						 "total"=>$order->total,
-	// 						 "order_items"=>$order->seller_id,
+	// 						 "order_items"=>$order->store_id,
 	// 						 "address"=>$order->address,
 	// 						 "ctime"=>$order->ctime,
 	// 						 "status"=>$order->status,
@@ -323,7 +324,7 @@ class OrderController extends Controller
 				foreach ($orders as $order) {
 					$newOrder = OrdersAR::model()->findByPk($order->id);
 					$poster = PostersAR::model()->findByPk($newOrder->poster_id);
-					$user = UsersAR::model()->findByPk($newOrder->seller_id);
+					$user = StoreAR::model()->findByPk($newOrder->store_id);
 					$posterPhone = "";
 					if(!empty($poster)){
 						$posterPhone = $poster->phone;
@@ -334,7 +335,7 @@ class OrderController extends Controller
 							 "order_no"=>$order->order_no,
 							 "order_id"=>$order->id,
 							 "total"=>$order->total,
-							 "order_items"=>$order->seller_id,
+							 "order_items"=>$order->store_id,
 							 "address"=>$order->address,
 							 "ctime"=>$order->ctime,
 							 "status"=>$order->status,
@@ -343,7 +344,7 @@ class OrderController extends Controller
 							 'tips'=>$order->description,
 							));
 				}
-				$arr=array('success'=>'1', 'result'=>$orderViews, 'nexttime'=>$nextTime, 'sellerphone'=>$user->phone,);
+				$arr=array('success'=>'1', 'result'=>$orderViews, 'nexttime'=>$nextTime, 'storephone'=>$user->phone,);
 				echo json_encode($arr);
 			}else{
 				$result = "openid is no exist";

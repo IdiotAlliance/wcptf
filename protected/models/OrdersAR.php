@@ -61,7 +61,7 @@ class OrdersAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('order_no, status, total, ctime, store_id, member_id, member_no, member_phone, order_name, phone, poster_id, poster_name, poster_phone, area_id, area_name, area_description, update_time', 'required'),
+			array('status, total, ctime, store_id, member_id, order_name, phone, area_id, update_time', 'required'),
 			array('status, , use_card, type, poster_id', 'numerical', 'integerOnly'=>true),
 			array('total, discount', 'numerical'),
 			array('order_no, member_phone, phone, poster_name, poster_phone, area_name', 'length', 'max'=>32),
@@ -274,26 +274,34 @@ class OrdersAR extends CActiveRecord
 		    return $orders;
 		}
 	}
-
 	public function changeArrayToAR($array){
 		$orders = array();
 		foreach ($array as $arr) {
 			$order = new OrdersAR;
 			$order->id = $arr['id'];
+			$order->order_no = $arr['order_no'];
+			$order->status = $arr['status'];
+			$order->type = $arr['type'];
+			$order->total = $arr['total'];
+			$order->discount = $arr['discount'];
+			$order->ctime = $arr['ctime'];
+			$order->duetime = $arr['duetime'];
+			$order->description = $arr['description'];
+			$order->use_card = $arr['use_card'];
 			$order->store_id = $arr['store_id'];
 			$order->member_id = $arr['member_id'];
-			$order->ctime = $arr['ctime'];
-			$order->status = $arr['status'];
-			$order->address = $arr['address'];
-			$order->description = $arr['description'];
-			$order->duetime = $arr['duetime'];
-			$order->total = $arr['total'];
-			$order->type = $arr['type'];
-			$order->phone = $arr['phone'];
-			$order->order_no = $arr['order_no'];
-			$order->poster_id = $arr['poster_id'];
-			$order->area_id = $arr['area_id'];
+			$order->member_no = $arr['member_no'];
+			$order->member_phone = $arr['member_phone'];
 			$order->order_name = $arr['order_name'];
+			$order->phone = $arr['phone'];
+			$order->address = $arr['address'];
+			$order->poster_id = $arr['poster_id'];
+			$order->poster_name = $arr['poster_name'];
+			$order->poster_phone = $arr['poster_phone'];
+			$order->area_id = $arr['area_id'];
+			$order->area_name = $arr['area_name'];
+			$order->area_description = $arr['area_description'];
+			$order->update_time = $arr['update_time'];
 			array_push($orders, $order);
 		}
 		return $orders;
@@ -436,6 +444,12 @@ class OrdersAR extends CActiveRecord
 	 *	订订单
 	 */
 	public function makeOrder($storeid, $memberid, $areaid, $areadesc, $phone, $tips, $name, $useCard) {
+		// $member = getBoundByStoreAndMember($sid, $memberId);
+		// $memberPhone = $member->phone;
+		// $memberCar = $member->cardno;
+		// $timestamp = strtotime(date('Y-m-d H:i:s'));
+		// $
+
 		$order = new OrdersAR;
 		$order->store_id = $storeid;
 		$order->member_id = $memberid;
@@ -449,6 +463,7 @@ class OrdersAR extends CActiveRecord
 		$order->order_name = $name;
 		$order->use_card = $useCard;
 		$order->ctime = $date = date('Y-m-d H:i:s');
+		$order->update_time = round(microtime(true) * 1000);
 		$order->save();
 		$order->order_no = OrdersAR::model()->getOrderNo($order->store_id, $order->id, $order->ctime);
 		$order->save();
@@ -553,13 +568,14 @@ class OrdersAR extends CActiveRecord
 	/*
 		修改订单头
 	*/
-	public function headerModify($orderId ,$name, $phone, $desc, $total){
+	public function headerModify($orderId ,$name, $phone, $desc, $total, $updateTime){
 		$order = OrdersAR::model()->findByPk($orderId);
 		if(!empty($order)){
 			$order->order_name = $name;
 			$order->phone = $phone;
 			$order->description = $desc;
 			$order->total = $total;
+			$order->update_time = $updateTime;
 			$order->update();
 			return true;
 		}else{

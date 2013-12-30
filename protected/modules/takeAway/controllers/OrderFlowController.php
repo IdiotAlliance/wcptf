@@ -15,8 +15,11 @@ class OrderFlowController extends TakeAwayController
 
 	public function actionOrderFlow()
 	{
-		$this->setCurrentStore(1);
-		$this->render('orderFlow');
+		if(Yii::app()->user->isGuest){
+			$this->redirect('index.php/accounts/login');
+		}else if(isset($_GET['sid']) && $_GET['sid'] >= 0 && $this->setCurrentStore($_GET['sid'])){
+			$this->render('orderFlow');
+		}
 	}
 	/*
 		初始化header订单数
@@ -67,7 +70,7 @@ class OrderFlowController extends TakeAwayController
 		foreach ($orders as $order) {
 			$newOrder = OrdersAR::model()->findByPk($order->id);
 			$poster = PostersAR::model()->findByPk($newOrder->poster_id);
-			$user = UsersAR::model()->findByPk($newOrder->seller_id);
+			// $user = UsersAR::model()->findByPk($newOrder->store_id);
 			$posterPhone = "";
 			if(!empty($poster)){
 				$posterPhone = $poster->phone;
@@ -79,13 +82,14 @@ class OrderFlowController extends TakeAwayController
 					 "orderType"=>$order->type,
 					 "order_id"=>$order->id,
 					 "total"=>$order->total,
-					 "order_items"=>$order->seller_id,
+					 "order_items"=>$order->store_id,
 					 "address"=>$order->address,
 					 "areaId"=>$order->area_id,
 					 "ctime"=>$order->ctime,
 					 "status"=>$order->status,
 					 "poster_name"=>$order->poster_id,
 					 'desc'=>$order->description,
+					 'update_time'=>$order->update_time
 					));
 		}
 		$arr=array('success'=>'1', 'orderList'=>$orderViews);
@@ -105,7 +109,7 @@ class OrderFlowController extends TakeAwayController
 						 "orderType"=>$order->type,
 						 "order_id"=>$order->id,
 						 "total"=>$order->total,
-						 "order_items"=>$order->seller_id,
+						 "order_items"=>$order->store_id,
 						 "address"=>$order->address,
 						 "areaId"=>$order->area_id,
 						 "ctime"=>$order->ctime,
@@ -113,6 +117,7 @@ class OrderFlowController extends TakeAwayController
 						 "orderType"=>$order->type,
 						 "poster_name"=>$order->poster_id,
 						 'desc'=>$order->description,
+						 'update_time'=>$order->update_time
 						);
 			$arr=array('success'=>'1', 'order'=>$orderView);
 		}else{
@@ -236,9 +241,10 @@ class OrderFlowController extends TakeAwayController
 	*/
 	public function actionCancelOrder(){
 		$orderId = 1;
-		if(isset($_POST['orderId'])){
+		if(isset($_POST['orderId']) && isset($_POST['storeid'])){
 			$orderId = $_POST['orderId'];
-			ordersAR::model()->cancelOrder($this->userID, $orderId);
+			$storeid = $_POST['storeid'];
+			ordersAR::model()->cancelOrder($storeid, $orderId);
 			$arr=array('success'=>'1');
 			echo json_encode($arr);
 		}else{
@@ -251,10 +257,11 @@ class OrderFlowController extends TakeAwayController
 		批量取消订单
 	*/
 	public function actionBatCancelOrder(){
-		if(isset($_POST['orderIds'])){
+		if(isset($_POST['orderIds']) && isset($_POST['storeid'])){
 			$orderIds = $_POST['orderIds'];
+			$storeid = $_POST['storeid'];
 			foreach ($orderIds as $orderId) {
-				ordersAR::model()->cancelOrder($this->userID, $orderId);
+				ordersAR::model()->cancelOrder($storeid, $orderId);
 			}
 			$arr=array('success'=>'1');
 			echo json_encode($arr);
@@ -268,9 +275,10 @@ class OrderFlowController extends TakeAwayController
 	*/
 	public function actionFinishOrder(){
 		$orderId = 0;
-		if(isset($_POST['orderId'])){
+		if(isset($_POST['orderId']) && isset($_POST['storeid'])){
 			$orderId = $_POST['orderId'];
-			ordersAR::model()->finishOrder($this->userID, $orderId);
+			$storeid = $_POST['storeid'];
+			ordersAR::model()->finishOrder($storeid, $orderId);
 			$arr=array('success'=>'1');
 			echo json_encode($arr);
 		}else{
@@ -282,10 +290,11 @@ class OrderFlowController extends TakeAwayController
 		批量完成订单
 	*/
 	public function actionBatFinishOrder(){
-		if(isset($_POST['orderIds'])){
+		if(isset($_POST['orderIds']) && isset($_POST['storeid'])){
 			$orderIds = $_POST['orderIds'];
+			$storeid = $_POST['storeid'];
 			foreach ($orderIds as $orderId) {
-				ordersAR::model()->finishOrder($this->userID, $orderId);
+				ordersAR::model()->finishOrder($storeid, $orderId);
 			}
 			$arr=array('success'=>'1');
 			echo json_encode($arr);
@@ -299,7 +308,7 @@ class OrderFlowController extends TakeAwayController
 		定期更新数据
 	*/
 	public function actionUpdate(){
-		$userID = $this->getUserId();
+		$storeid = -1;
 		$timeOut = 20;
 		$tabOneOrderList = null;
 		$tabTwoOrderList = null;
@@ -308,7 +317,10 @@ class OrderFlowController extends TakeAwayController
 		$day = 0;
 		if(isset($_POST['time'])){
 			$timeOut = $_POST['time'];
-		}	
+		}
+		if(isset($_POST['storeid'])){
+			$storeid = $_POST['storeid'];
+		}
 		if(isset($_POST['tabOneOrderList'])){
 			$tabOneOrderList = $_POST['tabOneOrderList'];
 		}
@@ -324,7 +336,7 @@ class OrderFlowController extends TakeAwayController
 		if(isset($_POST['day'])){
 			$day = $_POST['day'];
 		}
-		$this->updateListener($userID, $day);
+		$this->updateListener($storeid, $day);
 	}
 	/*
 		主动更新操作
@@ -350,29 +362,41 @@ class OrderFlowController extends TakeAwayController
 		更新接口
 		success：1需要当前页刷新；2不需要当前页刷新只刷新头；
 	*/
-	public function updateListener($userID, $day){
+	public function updateListener($storeid, $day){
         $date = date("Y-m-d H:i:s",strtotime($day." day"));
-        $tabOneOrders = OrdersAR::model()->filterOrder($this->userID, $date, "#tab1");
-        $tabTwoOrders = OrdersAR::model()->filterOrder($this->userID, $date, "#tab2");
-        $tabThreeOrders = OrdersAR::model()->filterOrder($this->userID, $date, "#tab3");
+        $tabOneOrders = OrdersAR::model()->filterOrder($storeid, $date, "#tab1");
+        $tabTwoOrders = OrdersAR::model()->filterOrder($storeid, $date, "#tab2");
+        $tabThreeOrders = OrdersAR::model()->filterOrder($storeid, $date, "#tab3");
         $tempLen = count($tabOneOrders);
         $tabOneOrderIdList = array();
         $tabTwoOrderIdList = array();
         $tabThreeOrderIdList = array();
+        //更新校验队列
+        $tabOneUpdateQueue = array();
+        $tabTwoUpdateQueue = array();
+        $tabThreeUpdateQueue = array();
+        // 返回新的订单列表
         for($i=0; $i<$tempLen; $i++){
         	array_push($tabOneOrderIdList, $tabOneOrders[$i]->id);
+        	array_push($tabOneUpdateQueue, $tabOneOrders[$i]->update_time);
         }
         $tempLen = count($tabTwoOrders);
         for($i=0; $i<$tempLen; $i++){
         	array_push($tabTwoOrderIdList, $tabTwoOrders[$i]->id);
+        	array_push($tabTwoUpdateQueue, $tabTwoOrders[$i]->update_time);
         }
         $tempLen = count($tabThreeOrders);
         for($i=0; $i<$tempLen; $i++){
         	array_push($tabThreeOrderIdList, $tabThreeOrders[$i]->id);
+        	array_push($tabThreeUpdateQueue, $tabThreeOrders[$i]->update_time);
         }
+
         $arr=array('success'=>'1', "tabOneOrderIdList"=>$tabOneOrderIdList,
         							"tabTwoOrderIdList"=>$tabTwoOrderIdList,
-        							"tabThreeOrderIdList"=>$tabThreeOrderIdList);
+        							"tabThreeOrderIdList"=>$tabThreeOrderIdList,
+        							"tabOneUpdateQueue"=>$tabOneUpdateQueue,
+        							"tabTwoUpdateQueue"=>$tabTwoUpdateQueue,
+        							"tabThreeUpdateQueue"=>$tabThreeUpdateQueue);
         echo json_encode($arr);
         exit;
     }
@@ -481,12 +505,14 @@ class OrderFlowController extends TakeAwayController
     {
     	require "HtmLawed.php";
     	if(isset($_POST['orderId'])&&isset($_POST['orderName'])
-    		&&isset($_POST['phone'])&&isset($_POST['desc'])&&isset($_POST['total'])){
+    		&&isset($_POST['phone'])&&isset($_POST['desc'])
+    		&&isset($_POST['total'])&&isset($_POST['updateTime'])){
     		$orderId = $_POST['orderId'];
     		$name = $_POST['orderName'];
     		$phone = $_POST['phone'];
     		$desc = $_POST['desc'];
     		$total = $_POST['total'];
+    		$updateTime = $_POST['updateTime'];
     		if($this->inject_check($name)){
     			$arr=array('success'=>'2');
 				echo json_encode($arr);
@@ -507,7 +533,7 @@ class OrderFlowController extends TakeAwayController
     		$name = htmLawed($name, $config);
     		$phone = htmLawed($phone, $config);
     		
-    		$result = OrdersAR::model()->headerModify($orderId, $name, $phone, $desc, $total);
+    		$result = OrdersAR::model()->headerModify($orderId, $name, $phone, $desc, $total, $updateTime);
     		if($result){
     			$arr=array('success'=>'1');
 				echo json_encode($arr);
@@ -519,7 +545,7 @@ class OrderFlowController extends TakeAwayController
     		}
     		
     	}else{
-    		$arr=array('success'=>'0');
+    		$arr=array('success'=>'3');
 			echo json_encode($arr);
     	}
     }
@@ -558,14 +584,21 @@ class OrderFlowController extends TakeAwayController
     	获取区域
     */
     public function actionFetchAreas(){
-    	// $userId = $this->getUserId();
-    	// $areas = DistrictsAR::model()->getUndeletedDistrictsByUserId($userId);
-    	// $result = array();
-    	// foreach ($areas as $area) {
-    	// 	array_push($result, array('id'=>$area->id, 'name'=>$area->name));
-    	// }
-    	// $arr=array('success'=>'0', 'area'=>$result);
-    	// echo json_encode($arr);
+    	$userId = $this->getUserId();
+    	if(isset($_POST['storeid'])){
+    		$storeid = $_POST['storeid'];
+    		$areas = DistrictsAR::model()->getUndeletedDistrictsByStoreId($storeid);
+    		$result = array();
+    		foreach ($areas as $area) {
+    			array_push($result, array('id'=>$area->id, 'name'=>$area->name));
+    		}
+    		$arr=array('success'=>'1', 'area'=>$result);
+    		echo json_encode($arr);
+    	}else{
+    		$arr=array('success'=>'0');
+    		echo json_encode($arr);
+    	}
+    	
     }
 
     /*

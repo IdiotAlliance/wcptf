@@ -746,7 +746,7 @@ var MYJQUERY='http://libs.baidu.com/jquery/2.0.3/jquery.min.js';
 var MYOWNJS='<?php echo Yii::app()->baseUrl?>/js/wap/wechat1.2.js';
 
 //fake
-var AJAXFORDATA='http://192.168.1.107/weChat/index.php/wap/wap/getData';
+var AJAXFORDATA='http://192.168.1.196/weChat/index.php/wap/wap/getData';
 
 //var AJAXFORDATA='<?php echo Yii::app()->createUrl('wap/wap/getData'); ?>';
 var AJAXFORSUBMIT='<?php echo Yii::app()->createUrl('wap/order/order'); ?>';

@@ -34,29 +34,30 @@ var MyOrder = {
 };
 // 订单列表Model
 var MyOrderList = {
-	createNew: function(listDate, listFilter, list){
+	createNew: function(storeid, listDate, listFilter, list){
 		var orderList = {};
 		orderList.list = list;
+		orderList.storeid = storeid;
 		orderList.listDate = listDate;
 		orderList.listFilter = listFilter;
 		orderList.save = function(){
-			localStorage.setItem('orderList'+this.listDate+listFilter, $.toJSON(this.list));
+			localStorage.setItem('orderList'+this.storeid+'$'+this.listDate+listFilter, $.toJSON(this.list));
 		};
 		orderList.get = function(){
-			var data = localStorage.getItem('orderList'+this.listDate+this.listFilter);
+			var data = localStorage.getItem('orderList'+this.storeid+'$'+this.listDate+this.listFilter);
 			data = $.evalJSON(data);
 			return data;
 		}
 		orderList.delete = function(){
-			localStorage.removeItem('orderList'+listDate+listFilter);
+			localStorage.removeItem('orderList'+this.storeid+'$'+listDate+listFilter);
 		}
 　　　　　　return orderList;
 　　　　},
-	getList : function(listDate, listFilter){
-		var list = localStorage.getItem('orderList'+listDate+listFilter);
+	getList : function(storeid, listDate, listFilter){
+		var list = localStorage.getItem('orderList'+storeid+'$'+listDate+listFilter);
 		if(list!=null && list!=undefined){
 			list = $.evalJSON(list);
-			var orderList = this.createNew(listDate, listFilter, list);
+			var orderList = this.createNew(storeid, listDate, listFilter, list);
 			return orderList;
 		}else{
 			return null;
@@ -146,7 +147,7 @@ var MyOrderFilter = {
 // 获取订单列表&并且刷新界面inclue cache
 function fetchAndRenderOrderList(storeid, day, filter){
 	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/filterOrderList';
-	var myOrderList = MyOrderList.getList(day, filter);
+	var myOrderList = MyOrderList.getList(storeid, day, filter);
 	//检查本地缓存是否
     if(myOrderList ==null || myOrderList == undefined) {
         $.ajax({
@@ -167,7 +168,7 @@ function fetchAndRenderOrderList(storeid, day, filter){
             			order.save();
             		};
             		orderList = arrayToJsonArray(orderList);
-            		var myOrderList = MyOrderList.createNew(day, filter, orderList);
+            		var myOrderList = MyOrderList.createNew(storeid, day, filter, orderList);
             		myOrderList.save();
             		// 更新头
             		updateTabHeaders(filter, myOrderList.list.length);
@@ -195,7 +196,7 @@ function fetchAndRenderOrderList(storeid, day, filter){
 // 获取订单列表inclue cache
 function fetchOrderList(storeid, day, filter){
 	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/filterOrderList';
-	var myOrderList = MyOrderList.getList(day, filter);
+	var myOrderList = MyOrderList.getList(storeid, day, filter);
 	//检查本地缓存是否
     if(myOrderList ==null || myOrderList == undefined) {
         $.ajax({
@@ -216,7 +217,7 @@ function fetchOrderList(storeid, day, filter){
             			order.save();
             		};
             		orderList = arrayToJsonArray(orderList);
-            		var myOrderList = MyOrderList.createNew(day, filter, orderList);
+            		var myOrderList = MyOrderList.createNew(storeid, day, filter, orderList);
             		myOrderList.save();
             		// 更新头
             		updateTabHeaders(filter, myOrderList.list.length);
@@ -260,6 +261,7 @@ function fetchOrder(orderId){
 // 获取订单数据和刷新新订单
 function fetchAndRenderOrder(day, filter, orderId){
 	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/filterOrder';
+	// alert("fetchAndRenderOrder");
 	var myOrder = MyOrder.getOrder(orderId);
 	//检查本地缓存是否
     if(myOrder ==null || myOrder == undefined) {
@@ -288,6 +290,68 @@ function fetchAndRenderOrder(day, filter, orderId){
     }else{
     	// 一定是本地不存在的
     }
+    return myOrder;
+}
+//更新订单内容
+function updateOrder(updateTime, orderId){
+	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/filterOrder';
+	// alert("fetchAndRenderOrder");
+	var myOrder = MyOrder.getOrder(orderId);
+	if(myOrder !=null && myOrder != undefined){
+		alert(parseInt(updateTime));
+		if(parseInt(myOrder.orderData.update_time)<parseInt(updateTime)){
+	        $.ajax({
+	            url      : ctUrl,
+	            type     : 'POST',
+	            dataType : 'json',
+	            async	 : 'false',
+	            data	 :{orderId:orderId},
+	            cache    : false,
+	            success  : function(data)
+	            {
+	            	if(data.success == 1){
+	            		myOrder.orderData = data.order;
+	            		myOrder.save();
+	            	}
+	            },
+	            error:function(){
+	                    alert('Request failed');
+	            }
+	        });
+		}
+	}
+    return myOrder;
+
+}
+
+//更新订单内容 并且刷新订单显示
+function updateAndRenderOrder(orderId){
+	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/filterOrder';
+	// alert("fetchAndRenderOrder");
+	var myOrder = MyOrder.getOrder(orderId);
+	if(myOrder !=null && myOrder != undefined){
+		alert(parseInt(updateTime));
+		if(parseInt(myOrder.orderData.update_time)<parseInt(updateTime)){
+	        $.ajax({
+	            url      : ctUrl,
+	            type     : 'POST',
+	            dataType : 'json',
+	            async	 : 'false',
+	            data	 :{orderId:orderId},
+	            cache    : false,
+	            success  : function(data)
+	            {
+	            	if(data.success == 1){
+	            		myOrder.orderData = data.order;
+	            		myOrder.save();
+	            	}
+	            },
+	            error:function(){
+	                    alert('Request failed');
+	            }
+	        });
+		}
+	}
     return myOrder;
 }
 // 获取订单子项&刷新订单子项
@@ -371,7 +435,7 @@ function fetchOrderItems(orderId){
 
 //Render 订单列表
 function renderOrderList(day, filter){
-	var myOrderList = MyOrderList.getList(day, filter);
+	var myOrderList = MyOrderList.getList(storeid, day, filter);
 	var orderList = new Array();
 	if(myOrderList!=null){
 		var len = myOrderList.list.length;
@@ -456,7 +520,7 @@ function renderOrderDetailByData(orderId, myOrderItemList){
 }
 //动态增加订单到列表&&h获取订单在列表中的位置
 function dynamicAddOrderToList(day, filter, myOrder){
-	var myOrderList = MyOrderList.getList(day, filter);
+	var myOrderList = MyOrderList.getList(getStoreId(), day, filter);
 	var pos = -1;
 	if(myOrderList!=null){
 		var len = myOrderList.list.length;
@@ -492,6 +556,7 @@ function renderAddOrder(day, filter, pos, myOrder){
 	var t=s.children().length;
 	var li= document.createElement("li");
 	li.innerHTML= $("#orderTemplate").render(myOrder);
+	$('.order-content',li).css("color","#d10000");
 	//根据区域做过滤
 	if(t == 0){
 		s.append(li);
@@ -522,7 +587,7 @@ function renderDeleOrder(day, filter, orderId){
 
 //动态删除订单在列表&&h获取删除订单在列表中的位置
 function dynamicDeleOrderToList(day, filter, orderId){
-	var myOrderList = MyOrderList.getList(day, filter);
+	var myOrderList = MyOrderList.getList(getStoreId(), day, filter);
 	var pos = -1;
 	if(myOrderList!=null){
 		var len = myOrderList.list.length;
