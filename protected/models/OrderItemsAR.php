@@ -43,13 +43,13 @@ class OrderItemsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('order_id, product_id, number, price, status', 'required'),
+			array('order_id, product_id, product_name, product_type, product_price, number, price, status', 'required'),
 			array('number, status', 'numerical', 'integerOnly'=>true),
-			array('price', 'numerical'),
+			array('price, product_price',  'numerical'),
 			array('order_id, product_id', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, order_id, product_id, number, price, status', 'safe', 'on'=>'search'),
+			array('id, order_id, product_id, product_name, product_type, product_price, number, price, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -75,6 +75,9 @@ class OrderItemsAR extends CActiveRecord
 			'id' => 'ID',
 			'order_id' => 'Order',
 			'product_id' => 'Product',
+			'product_name' => 'Product Name',
+			'product_type' => 'ProductType',
+			'product_price' => 'ProductPrice',
 			'number' => 'Number',
 			'price' => 'Price',
 			'status' => 'Status',
@@ -173,16 +176,19 @@ class OrderItemsAR extends CActiveRecord
 	/*
 		新建订单子项
 	*/
-	public function createItem($sellerId, $orderId, $productId, $num){
-		$product = ProductsAR::model()->getProductByIdSeller($productId, $sellerId);
+	public function createItem($storeId, $orderId, $productId, $num){
+		$product = ProductsAR::model()->getProductByIdSeller($productId, $storeId);
 		if(!empty($product)){
 			if($product->daily_instore>=$num){
-				$product = ProductsAR::model()->buyProduct($productId, $sellerId, $num);
+				$product = ProductsAR::model()->buyProduct($productId, $storeId, $num);
 				if($product->daily_instore>=0){
 					//成功购买
 					$item = new OrderItemsAR;
 					$item->order_id = $orderId;
 					$item->product_id = $productId;
+					$item->product_name = $product->pname;
+					$item->product_price = $product->price;
+					$item->product_type = $typeName = ProductTypeAR::model()->getProductTypeById($product->type_id)->type_name;
 					$item->number = $num;
 					$item->price = $product->price * $num;
 					$item->status = 0;
@@ -190,7 +196,7 @@ class OrderItemsAR extends CActiveRecord
 					return "ok";
 				}else{
 					//防止死锁，恢复
-					$product = ProductsAR::model()->buyProduct($sellerId, $productId, -$num);
+					$product = ProductsAR::model()->buyProduct($storeId, $productId, -$num);
 					return "number is not enough";
 				}
 			}else{

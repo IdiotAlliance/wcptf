@@ -73,12 +73,14 @@ function saveOrderHeaderModify(){
 	var phone = $('#ModifyOrderHeaderForm_phone').attr("value");
 	var desc = $('#ModifyOrderHeaderForm_desc').attr("value");
 	var total = $('#ModifyOrderHeaderForm_total').attr("value");
+	var timestamp = (new Date()).valueOf();
+	alert(timestamp);
 	if(ctUrl != '') {
 	    $.ajax({
 	        url      : ctUrl,
 	        type     : 'POST',
 	        dataType : 'json',
-	        data 	 : {orderId:orderId, orderName:name, phone:phone, desc:desc, total:total},
+	        data 	 : {orderId:orderId, orderName:name, phone:phone, desc:desc, total:total, updateTime:timestamp},
 	        cache    : false,
 	        success  : function(data)
 	        {
@@ -296,7 +298,7 @@ function cancel(){
 	        url      : ctUrl,
 	        type     : 'POST',
 	        dataType : 'json',
-	        data 	 : {orderId:orderId},
+	        data 	 : {orderId:orderId, storeid: getStoreId()},
 	        cache    : false,
 	        success  : function(data)
 	        {
@@ -339,7 +341,7 @@ function batCancelOrders(){
 	        url      : ctUrl,
 	        type     : 'POST',
 	        dataType : 'json',
-	        data 	 : {orderIds:orders},
+	        data 	 : {orderIds:orders, storeid: getStoreId()},
 	        cache    : false,
 	        success  : function(data)
 	        {
@@ -379,7 +381,7 @@ function finish(){
 	        url      : ctUrl,
 	        type     : 'POST',
 	        dataType : 'json',
-	        data 	 : {orderId:orderId},
+	        data 	 : {orderId:orderId, storeid: getStoreId()},
 	        cache    : false,
 	        success  : function(data)
 	        {
@@ -420,7 +422,7 @@ function batfinishOrders(){
 	        url      : ctUrl,
 	        type     : 'POST',
 	        dataType : 'json',
-	        data 	 : {orderIds:orders},
+	        data 	 : {orderIds:orders, storeid: getStoreId()},
 	        cache    : false,
 	        success  : function(data)
 	        {

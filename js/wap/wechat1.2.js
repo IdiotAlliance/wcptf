@@ -83,7 +83,7 @@ function dataload(needsort,needproduct,needdeliveryarea,needrecommend,needshopin
         type:'POST',
         dataType: 'json',
         url:  AJAXFORDATA,
-        data:{sellerid:sellerid,needsort:needsort,needproduct:needproduct,needdeliveryarea:needdeliveryarea,needrecommend:needrecommend,needshopinfo:needshopinfo},
+        data:{sid:storeid,needsort:needsort,needproduct:needproduct,needdeliveryarea:needdeliveryarea,needrecommend:needrecommend,needshopinfo:needshopinfo},
         success:function(data){
             if(data.error=='0'){
             	if(mydatasource==null){
@@ -128,7 +128,7 @@ function orderload(){
         type:'POST',
         dataType: 'json',
         url:  AJAXFORRESULT,
-        data:{sellerid:sellerid,wapKey:identitykey,openid:openid,endtime:null,num:1},
+        data:{storeid:storeid,wapKey:identitykey,openid:openid,endtime:null,num:1},
         success:function(data,textStatus){
             if(data.success=='1'){
             	callsuccesspay(data.result[0]);
@@ -1141,12 +1141,15 @@ function submit(){
 		mytips=$('#tips').val();
 		writeinfolocal(myuesrname,myphonenumber,myareaid,myareadesc);
 
+		//fake
+		usecard=0;
+
 		if(confirm('确认提交订单？')){
 			$.ajax({
 		        type:'POST',
 		        dataType: 'json',
 		        url:  AJAXFORSUBMIT,
-		        data:{sellerid:sellerid,openid:openid,wapKey:identitykey,name:myuesrname,phone:myphonenumber, areaid:myareaid,areadesc:myareadesc,tips:mytips, products:products, nums:nums},
+		        data:{storeid:storeid,openid:openid,wapKey:identitykey,name:myuesrname,phone:myphonenumber,usecard:usecard,areaid:myareaid,areadesc:myareadesc,tips:mytips, products:products, nums:nums},
 		        success:function(data,textStatus){
 		            if(data.success=='1'){
 						Toast('下单成功',2000);
