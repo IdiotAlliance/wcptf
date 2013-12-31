@@ -289,12 +289,21 @@ class ProductsAR extends CActiveRecord
 	 * @param unknown $storeId
 	 * @deprecated
 	 */
-	public function getUndeletedProductsBystoreId($storeId){
+	public function getUndeletedProductsBySellerId($storeId){
 		$products = ProductsAR::model()->findAll('store_id=:storeId and deleted<>1', 
 												 array(':storeId'=>$storeId));
 		return $products;
 	}
 	
+	/**
+	 * @param unknown $storeId
+	 */
+	public function getUndeletedProductsBystoreId($storeId){
+		$products = ProductsAR::model()->findAll('store_id=:storeId and deleted<>1', 
+												 array(':storeId'=>$storeId));
+		return $products;
+	}
+
 	/**
 	 * 根据storeId获取产品，以及它们的图片url
 	 * @param unknown $storeId
