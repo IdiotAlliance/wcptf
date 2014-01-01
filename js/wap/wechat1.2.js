@@ -1149,7 +1149,7 @@ function submit(){
 		        type:'POST',
 		        dataType: 'json',
 		        url:  AJAXFORSUBMIT,
-		        data:{storeid:storeid,openid:openid,wapKey:identitykey,name:myuesrname,phone:myphonenumber,usecard:usecard,areaid:myareaid,areadesc:myareadesc,tips:mytips, products:products, nums:nums},
+		        data:{sellerid:sellerid,storeid:storeid,openid:openid,wapKey:identitykey,name:myuesrname,phone:myphonenumber,usecard:usecard,areaid:myareaid,areadesc:myareadesc,tips:mytips, products:products, nums:nums},
 		        success:function(data,textStatus){
 		            if(data.success=='1'){
 						Toast('下单成功',2000);

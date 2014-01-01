@@ -11,6 +11,7 @@ class OrderController extends Controller
 		$openid=0;
 		$name="";
 		$areaid = 0;
+		$sellerid = 0;
 		$storeid = 0;
 		$usecard = false;
 		$areadesc = "";
@@ -48,6 +49,14 @@ class OrderController extends Controller
 			$storeid = $_POST['storeid'];
 		}else{
 			$result = "storeid is null";
+			$arr=array('success'=>'0', 'result'=>$result);
+			echo json_encode($arr);
+			exit;
+		}
+		if(isset($_POST['sellerid'])){
+			$sellerid = $_POST['sellerid'];
+		}else{
+			$result = "sellerid is null";
 			$arr=array('success'=>'0', 'result'=>$result);
 			echo json_encode($arr);
 			exit;
@@ -235,6 +244,9 @@ class OrderController extends Controller
 				
 			}
 			OrdersAR::model()->setOrderTotal($order->id, $total);
+			//订单消息
+			OrdermsgsAR::model()->insertMsg($sellerid, $order->id, $storeid, $order->ctime, 0);
+
 			$arr=array('success'=>'1', 'result'=>$result);
 		} else{
 			$arr=array('success'=>'2', 'result'=>$result);
