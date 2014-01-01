@@ -1,77 +1,4 @@
 <style type="text/css">
-	body{
-		background: #f6f7f1 url("<?php echo Yii::app()->baseUrl?>/img/account_foreground.png") repeat 0 0;
-		font-size: 16px;
-	}
-	#main_container{
-		position: absolute;
-		left: 0px;
-		top: 0px;
-		right: 0px;
-		bottom: 0px;
-	}
-	#nav_bar_container{
-		position: absolute;
-		width: 900px;
-		left: 50%;
-		margin-left: -450px;
-		top: 40px;
-	}
-	#nav_bar_container .nav_item{
-		color: #999999;
-		font-size: 16px;
-		line-height: 30px;
-		display: block;
-		text-shadow: 1px 1px rgba(255,255,255,0.75);
-		cursor: pointer;
-		display: inline-block;
-		min-width: 120px;
-		text-decoration: none;
-	}
-	#nav_bar_container .nav_item:hover{
-		color: #666666;
-	}
-	#nav_bar_container .nav_item.active{
-		color: #444444;
-	}
-	#nav_bar_container .nav_title{
-		color: #6a8b82;
-		font-size: 23px;
-		line-height: 25px;
-	}
-	#tab_container{
-		position: absolute;
-		width: 900px;
-		min-height: 500px;
-		left: 50%;
-		margin-left: -450px;
-		top: 100px;
-	}
-	#tab_container .tab{
-		position: relative;
-		left: 0px;
-		top: 0px;
-		width: 100%;
-		min-height: 500px;
-		display: none;
-	}
-	#tab_container .stab{
-		background-color: #ffffff;
-		border-radius: 1px;
-		box-shadow: 0px 0px 5px #808080;
-	}
-	#tab_container .tab.active{
-		display: block;
-	}
-	#tab_container .tab .tab_title{
-		font-size: 24px;
-		font-family: "Helvetica Neue", Helvetica, Arial,"Microsoft Yahei","SimHei",Sans-serif;
-		line-height: 24px;
-		margin: 20px 0 50px 0;
-		color: #84a099;
-		text-align: center;
-	}
-
 	#tab_stores .store_item{
 		position: relative;
 		float: left;
@@ -341,64 +268,48 @@
 		width: 715px;
 	}
 </style>
-
-<div id="main_container">
-	<div id="nav_bar_container" class="row">
-		<span class="nav_title nav_item">微积分</span>
-		<span class="nav_item active" data-toggle="tab_stores">店铺管理</span>
-		<span class="nav_item" data-toggle="tab_sdmessages">消息设置</span>
-		<span class="nav_item" data-toggle="tab_members">会员管理</span>
-		<span class="nav_item" data-toggle="tab_settings">账户设置</span>
-		<span class="nav_item" data-toggle="tab_help">帮助</span>
-	</div>
 	
-	<div id="tab_container">
-		<div>
-		<?php if($errmsg) 
-		echo '<div class="alert alert-error" id="error_alert">'.
-		  		 	'<button type="button" class="close" data-dismiss="alert">&times;</button>'.
-		  		 	'<strong>错误&nbsp;</strong>'.$errmsg.'</div>' ?>
-		</div>
-		<div class="tab active" id="tab_stores">
-			<div class="tab_title">
-				<?php 
-					if(count($stores) <= 0) 
-						echo "您还没有店铺，请先新建一个";
-					else 
-						echo "欢迎使用微积分，这些是您的店铺";
-				?>
-			</div>
-			<?php
-				foreach ($stores as $store) {
-					echo '<div class="store_item">'.
-						 '<div class="store_item_padding padding1"></div>'.
-						 '<div class="store_item_padding padding2"></div>'.
-						 '<div class="store_item_padding padding3"></div>'.
-						 '<div class="store_item_padding padding4"></div>'.
-						 '<a href="'.
-						 Yii::app()->createUrl('takeAway/members').
-						 '?sid='.$store->id.'" class="store_folder">'.
-						 '<span class="store_folder_name">'.$store->name.'</span>'.
-						 	'<div class="store_tools" id="'.$store->id.'" name="'.$store->name.'">'.
-						 		'<i class="store_tool_remove store_tool_btn icon-remove icon-white"></i>'.
-						 		'<i class="store_tool_edit store_tool_btn icon-edit icon-white"></i>'.
-						 	'</div>'.
-						 '</a>'.
-						 '</div>';
-				}
-				// add the default store
+<div id="tab_container">
+	<div>
+	<?php if($errmsg) 
+	echo '<div class="alert alert-error" id="error_alert">'.
+	  		 	'<button type="button" class="close" data-dismiss="alert">&times;</button>'.
+	  		 	'<strong>错误&nbsp;</strong>'.$errmsg.'</div>' ?>
+	</div>
+	<div class="tab active" id="tab_stores">
+		<div class="tab_title">
+			<?php 
+				if(count($stores) <= 0) 
+					echo "您还没有店铺，请先新建一个";
+				else 
+					echo "欢迎使用微积分，这些是您的店铺";
 			?>
-			<div class="store_item">
-				<a href="#" onclick="addStore()" class="store_new"></a>
-			</div>
 		</div>
-		<div class="tab stab" id="tab_sdmessages"></div>
-		<div class="tab stab" id="tab_members"></div>
-		<div class="tab stab" id="tab_settings"></div>
-		<div class="tab stab" id="tab_help"></div>
+		<?php
+			foreach ($stores as $store) {
+				echo '<div class="store_item">'.
+					 '<div class="store_item_padding padding1"></div>'.
+					 '<div class="store_item_padding padding2"></div>'.
+					 '<div class="store_item_padding padding3"></div>'.
+					 '<div class="store_item_padding padding4"></div>'.
+					 '<a href="'.
+					 Yii::app()->createUrl('takeAway/members').
+					 '?sid='.$store->id.'" class="store_folder">'.
+					 '<span class="store_folder_name">'.$store->name.'</span>'.
+					 	'<div class="store_tools" id="'.$store->id.'" name="'.$store->name.'">'.
+					 		'<i class="store_tool_remove store_tool_btn icon-remove icon-white"></i>'.
+					 		'<i class="store_tool_edit store_tool_btn icon-edit icon-white"></i>'.
+					 	'</div>'.
+					 '</a>'.
+					 '</div>';
+			}
+			// add the default store
+		?>
+		<div class="store_item">
+			<a href="#" onclick="addStore()" class="store_new"></a>
+		</div>
 	</div>
 </div>
-
 <div id="mask"></div>
 <div id="modal_add_store" class="modal">
 
@@ -554,17 +465,17 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		$('.nav_item').click(function(event){
-			src = event.target;
-			$('.nav_item').removeClass('active');
-			$(src).addClass('active');
-			$('.tab').removeClass('active');
-			if(src.getAttribute('data-toggle')){
-				$('#' + src.getAttribute('data-toggle')).addClass('active');
-			}else{
+		// $('.nav_item').click(function(event){
+		// 	src = event.target;
+		// 	$('.nav_item').removeClass('active');
+		// 	$(src).addClass('active');
+		// 	$('.tab').removeClass('active');
+		// 	if(src.getAttribute('data-toggle')){
+		// 		$('#' + src.getAttribute('data-toggle')).addClass('active');
+		// 	}else{
 
-			}
-		});
+		// 	}
+		// });
 		$('.modal_close').click(function(event){
 			// if(event.srcElement) console.log('foo');
 			src = event.target;

@@ -90,4 +90,9 @@ class MsgQueueAR extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+	public static function getMsgsBySellerId($sellerId){
+		return MsgQueueAR::model()->findAll('seller_id=:sellerId',
+											array(':sellerId'=>$sellerId));
+	}
 }

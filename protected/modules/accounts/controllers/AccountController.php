@@ -4,8 +4,9 @@
  */
 class AccountController extends Controller{
 
+	public $currentPage = null;
 	public $layout = 'account';
-	public $defaultAction = "myaccount";
+	public $defaultAction = "stores";
 	public $typeAtrributes    = ['type_name', 'type_description', 'pic_url'];
 	public $productAttributes = ['pname', 'price', 'credit', 'description', 
 								 'stime', 'etime', 'status', 'instore', 'richtext', 
@@ -27,10 +28,13 @@ class AccountController extends Controller{
             ); 
     }
 
-	public function actionMyaccount(){
+
+	public function actionStores(){
+		$this->pageTitle = "店铺管理";
 		if(Yii::app()->user->isGuest){
 			$this->redirect('index.php/accounts/login');
 		}else{
+			$this->currentPage = 'stores';
 			$errmsg = null;
 			// edit store name
 			if(isset($_POST['EditStoreForm'])){

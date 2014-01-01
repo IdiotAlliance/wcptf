@@ -60,7 +60,7 @@
 							if($store->id != $this->currentStore->id){
 								$url = Yii::app()->request->url;
 								$url = preg_replace('/(\d+)$/', $store->id, $url);
-								echo '<div class="store_item" onclick="window.location='.$url.'">'.$store->name.'</div>';
+								echo '<div class="store_item" onclick="window.location='."'".$url."'".'">'.$store->name.'</div>';
 							}
 						}
 					?>

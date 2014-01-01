@@ -27,7 +27,7 @@ class LoginController extends Controller
                         $user = UsersAR::model()->getUserByEmail($model->username);
                         switch ($user->seller_type) {
                             case "1":                            
-                                $this->redirect(array('/accounts/account/myaccount'));
+                                $this->redirect(array('/accounts/account/stores'));
                                 break;  
                             default:
                                 $this->redirect(Yii::app()->user->returnUrl);

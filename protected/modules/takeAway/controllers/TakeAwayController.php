@@ -12,7 +12,7 @@ class TakeAwayController extends Controller{
 		parent::__construct($id, $module);
 		
 		// get stores information from db
-		$this->stores = StoreAR::model()->getStoreByUserId(Yii::app()->user->sellerId);
+		$this->stores = StoreAR::model()->getUndeletedStoreByUserId(Yii::app()->user->sellerId);
 	}
 
 	/**
