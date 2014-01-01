@@ -221,6 +221,7 @@ function fetchOrderList(storeid, day, filter){
             		myOrderList.save();
             		// 更新头
             		updateTabHeaders(filter, myOrderList.list.length);
+            		updateTabHeadersByLocal();
             	}
             },
             error:function(){

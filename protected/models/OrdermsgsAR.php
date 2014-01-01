@@ -1,20 +1,20 @@
 <?php
 
 /**
- * This is the model class for table "msg_queue".
+ * This is the model class for table "ordermsgs".
  *
- * The followings are the available columns in table 'msg_queue':
+ * The followings are the available columns in table 'ordermsgs':
  * @property string $id
- * @property string $seller_id
- * @property string $msg_id
- * @property integer $type
+ * @property string $store_id
+ * @property string $ctime
+ * @property integer $read
  */
-class MsgQueueAR extends CActiveRecord
+class OrdermsgsAR extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return MsgQueueAR the static model class
+	 * @return OrdermsgsAR the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -26,7 +26,7 @@ class MsgQueueAR extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'msg_queue';
+		return 'ordermsgs';
 	}
 
 	/**
@@ -37,12 +37,12 @@ class MsgQueueAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, msg_id, type', 'required'),
-			array('type', 'numerical', 'integerOnly'=>true),
-			array('seller_id, msg_id', 'length', 'max'=>11),
+			array('order_id, store_id, ctime', 'required'),
+			array('read', 'numerical', 'integerOnly'=>true),
+			array('store_id', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, seller_id, msg_id, type', 'safe', 'on'=>'search'),
+			array('id, order_id, store_id, ctime, read', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -64,9 +64,10 @@ class MsgQueueAR extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'seller_id' => 'Seller',
-			'msg_id' => 'Msg',
-			'type' => 'Type',
+			'order_id' => 'Order',
+			'store_id' => 'Store',
+			'ctime' => 'Ctime',
+			'read' => 'Read',
 		);
 	}
 
@@ -82,22 +83,25 @@ class MsgQueueAR extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id,true);
-		$criteria->compare('seller_id',$this->seller_id,true);
-		$criteria->compare('msg_id',$this->msg_id,true);
-		$criteria->compare('type',$this->type);
+		$criteria->compare('order_id',$this->order_id,true);
+		$criteria->compare('store_id',$this->store_id,true);
+		$criteria->compare('ctime',$this->ctime,true);
+		$criteria->compare('read',$this->read);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
 
-	public function insertMsg($sellerId, $msgId, $type){
-		$msgQueue = new MsgQueueAR;
-		$msgQueue->seller_id = $sellerId;
-		$msgQueue->msg_id = $msgId;
-		$msgQueue->type = $type;
-		$msgQueue->save();
+	//插入订单消息
+	public function insertMsg($sellerId, $orderId, $storeId, $ctime, $read){
+		$ordermsgs = new OrdermsgsAR;
+		$ordermsgs->order_id = $orderId;
+		$ordermsgs->store_id = $storeId;
+		$ordermsgs->ctime = $ctime;
+		$ordermsgs->read = $read;
+		$ordermsgs->save();
+		//插入消息队列
+		MsgQueueAR::model()->insertMsg($sellerId, $ordermsgs->id, 1);
 	}
-
-
 }
