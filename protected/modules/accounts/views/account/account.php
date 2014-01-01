@@ -48,11 +48,11 @@
 		top: 100px;
 	}
 	#tab_container .tab{
-		position: absolute;
+		position: relative;
 		left: 0px;
 		top: 0px;
-		right: 0px;
-		bottom: 0px;
+		width: 100%;
+		min-height: 500px;
 		display: none;
 	}
 	#tab_container .stab{
@@ -93,9 +93,76 @@
 		background-color: #ece8d5;
 		border-color: #c8bfa5;
 		text-decoration: none;
+	}
+
+	#tab_stores .store_item .store_folder .store_folder_name{
+		position: relative;
+		width: 152px;
+		top: 45px;
+		text-align: center;
 		color: #ffffff;
-		text-shadow: 1px 1px rgba(0, 0, 0, 0.2);
-		line-height: 110px;
+		text-shadow: 1px 1px rgba(0, 0, 0, 0.5);
+		text-decoration: none;
+	}
+
+	#tab_stores .store_item .store_item_padding{
+		position: absolute;
+	}
+
+	#tab_stores .store_item .store_item_padding.padding1{
+		width: 45px;
+		height: 220px;
+		left: 0;
+		top: 0;
+	}
+
+	#tab_stores .store_item .store_item_padding.padding2{
+		width: 152px;
+		height: 20px;
+		left: 45px;
+		top: 0;
+	}
+
+	#tab_stores .store_item .store_item_padding.padding3{
+		width: 45px;
+		height: 220px;
+		left: 196px;
+		top: 0;
+	}
+
+	#tab_stores .store_item .store_item_padding.padding4{
+		width: 152px;
+		height: 100px;
+		left: 45px;
+		top: 132px;
+	}
+
+	#tab_stores .store_item .store_tools{
+		position: absolute;
+		width: 152px;
+		height: 0;
+		bottom: 1px;
+		left: 0;
+		overflow: hidden;
+		border-bottom-left-radius: 5px;
+		border-bottom-right-radius: 5px;
+		background-color: #222;
+		opacity: 0.5;
+	}
+
+	#tab_stores .store_item .store_tools .store_tool_btn{
+		float: right;
+		margin-top: 7px;
+		width: 14px;
+		height: 14px;
+		border-radius: 4px;
+		border: 1px solid #fff;
+		margin-right: 5px;
+	}
+
+	#tab_stores .store_item .store_tools .store_tool_btn:hover{
+		cursor: pointer;
+		background-color: #888;
 	}
 
 	#tab_stores .store_item .store_new{
@@ -197,12 +264,19 @@
 	.modal .alert{
 		width: 725px;
 	}
-	#modal_add_store .modal_content{
+	.modal .modal_content{
 		overflow: auto;
 		width: 100%;
 		height: 280px;
 		padding: 10px;
 	}
+	.modal .modal_footer{
+		float: bottom;
+		border-top: 1px solid #ddd;
+		background-color: #d3e8db;
+		height: 50px;
+	}
+
 	#modal_add_store .modal_content table{
 		margin-top: 17px;
 	}
@@ -219,12 +293,6 @@
 	}
 	#modal_add_store .modal_content .td_select{
 		padding-left: 20px;
-	}
-	#modal_add_store .modal_footer{
-		float: bottom;
-		border-top: 1px solid #ddd;
-		background-color: #d3e8db;
-		height: 50px;
 	}
 
 	#modal_progress_progbar{
@@ -256,6 +324,22 @@
 	#modal_progress_ok.active:hover{
 		cursor: pointer;
 	}
+	#modal_edit_store form{
+		background-color: #fff;
+		padding-left: 10px;
+		padding-bottom: 5px;
+		margin-left: 15px;
+		margin-top: 20px;
+		width: 715px;
+	}
+	#modal_delete_store form{
+		background-color: #fff;
+		padding-left: 10px;
+		padding-bottom: 5px;
+		margin-left: 15px;
+		margin-top: 20px;
+		width: 715px;
+	}
 </style>
 
 <div id="main_container">
@@ -267,7 +351,14 @@
 		<span class="nav_item" data-toggle="tab_settings">账户设置</span>
 		<span class="nav_item" data-toggle="tab_help">帮助</span>
 	</div>
+	
 	<div id="tab_container">
+		<div>
+		<?php if($errmsg) 
+		echo '<div class="alert alert-error" id="error_alert">'.
+		  		 	'<button type="button" class="close" data-dismiss="alert">&times;</button>'.
+		  		 	'<strong>错误&nbsp;</strong>'.$errmsg.'</div>' ?>
+		</div>
 		<div class="tab active" id="tab_stores">
 			<div class="tab_title">
 				<?php 
@@ -279,10 +370,21 @@
 			</div>
 			<?php
 				foreach ($stores as $store) {
-					echo '<div class="store_item"><a href="'.
+					echo '<div class="store_item">'.
+						 '<div class="store_item_padding padding1"></div>'.
+						 '<div class="store_item_padding padding2"></div>'.
+						 '<div class="store_item_padding padding3"></div>'.
+						 '<div class="store_item_padding padding4"></div>'.
+						 '<a href="'.
 						 Yii::app()->createUrl('takeAway/members').
 						 '?sid='.$store->id.'" class="store_folder">'.
-						 $store->name.'</a></div>';
+						 '<span class="store_folder_name">'.$store->name.'</span>'.
+						 	'<div class="store_tools" id="'.$store->id.'" name="'.$store->name.'">'.
+						 		'<i class="store_tool_remove store_tool_btn icon-remove icon-white"></i>'.
+						 		'<i class="store_tool_edit store_tool_btn icon-edit icon-white"></i>'.
+						 	'</div>'.
+						 '</a>'.
+						 '</div>';
 				}
 				// add the default store
 			?>
@@ -345,7 +447,100 @@
 	</div>
 	<div class="modal_footer">
 		<div class="modal_ok modal_btn" onclick="submitAddStore()">确定</div>
-		<div class="modal_cancel modal_btn">取消</div>
+		<div class="modal_cancel modal_btn" data-toggle="modal_add_store">取消</div>
+	</div>
+</div>
+<div id="modal_edit_store" class="modal">
+	<div class="modal_header">
+		编辑店铺
+		<a href="javascript:" class="modal_close" data-toggle="modal_edit_store"></a>
+	</div>
+	<div class="modal_content">
+		
+		<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+		    'id'=>'edit_store_form',
+		    'enableClientValidation'=>true,
+		    'clientOptions'=>array(
+		        'validateOnSubmit'=>true,
+		    ),
+		    'htmlOptions'=>array('class'=>'well row'),
+		)); ?>
+		<div class="hidden">
+		<?php echo $form->textFieldRow($editForm, 'sid', 
+	                                array(
+	                                    'class'=>'input-large', 
+	                                    )); ?>
+        </div>
+	    <?php echo $form->textFieldRow($editForm, 'newname', 
+	                                array(
+	                                    'class'=>'input-large', 
+	                                    'prepend'=>'<i class="icon-home"></i>',
+	                                    'placeholder'=>'请输入新的店铺名称',
+	                                    'tabindex'=>'1',
+	                                    )); ?>
+	    <?php echo $form->captchaRow($editForm, 'vericode', 
+	    							array(
+										'class'=>'input-large',
+										'prepend'=>'<i class="icon-ok-circle"></i>',
+										'captchaOptions'=>array(
+	                                        'clickableImage'=>true,
+	                                        'showRefreshButton'=>true,
+	                                        'buttonLabel'=>'换一张',
+                                        ),
+                                    'enableAjaxValidation'=>false,
+                                    )); ?>
+		<input type="submit" class="submit hidden" id="modal_edit_submit">
+		<?php $this->endWidget(); ?>
+	</div>
+	<div class="modal_footer">
+		<div class="modal_ok modal_btn" onclick="submitEdit()">确定</div>
+		<div class="modal_cancel modal_btn" data-toggle="modal_edit_store">取消</div>
+	</div>
+</div>
+<div id="modal_delete_store" class="modal">
+	<div class="modal_header">
+		删除店铺
+		<a href="javascript:" class="modal_close" data-toggle="modal_delete_store"></a>
+	</div>
+	<div class="modal_content">
+		<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+		    'id'=>'delete_store_form',
+		    'enableClientValidation'=>true,
+		    'clientOptions'=>array(
+		        'validateOnSubmit'=>true,
+		    ),
+		    'htmlOptions'=>array('class'=>'well row'),
+		)); ?>
+		<div class="hidden">
+		<?php echo $form->textFieldRow($deleteForm, 'sid', 
+	                                array(
+	                                    'class'=>'input-large', 
+	                                    )); ?>
+        </div>
+	    <?php echo $form->passwordFieldRow($deleteForm, 'pass', 
+	                                array(
+	                                    'class'=>'input-large', 
+	                                    'prepend'=>'<i class="icon-lock"></i>',
+	                                    'placeholder'=>'请输入密码',
+	                                    'tabindex'=>'1',
+	                                    )); ?>
+	    <?php echo $form->captchaRow($deleteForm, 'vericode', 
+	    							array(
+										'class'=>'input-large',
+										'prepend'=>'<i class="icon-ok-circle"></i>',
+										'captchaOptions'=>array(
+	                                        'clickableImage'=>true,
+	                                        'showRefreshButton'=>true,
+	                                        'buttonLabel'=>'换一张',
+                                        ),
+                                    'enableAjaxValidation'=>false,
+                                    )); ?>
+		<input type="submit" class="submit hidden" id="modal_delete_submit">
+		<?php $this->endWidget(); ?>
+	</div>
+	<div class="modal_footer">
+		<div class="modal_ok modal_btn" onclick="submitDelete()">确定</div>
+		<div class="modal_cancel modal_btn" data-toggle="modal_delete_store">取消</div>
 	</div>
 </div>
 <div id="modal_progress" class="modal">
@@ -360,17 +555,68 @@
 
 	$(document).ready(function(){
 		$('.nav_item').click(function(event){
-			src = $(event.srcElement);
+			src = event.target;
 			$('.nav_item').removeClass('active');
-			src.addClass('active');
+			$(src).addClass('active');
 			$('.tab').removeClass('active');
-			$('#' + src.attr('data-toggle')).addClass('active');
+			if(src.getAttribute('data-toggle')){
+				$('#' + src.getAttribute('data-toggle')).addClass('active');
+			}else{
+
+			}
 		});
 		$('.modal_close').click(function(event){
-			src = $(event.srcElement);
-			$('#' + src.attr('data-toggle')).hide('fast');
-			$('#' + src.attr('data-toggle')).find('input').val('');
+			// if(event.srcElement) console.log('foo');
+			src = event.target;
+			if(src.getAttribute('data-toggle')){
+				$('#' + src.getAttribute('data-toggle')).hide('fast');
+				$('#' + src.getAttribute('data-toggle')).find('input').val('');
+			}
 			$('#mask').hide('fast');
+		});
+		$('.modal_cancel').click(function(event){
+			src = event.target;
+			if(src.getAttribute('data-toggle')){
+				$('#' + src.getAttribute('data-toggle')).hide('fast');
+				$('#' + src.getAttribute('data-toggle')).find('input').val('');
+			}
+			$('#mask').hide('fast');
+		});
+		$('.store_item_padding').mouseenter(function(event){
+			$(event.target).parent().find('.store_tools').animate({height: "0"}, 'fast');
+		});
+		$('.store_folder').mouseenter(function(event){
+			src = event.target;
+			$(src).find('.store_tools').animate({height: "30px"}, 'fast');
+			// $('.store_tools', $(src).parent()).animate({height: "30px"}, 'fast');
+		});
+		$('.store_tool_edit').click(function(event){
+			src = $(event.target);
+			event.preventDefault();
+			$('#mask').show('fast');
+			$('#modal_edit_store').show('fast');
+			$('#mask').click(function(){
+				$('#modal_edit_store').hide('fast');
+				$('#mask').hide('fast');
+			});
+			$('.store_tools').animate({height: "0"}, 'fast');
+			$('#EditStoreForm_sid').val(src.parent().attr('id'));
+			$('#EditStoreForm_newname').val(src.parent().attr('name'));
+			$('#EditStoreForm_vericode').val('');
+		});
+		$('.store_tool_remove').click(function(){
+			src = $(event.target);
+			event.preventDefault();
+			$('#mask').show('fast');
+			$('#modal_delete_store').show('fast');
+			$('#mask').click(function(){
+				$('#modal_delete_store').hide('fast');
+				$('#mask').hide('fast');
+			});
+			$('.store_tools').animate({height: "0"}, 'fast');
+			$('#DeleteStoreForm_sid').val(src.parent().attr('id'));
+			$('#DeleteStoreForm_pass').val('');
+			$('#DeleteStoreForm_vericode').val('');
 		});
 	});
 
@@ -498,5 +744,13 @@
 				console.log(r);
 			}
 		});
+	}
+
+	function submitEdit(){
+		$('#modal_edit_submit').click();
+	}
+
+	function submitDelete(){
+		$('#modal_delete_submit').click();	
 	}
 </script>

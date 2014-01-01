@@ -13,14 +13,68 @@ class AccountController extends Controller{
 	public $districtAttributes = ['name', 'description'];
 	public $posterAttributes   = ['name', 'phone', 'description'];
 
+	public function actions()
+    { 
+            return array( 
+                    // captcha action renders the CAPTCHA image displayed on the contact page
+                    'captcha'=>array(
+                            'class'=>'CCaptchaAction',
+                            'backColor'=>0xFFFFFF, 
+                            'maxLength'=>'4',       // 最多生成几个字符
+                             'minLength'=>'4',       // 最少生成几个字符
+                           'height'=>'40'
+                    ), 
+            ); 
+    }
+
 	public function actionMyaccount(){
 		if(Yii::app()->user->isGuest){
 			$this->redirect('index.php/accounts/login');
 		}else{
+			$errmsg = null;
+			// edit store name
+			if(isset($_POST['EditStoreForm'])){
+				// var_dump(123);
+				// exit();
+				$uid = Yii::app()->user->sellerId;
+				$model = new EditStoreForm();
+				$model->attributes = $_POST['EditStoreForm'];
+				$store = StoreAR::model()->findByPK($model->sid); 
+				if($store && !StoreAR::model()->nameExsits($uid, $model->newname)){
+					$store->name = $model->newname;
+					$store->update();
+				}else{
+					$errmsg = "修改失败，店铺名称不能重复";
+				}
+			}
+			if(isset($_POST['DeleteStoreForm'])){
+				$uid = Yii::app()->user->sellerId;
+				$user  = UsersAR::model()->findByPK($uid);
+				$model = new DeleteStoreForm();
+				$model->attributes = $_POST['DeleteStoreForm'];
+				if(md5($model->pass) == $user->password){
+					$store = StoreAR::model()->findByPK($model->sid);
+					if($store){
+						$store->deleted = 1;
+						$store->update();
+					}else{
+						$errmsg = "指定的店铺不存在";
+					}
+				}else{
+					$errmsg = "密码错误，无法删除店铺";
+				}
+			}
+			$editForm = new EditStoreForm();
+			$deleteForm = new DeleteStoreForm();
 			$uid = Yii::app()->user->sellerId;
 			$user   = UsersAR::model()->findByPK($uid);
-			$stores = StoreAR::model()->getStoreByUserId($uid);
-			$this->render("account", array('user'=>$user, 'stores'=>$stores));
+			$stores = StoreAR::model()->getUndeletedStoreByUserId($uid);
+			$this->render("account", array('user'=>$user, 
+										   'stores'=>$stores, 
+										   'editForm'=>$editForm,
+										   'deleteForm'=>$deleteForm,
+										   'errmsg'=>$errmsg));
+
 		}
 	}
 

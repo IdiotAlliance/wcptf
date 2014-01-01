@@ -135,4 +135,16 @@ class StoreAR extends CActiveRecord
 									  array(':userId'=>$userId));
 		}
 	}
+
+	public static function getUndeletedStoreByUserId($userId){
+		if($userId && $userId >= 0){
+			return StoreAR::model()->findAll('seller_id=:userId and deleted <> 1',
+									  array(':userId'=>$userId));
+		}
+	}
+
+	public static function nameExsits($userId, $name){
+		return StoreAR::model()->find('seller_id=:userId and name=:name',
+									  array(':userId'=>$userId, ':name'=>$name)) ? true : false;
+	}
 }
