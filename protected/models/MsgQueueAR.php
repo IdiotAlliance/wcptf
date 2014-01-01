@@ -91,12 +91,12 @@ class MsgQueueAR extends CActiveRecord
 		));
 	}
 
-<<<<<<< HEAD
+
 	public static function getMsgsBySellerId($sellerId){
 		return MsgQueueAR::model()->findAll('seller_id=:sellerId',
 											array(':sellerId'=>$sellerId));
 	}
-=======
+
 	public function insertMsg($sellerId, $msgId, $type){
 		$msgQueue = new MsgQueueAR;
 		$msgQueue->seller_id = $sellerId;
@@ -105,6 +105,4 @@ class MsgQueueAR extends CActiveRecord
 		$msgQueue->save();
 	}
 
-
->>>>>>> 3344806844f41bf0dc48bf89ffb9be2d157c3cb4
 }
