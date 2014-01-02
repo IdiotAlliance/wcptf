@@ -248,7 +248,7 @@ function getPosters(){
 	        url      : ctUrl,
 	        type     : 'POST',
 	        dataType : 'html',
-	        data 	 : {orderId:orderId},
+	        data 	 : {orderId:orderId, storeid: getStoreId()},
 	        cache    : false,
 	        success  : function(html)
 	        {
@@ -275,7 +275,7 @@ function setPosters(){
 		        url      : ctUrl,
 		        type     : 'POST',
 		        dataType : 'json',
-		        data 	 : {orderId:orderId, posterId:posterId},
+		        data 	 : {orderId:orderId, posterId:posterId, storeid: getStoreId()},
 		        cache    : false,
 		        success  : function(data)
 		        {

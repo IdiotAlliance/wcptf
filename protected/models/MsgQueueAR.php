@@ -99,5 +99,7 @@ class MsgQueueAR extends CActiveRecord
 		$msgQueue->save();
 	}
 
+	
+
 
 }
