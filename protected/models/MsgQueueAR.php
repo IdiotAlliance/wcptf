@@ -91,6 +91,12 @@ class MsgQueueAR extends CActiveRecord
 		));
 	}
 
+
+	public static function getMsgsBySellerId($sellerId){
+		return MsgQueueAR::model()->findAll('seller_id=:sellerId',
+											array(':sellerId'=>$sellerId));
+	}
+
 	public function insertMsg($sellerId, $msgId, $type){
 		$msgQueue = new MsgQueueAR;
 		$msgQueue->seller_id = $sellerId;
@@ -99,7 +105,19 @@ class MsgQueueAR extends CActiveRecord
 		$msgQueue->save();
 	}
 
-	
-
-
+	/**
+	 * Get ids of msg_queue items by linking ordermsgs table
+	 */
+	public static function getOrderItemsByUserAndStoreId($uid, $sid){
+		$connection = MsgQueueAR::model()->getDbConnection();
+		$query = "SELECT msg_queue.id AS mqid FROM msg_queue JOIN ordermsgs ON ".
+				 "msg_queue.msg_id = ordermsgs.id and msg_queue.type=1 and msg_queue.seller_id=:sellerId ".
+				 "and ordermsgs.store_id=:sid";
+		if($stmt = $connection->createCommand($query)){
+			$stmt->bindParam(':sellerId', $uid);
+			$stmt->bindParam(':sid', $sid);
+			return $stmt->queryAll();
+		}
+		return null;
+	}
 }

@@ -15,40 +15,106 @@
 
 <body>
 	<?php
-	$this->widget('bootstrap.widgets.TbNavbar',array(
-        'type'=>'inverse',
-        'brand'=>'微积分',
-        'brandUrl'=>Yii::app()->createUrl('index'),
-        'fixed'=>'top', 
-        'items'=>array(
-            array(
-                'class'=>'bootstrap.widgets.TbMenu',
-                'htmlOptions'=>array('class'=>'pull-right'),
-                'items'=>array(
-                		array('label'=>'消息','url'=>'#','items'=>array(
-                                array('label'=>'system','url'=>'#'),
-                                array('label'=>'orders','url'=>'#', 'items'=>array()),
-                                array('label'=>'members','url'=>'#', 'items'=>array(
-                                	array('label'=>'test1', 'url'=>'#'),
-                                	array('label'=>'test2', 'url'=>'#'),
-                                	)),
-                            )),
-                        array('label'=>'帮助','url'=>'#','items'=>array(
-                                array('label'=>'功能向导','url'=>'#'),
-                                array('label'=>'视频教程','url'=>'#'),
-                                array('label'=>'联系我们','url'=>'#'),
-                            )),
-                        array('label'=>'设置','url'=>'#','items'=>array(
-                        		array('label'=>'切换店铺', 'url'=>'#', 'items'=>array(
-
-                        			)),
-                                array('label'=>'账户信息','url'=>'#'),
-                                array('label'=>'退出','url'=>Yii::app()->createUrl("site/logout")),
-                            )),
-                    ),
-            ),
-        ),
-    )); ?>
+	$orderItems = array();
+	$memberItems = array();
+	foreach ($this->stores as $store) {
+		if($store->id != $this->currentStore->id){
+			array_push(
+				$orderItems,
+				array(
+					  'sid'=>$store->id,
+					  'label'=>$store->name, 
+					  'url'=>Yii::app()->createUrl('messages/message/redirect', array('type'=>1, 'sid'=>$store->id)))
+			);
+			array_push(
+				$memberItems,
+				array(
+					  'sid'=>$store->id,
+					  'label'=>$store->name, 
+					  'url'=>Yii::app()->createUrl('messages/message/redirect', array('type'=>2, 'sid'=>$store->id)))
+			);	
+		}
+	}?>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a href="/weChat/index.php/" class="brand">微积分</a>
+				<ul class="pull-right nav" id="yw0">
+					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">消息
+							<div class="badge badge-important" id="msg_total_badge"></div>
+							<span class="caret"></span>
+						</a>
+						<ul id="yw1" class="dropdown-menu">
+							<li>
+								<a tabindex="-1" href="#">系统消息
+									<div id="system_msg_badge" class="badge"></div>
+								</a>
+							</li>
+							<li class="dropdown-submenu">
+								<a tabindex="-1" href="#">订单消息
+									<div id="order_msg_badge" class="badge order-badge"></div>
+								</a>
+								<ul id="yw2" class="dropdown-menu">
+									<?php
+										foreach ($orderItems as $orderItem) {
+											echo '<li><a tabindex="-1" href="'.
+												 $orderItem['url'].
+												 '">'.$orderItem['label'].
+												 	'<div class="badge order-badge" id="order_badge_'.$orderItem['sid'].'"></div>'.
+												 '</a></li>';
+										}
+									?>
+								</ul>
+							</li>
+							<li class="dropdown-submenu">
+								<a tabindex="-1" href="#">会员消息
+									<div id="member_msg_badge" class="badge member-badge"></div>
+								</a>
+								<ul id="yw3" class="dropdown-menu">
+									<?php
+										foreach ($memberItems as $memberItem) {
+											echo '<li><a tabindex="-1" href="'.
+												 $memberItem['url'].
+												 '">'.$memberItem['label'].
+												 	'<div class="badge member-badge" id="member_badge_'.$memberItem['sid'].'"></div>'.
+												 '</a></li>';
+										}
+									?>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">帮助 <span class="caret"></span></a>
+						<ul id="yw4" class="dropdown-menu">
+							<li>
+								<a tabindex="-1" href="#">功能向导</a>
+							</li>
+							<li>
+								<a tabindex="-1" href="#">视频教程</a>
+							</li>
+							<li>
+								<a tabindex="-1" href="#">联系我们</a>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">设置 <span class="caret"></span>
+						</a>
+						<ul id="yw5" class="dropdown-menu">
+							<li>
+								<a tabindex="-1" href="<?php echo Yii::app()->createUrl('accounts/account/stores')?>">账户信息</a>
+							</li>
+							<li>
+								<a tabindex="-1" href="/weChat/index.php/logout">退出</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
 
 	<div class='main'>
 		<div class='sidebar'>
@@ -60,14 +126,15 @@
 							if($store->id != $this->currentStore->id){
 								$url = Yii::app()->request->url;
 								$url = preg_replace('/(\d+)$/', $store->id, $url);
-								echo '<div class="store_item" onclick="window.location='.$url.'">'.$store->name.'</div>';
+								echo '<div class="store_item" onclick="window.location='."'".$url."'".'">'.$store->name.'</div>';
 							}
 						}
 					?>
 				</div>
 			</div>
 			<div class='menu'>
-				<h4><i class='icon-list-alt'></i> &nbsp&nbsp订单管理</a></h4>
+				<h4><i class='icon-list-alt'></i> &nbsp&nbsp订单管理
+					<div class="badge badge-important" id="order_manage_badge"></div></h4>
 				<ul>
 					<li><a href="<?php echo Yii::app()->createUrl('takeAway/orderFlow/orderFlow').'?sid='.$this->currentStore->id?>">订单流</a></li>
 					<li><a href="#">订单2</a></li>					
@@ -134,6 +201,69 @@
         <?php echo $content; ?>		
 	</div>
 <script type="text/javascript">
+	(function(win){
+		var self = this;
+		win.MESSAGE_LOADER = self;
+		self.currentId = <?php echo $this->currentStore->id?>;
+		self.currentAction = "<?php echo $this->action?>";
+
+		this.loadMessage = function(){
+			$.ajax({
+					url: "<?php echo Yii::app()->createUrl('messages/message/load')?>",
+					dataType: 'json',
+					success: function(data){
+						var total = 0;
+						total += self.handleSystemMessages(data['system']);
+						total += self.handleOrderMessages(data['orders']);
+						total += self.handleWechatMessages(data['wcmsgs']);
+						self.setTotal(total);
+						setTimeout(self.loadMessage, self.getTimeoutTime(data));
+					},
+					fail: function(data){
+						setTimeout(self.loadMessage, self.getTimeoutTime(data));
+					}
+			});
+		};
+		this.handleSystemMessages = function(msgs){
+			return 0;
+		};
+		this.handleOrderMessages = function(msgs){
+			var total = 0;
+			if(msgs){
+				for(var key in msgs){
+					if(parseInt(key) != self.currentId){
+						$('#order_badge_' + key).html(msgs[key]);
+						total += parseInt(msgs[key]);
+					}else{
+						if(self.currentAction != "orderFlow" && parseInt(msgs[key]) > 0){
+							$('#order_manage_badge').html(msgs[key]);
+						}
+					}
+					if(total > 0)
+						$('#order_msg_badge').html(total);
+					else
+						$('#order_msg_badge').html('');
+				}
+			}else{
+				$('.order-badge').html('');
+			}
+			return total;
+		};
+		this.handleWechatMessages = function(msgs){
+			return 0;
+		};
+		this.setTotal = function(total){
+			if(total > 0)
+				$('#msg_total_badge').html(total);
+			else
+				$('#msg_total_badge').html('');
+		};
+
+		this.getTimeoutTime = function(){
+			return 10000;
+		}
+	})(window);
+
 	$(document).ready(function(){
 		//显示添加分组输入框
 		$('#newCategory').click(function(event){		
@@ -189,14 +319,12 @@
 			default:
 				break;
 		}
-	});
 
+		MESSAGE_LOADER.loadMessage();
+	});
+	
 	function expandStoreSwitch(){
 		$('.store_switch').slideToggle('fast');
-	}
-
-	function loadMessages(){
-		
 	}
 
 </script>

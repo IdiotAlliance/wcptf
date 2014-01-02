@@ -5,6 +5,7 @@ class TakeAwayController extends Controller{
 	
 	public $currentStore = null;
 	public $stores = null;
+	public $action = null;
 
 	public function __construct($id,$module=null){
 
@@ -12,7 +13,7 @@ class TakeAwayController extends Controller{
 		parent::__construct($id, $module);
 		
 		// get stores information from db
-		$this->stores = StoreAR::model()->getStoreByUserId(Yii::app()->user->sellerId);
+		$this->stores = StoreAR::model()->getUndeletedStoreByUserId(Yii::app()->user->sellerId);
 	}
 
 	/**
@@ -33,4 +34,7 @@ class TakeAwayController extends Controller{
 		return $set;
 	}
 
+	public function setCurrentAction($aid){
+		$this->action = $aid;
+	}
 }
