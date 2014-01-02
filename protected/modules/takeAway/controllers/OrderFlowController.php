@@ -93,10 +93,7 @@ class OrderFlowController extends TakeAwayController
 					));
 		}
 		// 清空订单消息
-		if(isset($_GET['sid'])){
-			$storeId = $_GET['sid'];
-			OrdermsgsAR::model()->deleteMsg($storeId);
-		}
+		OrdermsgsAR::model()->deleteMsg($storeid);
 		$arr=array('success'=>'1', 'orderList'=>$orderViews);
 		echo json_encode($arr);
 	}
@@ -125,11 +122,6 @@ class OrderFlowController extends TakeAwayController
 						 'update_time'=>$order->update_time
 						);
 			$arr=array('success'=>'1', 'order'=>$orderView);
-			// 清空订单消息
-			if(isset($_GET['sid'])){
-				$storeId = $_GET['sid'];
-				OrdermsgsAR::model()->deleteMsg($storeId);
-			}
 		}else{
 			$arr=array('success'=>'0');
 		}
@@ -373,6 +365,9 @@ class OrderFlowController extends TakeAwayController
 		success：1需要当前页刷新；2不需要当前页刷新只刷新头；
 	*/
 	public function updateListener($storeid, $day){
+		// 清空订单消息
+		OrdermsgsAR::model()->deleteMsg($storeid);
+		
         $date = date("Y-m-d H:i:s",strtotime($day." day"));
         $tabOneOrders = OrdersAR::model()->filterOrder($storeid, $date, "#tab1");
         $tabTwoOrders = OrdersAR::model()->filterOrder($storeid, $date, "#tab2");
