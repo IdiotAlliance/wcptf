@@ -102,4 +102,14 @@ class SdmsgsAR extends CActiveRecord
 		return parent::model($className);
 	}
 
+	public function getKeywordsByMsgId($sdmsg_id){
+		$connection = SdmsgsAR::model()->getDbConnection();
+		$query = "select * from sdmsgs left join keywords on keywords.id = sdmsgs.keyword_id where sdmsgs.id=:sdmsg_id";
+		if ($stmt = $connection->createCommand($query)) {
+			$stmt->bindParam(':sdmsg_id',$sdmsg_id);
+            $result = $stmt->queryAll();         
+            return $result;
+		}
+	}
+
 }

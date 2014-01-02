@@ -27,8 +27,8 @@ class UserIdentity extends CUserIdentity
 			Yii::app()->user->setState(UserIdentity::SESSION_SELLERID, $user->id);
 			$this->errorCode=self::ERROR_NONE;
 
-			$typeCount = ProductTypeAR::model()->getProductsByType(Yii::app()->user->sellerId);
-			Yii::app()->session[UserIdentity::SESSION_TYPECOUNT] = $typeCount;
+			// $typeCount = ProductTypeAR::model()->getProductsByType(Yii::app()->user->sellerId);
+			// Yii::app()->session[UserIdentity::SESSION_TYPECOUNT] = $typeCount;
 		}	
 		return !$this->errorCode;
 	}

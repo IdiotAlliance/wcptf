@@ -253,4 +253,5 @@ class UsersAR extends CActiveRecord
 		$userAr = UsersAR::model()->find('email=:email', array(':email'=>$email));
 		return $userAr->email_verified == UsersAR::STATUS_HAS_VERIFIED ? true : false;
 	}
+
 }
