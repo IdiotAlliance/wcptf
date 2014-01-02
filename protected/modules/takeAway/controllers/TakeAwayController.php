@@ -5,6 +5,7 @@ class TakeAwayController extends Controller{
 	
 	public $currentStore = null;
 	public $stores = null;
+	public $action = null;
 
 	public function __construct($id,$module=null){
 
@@ -33,4 +34,7 @@ class TakeAwayController extends Controller{
 		return $set;
 	}
 
+	public function setCurrentAction($aid){
+		$this->action = $aid;
+	}
 }

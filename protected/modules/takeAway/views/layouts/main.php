@@ -133,7 +133,8 @@
 				</div>
 			</div>
 			<div class='menu'>
-				<h4><i class='icon-list-alt'></i> &nbsp&nbsp订单管理</a></h4>
+				<h4><i class='icon-list-alt'></i> &nbsp&nbsp订单管理
+					<div class="badge badge-important" id="order_manage_badge"></div></h4>
 				<ul>
 					<li><a href="<?php echo Yii::app()->createUrl('takeAway/orderFlow/orderFlow').'?sid='.$this->currentStore->id?>">订单流</a></li>
 					<li><a href="#">订单2</a></li>					
@@ -201,9 +202,11 @@
 	</div>
 <script type="text/javascript">
 	(function(win){
-		win.MESSAGE_LOADER = this;
 		var self = this;
-		var currentId = <?php echo $this->currentStore->id?>;
+		win.MESSAGE_LOADER = self;
+		self.currentId = <?php echo $this->currentStore->id?>;
+		self.currentAction = "<?php echo $this->action?>";
+
 		this.loadMessage = function(){
 			$.ajax({
 					url: "<?php echo Yii::app()->createUrl('messages/message/load')?>",
@@ -225,15 +228,21 @@
 			return 0;
 		};
 		this.handleOrderMessages = function(msgs){
-			total = 0;
+			var total = 0;
 			if(msgs){
 				for(var key in msgs){
-					sid = parseInt(key);
-					if(sid != self.currentId){
+					if(parseInt(key) != self.currentId){
 						$('#order_badge_' + key).html(msgs[key]);
 						total += parseInt(msgs[key]);
+					}else{
+						if(self.currentAction != "orderFlow" && parseInt(msgs[key]) > 0){
+							$('#order_manage_badge').html(msgs[key]);
+						}
 					}
-					$('#order_msg_badge').html(total);
+					if(total > 0)
+						$('#order_msg_badge').html(total);
+					else
+						$('#order_msg_badge').html('');
 				}
 			}else{
 				$('.order-badge').html('');
@@ -244,7 +253,10 @@
 			return 0;
 		};
 		this.setTotal = function(total){
-			$('#msg_total_badge').html(total);
+			if(total > 0)
+				$('#msg_total_badge').html(total);
+			else
+				$('#msg_total_badge').html('');
 		};
 
 		this.getTimeoutTime = function(){

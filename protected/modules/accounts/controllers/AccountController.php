@@ -7,12 +7,12 @@ class AccountController extends Controller{
 	public $currentPage = null;
 	public $layout = 'account';
 	public $defaultAction = "stores";
-	public $typeAtrributes    = ['type_name', 'type_description', 'pic_url'];
-	public $productAttributes = ['pname', 'price', 'credit', 'description', 
-								 'stime', 'etime', 'status', 'instore', 'richtext', 
-								 'cover'];
-	public $districtAttributes = ['name', 'description'];
-	public $posterAttributes   = ['name', 'phone', 'description'];
+	// public $typeAtrributes    = ['type_name', 'type_description', 'pic_url'];
+	// public $productAttributes = ['pname', 'price', 'credit', 'description', 
+	// 							 'stime', 'etime', 'status', 'instore', 'richtext', 
+	// 							 'cover'];
+	// public $districtAttributes = ['name', 'description'];
+	// public $posterAttributes   = ['name', 'phone', 'description'];
 
 	public function actions()
     { 

@@ -32,6 +32,10 @@ class MessageController extends Controller{
 						# wechat messages
 						
 						break;
+					case 3:
+						# comments
+						
+						break;
 					default:
 						# code...
 						
@@ -46,6 +50,7 @@ class MessageController extends Controller{
 		if(Yii::app()->user->isGuest){
 			throw new CHttpException(403, "You must sign in first");
 		}else{
+			$uid = Yii::app()->user->sellerId;
 			switch ($type) {
 				case 0:
 					// system messages
@@ -53,14 +58,20 @@ class MessageController extends Controller{
 					break;
 				case 1:
 					// order messages
-					
+					$mqids = MsgQueueAR::model()->getOrderItemsByUserAndStoreId($uid, $sid);
+					foreach ($mqids as $mqid) {
+						$mq = MsgQueueAR::model()->findByPK($mqid['mqid']);
+						if($mq) $mq->delete();
+					}
+					OrdermsgsAR::model()->deleteAll('store_id=:sid', array(':sid'=>$sid));
+					$this->redirect(Yii::app()->createUrl('takeAway/orderFlow/orderFlow?sid=').$sid);
 					break;
 				case 2:
 					// wechat messages
 
 					break;
 				default:
-					# code...
+					$this->redirect(Yii::app()->createUrl(''));
 					break;
 			}
 		}
