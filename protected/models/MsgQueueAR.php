@@ -111,7 +111,7 @@ class MsgQueueAR extends CActiveRecord
 	public static function getOrderItemsByUserAndStoreId($uid, $sid){
 		$connection = MsgQueueAR::model()->getDbConnection();
 		$query = "SELECT msg_queue.id AS mqid FROM msg_queue JOIN ordermsgs ON ".
-				 "msg_queue.msg_id = ordermsgs.id and msg_queue.type=1 and msg_queue.seller_id=:sellerId ".
+				 "msg_queue.msg_id = ordermsgs.id WHERE msg_queue.type=1 and msg_queue.seller_id=:sellerId ".
 				 "and ordermsgs.store_id=:sid";
 		if($stmt = $connection->createCommand($query)){
 			$stmt->bindParam(':sellerId', $uid);
@@ -120,4 +120,54 @@ class MsgQueueAR extends CActiveRecord
 		}
 		return null;
 	}
+
+	/**
+	 * Get ids of msg_queue items by linking comments table
+	 */
+	public static function getCommentItemsByUserAndStoreId($uid, $sid){
+		$connection = MsgQueueAR::model()->getDbConnection();
+		$query = "SELECT msg_queue.id AS mqid FROM msg_queue JOIN comments ON ".
+				 "msg_queue.msg_id = comments.id WHERE msg_queue.type=3 and msg_queue.seller_id=:sellerId ".
+				 "and comments.store_id=:sid";
+		if($stmt = $connection->createCommand($query)){
+			$stmt->bindParam(':sellerId', $uid);
+			$stmt->bindParam(':sid', $sid);
+			return $stmt->queryAll();
+		}
+		return null;
+	}
+
+	public static function getCountByType($uid, $type){
+		$connection = MsgQueueAR::model()->getDbConnection();
+		$query  = null;
+		$query1 = "SELECT COUNT(*) as count FROM msg_queue WHERE ".
+				  "msg_queue.seller_id=:uid AND msg_queue.type=:type";
+		$query2 = "SELECT %s.store_id AS sid, count(*) AS count FROM ".
+			     "msg_queue RIGHT JOIN %s ON msg_queue.msg_id=%s.id WHERE ".
+			     "msg_queue.seller_id=:uid AND msg_queue.type=:type GROUP BY %s.store_id";
+		switch ($type) {
+			case Constants::MSG_SYSTEM: 
+			case Constants::MSG_WECHAT:
+				$query = $query1;
+				break;
+			case Constants::MSG_ORDERS:
+				$query = $query2;
+				$query = sprintf($query, 'ordermsgs', 'ordermsgs', 'ordermsgs', 'ordermsgs');
+				break;
+			case Constants::MSG_COMMENT:
+				$query = $query2;
+				$query = sprintf($query, 'comments', 'comments', 'comments', 'comments');
+				break;
+			default:
+				return null;
+				break;
+		}
+		if($stmt = $connection->createCommand($query)){
+			$stmt->bindParam(':uid', $uid);
+			$stmt->bindParam(':type', $type);
+			return $stmt->queryAll();
+		}
+		return null;
+	}
+
 }

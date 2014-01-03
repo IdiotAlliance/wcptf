@@ -11,8 +11,19 @@ class MembersController extends TakeAwayController{
 		if(Yii::app()->user->isGuest){
 			$this->redirect('index.php/accounts/login');
 		}else if(isset($_GET['sid']) && $_GET['sid'] >= 0 && $this->setCurrentStore($_GET['sid'])){
+			
 			$sid      = $_GET['sid'];
 			$sellerId = Yii::app()->user->sellerId;
+
+			// clear comment msg_queue items
+			$mqs = MsgQueueAR::model()->getCommentItemsByUserAndStoreId($sellerId, $sid);
+			if($mqs){
+				foreach ($mqs as $mq) {
+					$mqitem = MsgQueueAR::model()->findByPK($mq['mqid']);
+					$mqitem->delete();
+				}
+			}
+
 			$members  = MembersAR::model()->getMembersBySellerIdOrderByComment($sellerId);
 			$orders   = OrdersAR::model()->getOrdersCountBySellerId($sellerId);
 			$comments = CommentsAR::model()->getCommentsCountBySellerId($sellerId);
@@ -88,7 +99,7 @@ class MembersController extends TakeAwayController{
 			if($dbmember){
 				$dborders = OrdersAR::model()->getOrdersByMemeberId($memberId);
 				$dbcomments = CommentsAR::model()->getCommentsByMemberId($memberId);
-				$dbmessages = WechatmsgsAR::model()->getMessages($userId, $dbmember->openid);
+				//$dbmessages = WechatmsgsAR::model()->getMessages($userId, $dbmember->openid);
 				$bound    = MemberBoundAR::model()->getBoundByStoreAndMember($sid, $memberId);
 				$request  = MemberNumbersAR::model()->getRequest($sid, $memberId);
 
@@ -112,7 +123,7 @@ class MembersController extends TakeAwayController{
 
 				$orders = array();
 				$comments = array();
-				$messages = array();
+				//$messages = array();
 				
 				$i = 0;
 				foreach ($dborders as $order){
@@ -132,28 +143,28 @@ class MembersController extends TakeAwayController{
 					$comments[$i]['status'] = $comment->status;
 					$i ++;
 				}
-				$i = 0;
-				foreach ($dbmessages as $message) {
-					# code...
-					if($message->msgtype == 'text'){
-						$xml = simplexml_load_string($message->rawmsg, 'SimpleXMLElement', LIBXML_NOCDATA);
-						$messages[$i] = array(
-							'ctime'=>$message->createtime,
-							'content'=>$xml->Content,
-							'replied'=>$message->replied,
-						);
-						// $messages[$i]['ctime']   = $message->createtime;
-						// $messages[$i]['content'] = $xml->Content;
-						// $messages[$i]['replied'] = $message->replied;
-					}
-					$i ++;
-				}
+				// $i = 0;
+				// foreach ($dbmessages as $message) {
+				// 	# code...
+				// 	if($message->msgtype == 'text'){
+				// 		$xml = simplexml_load_string($message->rawmsg, 'SimpleXMLElement', LIBXML_NOCDATA);
+				// 		$messages[$i] = array(
+				// 			'ctime'=>$message->createtime,
+				// 			'content'=>$xml->Content,
+				// 			'replied'=>$message->replied,
+				// 		);
+				// 		// $messages[$i]['ctime']   = $message->createtime;
+				// 		// $messages[$i]['content'] = $xml->Content;
+				// 		// $messages[$i]['replied'] = $message->replied;
+				// 	}
+				// 	$i ++;
+				// }
 
 				$data = array(
 					'member'=>$member,
 					'orders'=>$orders,
 					'comments'=>$comments,
-					'messages'=>$messages,
+					//'messages'=>$messages,
 				);
 				echo json_encode($data);
 			}else{

@@ -31,7 +31,7 @@ class CommentsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('member_id, comment, ctime', 'required'),
+			array('member_id, comment', 'required'),
 			array('status', 'numerical', 'integerOnly'=>true),
 			array('member_id', 'length', 'max'=>11),
 			// The following rule is used by search().

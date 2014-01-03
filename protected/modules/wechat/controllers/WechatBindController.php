@@ -46,7 +46,7 @@ class WechatBindController extends Controller{
 			$userId = Yii::app()->user->sellerId;
 			$user = UsersAR::model()->getUserById($userId);
 			if($user->wechat_bound){
-				$this->redirect(Yii::app()->createUrl('takeAway/orderFlow/orderFlow'));
+				$this->redirect(Yii::app()->createUrl('accounts/account/stores'));
 			}
 			else{
 				$errmsg = "您还没有绑定微信帐号";
