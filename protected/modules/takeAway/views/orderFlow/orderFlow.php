@@ -133,7 +133,17 @@
 					<ul class="order-list">
 					    {{for list}}
 					    	<li>
-					    		<div class="order-item item-wait" id={{:orderData.areaId}}>
+					    		{{if orderData.status == '待派送'}}
+		    		    			<div class="order-item item-wait" id={{:orderData.areaId}}>
+		    		    		{{else orderData.status == '待生产'}}
+		    		    			<div class="order-item item-produce" id={{:orderData.areaId}}>
+		    		    		{{else orderData.status == '派送中'}}
+		    		    			<div class="order-item item-sending" id={{:orderData.areaId}}>
+		    		    		{{else orderData.status == '已完成'}}
+		    		    			<div class="order-item item-finish" id={{:orderData.areaId}}>
+		    		    		{{else orderData.status == '已取消'}}
+		    		    			<div class="order-item item-cancel" id={{:orderData.areaId}}>
+		    		    		{{/if}}
 					    			<ul>
 					    				<li class="order-state ">
 					    					<div class="state">
@@ -182,7 +192,17 @@
 		</script>
 		<!-- 单个订单模板 -->
 		<script type="text/x-jsrender" id="orderTemplate">
-    		<div class="order-item item-wait" id={{:orderData.areaId}}>
+			{{if orderData.status == '待派送'}}
+    			<div class="order-item item-wait" id={{:orderData.areaId}}>
+    		{{else orderData.status == '待生产'}}
+    			<div class="order-item item-produce" id={{:orderData.areaId}}>
+    		{{else orderData.status == '派送中'}}
+    			<div class="order-item item-sending" id={{:orderData.areaId}}>
+    		{{else orderData.status == '已完成'}}
+    			<div class="order-item item-finish" id={{:orderData.areaId}}>
+    		{{else orderData.status == '已取消'}}
+    			<div class="order-item item-cancel" id={{:orderData.areaId}}>
+    		{{/if}}
     			<ul>
     				<li class="order-state ">
     					<div class="state">

@@ -92,6 +92,8 @@ class OrderFlowController extends TakeAwayController
 					 'update_time'=>$order->update_time
 					));
 		}
+		// 清空订单消息
+		OrdermsgsAR::model()->deleteMsg($storeid);
 		$arr=array('success'=>'1', 'orderList'=>$orderViews);
 		echo json_encode($arr);
 	}
@@ -363,6 +365,9 @@ class OrderFlowController extends TakeAwayController
 		success：1需要当前页刷新；2不需要当前页刷新只刷新头；
 	*/
 	public function updateListener($storeid, $day){
+		// 清空订单消息
+		OrdermsgsAR::model()->deleteMsg($storeid);
+		
         $date = date("Y-m-d H:i:s",strtotime($day." day"));
         $tabOneOrders = OrdersAR::model()->filterOrder($storeid, $date, "#tab1");
         $tabTwoOrders = OrdersAR::model()->filterOrder($storeid, $date, "#tab2");
@@ -403,12 +408,12 @@ class OrderFlowController extends TakeAwayController
 
     public function actionGetPosters(){
     	$orderId = null;
-    	$userId = null;
-    	if(isset($_POST['orderId'])){
+    	$storeid = null;
+    	if(isset($_POST['orderId']) && isset($_POST['storeid'])){
     		$orderId = $_POST['orderId'];
-    		$userId = OrdersAR::model()->getUserId($orderId);
+    		$storeid = $_POST['storeid'];
     		$model = new ChoosePosterForm;
-    		$posters = PostersAR::model()->getWorkPosters($userId);
+    		$posters = PostersAR::model()->getWorkPosters($storeid);
     		$posterViews = array();
     		foreach ($posters as $poster)
     		{
