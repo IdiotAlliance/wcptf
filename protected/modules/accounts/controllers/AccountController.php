@@ -73,7 +73,7 @@ class AccountController extends Controller{
 			$uid = Yii::app()->user->sellerId;
 			$user   = UsersAR::model()->findByPK($uid);
 			$stores = StoreAR::model()->getUndeletedStoreByUserId($uid);
-			$this->render("account", array('user'=>$user, 
+			$this->render("stores", array('user'=>$user, 
 										   'stores'=>$stores, 
 										   'editForm'=>$editForm,
 										   'deleteForm'=>$deleteForm,
@@ -176,5 +176,14 @@ class AccountController extends Controller{
 				throw new CHttpException(403, "Error Processing Request, Illegal Arguments");
 			}
 		}
+	}
+
+	public function actionProfile(){
+		$this->currentPage = 'profile';
+		$this->render('profile');
+	}
+
+	public function actionBills(){
+
 	}
 }

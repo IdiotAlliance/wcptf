@@ -114,6 +114,9 @@
 								<a tabindex="-1" href="<?php echo Yii::app()->createUrl('accounts/account/stores')?>">账户信息</a>
 							</li>
 							<li>
+								<a tabindex="-1" href="<?php echo Yii::app()->createUrl('accounts/account/stores')?>">返回上一级</a>
+							</li>
+							<li>
 								<a tabindex="-1" href="/weChat/index.php/logout">退出</a>
 							</li>
 						</ul>
