@@ -1,6 +1,7 @@
 <?php
+include 'TakeAwayController.php';
 
-class ProductManagerController extends Controller
+class ProductManagerController extends TakeAwayController
 {
 	public $layout = '/layouts/main';
     public $defaultAction = 'allProducts';

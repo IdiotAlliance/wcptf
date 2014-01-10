@@ -116,7 +116,7 @@ class KeywordsAR extends CActiveRecord
 				$stop = false;
 				for($i=0; $i<count($results); $i++){
 					$keywords = split(';', $results[$i]['keyword']);
-					switch ($results['type']) {
+					switch ($results[$i]['type']) {
 						case 0:
 							# complete match
 							if(in_array($text, $keywords)){

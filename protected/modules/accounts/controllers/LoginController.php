@@ -25,7 +25,6 @@ class LoginController extends Controller
                 if($model->validate() && $model->login()){
                     if ($model->isVerified()){
                         $user = UsersAR::model()->getUserByEmail($model->username);
-
                         switch ($user->seller_type) {
                             case "1":                            
                                 $this->redirect(array('/accounts/account/stores'));
@@ -34,7 +33,6 @@ class LoginController extends Controller
                                 $this->redirect(Yii::app()->user->returnUrl);
                                 break;
                         }
-                        
                     }
                     else{
                         $this->redirect(array('/accounts/verifyEmail/actEmail'));

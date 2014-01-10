@@ -286,7 +286,8 @@ class WechatAccessController extends Controller {
 						}
 						$itemstr = "";
 						foreach ($msgitems as $msgitem) {
-							$itemstr += $msgitem;
+							if($msgitem)
+								$itemstr += $msgitem;
 						}
 						$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, count($items), $itemstr);
 					}
@@ -295,9 +296,17 @@ class WechatAccessController extends Controller {
 				else $wcmsg->replied = Constants::REPLIED_NONE;
 			}
 			else $wcmsg->replied = Constants::REPLIED_NONE;
+<<<<<<< HEAD
 			if($wcmsg->save()){
 				// create a message queue entry and insert into msg_queue table
 				$mq    = new MsgQueueAR();
+=======
+			if($wcmsg->save() && 
+			  ($wcmsg->replied == Constants::REPLIED_DEFAULT ||
+			   $wcmsg->replied == Constants::REPLIED_NONE)){
+				// create a message queue entry and insert into msg_queue table
+				$mq = new MsgQueueAR();
+>>>>>>> origin/master
 				$mq->seller_id = $sellerId;
 				$mq->msg_id    = $wcmsg->attributes['id'];
 				$mq->type      = Constants::MSG_WECHAT;

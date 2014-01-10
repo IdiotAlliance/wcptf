@@ -9,7 +9,6 @@ $(document).ready(function(){
 	// 完成订单
 	$(".order-detail").delegate("#btn-confirm", "click", function(e){
 		finish();
-		
 	});
 	// 添加订单子项
 	$(".order-detail").delegate(".order-item.add-item", "click", function(e){
@@ -249,7 +248,11 @@ function getPosters(){
 	        url      : ctUrl,
 	        type     : 'POST',
 	        dataType : 'html',
+<<<<<<< HEAD
 	        data 	 : {orderId:orderId},
+=======
+	        data 	 : {orderId:orderId, storeid: getStoreId()},
+>>>>>>> origin/master
 	        cache    : false,
 	        success  : function(html)
 	        {
@@ -276,7 +279,7 @@ function setPosters(){
 		        url      : ctUrl,
 		        type     : 'POST',
 		        dataType : 'json',
-		        data 	 : {orderId:orderId, posterId:posterId},
+		        data 	 : {orderId:orderId, posterId:posterId, storeid: getStoreId()},
 		        cache    : false,
 		        success  : function(data)
 		        {

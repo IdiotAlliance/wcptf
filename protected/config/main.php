@@ -38,7 +38,7 @@ return array(
 		'wechat',
 		'wap',
 		'errors',
-		'weiXinReply',
+		'messages',
 	),
 
 	// application components

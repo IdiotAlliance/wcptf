@@ -7,7 +7,11 @@ class AccountController extends Controller{
 	public $currentPage = null;
 	public $layout = 'account';
 	public $defaultAction = "stores";
+<<<<<<< HEAD
 	// public $typeAtrributes    = array('type_name', 'type_description', 'pic_url');
+=======
+	// public $typeAtrributes    = ['type_name', 'type_description', 'pic_url'];
+>>>>>>> origin/master
 	// public $productAttributes = ['pname', 'price', 'credit', 'description', 
 	// 							 'stime', 'etime', 'status', 'instore', 'richtext', 
 	// 							 'cover'];
@@ -73,7 +77,11 @@ class AccountController extends Controller{
 			$uid = Yii::app()->user->sellerId;
 			$user   = UsersAR::model()->findByPK($uid);
 			$stores = StoreAR::model()->getUndeletedStoreByUserId($uid);
+<<<<<<< HEAD
 			$this->render("account", array('user'=>$user, 
+=======
+			$this->render("stores", array('user'=>$user, 
+>>>>>>> origin/master
 										   'stores'=>$stores, 
 										   'editForm'=>$editForm,
 										   'deleteForm'=>$deleteForm,
@@ -177,4 +185,16 @@ class AccountController extends Controller{
 			}
 		}
 	}
+<<<<<<< HEAD
+=======
+
+	public function actionProfile(){
+		$this->currentPage = 'profile';
+		$this->render('profile');
+	}
+
+	public function actionBills(){
+
+	}
+>>>>>>> origin/master
 }

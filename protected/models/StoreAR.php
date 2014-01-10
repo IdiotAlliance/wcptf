@@ -148,5 +148,4 @@ class StoreAR extends CActiveRecord
 									  array(':userId'=>$userId, ':name'=>$name)) ? true : false;
 	}
 
-	
 }
