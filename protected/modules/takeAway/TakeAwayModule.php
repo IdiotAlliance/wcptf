@@ -29,6 +29,8 @@ class TakeAwayModule extends CWebModule
 				$user = UsersAR::model()->getUserById($userId);
 				if($user->wechat_id == null || $user->wechat_bound == 0){
 					$controller->redirect(Yii::app()->createUrl('wechat/wechatBind'));
+				}else{
+					$controller->setCurrentAction($action->id);
 				}
 			}
 			return true;
