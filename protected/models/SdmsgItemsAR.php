@@ -126,8 +126,8 @@ class SdmsgItemsAR extends CActiveRecord
 
 	public function getAllCustomizedItem($sellerId){
 		$connection = ProductsAR::model()->getDbConnection();
-		$query = "select count(*) as item_count,sdmsgs.id as sdmsgs_id,sdmsgs.menu_name,sdmsg_items.type as item_type from keywords left join sdmsgs on sdmsgs.keyword_id = keywords.id 
-		left join sdmsg_items on sdmsg_items.sdmsg_id = sdmsgs.id where keywords.seller_id=:seller_id group by keywords.id";
+		$query = "select count(*) as item_count,sdmsgs.id as sdmsgs_id,sdmsgs.menu_name,sdmsg_items.type as item_type from sdmsgs 
+		left join sdmsg_items on sdmsg_items.sdmsg_id = sdmsgs.id where sdmsgs.seller_id=:seller_id and sdmsgs.type = 2 group by sdmsgs.id";
 		if ($stmt = $connection->createCommand($query)) {
 			$stmt->bindParam(':seller_id',$sellerId);
             $result = $stmt->queryAll();
@@ -169,6 +169,7 @@ class SdmsgItemsAR extends CActiveRecord
 	 */
 	public function getImageTexts($sdmsg_id){
 		$result = $this->getItemsBySdmsgsId($sdmsg_id);
+		$sdmsgs = SdmsgsAR::model()->findByPK($sdmsg_id);
 		$imageTexts = array();
 		if(count($result)>1){
 			foreach ($result as $re) {
@@ -237,13 +238,13 @@ class SdmsgItemsAR extends CActiveRecord
 				}
 			}
 			if($imageTexts[0]['picurl']=="")
-				$imageTexts[$i]['picurl'] = '/img/replyCover.png';
+				$imageTexts[0]['picurl'] = 'img/replyCover.png';
 			for ($i=1; $i<count($imageTexts); $i++) { 
 				if($imageTexts[$i]['picurl'] == "")
-					$imageTexts[$i]['picurl'] = '/img/thumbnail.png';
+					$imageTexts[$i]['picurl'] = 'img/thumbnail.png';
 			}
-			$sdmsgs = SdmsgsAR::model()->getKeywordsByMsgId($sdmsg_id);
-			$imageTexts[0]['keyword'] = $sdmsgs[0]['keyword'];
+			$imageTexts[0]['keyword'] = $sdmsgs->keyword;
+			$imageTexts[0]['match_rule'] = $sdmsgs->match_rule;			
 			return $imageTexts;
 		}else if($result[0]['type']!=0 && count($result)==1){
 			$temp = $result[0]['type'] & 131;
@@ -270,9 +271,16 @@ class SdmsgItemsAR extends CActiveRecord
 					$result[0]['resource'] = "外部链接";
 					break;
 			}
+			$result[0]['keyword'] = $sdmsgs->keyword;
+			$result[0]['match_rule'] = $sdmsgs->match_rule;
+			if($result[0]['picurl']==null)
+				$result[0]['picurl'] = 'img/replyCover.png';
 			return $result;
-		}else
+		}else{
+			$result[0]['keyword'] = $sdmsgs->keyword;
+			$result[0]['match_rule'] = $sdmsgs->match_rule;
 			return $result;
+		}
 
 	}
 	/**

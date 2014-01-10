@@ -11,7 +11,7 @@
 			//更新订单详情
 			var orderId = $(this).attr("id");
 			//alert(orderId);
-			getOrderItems(orderId);
+			// getOrderItems(orderId);
 		})
 	});
 </script>

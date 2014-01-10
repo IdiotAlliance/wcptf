@@ -8,7 +8,7 @@
  * @property string $name
  * @property string $phone
  * @property string $description
- * @property string $seller_id
+ * @property string $store_id
  *
  * The followings are the available model relations:
  * @property Users $seller
@@ -41,12 +41,12 @@ class PostersAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, seller_id', 'required'),
+			array('name, store_id', 'required'),
 			array('name, phone', 'length', 'max'=>32),
-			array('seller_id', 'length', 'max'=>11),
+			array('store_id', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name, phone, description, seller_id', 'safe', 'on'=>'search'),
+			array('id, name, phone, description, store_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -58,7 +58,7 @@ class PostersAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'seller' => array(self::BELONGS_TO, 'UsersAR', 'seller_id'),
+			'seller' => array(self::BELONGS_TO, 'UsersAR', 'store_id'),
 		);
 	}
 
@@ -72,7 +72,7 @@ class PostersAR extends CActiveRecord
 			'name' => 'Name',
 			'phone' => 'Phone',
 			'description' => 'Description',
-			'seller_id' => 'Seller',
+			'store_id' => 'Seller',
 		);
 	}
 
@@ -91,7 +91,7 @@ class PostersAR extends CActiveRecord
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('phone',$this->phone,true);
 		$criteria->compare('description',$this->description,true);
-		$criteria->compare('seller_id',$this->seller_id,true);
+		$criteria->compare('store_id',$this->store_id,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -103,18 +103,24 @@ class PostersAR extends CActiveRecord
 	 * @return unknown
 	 */
 	public function getPostersByUserId($userId){
-		$posters = PostersAR::model()->findAll('seller_id=:userId', array(':userId'=>$userId));
+		$posters = PostersAR::model()->findAll('store_id=:userId', array(':userId'=>$userId));
 		return $posters;
 	}
 	
 	/**
 	 * 根据用户的id获取未删除的送货员id
 	 * @param unknown $userId
+	 * @deprecated
 	 */
 	public function getUndeletedPostersByUserId($userId){
-		$posters = PostersAR::model()->findAll('seller_id=:userId and deleted<>1', 
+		$posters = PostersAR::model()->findAll('store_id=:userId and deleted<>1', 
 									array(':userId'=>$userId));
 		return $posters;
+	}
+
+	public function getUndeletedPostersByStoreId($sid){
+		return PostersAR::model()->findAll('store_id=:sid and deleted <> 1',
+										   array(':sid'=>$sid));
 	}
 	
 	public function getPosterById($id){
@@ -133,9 +139,9 @@ class PostersAR extends CActiveRecord
 	/*
 		查找有效的派送人员
 	*/
-	public function getWorkPosters($seller_id){
-		$posters = PostersAR::model()->findAll('seller_id=:seller_id and deleted=:deleted and daily_status=:dailyStatus', 
-			array(':seller_id'=>$seller_id, ':deleted'=>0, ':dailyStatus'=>0));
+	public function getWorkPosters($store_id){
+		$posters = PostersAR::model()->findAll('store_id=:store_id and deleted=:deleted and daily_status=:dailyStatus', 
+			array(':store_id'=>$store_id, ':deleted'=>0, ':dailyStatus'=>0));
 		return $posters;
 	}
 

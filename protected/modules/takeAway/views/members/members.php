@@ -99,6 +99,9 @@
 		padding-left: 20px;
 		padding-right: 20px;
 	}
+	#tab1 .mem-comfirm-btn{
+		float: right;
+	}
 	.table-btn-container{
 		float: right;
 	}
@@ -138,19 +141,34 @@
 		<h4>会员列表</h4>
 		<div class="filter_right">
 			<select onchange="filterMembers()" id="member_filter_select">
-				<option value="all">全部(<?php echo $stats['total'];?>)</option>
-				<option value="subscribed">已关注(<?php echo $stats['sub'];?>)</option>
-				<option value="unsubscribed">已取消关注(<?php echo $stats['unsub']?>)</option>
+				<option id="option_all" value="all">全部(<?php echo $stats['total'];?>)</option>
+				<option id="option_sub" value="subscribed">已关注(<?php echo $stats['sub'];?>)</option>
+				<option id="option_bnd" value="bound">已绑定会员卡(<?php echo $stats['bound'];?>)</option>
+				<option id="option_req" value="request">请求绑定会员卡(<?php echo $stats['request'];?>)</option>
+				<option id="option_usb" value="unsubscribed">已取消关注(<?php echo $stats['unsub']?>)</option>
 			</select>
+		</div>
+		<div class="sort_container">
+
 		</div>
 	</div>
 	<ul class="members_list">
 		<?php foreach ($model as $member):?>
-			<li name="<?php echo $member['id']?>" class="member_item <?php echo $member['unsubscribed']==1?'unsubscribed':'subscribed';?>" id="member_item_<?php echo $member['id']?>" onclick="onMemberItemClick(this)">
+			<li name="<?php echo $member['id']?>" class="member_item 
+				<?php echo $member['unsubscribed']==1?'unsubscribed':'subscribed';
+					  echo isset($member['bound']) && $member['bound'] == 1 ? ' bound' : '';
+					  echo isset($member['request']) && $member['request'] == 1 ? ' request' : '';
+				?>" 
+				id="member_item_<?php echo $member['id']?>" onclick="onMemberItemClick(this)">
 				<div class="member_no">
 					用户编号：<?php echo $member['id'];?>
-					<span class="subscribe_label label <?php echo $member['unsubscribed']==1?'label-important':'label-info';?>">
-						<?php echo $member['unsubscribed']==1?'已取消关注':'已关注';?>
+					<span id="item_label_<?php echo $member['id']?>" class="subscribe_label label 
+						<?php echo $member['unsubscribed']==1?'label-important':
+								   (isset($member['bound']) && $member['bound']==1?'label-success':
+								   (isset($member['request']) && $member['request']==1?'label-warning':'label-info'));?>">
+						<?php echo $member['unsubscribed']==1?'已取消关注':
+								   (isset($member['bound']) && $member['bound']==1?'已绑定':
+								   (isset($member['request']) && $member['request']==1?'请求绑定':'已关注'));?>
 					</span>
 					<div>
 						<span id="order_count_<?php echo $member['id'];?>">订单数量：<?php echo $member['order_count'];?></span>
@@ -158,7 +176,6 @@
 					</div>
 					<div>关注日期：<?php echo $member['ctime']?></div>
 				</div>
-				
 			</li>
 		<?php endforeach;?>
 	</ul>
@@ -169,6 +186,7 @@
 			<li class="active"><a href="#tab1" data-toggle="tab">基本信息</a></li>
 			<li class=""><a href="#tab2" data-toggle="tab">订单</a></li>
 			<li class=""><a href="#tab3" data-toggle="tab">评论</a></li>
+			<li class=""><a href="#tab4" data-toggle="tab">消息</a></li>
 		</ul>
 		<div class="tab-content" style="padding-bottom: 9px;">
 			<div class="tab-pane tab active" id="tab1">
@@ -178,6 +196,9 @@
 				<p></p>
 			</div>
 			<div class="tab-pane tab" id="tab3">
+				<p></p>
+			</div>
+			<div class="tab-pane tab" id="tab4">
 				<p></p>
 			</div>
 		</div>
@@ -193,7 +214,9 @@
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/highstock1.3.7.min.js" charset="utf-8"></script>
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/highstock-exporting1.3.7.min.js" charset="utf-8"></script>
 <script type="text/javascript">
-
+	
+	var cbound   = <?php echo $stats['bound']?>;
+	var crequest = <?php echo $stats['request']?>;
 	var member   = null;
 	var orders   = null;
 	var comments = null;
@@ -256,7 +279,7 @@
 		memid = $(item).attr('name');
 		$.ajax({
 			type: 'GET',
-			url: "<?php echo Yii::app()->createUrl('takeAway/members/getHistory')?>/memberId/" + memid,
+			url: "<?php echo Yii::app()->createUrl('takeAway/members/getHistory')?>/memberId/" + memid + "?sid=<?php echo $this->currentStore->id?>",
 			dataType: 'json',
 			success: function(result){
 				refreshDetailsBoard(result);
@@ -276,6 +299,7 @@
 		member   = data['member'];
 		orders   = data['orders'];
 		comments = data['comments'];
+		messages = data['messages'];
 		chartData = new Array();
 		
 		$('#order_count_' + member['id']).html('订单数量：' + orders.length);
@@ -283,16 +307,23 @@
 		// 设置基本信息
 		$('#tab1').html(
 			'<h4>用户编号：' + member['id'] + '</h4>' +
-			'<div>关注状态：<span class="label label-' + (member['unsubscribed']=="0"?'info':'important') + 
-			'">' + (member['unsubscribed']=="0"?'已关注':'已取消关注') + '</span>&nbsp;&nbsp;&nbsp;&nbsp;' +
-			'<span>关注日期：' + member['ctime'] + '</span></div><br>' +
+			'<div>关注状态：<span class="label label-' + (member['unsubscribed']=="1"?'important':'info') + 
+			'">' + (member['unsubscribed']=="1"?'已取消关注':'已关注') + '</span>&nbsp;&nbsp;&nbsp;&nbsp;' +
+			'绑定状态:&nbsp;&nbsp;<span class="label label-' + (member['bound']=="1"?"success":(member['request']=="1"?"warning":"info")) + '">' +
+			(member['bound']=="1"?"已绑定":(member['request']=="1"?"请求绑定":"未绑定")) + '</span>' +
+			'<span>&nbsp;&nbsp;&nbsp;关注日期：' + member['ctime'] + '</span></div><br>' +
 			'<table class="table table-bordered">' + 
-				'<thead><tr><th>会员信息</th></tr></thead>' + 
+				'<thead><tr>' + 
+					'<th colspan="2">' + 
+						'会员信息' + (member['request'] == "1" ? '<div class="btn btn-primary mem-comfirm-btn" onclick="confirmMember()">确认</div>':'') + 
+					'</th></tr>' + 
+				'</thead>' + 
 				'<tbody>' + 
-					'<tr><td>会员号</td><td>' + (member['memberid']?member['memberid']:'未设置') + '</td></tr>' + 
+					'<tr><td>会员号</td><td>' + (member['cardno']?member['cardno']:'未设置') + '</td></tr>' + 
 					'<tr><td>会员积分</td><td>' + member['credits'] + '</td></tr>' + 
+					'<tr><td>电话号码</td><td>' + (member['phone']?member['phone']:'未设置') + '</td></tr>' +
 				'</tbody>' +
-			'</table>' +
+			'</table>' + 
 			'<table class="table table-bordered">' +
 				'<thead><tr><th>微信信息</th></tr></thead>' +
 				'<tbody>' +
@@ -329,9 +360,7 @@
 			}
 			chartData.sort(function(a, b){return a[0] > b[0]?1:-1});
 			html += '</tbody></table>'
-			$('#tab2').html(
-				html
-			);
+			$('#tab2').html(html);
 			
 		}else{
 			$('#tab2').html(
@@ -359,6 +388,29 @@
 				'<div>这位用户还木有发表过评论</div>'
 			);
 		}
+
+		// 
+		if(messages.length > 1){
+			var html = '<table class="table">' + 
+					   		'<thead><tr><th>历史消息</th></tr></thead>' +
+					   		'<thead><tr><th>发送日期</th><th>消息内容</th><th>回复状态</th></tr></thead>';
+			for(index in messages){
+				var message = messages[index];
+				html += '<tr><td>' + message['ctime'] + '</td>' +
+						    '<td>' + message['content']['0'] + '</td>' +
+						    '<td>' + message['replied'] + '</td>' + 
+						'</tr>';
+				console.log(message['content']);
+			}
+			html += '</table>';
+			$('#tab4').html(
+					html
+			);
+		}else{
+			$('#tab4').html(
+				'<div>这位用户还木有发过消息</div>'
+			);
+		}
 	}
 	
 	function filterMembers(){
@@ -366,10 +418,17 @@
 		if(value == 'all'){
 			$('.member_item').removeClass('hidden');
 		}else if(value == 'subscribed'){
-			$('.member_item.unsubscribed').addClass('hidden');
+			$('.member_item').addClass('hidden');
 			$('.member_item.subscribed').removeClass('hidden');
-		}else if(value=='unsubscribed'){
-			$('.member_item.subscribed').addClass('hidden');
+		}else if(value == 'bound'){
+			$('.member_item').addClass('hidden');
+			$('.member_item.bound').removeClass('hidden');
+		}else if(value == 'request'){
+			$('.member_item').addClass('hidden');
+			$('.member_item.request').removeClass('hidden');
+		}
+		else if(value=='unsubscribed'){
+			$('.member_item').addClass('hidden');
 			$('.member_item.unsubscribed').removeClass('hidden');
 		}
 	}
@@ -416,6 +475,33 @@
 
 	function dismissOrderChart(){
 		$('#chart_container').fadeOut();
+	}
+
+	function confirmMember() {
+		if(member && confirm("确认该用户的会员资格？")){
+			$.ajax({
+				url: "<?php echo Yii::app()->createUrl('takeAway/members/confirmMember/memberId/')?>" + 
+					 "/" + member['id'] + "?sid=<?php echo $this->currentStore->id?>"
+			}).success(function (data){
+				if (data == 'ok'){
+					var item = $('#member_item_' + member['id']);
+					$('#option_bnd').html("已绑定会员卡(" + (++cbound) + ")");
+					$('#option_req').html("请求绑定会员卡(" + (--crequest) + ")");
+					item.removeClass('request');
+					item.addClass('bound');
+					if(member['unsubscribed'] != '1'){
+						var label = item.find('#item_label_' + member['id']);
+						label.removeClass('label-warning');
+						label.addClass('label-success');
+						label.html('已绑定');
+					}
+					item.click();
+					filterMembers();
+				}else{
+					alert('绑定失败');
+				}
+			});
+		}
 	}
 	
 

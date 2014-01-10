@@ -30,13 +30,14 @@ class SdmsgsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('keyword_id, type', 'required'),
-			array('type', 'numerical', 'integerOnly'=>true),
-			array('keyword_id', 'length', 'max'=>11),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('id, keyword_id, type', 'safe', 'on'=>'search'),
-		);
+            array('seller_id, type', 'required'),
+            array('seller_id, type, match_rule', 'numerical', 'integerOnly'=>true),
+            array('menu_name', 'length', 'max'=>128),
+            array('keyword', 'safe'),
+            // The following rule is used by search().
+            // Please remove those attributes that should not be searched.
+            array('id, seller_id, type, menu_name, keyword, match_rule', 'safe', 'on'=>'search'),
+        );
 	}
 
 	/**
@@ -47,9 +48,8 @@ class SdmsgsAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'sdmsgItems' => array(self::HAS_MANY, 'SdmsgItems', 'sdmsg_id'),
-			'keyword' => array(self::BELONGS_TO, 'Keywords', 'keyword_id'),
-		);
+            'sdmsgItems' => array(self::HAS_MANY, 'SdmsgItems', 'sdmsg_id'),
+        );
 	}
 
 	/**
@@ -59,8 +59,11 @@ class SdmsgsAR extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'keyword_id' => 'Keyword',
-			'type' => 'Type',
+            'seller_id' => 'Seller',
+            'type' => 'Type',
+            'menu_name' => 'Menu Name',
+            'keyword' => 'Keyword',
+            'match_rule' => 'Match Rule',
 		);
 	}
 
@@ -102,14 +105,22 @@ class SdmsgsAR extends CActiveRecord
 		return parent::model($className);
 	}
 
-	public function getKeywordsByMsgId($sdmsg_id){
-		$connection = SdmsgsAR::model()->getDbConnection();
-		$query = "select * from sdmsgs left join keywords on keywords.id = sdmsgs.keyword_id where sdmsgs.id=:sdmsg_id";
-		if ($stmt = $connection->createCommand($query)) {
-			$stmt->bindParam(':sdmsg_id',$sdmsg_id);
-            $result = $stmt->queryAll();         
-            return $result;
-		}
+	public function getAutoReply($sellerId){
+		return SdmsgsAR::model()->find(
+			'seller_id=:seller_id and type = 0',
+			array(
+				':seller_id'=>$sellerId,
+			)
+		);
+	}
+
+	public function getDefaultReply($sellerId){
+		return SdmsgsAR::model()->find(
+			'seller_id=:seller_id and type = 1',
+			array(
+				':seller_id'=>$sellerId,
+			)
+		);	
 	}
 
 }

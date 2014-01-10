@@ -28,7 +28,7 @@ class LoginController extends Controller
 
                         switch ($user->seller_type) {
                             case "1":                            
-                                $this->redirect(array('/weiXinReply/replyRules/allRules'));
+                                $this->redirect(array('/accounts/account/stores'));
                                 break;  
                             default:
                                 $this->redirect(Yii::app()->user->returnUrl);

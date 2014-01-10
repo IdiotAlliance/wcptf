@@ -106,4 +106,11 @@ class WechatmsgsAR extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public static function getMessages($userId, $openId){
+		return WechatmsgsAR::model()->findAll(
+			array('condition'=>'seller_id=:userId and openid=:openId',
+				  'params'=>array(':userId'=>$userId, ':openId'=>$openId),
+				  'order'=>'createtime DESC'));
+	}
 }

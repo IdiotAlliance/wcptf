@@ -4,7 +4,7 @@
  * This is the model class for table "hot_products".
  *
  * The followings are the available columns in table 'hot_products':
- * @property string $seller_id
+ * @property string $store_id
  * @property string $desc
  * @property string $pic_id
  * @property string $product_id
@@ -43,12 +43,12 @@ class HotProductsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id, product_id', 'required'),
-			array('seller_id, pic_id, product_id', 'length', 'max'=>11),
+			array('store_id, product_id', 'required'),
+			array('store_id, pic_id, product_id', 'length', 'max'=>11),
 			array('desc', 'length', 'max'=>128),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('seller_id, desc, pic_id, product_id', 'safe', 'on'=>'search'),
+			array('store_id, desc, pic_id, product_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -61,7 +61,7 @@ class HotProductsAR extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'pic' => array(self::BELONGS_TO, 'PicturesAR', 'pic_id'),
-			'seller' => array(self::BELONGS_TO, 'UsersAR', 'seller_id'),
+			'seller' => array(self::BELONGS_TO, 'UsersAR', 'store_id'),
 			'product' => array(self::BELONGS_TO, 'ProductsAR', 'product_id'),
 		);
 	}
@@ -72,7 +72,7 @@ class HotProductsAR extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'seller_id' => 'Seller',
+			'store_id' => 'Seller',
 			'desc' => 'Desc',
 			'pic_id' => 'Pic',
 			'product_id' => 'Product',
@@ -90,7 +90,7 @@ class HotProductsAR extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('seller_id',$this->seller_id,true);
+		$criteria->compare('store_id',$this->store_id,true);
 		$criteria->compare('desc',$this->desc,true);
 		$criteria->compare('pic_id',$this->pic_id,true);
 		$criteria->compare('product_id',$this->product_id,true);
@@ -100,12 +100,19 @@ class HotProductsAR extends CActiveRecord
 		));
 	}
 	
+	/**
+	 * @deprecated
+	 */
 	public function getHotProductsById($sellerId){
-		$hots = HotProductsAR::model()->findAll('seller_id=:sellerId', array(':sellerId'=>$sellerId));
+		$hots = HotProductsAR::model()->findAll('store_id=:sellerId', array(':sellerId'=>$sellerId));
 		return $hots;
+	}
+
+	public function getHotProductsByStoreId($sid){
+		return HotProductsAR::model()->findAll('store_id=:sid', array(':sid'=>$sid));
 	}
 	
 	public function deleteHotProductsByUserId($userId){
-		HotProductsAR::model()->deleteAll('seller_id=:seller_id', array(':seller_id'=>$userId));
+		HotProductsAR::model()->deleteAll('store_id=:store_id', array(':store_id'=>$userId));
 	}
 }

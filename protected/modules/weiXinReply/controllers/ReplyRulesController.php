@@ -39,13 +39,15 @@ class ReplyRulesController extends Controller
             } 		
     	}else{
     		$default = array();
+            $default[0]['id'] = $user->auto_id;         
     		$default[0]['id'] = $user->auto_id;    		
     		$default[0]['type_name'] = SdmsgItemsAR::model()->getTypeName($user->auto_id);
     		$default[1]['id'] = $user->default_id;
 			$default[1]['type_name'] = SdmsgItemsAR::model()->getTypeName($user->default_id);
     	}
     	$itemList = SdmsgItemsAR::model()->getAllCustomizedItem(Yii::app()->user->sellerId);
-    	$this->render('allRules',array(
+    	$storeList = StoreAR::getStoreByUserId(Yii::app()->user->sellerId);
+        $this->render('allRules',array(
 			'default'=>$default,
 			'itemList'=>$itemList,
 		));
