@@ -367,7 +367,7 @@
 
 		MESSAGE_LOADER.loadMessage();
 	});
-	
+	// this is a foo line
 	function expandStoreSwitch(){
 		$('.store_switch').slideToggle('fast');
 	}
