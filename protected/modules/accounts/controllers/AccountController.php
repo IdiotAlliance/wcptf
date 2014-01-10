@@ -7,11 +7,8 @@ class AccountController extends Controller{
 	public $currentPage = null;
 	public $layout = 'account';
 	public $defaultAction = "stores";
-<<<<<<< HEAD
-	// public $typeAtrributes    = array('type_name', 'type_description', 'pic_url');
-=======
-	// public $typeAtrributes    = ['type_name', 'type_description', 'pic_url'];
->>>>>>> origin/master
+	public $typeAtrributes    = array('type_name', 'type_description', 'pic_url');
+
 	// public $productAttributes = ['pname', 'price', 'credit', 'description', 
 	// 							 'stime', 'etime', 'status', 'instore', 'richtext', 
 	// 							 'cover'];
