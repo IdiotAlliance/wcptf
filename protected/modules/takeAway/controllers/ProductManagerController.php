@@ -8,49 +8,50 @@ class ProductManagerController extends TakeAwayController
 
 	public function actionAllProducts($typeId,$prodId)
 	{	
-		if($typeId==0){
-			$typeId = Yii::app()->session['typeCount'][0]['typeId'];
-		}
-
-		$productList = ProductsAR::model()->getCategoryProducts($typeId,Yii::app()->user->sellerId);
-		$prodList = ProductsAR::model()->getAllProducts($productList);
-		$productInfo = null;
-		if($productList != null && $prodId==0){
-			$productInfo = $productList[0];
-		}
-		if($prodId!=0){
-			$productInfo = ProductsAR::model()->findByPK($prodId);
-			$now = date('Y-m-d');
-			if($now< $productInfo->stime )
-				$productInfo->status = "未到期";
-			else if($now > $productInfo->etime)
-				$productInfo->status = "已过期";
-			else{
-				switch ($productInfo->status) {
-					case 1:
-						$productInfo->status = '已上架';
-						break;
-					case 2:
-						$productInfo->status = '已下架';
-						break;
-					default:
-						$productInfo->status = '已上架';
-						break;
+		if(isset($_GET['sid']) && $_GET['sid'] >= 0 && $this->setCurrentStore($_GET['sid'])){
+			$this->typeCount = ProductTypeAR::model()->getProductsByType($_GET['sid']);
+			if($this->typeCount == null){
+					$this->render('noProducts');	
+			}else{
+				if($typeId==0){
+					$typeId = $typeCount[0]['typeId'];
 				}
-			}
-		}
-		$productType = ProductTypeAR::model()->findByPK($typeId);
+				$productList = ProductsAR::model()->getCategoryProducts($typeId,Yii::app()->user->sellerId);
+				$prodList = ProductsAR::model()->getAllProducts($productList);
+				$productInfo = null;
+				if($productList != null && $prodId==0){
+					$productInfo = $productList[0];
+				}
+				if($prodId!=0){
+					$productInfo = ProductsAR::model()->findByPK($prodId);
+					$now = date('Y-m-d');
+					if($now< $productInfo->stime )
+						$productInfo->status = "未到期";
+					else if($now > $productInfo->etime)
+						$productInfo->status = "已过期";
+					else{
+						switch ($productInfo->status) {
+							case 1:
+								$productInfo->status = '已上架';
+								break;
+							case 2:
+								$productInfo->status = '已下架';
+								break;
+							default:
+								$productInfo->status = '已上架';
+								break;
+						}
+					}
+				}
+				$productType = ProductTypeAR::model()->findByPK($typeId);
 
-		$this->render('allProducts',array(
-			'productType'=>$productType,
-			'prodList'=>$prodList,
-			'productInfo'=>$productInfo,
-		));	
-	}
-	
-	public function actionNoProducts()
-	{
-		$this->render('noProducts');
+				$this->render('allProducts',array(
+					'productType'=>$productType,
+					'prodList'=>$prodList,
+					'productInfo'=>$productInfo,
+				));	
+			}			
+		}		
 	}
 	//ajax:编辑类别和其描述
 	public function actionUpdateCategory()
@@ -61,7 +62,6 @@ class ProductManagerController extends TakeAwayController
 				throw new CHttpException(500,'商品类别名字重复！');
 			}else{
 				ProductTypeAR::model()->updateProductType($_POST['id'],$_POST['changeName'],$_POST['changeDesc']);
-				$this->updateSession();
 			}
 		}
 	}
@@ -80,7 +80,7 @@ class ProductManagerController extends TakeAwayController
 		if(isset($_POST["pname"]) && isset($_POST["price"]) && isset($_POST["typeId"]) 
 			&& isset($_POST["credit"]) && isset($_POST["stime"]) && isset($_POST["etime"])){
 			$product = new ProductsAR();
-			$product->seller_id = Yii::app()->user->sellerId;
+			$product->store_id = $_POST['sid'];
 			$product->pname = $_POST["pname"];
 			$product->type_id = $_POST["typeId"];
 			$product->price = $_POST["price"];
@@ -91,7 +91,6 @@ class ProductManagerController extends TakeAwayController
 			$product->instore = $_POST["instore"];
 			$product->daily_instore = $_POST["instore"];
 			$product->save();
-			$this->updateSession();
 			$info = array();
 			$info['prodId']=$product->id;
 			echo json_encode($info);
@@ -109,10 +108,9 @@ class ProductManagerController extends TakeAwayController
 				throw new CHttpException(500,'商品类别名字重复！');
 			}else{
 				$category = new ProductTypeAR();
-				$category->seller_id = Yii::app()->user->sellerId;
+				$category->store_id = $_POST['sid'];
 				$category->type_name = $_POST["typeName"];
 				$category->save();
-				$this->updateSession();
 				$info["success"] = $category->id;
 				echo json_encode($info);
 			}
@@ -141,7 +139,6 @@ class ProductManagerController extends TakeAwayController
             		}
             	}
                 $transaction->commit();
-            	$this->updateSession();
             	$types = ProductTypeAR::model()->getUndeletedProductTypeBySellerId(Yii::app()->user->sellerId);
             	if(!empty($types)){
             		echo json_encode(array('empty'=>0, 'id'=>$types[0]->id));
@@ -160,7 +157,6 @@ class ProductManagerController extends TakeAwayController
 			$category = ProductTypeAR::model()->findByPK($_POST['id']);
 			$category->deleted = 1;
 			$category->save();
-			$this->updateSession();
 			$types = ProductTypeAR::model()->getUndeletedProductTypeBySellerId(Yii::app()->user->sellerId);
 			if(!empty($types)){
 				echo json_encode(array('empty'=>0, 'id'=>$types[0]->id));
@@ -184,7 +180,6 @@ class ProductManagerController extends TakeAwayController
 			$product->richtext = $_POST['richtext'];
 			$product->type_id = $_POST['typeId'];
 			$product->update();
-			$this->updateSession();
 		}
 
 	}
@@ -194,7 +189,6 @@ class ProductManagerController extends TakeAwayController
 			$product = ProductsAR::model()->findByPK($_POST["id"]);
 			$product->deleted = 1;
 			$product->update();
-			$this->updateSession();
 		}else{
 			throw new CHttpException(500,'删除失败！');
 		}
@@ -242,7 +236,6 @@ class ProductManagerController extends TakeAwayController
             		$product->update();									
             	}
                 $transaction->commit();
-            	$this->updateSession();
             }catch(Exception $e){
                 $transaction->rollback();
             } 
@@ -296,18 +289,11 @@ class ProductManagerController extends TakeAwayController
             		$product->deleted = 1;
             		$product->update();									
             	}
-            	$this->updateSession();
 
                 $transaction->commit();
             }catch(Exception $e){
                 $transaction->rollback();
             } 
 		}
-	}
-
-	private function updateSession()
-	{
-		$typeCount = ProductTypeAR::model()->getProductsByType(Yii::app()->user->sellerId);
-		Yii::app()->session[UserIdentity::SESSION_TYPECOUNT] = $typeCount;
 	}
 }

@@ -1,7 +1,7 @@
   /*组件全局样式设置 */
   html,body{
     height: 100%;
-    overflow-y:hidden;  
+    overflow-x:hidden;  
   }
 
   .task{
@@ -277,6 +277,10 @@
 
 .main .sidebar .menu ul li:hover{
   background-color: #f8f8f8;
+}
+
+.menu ul li a{
+  width: 100%;
 }
 
 .main .sidebar .menuHeader{

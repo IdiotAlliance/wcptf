@@ -9,35 +9,6 @@ class MessageController extends Controller{
 			throw new CHttpException(403, "You must sign in first");
 		}else{
 			$sellerId = Yii::app()->user->sellerId;
-<<<<<<< HEAD
-			$mqs = MsgQueueAR::model()->getMsgsBySellerId($sellerId);
-			$msgs = array('system'=>array(), 'orders'=>array(), 'wcmsgs'=>array());
-			foreach ($mqs as $mq) {
-				switch ($mq->type) {
-					case 0:
-						# system messages
-						
-						break;
-					case 1:
-						# order messages
-						$ordermsg = OrdermsgsAR::model()->findByPK($mq->msg_id);
-						if($ordermsg){
-							if(isset($msgs['orders']['' + $ordermsg->store_id])){
-								$msgs['orders']['' + $ordermsg->store_id] ++;
-							} else{
-								$msgs['orders']['' + $ordermsg->store_id] = 1;
-							}
-						}
-						break;
-					case 2:
-						# wechat messages
-						
-						break;
-					default:
-						# code...
-						
-						break;
-=======
 			$system  = MsgQueueAR::model()->getCountByType($sellerId, Constants::MSG_SYSTEM);
 			$orders  = MsgQueueAR::model()->getCountByType($sellerId, Constants::MSG_ORDERS);
 			$wechat  = MsgQueueAR::model()->getCountByType($sellerId, Constants::MSG_WECHAT);
@@ -55,7 +26,6 @@ class MessageController extends Controller{
 				$msgs['comments'] = array();
 				foreach ($comment as $c) {
 					$msgs['comments'][$c['sid']] = $c['count'];
->>>>>>> origin/master
 				}
 			}
 			echo json_encode($msgs);
@@ -66,23 +36,6 @@ class MessageController extends Controller{
 		if(Yii::app()->user->isGuest){
 			throw new CHttpException(403, "You must sign in first");
 		}else{
-<<<<<<< HEAD
-			switch ($type) {
-				case 0:
-					// system messages
-					
-					break;
-				case 1:
-					// order messages
-					
-					break;
-				case 2:
-					// wechat messages
-
-					break;
-				default:
-					# code...
-=======
 			$uid = Yii::app()->user->sellerId;
 			switch ($type) {
 				case Constants::MSG_SYSTEM:
@@ -118,7 +71,6 @@ class MessageController extends Controller{
 					break;
 				default:
 					$this->redirect(Yii::app()->createUrl(''));
->>>>>>> origin/master
 					break;
 			}
 		}

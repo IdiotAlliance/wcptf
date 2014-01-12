@@ -222,7 +222,7 @@ class ProductsAR extends CActiveRecord
 			$prod['price'] = $product->price;
 			$prod['cover'] = $product->cover0->pic_url;
 			$prod['richtext'] = $product->richtext;
-
+			$prod['display'] = 'block';
 			$prodList[] = $prod;
 		}
 		return $prodList;
@@ -265,25 +265,14 @@ class ProductsAR extends CActiveRecord
 
 
 	//获取该商户未分类或者星标类的商品数
-	public function getSpCategoryNum($typeId){
+	public function getSpCategoryNum($typeId,$storeId){
 		$pdList = ProductsAR::model()->findAll(array(
 			'condition' => 'store_id=:store_id and type_id=:type_id',
-			'params' => array(':store_id'=>Yii::app()->user->storeId,':type_id'=>$typeId),
+			'params' => array(':store_id'=>$storeId,':type_id'=>$typeId),
 		));
 		return count($pdList);
 	}
 	
-	/**
-	 * 取出一个商家的所有商品，包括已经被删除的商品
-	 * @param unknown $storeId
-	 * @deprecated
-	 * @return unknown
-	 */
-	//获取某商家的所有商品
-	public function getProductsBySellerId($storeId){
-		$products = ProductsAR::model()->findAll('store_id=:storeId and deleted=:deleted', array(':storeId'=>$storeId,':deleted'=>0));
-		return $products;
-	}
 
 	/**
 	 * @param unknown $storeId

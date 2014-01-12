@@ -10,13 +10,9 @@ class MembersController extends TakeAwayController{
 		
 		if(Yii::app()->user->isGuest){
 			$this->redirect('index.php/accounts/login');
-		}else if(isset($_GET['sid']) && $_GET['sid'] >= 0 && $this->setCurrentStore($_GET['sid'])){
-<<<<<<< HEAD
+		}else if(isset($_GET['sid']) && $_GET['sid'] >= 0 && $this->setCurrentStore($_GET['sid'])){			
 			$sid      = $_GET['sid'];
-			$sellerId = Yii::app()->user->sellerId;
-=======
-			
-			$sid      = $_GET['sid'];
+			$this->typeCount = ProductTypeAR::model()->getProductsByType($_GET['sid']);
 			$sellerId = Yii::app()->user->sellerId;
 
 			// clear comment msg_queue items
@@ -27,8 +23,6 @@ class MembersController extends TakeAwayController{
 					$mqitem->delete();
 				}
 			}
-
->>>>>>> origin/master
 			$members  = MembersAR::model()->getMembersBySellerIdOrderByComment($sellerId);
 			$orders   = OrdersAR::model()->getOrdersCountBySellerId($sellerId);
 			$comments = CommentsAR::model()->getCommentsCountBySellerId($sellerId);
@@ -104,11 +98,8 @@ class MembersController extends TakeAwayController{
 			if($dbmember){
 				$dborders = OrdersAR::model()->getOrdersByMemeberId($memberId);
 				$dbcomments = CommentsAR::model()->getCommentsByMemberId($memberId);
-<<<<<<< HEAD
-				$dbmessages = WechatmsgsAR::model()->getMessages($userId, $dbmember->openid);
-=======
+
 				//$dbmessages = WechatmsgsAR::model()->getMessages($userId, $dbmember->openid);
->>>>>>> origin/master
 				$bound    = MemberBoundAR::model()->getBoundByStoreAndMember($sid, $memberId);
 				$request  = MemberNumbersAR::model()->getRequest($sid, $memberId);
 
@@ -132,11 +123,8 @@ class MembersController extends TakeAwayController{
 
 				$orders = array();
 				$comments = array();
-<<<<<<< HEAD
-				$messages = array();
-=======
+
 				//$messages = array();
->>>>>>> origin/master
 				
 				$i = 0;
 				foreach ($dborders as $order){
@@ -156,24 +144,6 @@ class MembersController extends TakeAwayController{
 					$comments[$i]['status'] = $comment->status;
 					$i ++;
 				}
-<<<<<<< HEAD
-				$i = 0;
-				foreach ($dbmessages as $message) {
-					# code...
-					if($message->msgtype == 'text'){
-						$xml = simplexml_load_string($message->rawmsg, 'SimpleXMLElement', LIBXML_NOCDATA);
-						$messages[$i] = array(
-							'ctime'=>$message->createtime,
-							'content'=>$xml->Content,
-							'replied'=>$message->replied,
-						);
-						// $messages[$i]['ctime']   = $message->createtime;
-						// $messages[$i]['content'] = $xml->Content;
-						// $messages[$i]['replied'] = $message->replied;
-					}
-					$i ++;
-				}
-=======
 				// $i = 0;
 				// foreach ($dbmessages as $message) {
 				// 	# code...
@@ -190,17 +160,12 @@ class MembersController extends TakeAwayController{
 				// 	}
 				// 	$i ++;
 				// }
->>>>>>> origin/master
 
 				$data = array(
 					'member'=>$member,
 					'orders'=>$orders,
 					'comments'=>$comments,
-<<<<<<< HEAD
-					'messages'=>$messages,
-=======
 					//'messages'=>$messages,
->>>>>>> origin/master
 				);
 				echo json_encode($data);
 			}else{

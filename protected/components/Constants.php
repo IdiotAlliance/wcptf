@@ -11,10 +11,6 @@ class Constants{
 
 	// message queue message types
 
-	const MSG_SYSTEM = 0x0000;
-	const MSG_WECHAT = 0x0001;
-	const MSG_ORDERS = 0x0002;
-
 	const MSG_SYSTEM  = 0x0000; // system messages
 	const MSG_ORDERS  = 0x0001; // order messages
 	const MSG_WECHAT  = 0x0002; // wechat messages

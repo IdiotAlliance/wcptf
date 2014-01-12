@@ -151,18 +151,10 @@
 			</div>
 			<div class='menu'>
 				<h4>
-					<a href=
-						"<?php 
-							if(Yii::app()->session['typeCount']!=null){
-							echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>Yii::app()->session['typeCount'][0]['typeId'],'prodId'=>0)).'?sid='.$this->currentStore->id;
-						}else{
-							echo Yii::app()->createUrl('takeAway/productManager/noProducts').'?sid='.$this->currentStore->id;
-						}
-						?>"
-						><i class='icon-shopping-cart'></i> &nbsp&nbsp商品管理</a>
+					<i class='icon-shopping-cart'></i> &nbsp&nbsp商品管理
 				</h4>
 				<ul id="category">
-					<?php foreach (Yii::app()->session['typeCount'] as $tc):?>
+					<?php foreach ($this->typeCount as $tc):?>
 						<li>
 							<a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$tc['typeId'],'prodId'=>0)).'?sid='.$this->currentStore->id;?>">
 								<?php echo $tc['type_name'];?>
@@ -323,7 +315,7 @@
 					$.ajax({
 		                type: 'POST',
 		                url: "<?php echo CHtml::normalizeUrl(array('productManager/addCategory'));?>",
-		                data: {'typeName':inputText},
+		                data: {'typeName':inputText,'sid':<?php echo $this->currentStore->id;?>},
 		                dataType: 'json',
 		                
 		                success:function(json){

@@ -74,11 +74,8 @@ class AccountController extends Controller{
 			$uid = Yii::app()->user->sellerId;
 			$user   = UsersAR::model()->findByPK($uid);
 			$stores = StoreAR::model()->getUndeletedStoreByUserId($uid);
-<<<<<<< HEAD
-			$this->render("account", array('user'=>$user, 
-=======
+
 			$this->render("stores", array('user'=>$user, 
->>>>>>> origin/master
 										   'stores'=>$stores, 
 										   'editForm'=>$editForm,
 										   'deleteForm'=>$deleteForm,
@@ -182,8 +179,6 @@ class AccountController extends Controller{
 			}
 		}
 	}
-<<<<<<< HEAD
-=======
 
 	public function actionProfile(){
 		$this->currentPage = 'profile';
@@ -193,5 +188,4 @@ class AccountController extends Controller{
 	public function actionBills(){
 
 	}
->>>>>>> origin/master
 }
