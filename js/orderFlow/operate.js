@@ -135,6 +135,9 @@ function orderDownload(){
 	// alert(filter);
 	var area = "";
 	//area pick
+	if($("input[name='area-pick-all']").is(':checked')){
+		area = area + $(this).attr('id')+",";
+	}
 	$("input[name='area-pick']").each(function(){
 		if($(this).is(':checked')){
 			area = area + $(this).attr('id') + ',';
@@ -348,11 +351,7 @@ function getPosters(){
 	        url      : ctUrl,
 	        type     : 'POST',
 	        dataType : 'html',
-<<<<<<< HEAD
-	        data 	 : {orderId:orderId},
-=======
 	        data 	 : {orderId:orderId, storeid: getStoreId()},
->>>>>>> origin/master
 	        cache    : false,
 	        success  : function(html)
 	        {
