@@ -99,7 +99,7 @@ class OrdersAR extends CActiveRecord
 			'order_no' => 'Order No',
 			'status' => 'Status',
 			'type' => 'Type',
-			'total' => 'Total',
+			'total' => 'Taotal',
 			'discount' => 'Discount',
 			'ctime' => 'Ctime',
 			'duetime' => 'Duetime',
@@ -256,6 +256,42 @@ class OrdersAR extends CActiveRecord
 		if ($stmt = $connection->createCommand($query)) {
 		    $stmt->bindParam(':storeId', $storeId);
 		    $stmt->bindParam(':date', $date);
+		    if($areaId != 0){
+		    	 $stmt->bindParam(':areaId', $areaId);
+		    }
+		    if($filter == "#tab3"){
+		    	$stmt->bindValue(':status1', 3);
+		    	$stmt->bindValue(':status2', 3);
+		    }else if($filter == "#tab2"){
+		    	$stmt->bindValue(':status1', 1);
+		    	$stmt->bindValue(':status2', 2);
+		    }else{
+		    	$stmt->bindValue(':status1', 0);
+		    	$stmt->bindValue(':status2', 4);
+		    }
+		    $result = $stmt->queryAll();
+		    $orders = OrdersAR::model()->changeArrayToAR($result);
+		    return $orders;
+		}
+	}
+	/*
+		订单下载过滤函数
+	*/
+	public function filterOrderDownLoad($storeId, $startDate, $endDate, $areaId, $filter){
+		$connection = OrdersAR::model()->getDbConnection();
+		$query = "";
+		if($areaId == 0){
+		//不过滤
+			$query = "select * from orders where store_id=:storeId and ctime>=:startDate and ctime<=:endDate".
+			" and (status=:status1 or status=:status2) order by ctime DESC";
+		}else{
+			$query = "select * from orders where store_id=:storeId and ctime>=:startDate and ctime<=:endDate".
+			" and area_id in:areaId and (status=:status1 or status=:status2) order by ctime DESC";
+		}
+		if ($stmt = $connection->createCommand($query)) {
+		    $stmt->bindParam(':storeId', $storeId);
+		    $stmt->bindParam(':startDate', $startDate);
+		    $stmt->bindParam(':endDate', $endDate);
 		    if($areaId != 0){
 		    	 $stmt->bindParam(':areaId', $areaId);
 		    }

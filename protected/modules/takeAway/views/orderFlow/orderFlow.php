@@ -1,4 +1,6 @@
 <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/order-flow.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/bootstrap-datetimepicker.min.js"></script>
+<link href="<?php echo Yii::app()->request->baseUrl; ?>/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/jquery.json-2.4.min.js"></script>
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/jsrender.min.js"></script>
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/orderFlow/orderFlow.js"></script>
@@ -16,6 +18,9 @@
 			$(this).css("background-color", "#e7e7e7");
 			$(this).css("color", "#000000");
 		});
+		$(".test").click(function(){
+			alert(0);
+		});
 
 		$('.order-header').delegate('.order-body ul>li .order-item ul>li.order-content', 'mouseup', function(e){
 			//更新订单详情
@@ -24,6 +29,7 @@
 			fetchAndRenderOrderItems(orderId);
 			// getOrderItems(orderId);
 		});
+		initView();
 		initTab();
 		//初次加载获取区域列表
 		fetchAreas();
@@ -57,6 +63,91 @@
 	    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
 	    return fmt;
 	}
+	// 初始化界面 new features
+	function initView(){
+		$('.order-header #order-header-content .nav.nav-tabs').after("<div class='order-list-divider'></div>");
+		var initTabNums = 0;
+		//tab 样式
+		$('.order-header #order-header-content .nav.nav-tabs').children().each(function(){
+			if(initTabNums == 0){
+				$(this).prepend("<div class='head-line-one'></div>");
+				$(this).hover(function (){
+					$('.head-line-one', $(this)).css('background-color', 'red');
+				},
+				function (){
+					$('.head-line-one', $(this)).css('background-color', '#737373');
+				}
+				);
+			}
+			if(initTabNums == 1){
+				$(this).prepend("<div class='head-line-two'></div>");
+				$(this).hover(function (){
+					$('.head-line-two', $(this)).css('background-color', 'red');
+				},
+				function (){
+					$('.head-line-two', $(this)).css('background-color', '#4986e7');
+				}
+				);
+			}
+			if(initTabNums == 2){
+				$(this).prepend("<div class='head-line-three'></div>");
+				$(this).hover(function (){
+					$('.head-line-three', $(this)).css('background-color', 'red');
+				},
+				function (){
+					$('.head-line-three', $(this)).css('background-color', '#16a765');
+				}
+				);
+			}
+			initTabNums++;
+		});
+		//date picker
+		$.fn.datetimepicker.dates['zh-CN'] = {
+					days: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
+					daysShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+					daysMin:  ["日", "一", "二", "三", "四", "五", "六", "日"],
+					months: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+					monthsShort: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+					today: "今日",
+					suffix: [],
+					meridiem: []
+				};
+	    //bottom date picker
+		$(".form_datetime").datetimepicker({
+			format:'yyyy-mm-dd',
+			autoclose:true,
+			minView:2,
+			todayHighlight:true,
+			pickerPosition: "top-right",
+			language:'zh-CN',
+		}).on('changeDate', function(ev){
+			var tempDate = $('.input-date').val();
+			toChooseDay(tempDate);
+		});
+		//order download date picker
+
+		$(".order_download_datetime").datetimepicker({
+			format:'yyyy-mm-dd hh:ii',
+			autoclose:true,
+			minView:0,
+			todayHighlight:true,
+			initialDate: new Date(),
+			pickerPosition: "bottom",
+			language:'zh-CN',
+		}).on('changeDate', function(ev){
+			// var a = new Date();
+			// if (ev.date.valueOf() > a.valueOf()){
+			//     alert("已经是最新日期");
+			// }
+		});
+		// var a = new Date();
+		// var endDate = new Date(a).Format("yyyy-MM-dd hh:mm");
+		// $('.order_download_datetime').datetimepicker('setEndDate', endDdate);
+		$('.order-footer-date').click(function(){
+			$('.form_datetime').datetimepicker('show');
+		});
+	}
+
 	// 初始化加载订单列表
 	function initTab(){
 		var tabId = "#tab1";
@@ -91,14 +182,57 @@
 	    $('.footer-right-btn.all-pick').html("全选");
 	    return false;
 	}
+	function toChooseDay(newDateString){
+		//将字符串转为时间
+		var tempDateString = newDateString;
+		var newDate =  new Date(Date.parse(newDateString.replace(/-/g,   "/"))); 
+		var day = $('.order-footer .order-date-container').attr("id");
+		var a = new Date();
+		var currentDateString = new Date(a).Format("yyyy-MM-dd");
+		var currentDate = new Date(Date.parse(currentDateString.replace(/-/g,   "/"))); 
+		var difTime = newDate.getTime()-currentDate.getTime();
+		var difDay  = difTime / (24*3600*1000);
+		if(difDay<=0){
+			$('.order-footer .order-date-container').attr("id", difDay);
+			$('.order-footer-date').html(tempDateString);
+			loadTab(currentTab);
+			updateTabHeadersByLocal();
+		}else{
+			alert("已经是最新的日期");
+		}
+		// if(parseInt(day)<0){
+		// 	day = parseInt(day) + 1;
+		// 	$('.order-footer .order-date-container').attr("id", day);
+		// 	var date = $('.order-footer .order-footer-wrap .order-footer-date').html();
+		// 	var a = new Date();
+		// 	a = a.valueOf();
+		// 	a = a + parseInt(day) * 24 * 60 * 60 * 1000;
+		// 	//a = new Date(a);
+		// 	var currentDate = new Date(a).Format("yyyy-MM-dd");
+		// 	$('.order-footer .order-footer-wrap .order-footer-date').html(currentDate);
+		// 	loadTab(currentTab);
+		// 	updateTabHeadersByLocal();
+		// }else{
+		// 	alert("已经是最新的日期");
+		// }
+	}
 	//获取当前店铺id
 	function getStoreId(){
 		return $('.store-id').attr("id");
 	}
+	function onlyNum()
+	{
+	  if(!((event.keyCode>=48&&event.keyCode<=57)||(event.keyCode>=96&&event.keyCode<=105)))
+	    event.returnValue=false;
+	}
 </script>
 <div id="action-name">
 </div>
+<div id="order-download">
+	<img src="../../../img/icon-excel.jpg" class="img-btn" data-toggle="modal" data-target="#order-download-modal">
+</div>
 <?php echo '<div class="store-id" id='.$this->currentStore->id.'></div>'; ?>
+<?php echo '<div class="base-url" id='.Yii::app()->request->baseUrl.'></div>'; ?>
 <div class="order">
 	<div class="order-header">
 		<?php $this->init(); ?>
@@ -112,7 +246,7 @@
 		        	'active'=>true),
 		        array(
 		        	'id'=>'tab2',
-		        	'label'=>'已派送('.$this->sendedNum.')', 
+		        	'label'=>'已派送('.$this->sendedNum.')',
 		        	'encodeLabel'=>true,
 		        	'htmlOptions'=>array('data-html'=>true),
 		        	'content'=>'loading',
@@ -292,6 +426,20 @@
 		   		</div>
 		   	</div>
 		</script>
+		<!-- 订单加载模板 -->
+		<script type="text/x-jsrender" id="orderProgress">
+			<div id="circular" class="marginLeft">
+				<div id="circular_1" class="circular"></div>
+				<div id="circular_2" class="circular"></div>
+				<div id="circular_3" class="circular"></div>
+				<div id="circular_4" class="circular"></div>
+				<div id="circular_5" class="circular"></div>
+				<div id="circular_6" class="circular"></div>
+				<div id="circular_7" class="circular"></div>
+				<div id="circular_8" class="circular"></div>
+				<div id="clearfix"></div>
+			</div> 
+		</script>
 	</div>
 	<div class="order-footer">
 		<ul>
@@ -307,8 +455,15 @@
 				<div class="order-date-container" id="0">
 				</div>
 				<div class="order-footer-wrap">
-					<label class="order-footer-date"></label>
-					<label class="order-footer-info">订单总量:120</label>
+					<!-- <input type="text"  name='order-date'  readonly class='order-footer-date'> -->
+					<div class="input-append date form_datetime">
+					    <input size="16" type="text" value="" class='input-date' style="display:none">
+					    <label class="order-footer-date"></label>
+					    <span class="add-on"><i class="icon-th"></i></span>
+						<label class="order-footer-info">订单总量:120</label>
+					</div>
+					<!-- <input size="16" type="text" readonly class="form_datetime" style="display:none"> -->
+					
 				</div>
 			</li>
 			<li>
@@ -415,6 +570,40 @@
 	    )); ?>
 	</div>
 <?php $this->endWidget(); ?>
-<script type="text/javascript">
-
-</script>
+<!-- 下载订单modal -->
+<div id="order-download-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">导出订单excel</h3>
+	</div>
+	<div class="modal-body">
+		<div class="time-pick">
+			<p>开始时间</p>
+			<input size="16" type="text" name="order-start-time" readonly class="order_download_datetime">
+			<p>结束时间</p>
+			<input size="16" type="text" name="order-end-time" readonly class="order_download_datetime">
+		</div>
+		
+		<div class="tyoe-pick">
+			<p>选择类型</p>
+			<label class="checkbox inline">
+			  	<input type="checkbox" name="order-notsend" id="inlineCheckbox1" value="#tab1">未派送
+			</label>
+			<label class="checkbox inline">
+			  	<input type="checkbox" name="order-sended" id="inlineCheckbox2" value="#tab2">已派送
+			</label>
+			<label class="checkbox inline">
+			  	<input type="checkbox" name="order-cancel" id="inlineCheckbox3" value="#tab3">已取消
+			</label>
+		</div>
+		<div class="area-pick">
+			
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">只导本列表</button>
+		<button class="btn" data-dismiss="modal" aria-hidden="true">只导出今天</button>
+		<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+		<button class="btn btn-primary" data-dismiss="modal" >导出</button>
+	</div>
+</div>

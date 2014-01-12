@@ -150,6 +150,10 @@ function fetchAndRenderOrderList(storeid, day, filter){
 	var myOrderList = MyOrderList.getList(storeid, day, filter);
 	//检查本地缓存是否
     if(myOrderList ==null || myOrderList == undefined) {
+    	// 加载动画
+    	var html  = $("#orderProgress").render();
+		$(filter).html(html);
+		$(".order-detail").html(html);
         $.ajax({
             url      : ctUrl,
             type     : 'POST',
@@ -162,7 +166,7 @@ function fetchAndRenderOrderList(storeid, day, filter){
             	if(data.success == 1){
             		var orderList = new Array();
             		for (var i = 0; i < data.orderList.length; i++) {
-            			var orderId = data.orderList[i].order_id; 
+            			var orderId = data.orderList[i].order_id;
             			orderList[i] = orderId;
             			var order = MyOrder.createNew(orderId, data.orderList[i]);
             			order.save();
@@ -381,8 +385,11 @@ function dynamicQueryOrderToList(day, filter, orderId){
 // 获取订单子项&刷新订单子项
 function fetchAndRenderOrderItems(orderId){
 	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/filterOrderItems';
+	var html  = $("#orderProgress").render();
+	$(".order-detail").html(html);
 	if(orderId == null || orderId == undefined){
 		$(".order-detail").html("无订单数据");
+		return false;
 	}
 	var myOrderItemList = MyOrderItemList.getItemList(orderId);
 	//检查本地缓存是否
@@ -540,6 +547,8 @@ function renderOrderDetailByData(orderId, myOrderItemList){
 		itemViews.list = itemList;
 		var html  = $("#orderDetailTemplate").render(itemViews);
 		$(".order-detail").html(html);
+		$(".order-detail-header").animate({opacity: 0.0}, 1);
+		$(".order-detail-header").fadeTo("slow", 1);
 	}
 }
 //动态增加订单到列表&&h获取订单在列表中的位置

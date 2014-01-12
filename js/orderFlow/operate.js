@@ -100,7 +100,107 @@ $(document).ready(function(){
 		$('#batOperate').toggle();
 		batfinishOrders();
 	});
+	// 订单导出
+	$('#order-download-modal .btn.btn-primary').click(function(){
+		orderDownload();
+	});
+	//获取订单导出筛选区域
+	$('#order-download-modal').on('show', function (e) {
+	    getAreas();
+	    var nowDate = new Date();
+	    nowDate = new Date(nowDate).Format("yyyy-MM-dd hh:mm");
+	    $("input[name='order-start-time']").val(nowDate);
+	    $("input[name='order-end-time']").val(nowDate);
+	    $("input[name='order-notsend']").attr('checked', true);
+
+	});
+
 });
+// 订单导出
+function orderDownload(){
+	var startDate = $("input[name='order-start-time']").val();
+	var endDate = $("input[name='order-end-time']").val();
+	// alert(startDate);
+	//type pick
+	var filter = 0;
+	if($("input[name='order-notsend']").is(':checked')){
+		filter = filter + 1;
+	}
+	if($("input[name='order-sended']").is(':checked')){
+		filter = filter + 2;
+	}
+	if($("input[name='order-cancel']").is(':checked')){
+		filter = filter + 4;
+	}
+	// alert(filter);
+	var area = "";
+	//area pick
+	$("input[name='area-pick']").each(function(){
+		if($(this).is(':checked')){
+			area = area + $(this).attr('id') + ',';
+		}
+	});
+	// alert(area);
+	var url = '/weChat/index.php/takeAway/orderFlow/orderDownload';
+	// var url = ''
+	url = url+'/storeid/'+getStoreId()+ 
+	'/startDate/'+startDate+'/endDate/'+endDate+'/filter/'+filter+'/area/'+area;
+	// alert(url);
+	window.open(url);
+	// var num;
+	// ctUrl = '/weChat/index.php?r=takeAway/orderFlow/orderDownload';
+	// if(ctUrl != '') {
+	//     $.ajax({
+	//         url      : ctUrl,
+	//         type     : 'POST',
+	//         dataType : 'html',
+	//         data 	 : {storeid: getStoreId(), startDate: startDate, endDate: endDate, filter:filter, area:area},
+	//         cache    : false,
+	//         success  : function(data)
+	//         {
+	//         	alert('导出成功！');
+	//         },
+	//         error:function(){
+	//             alert('导出失败！');
+	//         }
+	//     });
+	// }
+	return false;
+}
+//获取订单导出筛选区域
+function getAreas(){
+	var ctUrl = '/weChat/index.php/?r=takeAway/orderFlow/fetchAreas';
+	$.ajax({
+	    url      : ctUrl,
+	    type     : 'POST',
+	    dataType : 'json',
+	    data 	 : {storeid: getStoreId()},
+	    cache    : false,
+	    success  : function(data)
+	    {
+	    	//alert(html);
+	        if(data.success == 1){
+	        	var areas = data.area;
+	        	var html = '<p>选择区域</p>';
+	        	html = html + '<label class="checkbox inline"><input type="checkbox" id='
+	        		+0+' value="option1" name="area-pick-all">'+'全部'+'</label>';
+	        	for (var i = 0; i < areas.length; i++) {
+	        		var id = areas[i]['id'];
+	        		var name = areas[i]['name'];
+	        		html = html+ '<label class="checkbox inline"><input type="checkbox" id='
+	        		+id+' value="option1" name="area-pick">'+name+'</label>';
+	        	};
+	        	$('#order-download-modal .area-pick').html(html);
+	        	$("input[name='area-pick-all']").attr("checked", true);
+	        } else{
+	        	alert('Request failed');
+	        }
+	    },
+	    error:function(){
+	        alert('Request failed');
+	    }
+	});
+}
 //添加订单子项
 function addItem(){
 	var orderId = $('.order-detail-header .order-name').attr("id");
@@ -286,6 +386,8 @@ function setPosters(){
 		        		myOrder.save();
 			        	renderDeleOrder(day, currentTab, orderId);
 			        	dynamicAddOrderToList(day, "#tab2", myOrder);
+			        	//清除订单详情
+			        	fetchAndRenderOrderItems(null);
 		        		alert("订单派送成功！");
 		        	}else{
 		        		alert("订单派送失败！");
@@ -331,6 +433,8 @@ function batDispatchOrders(){
 			        		myOrder.save();
 				        	renderDeleOrder(day, currentTab, orders[i]);
 				        	dynamicAddOrderToList(day, "#tab2", myOrder);
+				        	//清除订单详情
+			        		fetchAndRenderOrderItems(null);
 		        		}
 		        		alert("订单派送成功！");
 		        	}else{
@@ -371,7 +475,9 @@ function cancel(){
 	        		myOrder.save();
 		        	renderDeleOrder(day, currentTab, orderId);
 		        	dynamicAddOrderToList(day, "#tab3", myOrder);
-		        	//alert("取消成功！");
+		        	//清除订单详情
+			        fetchAndRenderOrderItems(null);
+		        	alert("取消成功！");
 	        	}else{
 	        		alert("取消失败！");
 	        	}
@@ -417,6 +523,8 @@ function batCancelOrders(){
 			        	renderDeleOrder(day, currentTab, orders[i]);
 			        	dynamicAddOrderToList(day, "#tab3", myOrder);
 	        		}
+	        		//清除订单详情
+			        fetchAndRenderOrderItems(null);
 	        		alert("取消成功！");
 	        	}else{
 	        		alert("取消失败！");
@@ -453,6 +561,8 @@ function finish(){
 	        		myOrder.save();
 		        	renderDeleOrder(day, currentTab, orderId);
 		        	dynamicAddOrderToList(day, "#tab2", myOrder);
+		        	//清除订单详情
+			        fetchAndRenderOrderItems(null);
 		        	alert("订单已成功完成");
 	        	}else{
 	        		alert("订单完成失败！");
@@ -498,6 +608,8 @@ function batfinishOrders(){
 		        		myOrder.save();
 			        	renderDeleOrder(day, currentTab, orders[i]);
 			        	dynamicAddOrderToList(day, "#tab2", myOrder);
+			        	//清除订单详情
+			        	fetchAndRenderOrderItems(null);
 	        		}
 	        		alert("订单已完成");
 	        	}else{
@@ -781,7 +893,7 @@ function updateListener(){
                 		if(tabTwoOrderList!=null){
                 			len = tabTwoOrderList.length;
                 			for(var i=0; i<len; i++){
-                				if($.inArray(tabTwoOrderList[i], data.tabTwoOrderIdList) == -1){
+                				if($.inArray(tabTwoOrderList[i]+"", data.tabTwoOrderIdList) == -1){
                 					renderDeleOrder(day, currentTab, tabTwoOrderList[i]);
                 				}
                 			}
@@ -822,7 +934,7 @@ function updateListener(){
                 		if(tabThreeOrderList!=null){
                 			len = tabThreeOrderList.length;
                 			for(var i=0; i<len; i++){
-                				if($.inArray(tabThreeOrderList[i], data.tabThreeOrderIdList) == -1){
+                				if($.inArray(tabThreeOrderList[i]+"", data.tabThreeOrderIdList) == -1){
                 					renderDeleOrder(day, currentTab, tabThreeOrderList[i]);
                 				}
                 			}
@@ -963,7 +1075,7 @@ function updateTabContent(tabId){
     } else if(tabId == '#tab2') {
         ctUrl = '/weChat/index.php/takeAway/orderFlow/sended';
     } else if(tabId == '#tab3') {
-    	ctUrl = '/weChat/index.php/takeAway/orderFlow/cancel'; 
+    	ctUrl = '/weChat/index.php/takeAway/orderFlow/cancel';
     }
 
     if(ctUrl != '') {
@@ -1003,6 +1115,8 @@ function updateTabContent(tabId){
 }
 //获取订单Items
 function getOrderItems(orderId){
+	//()
+	
 	fetchOrderItems(orderId);
     return false;
 }

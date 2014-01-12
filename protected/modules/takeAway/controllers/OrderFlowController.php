@@ -1,6 +1,7 @@
 <?php
 
 include 'TakeAwayController.php';
+include 'ExcelDownload.php';
 
 class OrderFlowController extends TakeAwayController
 {
@@ -619,6 +620,73 @@ class OrderFlowController extends TakeAwayController
 	    	 exit;
     	 }
     	
+    }
+
+    /*
+    	订单下载接口
+    */
+    public function actionOrderDownload(){
+    	if(isset($_GET['storeid']) && isset($_GET['startDate']) && isset($_GET['endDate'])
+    			&&isset($_GET['filter'])&&isset($_GET['area'])){
+			$storeid = $_GET['storeid'];
+			$startDate = $_GET['startDate'];
+			$endDate = $_GET['endDate'];
+			$filter = $_GET['filter'];
+			$areas = $_GET['area'];
+			//转换时间格式
+			$startDate = date("Y-m-d H:i:s", $this->getDateTimestamp($startDate));
+			$endDate = date("Y-m-d H:i:s", $this->getDateTimestamp($endDate));
+			// 处理type过滤器 按顺序展示优先级
+			$filterType = array();
+			if(($filter&1) == 1){
+				array_push($filterType, "#tab1");
+			}
+			if(($filter&2) == 2){
+				array_push($filterType, "#tab2");
+			}
+			if(($filter&4) == 4){
+				array_push($filterType, "#tab3");
+			}
+			//
+			$areas = explode(',', $areas);
+			$data = array();
+			$item = array('订单id','订单编号', '预约人', '下单时间');
+			array_push($data, $item);
+			foreach ($filterType as $type) {
+				if($areas[0] == 0){
+					$orders = OrdersAR::model()->filterOrderDownLoad($storeid, $startDate, $endDate, 0, $type);
+					foreach ($orders as $order) {
+						$item = array($order->id, $order->order_no, $order->phone, $order->ctime);
+						array_push($data, $item);
+					}
+				}else{
+					$orders = OrdersAR::model()->filterOrderDownLoad($storeid, $startDate, $endDate, $areas, $type);
+					foreach ($orders as $order) {
+						$item = array($order->id, $order->order_no, $order->phone, $order->ctime);
+						array_push($data, $item);
+					}
+				}
+			}
+			$filename = "orderFile";
+			$title = "微积分历史订单";
+			ExcelDownload::downloadExcelByArray($filename, $title, $data);	   	
+		}
+    }
+
+    /*
+    	获取字符串时间戳
+    */
+    public static function getDateTimestamp($date){
+    	$year=((int)substr($date, 0, 4));
+
+    	$month=((int)substr($date, 5, 2));
+
+    	$day=((int)substr($date, 8, 2));
+
+    	$hour = ((int) substr($date, 11, 2));
+
+    	$minute = ((int) substr($date, 14, 2));
+    	return mktime($hour, $minute, 0, $month, $day, $year);
     }
 
     /*
