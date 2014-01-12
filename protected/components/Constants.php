@@ -19,4 +19,9 @@ class Constants{
 	const SDMSG_AUTO    = 0x0000;
 	const SDMSG_DEFAULT = 0x0001;
 	const SDMSG_KEYWORD = 0x0002;
+
+	// bill types
+	const BILL_TYPE_NORMAL = 0x0000;
+	const BILL_TYPE_SMS    = 0x0001;
+	const BILL_TYPE_PLUGIN = 0x0002;
 }

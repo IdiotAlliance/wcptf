@@ -210,7 +210,8 @@ class AccountController extends Controller{
 												   array(':uid'=>$uid, ':page'=>$page));
 				$result = array();
 				foreach ($bills as $bill) {
-					array_push($result, array('flowid'=>$bill->flowid,
+					array_push($result, array('id'=>$bill->id,
+											  'flowid'=>$bill->flowid,
 											  'type'=>$bill->type,
 											  'income'=>$bill->income,
 											  'payment'=>$bill->payment,
@@ -219,6 +220,33 @@ class AccountController extends Controller{
 				}
 				echo json_encode($result);
 			}
+		}
+	}
+
+	public function getBillDetail($bid){
+		$bill = BillsAR::model()->findByPK($bid);
+		if($bill){
+			$result = array('id' => $bill->id, 'flowid'=>$bill->flowid, 
+							'type'=>$bill->type, 'income'=>$bill->income, 
+							'payment'=>$bill->payment, 'ctime'=>$bill->ctime,
+							'balance'=>$bill->balance);
+			if(isset($bill->reference) && $bill->reference >= 0){
+				switch ($bill->type) {
+					case Constants::BILL_TYPE_NORMAL:
+						# code...
+						break;
+					case Constants::BILL_TYPE_SMS:
+
+						break;
+					case Constants::BILL_TYPE_PLUGIN:
+						
+						break;
+					default:
+						# code...
+						break;
+				}
+			}
+			echo json_encode($result);
 		}
 	}
 }

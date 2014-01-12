@@ -118,6 +118,22 @@
 		font-weight: bold;
 		text-align: center;
 	}
+	#profile_tab3 #bill_detail_container{
+		position: absolute;
+		left: 15px;
+		top: 50px;
+		right: 15px;
+		bottom: 15px;
+		background-color: #fff;
+	}
+	#profile_tab3 #bill_loading_mask{
+		position: absolute;
+		left: 15px;
+		top: 50px;
+		right: 15px;
+		bottom: 15px;
+		background-color: #fff;
+	}
 </style>
 
 <div id="profile_main_container">
@@ -180,7 +196,7 @@
 							'<td>'.$bill->income.'</td>'.
 							'<td>'.$bill->payment.'</td>'.
 							'<td>'.$bill->balance.'</td>'.
-							'<td><a href="#">查看详情</a></td>'.
+							'<td><a href="#" class="bill_detail_btn" id="bill_detail_'.$bill->id.'">查看详情</a></td>'.
 						 '</tr>';
 				}?>
 			</tbody>
@@ -241,6 +257,22 @@
 				}
 			}
 		});
+		$('.bill_detail_btn').click(function(event){
+			$('#bill_loading_mask').show();
+			billId = parseInt(event.target.id.substr(12));
+			$.ajax({
+				url: '<?php echo Yii::app()->createUrl("accounts/account/billDetail")?>/bid/' + billId,
+				dataType: 'json',
+				success: function(data){
+					$('#bill_loading_mask').hide();
+					$('#bill_detail_container').show();
+
+				},
+				fail: function(data){
+
+				}
+			});
+		});
 		setCurrentPage(1);
 	});
 
@@ -300,7 +332,7 @@
 				if(data && data.length > 0){
 					setCurrentPage(page);
 					$('#profile_bill_table_body').html('');
-					for(index in data){
+					for(index = data.length - 1; index >= 0; index --){
 						$('#profile_bill_table_body').append(
 							'<tr>' + 
 								'<td>' + data[index]['flowid'] + '</td>' +
@@ -309,7 +341,7 @@
 								'<td>' + data[index]['income'] + '</td>' +
 								'<td>' + data[index]['payment'] + '</td>' +
 								'<td>' + data[index]['balance'] + '</td>' +
-								'<td><a href="#">查看详情</a></td>' +
+								'<td><a href="#" class="bill_detail_btn" id="bill_detail_' + data[index]['id'] + '">查看详情</a></td>' +
 							'</tr>'
 						);
 					}
