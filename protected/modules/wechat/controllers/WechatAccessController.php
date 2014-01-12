@@ -64,7 +64,6 @@ class WechatAccessController extends Controller {
 	 * 处理post消息的函数
 	 */
 	public function handleMsg($sellerId, $postStr) {
-	
 		$postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if($postObj){
 			switch($postObj->MsgType){
@@ -88,55 +87,44 @@ class WechatAccessController extends Controller {
 	public function handleEvent($rawmsg, $msg, $sellerId){
 		$eventType = $msg->Event;
 		$openId    = $msg->FromUserName;
+		$selfId    = $msg->ToUserName;
 		$user      = UsersAR::model()->getUserById($sellerId);
 		$time      = time();
-		switch ($eventType){
-			case 'subscribe':{
-				// 存储该用户到会员表中
- 				$member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openId);
- 				if(!$member){
- 					$member = new MembersAR();
- 					$member->seller_id = $sellerId;
- 					$member->openid    = $openId;
- 					$member->wapkey = SeriesGenerator::generateMemberKey();
- 					$member->save();
- 				}else{
- 					$member->unsubscribed = 0;
- 					$member->update();
- 				}
-				// 返回消息
-				$textTpl = "<xml>
-								<ToUserName><![CDATA[%s]]></ToUserName>
-								<FromUserName><![CDATA[%s]]></FromUserName>
-								<CreateTime>%s</CreateTime>
-								<MsgType><![CDATA[news]]></MsgType>
-								<ArticleCount>1</ArticleCount>
-								<Articles>
-									<item>
-										<Title><![CDATA[关于我们&帮助]]></Title> 
-										<Description><![CDATA[果果家微信平台使用小tips]]></Description>
-										<PicUrl><![CDATA[%s]]></PicUrl>
-										<Url><![CDATA[%s]]></Url>
-									</item>
-								</Articles>
-							</xml>";
-				$about_url = "http://mp.weixin.qq.com/mp/appmsg/show?__biz=MzA4MzA2MDgwMQ==&appmsgid=10000034&itemidx=1&sign=1e807c4e9afe16c97858e9539796000b#wechat_redirect";
-				$resultStr = sprintf($textTpl, $msg->FromUserName, $msg->ToUserName, $time,
-							 'http://www.v7fen.com/weChat/'.$user->logo, $about_url);
-				echo $resultStr;
-				break;
-			}
-			case 'unsubscribe':{
-				// 修改会员状态
-				$member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openId);
-				if($member){
-					$member->unsubscribed = 1;
-					$member->update();
+		if($user){
+			switch ($eventType){
+				case 'subscribe':{
+					// 存储该用户到会员表中
+	 				$member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openId);
+	 				if(!$member){
+	 					$member = new MembersAR();
+	 					$member->seller_id = $sellerId;
+	 					$member->openid    = $openId;
+	 					$member->wapkey = SeriesGenerator::generateMemberKey();
+	 					$member->save();
+	 				}else{
+	 					$member->unsubscribed = 0;
+	 					$member->update();
+	 				}
+					// 返回消息
+					$sdmsg = SdmsgsAR::model()->getMsgByType($sellerId, Constants::SDMSG_AUTO);
+					if($sdmsg && $msgtpl = $this->constructMsg($sellerId, $openId, $selfId, $sdmsg)){
+						echo $msgtpl;
+						exit();
+					}
+					echo '欢迎您关注 '.$user->wechat_name.' !';
+					break;
 				}
-				break;
+				case 'unsubscribe':{
+					// 修改会员状态
+					$member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openId);
+					if($member){
+						$member->unsubscribed = 1;
+						$member->update();
+					}
+					break;
+				}
 			}
 		}
-		
 	}
 	
 	/**
@@ -146,9 +134,7 @@ class WechatAccessController extends Controller {
 		$openid = $msg->FromUserName;
 		$selfid = $msg->ToUserName;
 		$content = trim($msg->Content);
-		
 		$msgtpl = null;
-		$time = time();
 		if($content){
 			$wcmsg = new WechatmsgsAR();
 			$wcmsg->seller_id  = $sellerId;
@@ -160,142 +146,26 @@ class WechatAccessController extends Controller {
 			$wcmsg->replied    = Constants::REPLIED_NONE;
 			
 			$sdmsg = null;
-			$matchId = KeywordsAR::model()->findMatch($sellerId, $content);
+			$matchId = SdmsgsAR::model()->findMatch($sellerId, $content);
 			if($matchId >= 0){
 				// get related sdmsg from db
 				$sdmsg = SdmsgsAR::model()->findByPK($matchId);
 				$wcmsg->replied = Constants::REPLIED_KEYWORD;
 			}else{
 				// get default msg from db
-				$user = UsersAR::model()->findByPK($sellerId);
-				if($user && $user->default_id)
-					$sdmsg  = SdmsgsAR::model()->findByPK($user->default_id);
+				$sdmsg = SdmsgsAR::model()->getMsgByType($sellerId, Constants::SDMSG_DEFAULT);
 				$wcmsg->replied = Constants::REPLIED_DEFAULT;
 			}
 			
 			if($sdmsg){
-				// var_dump($msg->type);
-				$items = SdmsgItemsAR::model()->getByMsgId($sdmsg->id);
-				if($items && !empty($items)){
-					if(count($items) == 1){
-						$item = $items[0];
-						switch ($item->type) {
-							case 0:
-								// dan tiao mu chun wen ben
-								$msgtpl = "<xml>
-											<ToUserName><![CDATA[%s]]></ToUserName>
-											<FromUserName><![CDATA[%s]]></FromUserName>
-											<CreateTime>%s</CreateTime>
-											<MsgType><![CDATA[text]]></MsgType>
-											<Content><![CDATA[%s]]></Content>
-										   </xml>";
-								$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, $item->content);
-								break;
-							case 1:
-								// dan tiao mu tu wen
-								$msgtpl = "<xml>
-											<ToUserName><![CDATA[%s]]></ToUserName>
-											<FromUserName><![CDATA[%s]]></FromUserName>
-											<CreateTime>%s</CreateTime>
-											<MsgType><![CDATA[news]]></MsgType>
-											<ArticleCount>1</ArticleCount>
-											<Articles>
-												<item>
-													<Title><![CDATA[%s]]></Title> 
-													<Description><![CDATA[%s]]></Description>
-													<PicUrl><![CDATA[%s]]></PicUrl>
-													<Url><![CDATA[%s]]></Url>
-												</item>
-											</Articles>
-											</xml> ";
-								$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, 
-												  $item->title, $item->content, $item->picurl, $item->url);
-								break;
-						}
-					}else{
-						$msgtpl = "<xml>
-									<ToUserName><![CDATA[%s]]></ToUserName>
-									<FromUserName><![CDATA[%s]]></FromUserName>
-									<CreateTime>%s</CreateTime>
-									<MsgType><![CDATA[news]]></MsgType>
-									<ArticleCount>%s</ArticleCount>
-									<Articles>%s</Articles>
-								   </xml>
-								   ";
-
-						$msgitems = array();
-						$token = null;
-						foreach ($items as $item) {
-						 	$itemtpl = "<item>
-						 					<Title><![CDATA[%s]]></Title>
-						 					<Description><![CDATA[%s]]></Description>
-											<PicUrl><![CDATA[%s]]></PicUrl>
-											<Url><![CDATA[%s]]></Url>
-						 				</item>";
-						 	$type = $item->type & 0xFF;
-						 	$index = ($item->type >> 8) & 0xFF;
-						 	if($type & 0x80 > 0){
-						 		// functional item
-						 		// generate and save token
-						 		if(!$token)
-						 			$token = SeriesGenerator::generateMemberToken();
-						 		
-						 		$url = "";
-						 		switch ($type) {
-						 			case 0x80:
-						 				# order
-						 				$url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId, 
-						 													 array('openid' => $openid, 'token' => $token));
-						 				break;
-						 			case 0x81:
-						 				# history
-										$url = Yii::app()->createAbsoluteUrl('/wap/wap/history/'.$sellerId, 
-																			 array('openid' => $openid)).'#mp.weixin.qq.com';					 				
-						 				break;
-						 			case 0x82:
-						 				# promotions
-						 				$hot_url = $url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId, 
-						 													 array('openid' => $openid, 'token' => $token));
-						 				$hot_products = HotProductsAR::model()->getHotProductsById($sellerId);
-						 				foreach ($hot_products as $hot) {
-						 					$hot_url = $url.'&sortid='.$hot->product_id;
-						 					if($hot->onindex == 1){
-						 						break;
-						 					}
-						 				}
-						 				$url = $hot_url;
-						 				break;
-						 			case 0x83:
-						 				# contact us
-
-						 				break;
-						 		}
-						 		$itemtpl = sprintf($itemtpl, $item->title, $item->content, $item->picurl, $url);
-						 	}else{
-						 		// non functional item
-						 		$itemtpl = sprintf($itemtpl, $item->title, $item->content, $item->picurl, $item->url);
-						 	}
-						 	$msgitems[$index] = $itemtpl;
-						}
-						if($token){
-							$memtoken = new MemberTokenAR();
-							$memtoken->seller_id = $sellerId;
-							$memtoken->openid    = $openid;
-							$memtoken->token     = $token;
-							$memtoken->save();
-						}
-						$itemstr = "";
-						foreach ($msgitems as $msgitem) {
-							if($msgitem)
-								$itemstr += $msgitem;
-						}
-						$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, count($items), $itemstr);
-					}
+				if($msgtpl = $this->constructMsg($sellerId, $openid, $selfid, $sdmsg))
 					echo $msgtpl;
-				}
-				else $wcmsg->replied = Constants::REPLIED_NONE;
+				else
+					$wcmsg->replied = Constants::REPLIED_NONE;
 			}
-			else $wcmsg->replied = Constants::REPLIED_NONE;
+			else 
+				$wcmsg->replied = Constants::REPLIED_NONE;
+
 			if($wcmsg->save() && 
 			  ($wcmsg->replied == Constants::REPLIED_DEFAULT ||
 			   $wcmsg->replied == Constants::REPLIED_NONE)){
@@ -307,5 +177,123 @@ class WechatAccessController extends Controller {
 				$mq->save();
 			}
 		}
+	}
+
+	public function constructMsg($sellerId, $openid, $selfid, $sdmsg){
+		$time = time();
+		$msgtpl = null;
+		$items = SdmsgItemsAR::model()->getByMsgId($sdmsg->id);
+		if($items && !empty($items)){
+			if(count($items) == 1){
+				$item = $items[0];
+				switch ($item->type) {
+					case 0:
+						// dan tiao mu chun wen ben
+						$msgtpl = "<xml>
+									<ToUserName><![CDATA[%s]]></ToUserName>
+									<FromUserName><![CDATA[%s]]></FromUserName>
+									<CreateTime>%s</CreateTime>
+									<MsgType><![CDATA[text]]></MsgType>
+									<Content><![CDATA[%s]]></Content>
+								   </xml>";
+						$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, $item->content);
+						break;
+					case 1:
+						// dan tiao mu tu wen
+						$msgtpl = "<xml>
+									<ToUserName><![CDATA[%s]]></ToUserName>
+									<FromUserName><![CDATA[%s]]></FromUserName>
+									<CreateTime>%s</CreateTime>
+									<MsgType><![CDATA[news]]></MsgType>
+									<ArticleCount>1</ArticleCount>
+									<Articles>
+										<item>
+											<Title><![CDATA[%s]]></Title> 
+											<Description><![CDATA[%s]]></Description>
+											<PicUrl><![CDATA[%s]]></PicUrl>
+											<Url><![CDATA[%s]]></Url>
+										</item>
+									</Articles>
+									</xml> ";
+						$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, 
+										  $item->title, $item->content, $item->picurl, $item->url);
+						break;
+				}
+			}else{
+				$msgtpl = "<xml>
+							<ToUserName><![CDATA[%s]]></ToUserName>
+							<FromUserName><![CDATA[%s]]></FromUserName>
+							<CreateTime>%s</CreateTime>
+							<MsgType><![CDATA[news]]></MsgType>
+							<ArticleCount>%s</ArticleCount>
+							<Articles>%s</Articles>
+						   </xml>
+						   ";
+				$msgitems = array();
+				$token = null;
+				foreach ($items as $item) {
+				 	$itemtpl = "<item>
+				 					<Title><![CDATA[%s]]></Title>
+				 					<Description><![CDATA[%s]]></Description>
+									<PicUrl><![CDATA[%s]]></PicUrl>
+									<Url><![CDATA[%s]]></Url>
+				 				</item>";
+				 	$type = ($item->type & 0xFF);
+				 	$index = (($item->type >> 8) & 0xFF) - 1;
+				 	if(($type & 0x80) > 0){
+				 		$url = null;
+				 		// functional item
+				 		// generate and save token
+				 		if(!$token)
+				 			$token = SeriesGenerator::generateMemeberToken();
+
+				 		switch ($type) {
+				 			case 0x80:
+				 				# order
+				 				$url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token);
+				 				break;
+				 			case 0x81:
+				 				# history
+								$url = Yii::app()->createAbsoluteUrl('/wap/wap/history/'.$sellerId.'?openid='.$openid.'&token='.$token).'#mp.weixin.qq.com';					 				
+				 				break;
+				 			case 0x82:
+				 				# promotions
+				 				$hot_url = $url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token);
+				 				$hot_products = HotProductsAR::model()->getHotProductsById($sellerId);
+				 				foreach ($hot_products as $hot) {
+				 					$hot_url = $url.'&sortid='.$hot->product_id;
+				 					if($hot->onindex == 1){
+				 						break;
+				 					}
+				 				}
+				 				$url = $hot_url;
+				 				break;
+				 			case 0x83:
+				 				# contact us
+				 				
+				 				break;
+				 		}
+				 		$itemtpl = sprintf($itemtpl, $item->title, $item->content, $item->picurl, $url);
+				 	}else{
+				 		// non functional item
+				 		$itemtpl = sprintf($itemtpl, $item->title, $item->content, $item->picurl, $item->url);
+				 	}
+				 	$msgitems[$index] = $itemtpl;
+				}
+				if($token){
+					$memtoken = new MemberTokenAR();
+					$memtoken->seller_id = $sellerId;
+					$memtoken->openid    = $openid;
+					$memtoken->token     = $token;
+					$memtoken->save();
+				}
+				$itemstr = "";
+				foreach ($msgitems as $msgitem) {
+					$itemstr = $itemstr.$msgitem;
+				}
+				$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, count($items), $itemstr);
+			}
+		}
+		return $msgtpl;
 	}
 }

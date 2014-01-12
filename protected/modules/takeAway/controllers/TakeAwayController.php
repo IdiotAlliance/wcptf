@@ -5,7 +5,6 @@ class TakeAwayController extends Controller{
 	
 	public $currentStore = null;
 	public $stores = null;
-
 	public $action = null;
 	public $typeCount = null;
 

@@ -92,7 +92,6 @@ class OrderFlowController extends TakeAwayController
 					 'update_time'=>$order->update_time
 					));
 		}
-
 		// 清空订单消息
 		OrdermsgsAR::model()->deleteMsg($storeid);
 		$arr=array('success'=>'1', 'orderList'=>$orderViews);
