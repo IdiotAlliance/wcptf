@@ -147,4 +147,6 @@ class KeywordsAR extends CActiveRecord
 			}
 		}
 	}
+
+	
 }

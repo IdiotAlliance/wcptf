@@ -618,4 +618,20 @@ class OrdersAR extends CActiveRecord
 			return false;
 		}
 	}
+
+	/**
+	 * get order stats of current month and all in history
+	 */
+	public static function getOrderStats($userId){
+		$connection = OrdersAR::model()->getDbConnection();
+		$query = "SELECT SUM(total) AS sum FROM orders WHERE store_id IN 
+		         (SELECT id FROM store WHERE seller_id=:userId) AND 
+		          status = 1";
+		if($stmt = $connection->createCommand($query)){
+			$stmt->bindParam(':userId', $userId);
+			$stats = $stmt->queryAll();
+			return $stats[0]['sum'];
+		}
+		return 0;
+	}
 }

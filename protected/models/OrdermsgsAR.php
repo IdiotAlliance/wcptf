@@ -105,6 +105,7 @@ class OrdermsgsAR extends CActiveRecord
 		MsgQueueAR::model()->insertMsg($sellerId, $ordermsgs->id, 1);
 	}
 
+
 	//清空该店的订单消息
 	public function deleteMsg($storeId){
 		$ordermsgs = OrdermsgsAR::Model()->findAll('store_id=:storeId', array(':storeId'=>$storeId));

@@ -31,7 +31,7 @@
 				array(
 					  'sid'=>$store->id,
 					  'label'=>$store->name, 
-					  'url'=>Yii::app()->createUrl('messages/message/redirect', array('type'=>2, 'sid'=>$store->id)))
+					  'url'=>Yii::app()->createUrl('messages/message/redirect', array('type'=>3, 'sid'=>$store->id)))
 			);	
 		}
 	}?>
@@ -47,8 +47,15 @@
 						</a>
 						<ul id="yw1" class="dropdown-menu">
 							<li>
-								<a tabindex="-1" href="#">系统消息
+								<a tabindex="-1" 
+								   href="<?php echo Yii::app()->createUrl('messages/message/redirect', array('type'=>0))?>">系统消息
 									<div id="system_msg_badge" class="badge"></div>
+								</a>
+							</li>
+							<li>
+								<a tabindex="-1" 
+									href="<?php echo Yii::app()->createUrl('messages/message/redirect', array('type'=>2))?>">微信消息
+									<div id="wechat_msg_badge" class="badge member-badge"></div>
 								</a>
 							</li>
 							<li class="dropdown-submenu">
@@ -68,8 +75,8 @@
 								</ul>
 							</li>
 							<li class="dropdown-submenu">
-								<a tabindex="-1" href="#">会员消息
-									<div id="member_msg_badge" class="badge member-badge"></div>
+								<a tabindex="-1" href="#">最新评论
+									<div id="comment_msg_badge" class="badge comment-badge"></div>
 								</a>
 								<ul id="yw3" class="dropdown-menu">
 									<?php
@@ -77,7 +84,7 @@
 											echo '<li><a tabindex="-1" href="'.
 												 $memberItem['url'].
 												 '">'.$memberItem['label'].
-												 	'<div class="badge member-badge" id="member_badge_'.$memberItem['sid'].'"></div>'.
+												 	'<div class="badge comment-badge" id="comment_badge_'.$memberItem['sid'].'"></div>'.
 												 '</a></li>';
 										}
 									?>
@@ -107,6 +114,9 @@
 								<a tabindex="-1" href="<?php echo Yii::app()->createUrl('accounts/account/stores')?>">账户信息</a>
 							</li>
 							<li>
+								<a tabindex="-1" href="<?php echo Yii::app()->createUrl('accounts/account/stores')?>">返回上一级</a>
+							</li>
+							<li>
 								<a tabindex="-1" href="/weChat/index.php/logout">退出</a>
 							</li>
 						</ul>
@@ -115,7 +125,6 @@
 			</div>
 		</div>
 	</div>
-
 	<div class='main'>
 		<div class='sidebar'>
 			<div class='menuHeader' onclick="expandStoreSwitch()">
@@ -142,18 +151,10 @@
 			</div>
 			<div class='menu'>
 				<h4>
-					<a href=
-						"<?php 
-							if(Yii::app()->session['typeCount']!=null){
-							echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>Yii::app()->session['typeCount'][0]['typeId'],'prodId'=>0)).'?sid='.$this->currentStore->id;
-						}else{
-							echo Yii::app()->createUrl('takeAway/productManager/noProducts').'?sid='.$this->currentStore->id;
-						}
-						?>"
-						><i class='icon-shopping-cart'></i> &nbsp&nbsp商品管理</a>
+					<i class='icon-shopping-cart'></i> &nbsp&nbsp商品管理
 				</h4>
 				<ul id="category">
-					<?php foreach (Yii::app()->session['typeCount'] as $tc):?>
+					<?php foreach ($this->typeCount as $tc):?>
 						<li>
 							<a href="<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>$tc['typeId'],'prodId'=>0)).'?sid='.$this->currentStore->id;?>">
 								<?php echo $tc['type_name'];?>
@@ -167,7 +168,9 @@
 			</div>
 			<div class='menu'>
 				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/members').'?sid='.$this->currentStore->id;?>">
-					<i class='icon-user'></i> &nbsp&nbsp会员管理</a>
+					<i class='icon-user'></i> &nbsp&nbsp会员管理
+						<div class="badge badge-important" id="comment_manage_badge"></div>
+					</a>
 				</h4>
 			</div>
 			<div class='menu'>
@@ -216,6 +219,7 @@
 						total += self.handleSystemMessages(data['system']);
 						total += self.handleOrderMessages(data['orders']);
 						total += self.handleWechatMessages(data['wcmsgs']);
+						total += self.handleCommentMessages(data['comments']);
 						self.setTotal(total);
 						setTimeout(self.loadMessage, self.getTimeoutTime(data));
 					},
@@ -224,8 +228,13 @@
 					}
 			});
 		};
-		this.handleSystemMessages = function(msgs){
-			return 0;
+		this.handleSystemMessages = function(count){
+			var total = parseInt(count);
+			if(total > 0)
+				$('#system_msg_badge').html(total);
+			else
+				$('#system_msg_badge').html('');
+			return total;
 		};
 		this.handleOrderMessages = function(msgs){
 			var total = 0;
@@ -249,8 +258,35 @@
 			}
 			return total;
 		};
-		this.handleWechatMessages = function(msgs){
-			return 0;
+		this.handleWechatMessages = function(count){
+			var total = parseInt(count);
+			if(total > 0)
+				$('#wechat_msg_badge').html(total);
+			else
+				$('#wechat_msg_badge').html('');
+			return total;
+		};
+		this.handleCommentMessages = function(msgs){
+			var total = 0;
+			if(msgs){
+				for(var key in msgs){
+					if(parseInt(key) != self.currentId){
+						$('#comment_badge_' + key).html(msgs[key]);
+						total += parseInt(msgs[key]);
+					}else{
+						if(self.currentAction != "members" && parseInt(msgs[key]) > 0){
+							$('#comment_manage_badge').html(msgs[key]);
+						}
+					}
+					if(total > 0)
+						$('#comment_msg_badge').html(total);
+					else
+						$('#comment_msg_badge').html('');
+				}
+			}else{
+				$('.comment-badge').html('');
+			}
+			return total;
 		};
 		this.setTotal = function(total){
 			if(total > 0)
@@ -279,7 +315,7 @@
 					$.ajax({
 		                type: 'POST',
 		                url: "<?php echo CHtml::normalizeUrl(array('productManager/addCategory'));?>",
-		                data: {'typeName':inputText},
+		                data: {'typeName':inputText,'sid':<?php echo $this->currentStore->id;?>},
 		                dataType: 'json',
 		                
 		                success:function(json){
@@ -322,7 +358,7 @@
 
 		MESSAGE_LOADER.loadMessage();
 	});
-	
+	// this is a foo line
 	function expandStoreSwitch(){
 		$('.store_switch').slideToggle('fast');
 	}

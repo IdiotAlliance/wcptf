@@ -278,6 +278,7 @@
 		    		    		{{else orderData.status == '已取消'}}
 		    		    			<div class="order-item item-cancel" id={{:orderData.areaId}}>
 		    		    		{{/if}}
+
 					    			<ul>
 					    				<li class="order-state ">
 					    					<div class="state">
@@ -326,6 +327,9 @@
 		</script>
 		<!-- 单个订单模板 -->
 		<script type="text/x-jsrender" id="orderTemplate">
+<<<<<<< HEAD
+    		<div class="order-item item-wait" id={{:orderData.areaId}}>
+=======
 			{{if orderData.status == '待派送'}}
     			<div class="order-item item-wait" id={{:orderData.areaId}}>
     		{{else orderData.status == '待生产'}}
@@ -337,6 +341,7 @@
     		{{else orderData.status == '已取消'}}
     			<div class="order-item item-cancel" id={{:orderData.areaId}}>
     		{{/if}}
+>>>>>>> origin/master
     			<ul>
     				<li class="order-state ">
     					<div class="state">

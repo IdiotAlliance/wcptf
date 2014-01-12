@@ -162,15 +162,15 @@ class ProductTypeAR extends CActiveRecord
 	}
 
 	//获取商家各类别的商品数量和类别id和名字
-	public function getProductsByType($sellerId){
+	public function getProductsByType($storeId){
 		$connection = ProductsAR::model()->getDbConnection();
         $query = "select count(*) as product_count, product_type.id as typeId,
         product_type.type_name from product_type left join (select * from products where products.deleted<>1) as products_view on products_view.type_id = product_type.id where product_type.store_id=:store_id and product_type.deleted = 0  group by product_type.id";
         if ($stmt = $connection->createCommand($query)) {
-            $stmt->bindParam(':store_id',$sellerId);
+            $stmt->bindParam(':store_id',$storeId);
             $result = $stmt->queryAll();
 
-           	$products = ProductsAR::model()->getProductsBySellerId(Yii::app()->user->sellerId);
+           	$products = ProductsAR::model()->getUndeletedProductsBystoreId($storeId);
 
            	for($i=0;$i<count($result);$i++){
             	if($result[$i]['product_count']==1)

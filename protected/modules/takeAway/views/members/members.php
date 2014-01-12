@@ -299,7 +299,7 @@
 		member   = data['member'];
 		orders   = data['orders'];
 		comments = data['comments'];
-		messages = data['messages'];
+		// messages = data['messages'];
 		chartData = new Array();
 		
 		$('#order_count_' + member['id']).html('订单数量：' + orders.length);

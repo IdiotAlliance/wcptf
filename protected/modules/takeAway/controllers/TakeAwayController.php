@@ -6,6 +6,7 @@ class TakeAwayController extends Controller{
 	public $currentStore = null;
 	public $stores = null;
 	public $action = null;
+	public $typeCount = null;
 
 	public function __construct($id,$module=null){
 
@@ -37,4 +38,9 @@ class TakeAwayController extends Controller{
 	public function setCurrentAction($aid){
 		$this->action = $aid;
 	}
+
+	public function setCurrentTypeCount($sid){
+		$this->typeCount = ProductTypeAR::model()->getProductsByType($sid);
+	}
+
 }
