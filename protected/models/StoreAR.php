@@ -147,4 +147,5 @@ class StoreAR extends CActiveRecord
 		return StoreAR::model()->find('seller_id=:userId and name=:name',
 									  array(':userId'=>$userId, ':name'=>$name)) ? true : false;
 	}
+
 }

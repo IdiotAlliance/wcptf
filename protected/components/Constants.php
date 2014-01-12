@@ -15,4 +15,8 @@ class Constants{
 	const MSG_WECHAT  = 0x0002; // wechat messages
 	const MSG_COMMENT = 0x0003; // comment
 	
+	// SD Messages types
+	const SDMSG_AUTO    = 0x0000;
+	const SDMSG_DEFAULT = 0x0001;
+	const SDMSG_KEYWORD = 0x0002;
 }

@@ -179,11 +179,45 @@ class AccountController extends Controller{
 	}
 
 	public function actionProfile(){
-		$this->currentPage = 'profile';
-		$this->render('profile');
+		if(Yii::app()->user->isGuest){
+			$this->redirect(Yii::app()->createUrl('accounts/login/login'));
+		}
+		else{
+			$this->currentPage = 'profile';
+			$uid = Yii::app()->user->sellerId;
+			$user = UsersAR::model()->findByPK($uid);
+			if($user){
+				$stats  = OrdersAR::model()->getOrderStats($uid);
+				$bills  = BillsAR::model()->getBills($uid, 8);
+				$bcount = BillsAR::model()->count('seller_id=:uid', array(':uid'=>$uid));
+				$pcount = floor(($bcount / 8)) + 1;
+				$model  = array('account'=>$user->email, 'wechat_name'=>$user->wechat_name,
+							   'balance'=>$user->balance, 'stats'=>$stats);
+				$this->render('profile', array('model'=>$model, 'bills'=>$bills, 
+							  'bcount'=>$bcount, 'pcount'=>$pcount));
+			}
+		}
 	}
 
-	public function actionBills(){
-
+	public function actionGetBills($page){
+		if(Yii::app()->user->isGuest){
+			throw new CHttpException(403, "You must sign in to use this service");
+		}else{
+			$uid = Yii::app()->user->sellerId;
+			if($page > 0){
+				$bills = BillsAR::model()->findAll('seller_id=:uid and page=:page',
+												   array(':uid'=>$uid, ':page'=>$page));
+				$result = array();
+				foreach ($bills as $bill) {
+					array_push($result, array('flowid'=>$bill->flowid,
+											  'type'=>$bill->type,
+											  'income'=>$bill->income,
+											  'payment'=>$bill->payment,
+											  'balance'=>$bill->balance,
+											  'ctime'=>$bill->ctime));
+				}
+				echo json_encode($result);
+			}
+		}
 	}
 }
