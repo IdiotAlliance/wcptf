@@ -19,6 +19,7 @@ class OrderFlowController extends TakeAwayController
 		if(Yii::app()->user->isGuest){
 			$this->redirect('index.php/accounts/login');
 		}else if(isset($_GET['sid']) && $_GET['sid'] >= 0 && $this->setCurrentStore($_GET['sid'])){
+			$this->typeCount = ProductTypeAR::model()->getProductsByType($_GET['sid']);			
 			$this->render('orderFlow');
 		}
 	}
