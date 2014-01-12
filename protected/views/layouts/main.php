@@ -29,7 +29,7 @@
                 'class'=>'bootstrap.widgets.TbMenu',
                 'items'=>array(
                     array('label'=>'首页', 'url'=>'#', 'active'=>true),
-                    array('label'=>'了解详细', 'url'=>'#'),
+                    array('label'=>'了解详细', 'url'=>array('/weiXinReply/replyRules/allRules')),
                     array('label'=>'价格方案', 'url'=>'#'),
                 ),
             ),

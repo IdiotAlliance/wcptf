@@ -186,6 +186,7 @@
 			<li class="active"><a href="#tab1" data-toggle="tab">基本信息</a></li>
 			<li class=""><a href="#tab2" data-toggle="tab">订单</a></li>
 			<li class=""><a href="#tab3" data-toggle="tab">评论</a></li>
+			<li class=""><a href="#tab4" data-toggle="tab">消息</a></li>
 		</ul>
 		<div class="tab-content" style="padding-bottom: 9px;">
 			<div class="tab-pane tab active" id="tab1">
@@ -195,6 +196,9 @@
 				<p></p>
 			</div>
 			<div class="tab-pane tab" id="tab3">
+				<p></p>
+			</div>
+			<div class="tab-pane tab" id="tab4">
 				<p></p>
 			</div>
 		</div>
@@ -295,7 +299,11 @@
 		member   = data['member'];
 		orders   = data['orders'];
 		comments = data['comments'];
+<<<<<<< HEAD
+		messages = data['messages'];
+=======
 		// messages = data['messages'];
+>>>>>>> origin/master
 		chartData = new Array();
 		
 		$('#order_count_' + member['id']).html('订单数量：' + orders.length);
@@ -382,6 +390,29 @@
 		}else{
 			$('#tab3').html(
 				'<div>这位用户还木有发表过评论</div>'
+			);
+		}
+
+		// 
+		if(messages.length > 1){
+			var html = '<table class="table">' + 
+					   		'<thead><tr><th>历史消息</th></tr></thead>' +
+					   		'<thead><tr><th>发送日期</th><th>消息内容</th><th>回复状态</th></tr></thead>';
+			for(index in messages){
+				var message = messages[index];
+				html += '<tr><td>' + message['ctime'] + '</td>' +
+						    '<td>' + message['content']['0'] + '</td>' +
+						    '<td>' + message['replied'] + '</td>' + 
+						'</tr>';
+				console.log(message['content']);
+			}
+			html += '</table>';
+			$('#tab4').html(
+					html
+			);
+		}else{
+			$('#tab4').html(
+				'<div>这位用户还木有发过消息</div>'
 			);
 		}
 	}

@@ -125,7 +125,6 @@
 			</div>
 		</div>
 	</div>
-
 	<div class='main'>
 		<div class='sidebar'>
 			<div class='menuHeader' onclick="expandStoreSwitch()">

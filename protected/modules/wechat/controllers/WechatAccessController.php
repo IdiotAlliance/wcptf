@@ -165,6 +165,7 @@ class WechatAccessController extends Controller {
 			}
 			else 
 				$wcmsg->replied = Constants::REPLIED_NONE;
+
 			if($wcmsg->save() && 
 			  ($wcmsg->replied == Constants::REPLIED_DEFAULT ||
 			   $wcmsg->replied == Constants::REPLIED_NONE)){

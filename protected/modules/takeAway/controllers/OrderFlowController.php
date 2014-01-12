@@ -92,8 +92,11 @@ class OrderFlowController extends TakeAwayController
 					 'update_time'=>$order->update_time
 					));
 		}
+<<<<<<< HEAD
+=======
 		// 清空订单消息
 		OrdermsgsAR::model()->deleteMsg($storeid);
+>>>>>>> origin/master
 		$arr=array('success'=>'1', 'orderList'=>$orderViews);
 		echo json_encode($arr);
 	}
@@ -365,9 +368,12 @@ class OrderFlowController extends TakeAwayController
 		success：1需要当前页刷新；2不需要当前页刷新只刷新头；
 	*/
 	public function updateListener($storeid, $day){
+<<<<<<< HEAD
+=======
 		// 清空订单消息
 		OrdermsgsAR::model()->deleteMsg($storeid);
 		
+>>>>>>> origin/master
         $date = date("Y-m-d H:i:s",strtotime($day." day"));
         $tabOneOrders = OrdersAR::model()->filterOrder($storeid, $date, "#tab1");
         $tabTwoOrders = OrdersAR::model()->filterOrder($storeid, $date, "#tab2");

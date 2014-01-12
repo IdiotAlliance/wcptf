@@ -54,7 +54,7 @@ return array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
 			'loginUrl'=>array('accounts/login/login'),
-			'returnUrl'=>array('site/index'),
+			'returnUrl'=>array('/site/index'),
 		),
 		'session'=>array(
 		   'autoStart'=>true,

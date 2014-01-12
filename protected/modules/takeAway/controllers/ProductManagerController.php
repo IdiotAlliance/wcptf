@@ -46,7 +46,8 @@ class ProductManagerController extends TakeAwayController
 			'prodList'=>$prodList,
 			'productInfo'=>$productInfo,
 		));	
-
+	}
+	
 	public function actionNoProducts()
 	{
 		$this->render('noProducts');

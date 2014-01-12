@@ -169,5 +169,4 @@ class MsgQueueAR extends CActiveRecord
 		}
 		return null;
 	}
-
 }

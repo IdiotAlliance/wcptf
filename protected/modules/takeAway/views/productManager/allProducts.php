@@ -520,14 +520,8 @@
 	                dataType: 'json',
 	                
 	                success:function(json){
-<<<<<<< HEAD
 	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+choice+"/prodId/0";
 	                },
-=======
-	                	$("#delCategoryModal").modal('hide');
-	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+choice;
-		            },
->>>>>>> ad9471852d7b3b908150dcba05930d52625725db
 	                error:function(){
 	                	alert('保存失败');
 	                },				
@@ -541,19 +535,12 @@
 	                dataType: 'json',
 	                
 	                success:function(json){
-<<<<<<< HEAD
-
-	                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts',array('typeId'=>0,'prodId'=>0));?>";
-	                },
-=======
-	                	$("#delCategoryModal").modal('hide');
-						if(json.empty == 1){
+	                	if(json.empty == 1){
 							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/noProducts'); ?>";
 						}else{
-							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>/typeId/" + json.id;
+							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>/typeId/" + json.id+"/prodId/0";
 						}
-		            },
->>>>>>> ad9471852d7b3b908150dcba05930d52625725db
+	                },
 	                error:function(){
 	                	alert('保存失败');
 	                },				
