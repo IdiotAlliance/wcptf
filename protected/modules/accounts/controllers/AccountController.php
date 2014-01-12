@@ -74,10 +74,7 @@ class AccountController extends Controller{
 			$uid = Yii::app()->user->sellerId;
 			$user   = UsersAR::model()->findByPK($uid);
 			$stores = StoreAR::model()->getUndeletedStoreByUserId($uid);
-<<<<<<< HEAD
 
-=======
->>>>>>> 824600bbe6adb1d321e0a8f98ff2fedfbf55acc1
 			$this->render("stores", array('user'=>$user, 
 										   'stores'=>$stores, 
 										   'editForm'=>$editForm,

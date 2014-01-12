@@ -348,11 +348,7 @@ function getPosters(){
 	        url      : ctUrl,
 	        type     : 'POST',
 	        dataType : 'html',
-<<<<<<< HEAD
-	        data 	 : {orderId:orderId},
-=======
 	        data 	 : {orderId:orderId, storeid: getStoreId()},
->>>>>>> origin/master
 	        cache    : false,
 	        success  : function(html)
 	        {

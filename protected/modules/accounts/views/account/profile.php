@@ -121,7 +121,7 @@
 	#profile_tab3 #bill_detail_container{
 		position: absolute;
 		left: 15px;
-		top: 50px;
+		top: 42px;
 		right: 15px;
 		bottom: 15px;
 		background-color: #fff;
@@ -129,7 +129,7 @@
 	#profile_tab3 #bill_loading_mask{
 		position: absolute;
 		left: 15px;
-		top: 50px;
+		top: 42px;
 		right: 15px;
 		bottom: 15px;
 		background-color: #fff;
