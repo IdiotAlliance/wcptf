@@ -1,20 +1,24 @@
 <?php
 
 /**
- * This is the model class for table "bills".
+ * This is the model class for table "systemmsgs".
  *
- * The followings are the available columns in table 'bills':
+ * The followings are the available columns in table 'systemmsgs':
  * @property string $id
  * @property integer $type
+ * @property string $ctime
+ * @property integer $read
  * @property string $seller_id
- * @property double $bill
+ *
+ * The followings are the available model relations:
+ * @property Users $seller
  */
-class BillsAR extends CActiveRecord
+class SystemmsgsAR extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return BillsAR the static model class
+	 * @return SystemmsgsAR the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -26,7 +30,7 @@ class BillsAR extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'bills';
+		return 'systemmsgs';
 	}
 
 	/**
@@ -37,13 +41,12 @@ class BillsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id', 'required'),
-			array('type', 'numerical', 'integerOnly'=>true),
-			array('bill', 'numerical'),
+			array('type, ctime, seller_id', 'required'),
+			array('type, read', 'numerical', 'integerOnly'=>true),
 			array('seller_id', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, type, seller_id, bill', 'safe', 'on'=>'search'),
+			array('id, type, ctime, read, seller_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -55,6 +58,7 @@ class BillsAR extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'seller' => array(self::BELONGS_TO, 'Users', 'seller_id'),
 		);
 	}
 
@@ -66,8 +70,9 @@ class BillsAR extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'type' => 'Type',
+			'ctime' => 'Ctime',
+			'read' => 'Read',
 			'seller_id' => 'Seller',
-			'bill' => 'Bill',
 		);
 	}
 
@@ -84,18 +89,30 @@ class BillsAR extends CActiveRecord
 
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('type',$this->type);
+		$criteria->compare('ctime',$this->ctime,true);
+		$criteria->compare('read',$this->read);
 		$criteria->compare('seller_id',$this->seller_id,true);
-		$criteria->compare('bill',$this->bill);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
 
-	public static function getBills($uid, $page, $limit){
-		return BillsAR::model()->findAll(array('condition'=>'seller_id=:userId',
-											   'params'=>array(':userId'=>$uid),
-											   'order'=>'ctime desc',
-											   'limit'=>($limit * $page)));
+	public static function getMsgsAfter($uid, $after, $limit){
+		return SystemmsgsAR::model()->findAll(array('condition' => 'seller_id=:uid AND id>:after',
+													'params' => array(':uid'=>$uid, ':after'=>$after),
+													'limit' => $limit, 
+													'order' => 'ctime desc'
+													)
+											 );
+	}
+
+	public static function getMsgsBefore($uid, $before, $limit){
+		return SystemmsgsAR::model()->findAll(array('condition' => 'seller_id=:uid AND id<:before',
+													'params' => array(':uid'=>$uid, ':before'=>$before),
+													'limit' => $limit, 
+													'order' => 'ctime desc'
+													)
+											 );
 	}
 }

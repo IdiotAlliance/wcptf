@@ -75,6 +75,22 @@
 		font-weight: bold;
 		text-align: center;
 	}
+	#profile_tab2 #profile_tab2_load_more{
+		padding-left: 10px;
+		width: 840px;
+		height: 35px;
+		line-height: 35px;
+		font-size: 16px;
+		font-weight: bold;
+		text-align: center;
+		border: 1px solid #a0a0a0;
+		margin-bottom: 5px;
+		margin-top: -5px;
+	}
+	#profile_tab2 #profile_tab2_load_more:hover{
+		cursor: pointer;
+		background-color: #d3e8db;
+	}
 	#profile_tab3 table{
 		overflow: auto;
 	}
@@ -119,20 +135,23 @@
 		text-align: center;
 	}
 	#profile_tab3 #bill_detail_container{
+		display: none;
 		position: absolute;
-		left: 15px;
+		left: 25px;
 		top: 42px;
-		right: 15px;
+		right: 25px;
 		bottom: 15px;
 		background-color: #fff;
 	}
 	#profile_tab3 #bill_loading_mask{
+		display: none;
 		position: absolute;
-		left: 15px;
+		left: 25px;
 		top: 42px;
-		right: 15px;
+		right: 25px;
 		bottom: 15px;
 		background-color: #fff;
+		text-align: center;
 	}
 </style>
 
@@ -170,7 +189,23 @@
 		</div>
 	</div>
 	<div id="profile_tab2" class="profile_tab">
-		
+		<div class="profile_tab_title">系统消息列表</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>消息收取时间</th>
+					<th>消息内容</th>
+				</tr>
+			</thead>
+			<tbody id="profile_msg_tbody">
+				<?php 
+				foreach ($sysmsgs as $msg) {
+					echo '<tr><td>'.$msg['ctime'].'</td><td>'.$msg['info'].'</td></tr>';
+				}
+				?>
+			</tbody>
+		</table>
+		<div id="profile_tab2_load_more" onclick="loadMoreMsgs()">加载更多</div>
 	</div>
 	<div id="profile_tab3" class="profile_tab">
 		<div class="profile_tab_title">账户消费记录</div>
@@ -214,13 +249,29 @@
 			<div id="profile_bills_no_bills">您还没有任何消费记录</div>
 		<?php }?>
 		<div id="bill_detail_container">
-			
+			<div id="bill_detail_table_container"></div>
+			<div style="float:right;">
+				<a href="#" onclick="$('#bill_detail_container').hide()">返回账单列表</a>
+			</div>
 		</div>
-		<div id="bill_loading_mask"></div>
+		<div id="bill_loading_mask">
+			<div id="circular" class="marginLeft">
+				<div id="circular_1" class="circular"></div>
+				<div id="circular_2" class="circular"></div>
+				<div id="circular_3" class="circular"></div>
+				<div id="circular_4" class="circular"></div>
+				<div id="circular_5" class="circular"></div>
+				<div id="circular_6" class="circular"></div>
+				<div id="circular_7" class="circular"></div>
+				<div id="circular_8" class="circular"></div>
+				<div id="clearfix"></div>
+			</div> 
+		</div>
 	</div>
 </div>
 
 <script type="text/javascript">
+	var maxmsgid    = <?php echo $sysmsgs[count($sysmsgs) - 1]['id']; ?>;
 	var billCount   = <?php echo $bcount; ?>;
 	var pageCount   = <?php echo $pcount; ?>;
 	var currentPage = 1;
@@ -260,18 +311,7 @@
 		$('.bill_detail_btn').click(function(event){
 			$('#bill_loading_mask').show();
 			billId = parseInt(event.target.id.substr(12));
-			$.ajax({
-				url: '<?php echo Yii::app()->createUrl("accounts/account/billDetail")?>/bid/' + billId,
-				dataType: 'json',
-				success: function(data){
-					$('#bill_loading_mask').hide();
-					$('#bill_detail_container').show();
-
-				},
-				fail: function(data){
-
-				}
-			});
+			getDetail(billId);
 		});
 		setCurrentPage(1);
 	});
@@ -296,6 +336,7 @@
 			$('#profile_bill_nav_next').removeClass('active');
 			$('#profile_bill_nav_last').removeClass('active');
 		}
+		$('#page_nav_input').val(currentPage);
 	}
 
 	function onGoButtonClick(){
@@ -332,21 +373,68 @@
 				if(data && data.length > 0){
 					setCurrentPage(page);
 					$('#profile_bill_table_body').html('');
-					for(index = data.length - 1; index >= 0; index --){
+					for(index = 0; index < data.length; index ++){
 						$('#profile_bill_table_body').append(
 							'<tr>' + 
 								'<td>' + data[index]['flowid'] + '</td>' +
-								'<td>' + (data[index]['type']=='0'?'每日维护支出':(data[index]['type']=='1'?'短信服务支出':'')) + '</td>' +
+								'<td>' + data[index]['type'] + '</td>' +
 								'<td>' + data[index]['ctime'] + '</td>' +
 								'<td>' + data[index]['income'] + '</td>' +
 								'<td>' + data[index]['payment'] + '</td>' +
 								'<td>' + data[index]['balance'] + '</td>' +
-								'<td><a href="#" class="bill_detail_btn" id="bill_detail_' + data[index]['id'] + '">查看详情</a></td>' +
+								'<td><a href="#" class="bill_detail_btn" ' + 
+								'id="bill_detail_' + data[index]['id'] + 
+								'" onclick="getDetail(' + data[index]['id'] + ')"' + 
+								'>查看详情</a></td>' +
 							'</tr>'
 						);
 					}
 				}else{
 
+				}
+			},
+			fail: function(){
+
+			}
+		});
+	}
+
+	function getDetail(billId){
+		$.ajax({
+			url: '<?php echo Yii::app()->createUrl("accounts/account/billDetail")?>/bid/' + billId,
+			dataType: 'json',
+			success: function(data){
+				$('#bill_loading_mask').hide();
+				$('#bill_detail_table_container').html(
+					'<table class="table">' + 
+						'<tr><td colspan="3">账单流水号</td><td>' + data['flowid'] + '</td></tr>' +
+						'<tr><td colspan="3">交易日期</td><td>' + data['ctime'] + '</td></tr>' +
+						'<tr><td colspan="3">交易类型</td><td>' + data['type'] + '</td></tr>' + 
+						'<tr><td>收入</td><td>' + data['income'] + '</td><td>支出</td><td>' + data['payment'] + '</td></tr>' +
+						'<tr><td colspan="3">余额</td><td>' + data['balance'] + '</td></tr>' +
+						'<tr><td colspan="1">交易详情</td><td colspan="3">' + data['info'] + '</td></tr>' +
+					'</table>'
+				);
+				$('#bill_detail_container').show();
+			},
+			fail: function(data){
+
+			}
+		});
+	}
+
+	function loadMoreMsgs(){
+		$.ajax({
+			url: "<?php echo Yii::app()->createUrl('accounts/account/loadSysmsgs/before/')?>/" + maxmsgid,
+			dataType: 'json',
+			success: function(data){
+				if(data && data.length > 0){
+					for(i = 0; i < data.length; i ++){
+						$('#profile_msg_tbody').append(
+							'<tr><td>' + data[i]['ctime'] + '</td><td>' + data[i]['info'] + '</td></tr>'
+						);
+					}
+					maxmsgid = data[data.length - 1]['id'];
 				}
 			},
 			fail: function(){

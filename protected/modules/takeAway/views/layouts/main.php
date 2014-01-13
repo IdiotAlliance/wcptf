@@ -93,6 +93,24 @@
 						</ul>
 					</li>
 					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">设置 <span class="caret"></span>
+						</a>
+						<ul id="yw5" class="dropdown-menu">
+							<li>
+								<a tabindex="-1" href="<?php echo Yii::app()->createUrl('accounts/account/stores')?>">店铺管理</a>
+							</li>
+							<li>
+								<a tabindex="-1" href="<?php echo Yii::app()->createUrl('accounts/replyRules/allRules')?>">消息设置</a>
+							</li>
+							<li>
+								<a tabindex="-1" href="<?php echo Yii::app()->createUrl('accounts/account/profile')?>">账户信息</a>
+							</li>
+							<li>
+								<a tabindex="-1" href="/weChat/index.php/logout">退出</a>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">帮助 <span class="caret"></span></a>
 						<ul id="yw4" class="dropdown-menu">
 							<li>
@@ -103,21 +121,6 @@
 							</li>
 							<li>
 								<a tabindex="-1" href="#">联系我们</a>
-							</li>
-						</ul>
-					</li>
-					<li class="dropdown">
-						<a class="dropdown-toggle" data-toggle="dropdown" href="#">设置 <span class="caret"></span>
-						</a>
-						<ul id="yw5" class="dropdown-menu">
-							<li>
-								<a tabindex="-1" href="<?php echo Yii::app()->createUrl('accounts/account/stores')?>">账户信息</a>
-							</li>
-							<li>
-								<a tabindex="-1" href="<?php echo Yii::app()->createUrl('accounts/account/stores')?>">返回上一级</a>
-							</li>
-							<li>
-								<a tabindex="-1" href="/weChat/index.php/logout">退出</a>
 							</li>
 						</ul>
 					</li>
