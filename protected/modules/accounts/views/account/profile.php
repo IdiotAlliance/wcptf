@@ -125,9 +125,6 @@
 	.profile_btn.btn_cancel:hover{
 		border: 2px solid #f6f6f6;
 	}
-	#profile_tab1 #profile_deposite_step1 .alert-error{
-		display: none;
-	}
 	#profile_tab1 #profile_deposite_step2{
 		display: none;
 	}
@@ -249,18 +246,10 @@
 		<div id="profile_deposite">
 			<div id="profile_deposite_step1" class="profile_deposite">
 				<div class="profile_tab_title">账户充值</div><br>
-				<div>
+				<div id="deposite_step_alert_container">
 					<div class="alert alert-info">
 				  		<button type="button" class="close" data-dismiss="alert">&times;</button>
 				  		<strong>提示</strong> 请输入您购买的充值卡账户和密码，如果没有充值卡，请到<a href="http://www.taobao.com/" target="_blank">这里</a>购买
-					</div>
-					<div class="alert alert-error" id="empty_alert">
-				  		<button type="button" class="close" data-dismiss="alert">&times;</button>
-				  		<strong>错误</strong> 充值卡卡号和密码不能为空
-					</div>
-					<div class="alert alert-error" id="error_alert">
-				  		<button type="button" class="close" data-dismiss="alert">&times;</button>
-				  		<strong>提示</strong> 未能识别您输入的卡号和密码，请检查您的输入是否正确
 					</div>
 				</div>
 				<label>卡号：</label>
@@ -274,7 +263,10 @@
 			</div>
 			<div id="profile_deposite_step2" class="profile_deposite">
 				<div class="profile_tab_title">请确认您的充值信息</div>
-				<table id="deposite_step2_table">
+				<div id="deposite_step2_alert_container">
+
+				</div>
+				<table id="deposite_step2_table" class="table">
 
 				</table>
 				<div id="profile_deposite_btn_container">
@@ -322,7 +314,7 @@
 				<?php foreach ($bills as $bill) {
 					echo '<tr>'.
 							'<td>'.$bill->flowid.'</td>'.
-							'<td>'.($bill->type==0?'每日维护支出':($bill->type==1?'短信服务支出':'')).'</td>'.
+							'<td>'.$bill->type.'</td>'.
 							'<td>'.$bill->ctime.'</td>'.
 							'<td>'.$bill->income.'</td>'.
 							'<td>'.$bill->payment.'</td>'.
@@ -365,8 +357,12 @@
 		</div>
 	</div>
 </div>
-
+<script type="text/javascript" src="<?php echo Yii::app()->baseUrl?>/js/jquery_md5.js"></script>
 <script type="text/javascript">
+	var cardno      = '';
+	var cardpass    = '';
+	var ctime       = 0;
+	var stime       = 0;
 	var maxmsgid    = <?php echo $sysmsgs[count($sysmsgs) - 1]['id']; ?>;
 	var billCount   = <?php echo $bcount; ?>;
 	var pageCount   = <?php echo $pcount; ?>;
@@ -426,27 +422,88 @@
 	}
 
 	function depositeNext(){
-		var no   = $('#deposite_card_no').val();
-		var pass = $('#deposite_card_pass').val();
-		if(!no || no == '' || !pass || pass == ''){
-			$('#profile_tab1 #empty_alert').show();
+		cardno   = $('#deposite_card_no').val();
+		cardpass = $('#deposite_card_pass').val();
+		ctime    = new Date().getTime();
+		if(!cardno || cardno == '' || !cardpass || cardpass == ''){
+			$('#deposite_step_alert_container').find('.alert-error').remove();
+			$('#deposite_step_alert_container').append(
+				'<div class="alert alert-error" id="error_alert">' +
+			  		'<button type="button" class="close" data-dismiss="alert">&times;</button>' + 
+			  		'<strong>错误</strong> 充值卡卡号和密码不能为空' +
+				'</div>'
+			);
 		}else{
 			$.ajax({
-				url: '',
+				url: '<?php echo Yii::app()->createUrl("accounts/account/checkCard")?>',
 				type: 'post',
+				data: {card_no: cardno, card_pass: cardpass, timestamp: ctime},
 				dataType: 'json',
 				success: function(data){
-
+					if(data && data['success'] == '1'){
+						stime = data['time'];
+						md5 = $.md5(cardno + cardpass + ctime + stime);
+						if(md5 == data['signature']){
+							$('#deposite_step2_table').html('');
+							$('#deposite_step2_table').append('<tr><td>卡号</td><td>' + cardno + '</td></tr>');
+							$('#deposite_step2_table').append('<tr><td>面值</td><td>' + data['value'] + '</td></tr>');
+							$('#deposite_step2_table').append('<tr><td>过期日期</td><td>' + data['duetime'] + '</td></tr>');
+							$('#profile_deposite_step1').hide();
+							$('#profile_deposite_step2').show();	
+						}
+					} else if(data['success'] == '0'){
+						$('#deposite_step_alert_container').find('.alert-error').remove();
+						$('#deposite_step_alert_container').append(
+							'<div class="alert alert-error" id="error_alert">' +
+						  		'<button type="button" class="close" data-dismiss="alert">&times;</button>' + 
+						  		'<strong>错误</strong> ' + data['info'] + 
+							'</div>'
+						);
+					}
 				},
 				fail: function(){
-
+					$('#deposite_step_alert_container').find('.alert-error').remove();
+					$('#deposite_step_alert_container').append(
+						'<div class="alert alert-error" id="error_alert">' +
+					  		'<button type="button" class="close" data-dismiss="alert">&times;</button>' + 
+					  		'<strong>错误</strong> 请求发送失败，请稍后重试' + 
+						'</div>'
+					);
 				}
 			});
 		}
 	}
 
 	function depositeOk(){
-
+		$.ajax({
+			url: '<?php echo Yii::app()->createUrl("accounts/account/deposite"); ?>',
+			type: 'post',
+			dataType: 'json',
+			data: {card_no: cardno, card_pass: cardpass, ctime: ctime, stime: stime},
+			success: function(data){
+				if(data['success'] == '1'){
+					alert('恭喜您！充值成功！');
+					window.location.reload();
+				}else {
+					$('#deposite_step2_alert_container').html('');
+					$('#deposite_step2_alert_container').append(
+						'<div class="alert alert-error" id="error_alert">' +
+					  		'<button type="button" class="close" data-dismiss="alert">&times;</button>' + 
+					  		'<strong>错误</strong> ' + data['info'] +
+						'</div>'
+					);
+				}
+			},
+			fail: function(){
+				$('#deposite_step2_alert_container').find('.alert-error').remove();
+				$('#deposite_step2_alert_container').append(
+					'<div class="alert alert-error" id="error_alert">' +
+				  		'<button type="button" class="close" data-dismiss="alert">&times;</button>' + 
+				  		'<strong>错误</strong> 请求发送失败，请稍后重试' + 
+					'</div>'
+				);
+			}
+		});
 	}
 
 	function depositeCancel(){

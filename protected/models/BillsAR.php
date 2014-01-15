@@ -39,11 +39,10 @@ class BillsAR extends CActiveRecord
 		return array(
 			array('seller_id', 'required'),
 			array('type', 'numerical', 'integerOnly'=>true),
-			array('bill', 'numerical'),
 			array('seller_id', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, type, seller_id, bill', 'safe', 'on'=>'search'),
+			array('id, type, seller_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -67,7 +66,6 @@ class BillsAR extends CActiveRecord
 			'id' => 'ID',
 			'type' => 'Type',
 			'seller_id' => 'Seller',
-			'bill' => 'Bill',
 		);
 	}
 
@@ -85,7 +83,6 @@ class BillsAR extends CActiveRecord
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('type',$this->type);
 		$criteria->compare('seller_id',$this->seller_id,true);
-		$criteria->compare('bill',$this->bill);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
