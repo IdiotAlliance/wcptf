@@ -1,20 +1,20 @@
 <?php
 
 /**
- * This is the model class for table "bills".
+ * This is the model class for table "plugins".
  *
- * The followings are the available columns in table 'bills':
+ * The followings are the available columns in table 'plugins':
  * @property string $id
- * @property integer $type
- * @property string $seller_id
- * @property double $bill
+ * @property string $name
+ * @property integer $scope
+ * @property double $price
  */
-class BillsAR extends CActiveRecord
+class PluginsAR extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return BillsAR the static model class
+	 * @return PluginsAR the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -26,7 +26,7 @@ class BillsAR extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'bills';
+		return 'plugins';
 	}
 
 	/**
@@ -37,12 +37,14 @@ class BillsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id', 'required'),
-			array('type', 'numerical', 'integerOnly'=>true),
-			array('seller_id', 'length', 'max'=>11),
+			array('id, name, price', 'required'),
+			array('scope', 'numerical', 'integerOnly'=>true),
+			array('price', 'numerical'),
+			array('id', 'length', 'max'=>11),
+			array('name', 'length', 'max'=>256),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, type, seller_id', 'safe', 'on'=>'search'),
+			array('id, name, scope, price', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -64,8 +66,9 @@ class BillsAR extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'type' => 'Type',
-			'seller_id' => 'Seller',
+			'name' => 'Name',
+			'scope' => 'Scope',
+			'price' => 'Price',
 		);
 	}
 
@@ -81,18 +84,12 @@ class BillsAR extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id,true);
-		$criteria->compare('type',$this->type);
-		$criteria->compare('seller_id',$this->seller_id,true);
+		$criteria->compare('name',$this->name,true);
+		$criteria->compare('scope',$this->scope);
+		$criteria->compare('price',$this->price);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
-	}
-
-	public static function getBills($uid, $page, $limit){
-		return BillsAR::model()->findAll(array('condition'=>'seller_id=:userId',
-											   'params'=>array(':userId'=>$uid),
-											   'order'=>'ctime desc',
-											   'limit'=>($limit * $page)));
 	}
 }

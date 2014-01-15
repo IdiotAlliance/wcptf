@@ -191,6 +191,25 @@ class AccountController extends Controller{
 			if($user){
 				$stats  = OrdersAR::model()->getOrderStats($uid);
 				$bills  = BillsAR::model()->getBills($uid, 1, 8);
+				foreach ($bills as $bill) {
+					switch ($bill->type) {
+						case Constants::BILL_TYPE_NORMAL:
+							$bill->type = "系统日常维护费用";
+							break;
+						case Constants::BILL_TYPE_SMS:
+							$bill->type = "短信服务费用，共发送1条，每条0.1元";
+							break;
+						case Constants::BILL_TYPE_PLUGIN:
+							$bill->type = "购买插件费用";
+							break;
+						case Constants::BILL_TYPE_PREPAID:
+							$bill->type = "充值卡充值成功";
+							break;
+						default:
+							# code...
+							break;
+					}
+				}
 				$bcount = BillsAR::model()->count('seller_id=:uid', array(':uid'=>$uid));
 				$pcount = ($bcount % 8 == 0) ? ($bcount / 8) : (floor(($bcount / 8)) + 1);
 				$sysmsgs   = $this->sysmsgsToArray(SystemmsgsAR::model()->getMsgsAfter($uid, 0, 10));
@@ -238,10 +257,10 @@ class AccountController extends Controller{
 					$result['info'] = "短信服务费用，共发送1条，每条0.1元";
 					break;
 				case Constants::BILL_TYPE_PLUGIN:
-					$result['info'] = "";
+					$result['info'] = "购买插件费用";
 					break;
 				case Constants::BILL_TYPE_PREPAID:
-					$result['info'] = "";
+					$result['info'] = "充值卡充值成功";
 					break;
 				default:
 					# code...
@@ -258,6 +277,70 @@ class AccountController extends Controller{
 			$uid = Yii::app()->user->sellerId;
 			$sysmsgs = $this->sysmsgsToArray(SystemmsgsAR::model()->getMsgsBefore($uid, $before, 10));
 			echo json_encode($sysmsgs);
+		}
+	}
+
+	public function actionCheckCard(){
+		if(Yii::app()->user->isGuest){
+			throw new CHttpException(403, "You must sign in to use this service");
+		}else if(Yii::app()->request->isPostRequest){
+			if(isset($_POST['card_no']) && isset($_POST['card_pass']) && isset($_POST['timestamp'])){
+				$no    = $_POST['card_no'];
+				$pass  = $_POST['card_pass'];
+				$time  = $_POST['timestamp'];
+				$card  = PrepaidCardAR::model()->find('card_no=:cno AND password=:pword AND is_use<>1',
+													  array(':cno'=>$no, ':pword'=>$pass));
+				if($card){
+					$ctime = time();
+					$signature = md5($no.$pass.$time.$ctime);
+					$result = array('success'=>'1', 'time'=>$ctime, 'signature'=>$signature,
+									'value'=>$card->value, 'duetime'=>$card->duetime);
+					$card->signature = $signature;
+					$card->update();
+					echo json_encode($result);
+				}else{
+					$result = array('success'=>'0', 'error'=>'PR_0001', 'info'=>'您输入的卡号或密码无效，请检查您的输入是否正确');
+					echo json_encode($result);
+				}
+			}
+		}
+	}
+
+	public function actionDeposite(){
+		if(Yii::app()->user->isGuest){
+			throw new CHttpException(403, "You must sign in to use this service");
+		}else if(Yii::app()->request->isPostRequest){
+			$uid = Yii::app()->user->sellerId;
+			if(isset($_POST['card_no']) && isset($_POST['card_pass']) 
+				&& isset($_POST['ctime']) && isset($_POST['stime'])){
+				$cardno    = $_POST['card_no'];
+				$cardpass  = $_POST['card_pass'];
+				$stime     = $_POST['stime'];
+				$ctime     = $_POST['ctime'];
+				$signature = md5($cardno.$cardpass.$ctime.$stime);
+				$card = PrepaidCardAR::model()->find('card_no=:cno AND password=:pword AND is_use<>1 AND signature=:sig',
+													  array(':cno'=>$cardno, ':pword'=>$cardpass, ':sig'=>$signature));
+				if($card){
+					$user = UsersAR::model()->findByPK($uid);
+					$user->balance = $user->balance + $card->value;
+					$user->update();
+					$card->is_use = 1;
+					$card->update();
+
+					$bill = new BillsAR();
+					$bill->income    = $card->value;
+					$bill->type      = Constants::BILL_TYPE_PREPAID;
+					$bill->reference = $card->id;
+					$bill->seller_id = $uid;
+					$bill->payment   = 0;
+					$bill->balance   = $user->balance;
+					$bill->flowid    = date('Ymd', time()).(time() % 86400000);
+					$bill->save();
+					echo json_encode(array('success'=>'1'));
+				}else{
+					echo json_encode(array('success'=>'0', 'info'=>'充值失败，无法确认您的充值卡的有效性，请重试'));
+				}
+			}
 		}
 	}
 

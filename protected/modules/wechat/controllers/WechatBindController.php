@@ -12,7 +12,7 @@ class WechatBindController extends Controller{
 			$this->redirect(Yii::app()->createUrl('accounts/login'));
 		}else{
 			$userId = Yii::app()->user->sellerId;
-			$user = UsersAR::model()->getUserById($userId);
+			$user = UsersAR::model()->findByPK($userId);
 			$model = new WechatBindForm();
 			$step = 1;
 			
@@ -23,7 +23,7 @@ class WechatBindController extends Controller{
 				if($model->bindComplete($user)) $step = 2;
 			}else{
 				if($user->wechat_bound == 1){
-					$this->redirect(Yii::app()->createUrl('index'));
+					$this->redirect(Yii::app()->createUrl('accounts/account/stores'));
 				}
 				else if($model->bindComplete($user)){
 					$step = 2;

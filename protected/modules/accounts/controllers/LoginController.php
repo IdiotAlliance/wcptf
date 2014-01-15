@@ -25,10 +25,16 @@ class LoginController extends Controller
                 if($model->validate() && $model->login()){
                     if ($model->isVerified()){
                         $user = UsersAR::model()->getUserByEmail($model->username);
-                        switch ($user->seller_type) {
-                            case "1":                            
-                                $this->redirect(array('/accounts/account/stores'));
-                                break;  
+                        switch ($user->type) {
+                            case 0:
+                                if($user->wechat_bound)
+                                    $this->redirect(array('/accounts/account/stores'));
+                                else
+                                    $this->redirect(array('/wechat/wechatBind'));
+                                break;
+                            case 1:       
+                                $this->redirect(array('/payment/prepaidCard/prepaidCard'));
+                                break;
                             default:
                                 $this->redirect(Yii::app()->user->returnUrl);
                                 break;

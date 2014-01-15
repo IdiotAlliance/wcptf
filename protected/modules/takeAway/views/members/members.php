@@ -14,6 +14,7 @@
 		bottom: 0px;
 		right: 0px;
 		overflow: auto;
+		z-index: 100;
 		box-sizing: border-box;
 		-moz-box-shadow: 0 0 5px rgba(0,0,0,0.15);
 		-webkit-box-shadow: 0 0 5px rgba(0,0,0,0.15);
@@ -28,6 +29,7 @@
 		box-shadow: -1px 1px 3px #808080;
 		margin-top: 0px;
 		overflow: hidden;
+		height: 75px;
 	}
 	.filter_right{
 		float: right;
@@ -36,8 +38,8 @@
 	}
 	.members_list{
 		position: absolute;
-		left: 0px;
-		top: 68px;
+		left: 1px;
+		top: 99px;
 		bottom: 0px;
 		width: 100%;
 		overflow-x: hidden !important;
@@ -135,6 +137,41 @@
 		left: 50%;
 		margin-left: -400px;
 	}
+	.switch_container{
+		position: absolute;
+		left: 0px;
+		top: 50px;
+		right: 0px;
+		bottom: 0px;
+	}
+	.switch_container .onoff_label{
+		position: absolute;
+		left: 10px;
+		top: 12px;
+		height: 25px;
+		line-height: 25px;
+		vertical-align: center;
+		display: inline-block;
+	}
+	.switch_container .onoff_switch{
+		position: absolute;
+		left: 330px;
+		top: 10px;
+		width: 60px;
+		height: 25px;
+		display: inline-block;
+	}
+	.switch_container .onoff_switch:hover{
+		cursor: pointer;
+	}
+	.switch_container .onoff_switch.on{
+		background: url('<?php echo Yii::app()->baseUrl?>/img/on.png') 0 0 no-repeat;
+		background-size: 100% 100%;
+	}
+	.switch_container .onoff_switch.off{
+		background: url('<?php echo Yii::app()->baseUrl?>/img/off.png') 0 0 no-repeat;
+		background-size: 100% 100%;
+	}
 </style>
 <div id="members_member_list_container">
 	<div class="members_title">
@@ -150,6 +187,10 @@
 		</div>
 		<div class="sort_container">
 
+		</div>
+		<div class="switch_container">
+			<label class="onoff_label" for="onoff_switch">会员绑定开关</label>
+			<div class="onoff_switch <?php if($bindon) echo 'on'; else echo 'off'; ?>"></div>
 		</div>
 	</div>
 	<ul class="members_list">
@@ -213,10 +254,12 @@
 	
 	var cbound   = <?php echo $stats['bound']?>;
 	var crequest = <?php echo $stats['request']?>;
+	var switchon = <?php echo $bindon; ?>;
 	var member   = null;
 	var orders   = null;
 	var comments = null;
 	var chartData = null;
+	var sid      = <?php echo $this->currentStore->id?>;
 
 	$(document).ready(function() {
 	    flikr.prepare();
@@ -225,8 +268,42 @@
 	    $('#chart_container').click(function(){
 	    	dismissOrderChart();
 	    });
+	    $('.switch_container .onoff_switch').click(function(){
+	    	if(switchon){
+		    	$.ajax({
+					url: '<?php echo Yii::app()->createUrl("takeAway/members/memberBoundOff/sid")?>/' + sid,
+					success: function(result){
+						if(result == '0'){
+							$('.switch_container .onoff_switch').removeClass('on');
+							$('.switch_container .onoff_switch').addClass('off');
+							switchon = 0;
+						}
+					},
+					fail: function(){
+						alert('未能关闭该功能，请稍后重试');
+					}
+				});
+	    	}else{
+	    		if(confirm('您将要开启会员卡绑定功能, 开启该功能需要使用短信服务，系统将会向您收取0.1元/条的短信服务费，是否确定开启？')){
+	    			
+	    			$.ajax({
+	    				url: '<?php echo Yii::app()->createUrl("takeAway/members/memberBoundOn/sid")?>/' + sid,
+	    				success: function(result){
+	    					if(result == '0'){
+	    						$('.switch_container .onoff_switch').removeClass('off');
+	    						$('.switch_container .onoff_switch').addClass('on');
+	    						switchon = 1;
+	    					}
+	    				},
+	    				fail: function(){
+	    					alert('未能开启该功能，请稍后重试');
+	    				}
+	    			});
+	    			switchon = 1;
+	    		}
+	    	}
+	    });
 	});
-
 	var flikr = {
 			playHandler: null,
 			movex: null,

@@ -14,10 +14,10 @@
 
 
 <fieldset>
-        <?php echo $form->textFieldRow($model, 'store_name', array('class'=>'input-xlarge')); ?>
         <?php echo $form->textFieldRow($model, 'wechat_id', array(
                                                                 'class'=>'input-xlarge'
                                                              )); ?>                                                  
+        <?php echo $form->textFieldRow($model, 'wechat_name', array('class'=>'input-xlarge')); ?>
         <?php echo $form->textFieldRow($model, 'token', array('id'=>'wechat_bind_token',
                                                               'class'=>'input-xlarge',
         													  'onchange'=>'setUrl()',
@@ -36,7 +36,7 @@
 
 <script type="text/javascript">
 	var userId  = <?php echo $user->id?>;
-	var baseurl = "<?php echo Constants::BASE_URL?>";
+	var baseurl = "<?php echo Yii::app()->createAbsoluteUrl('wechat/weChatAccess')?>/";
 	
 	function setUrl(){
 		var value = $('#wechat_bind_token').val();

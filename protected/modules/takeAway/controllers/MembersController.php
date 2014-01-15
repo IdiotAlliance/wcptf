@@ -15,6 +15,12 @@ class MembersController extends TakeAwayController{
 			$sid      = $_GET['sid'];
 			$this->typeCount = ProductTypeAR::model()->getProductsByType($_GET['sid']);
 			$sellerId = Yii::app()->user->sellerId;
+			$r = PluginsStoreAR::model()->find('store_id=:sid AND plugin_id=:pid',
+											   array(':sid'=>$sid, ':pid'=>0));
+			$bindon = 0;
+			if($r){
+				$bindon = 1;
+			}
 
 			// clear comment msg_queue items
 			$mqs = MsgQueueAR::model()->getCommentItemsByUserAndStoreId($sellerId, $sid);
@@ -85,7 +91,7 @@ class MembersController extends TakeAwayController{
 				'total'=>$total, 'sub'=>$sub, 'unsub'=>$unsub,
 				'bound'=>count($bounds), 'request'=>count($requests),
 			);
-			$this->render('members', array('model'=>$model, 'stats'=>$stats));
+			$this->render('members', array('model'=>$model, 'stats'=>$stats, 'bindon'=>$bindon));
 		}
 	}
 	
@@ -191,12 +197,41 @@ class MembersController extends TakeAwayController{
 			$orders = OrdersAR::model()->getOrdersByMemeberId($memberId);
 			$data['orders'] = $orders;
 			$data['memberid'] = $memberId;
-			
+			 
 			// 首先创建文件
 			ExcelGenerator::generateOrderExcelForMember($data);
 			
 			// 将请求跳转到对应的文件链接
 			
+		}
+	}
+
+	function actionMemberBoundOn($sid){
+		if(Yii::app()->user->isGuest){
+			throw new CHttpException(403, "You must sign in to use this function.");
+		}else{
+			$store = StoreAR::model()->findByPK($sid);
+			if($store){
+				$r = new PluginsStoreAR();
+				$r->store_id  = $sid;
+				$r->plugin_id = 0;
+				$r->onoff     = 1;
+				if($r->save()){
+					echo "0";
+					exit();
+				}
+			}
+			echo "1";
+		}
+	}
+
+	function actionMemberBoundOff($sid){
+		if(Yii::app()->user->isGuest){
+			throw new CHttpException(403, "You must sign in to use this function.");
+		}else{
+			$rs = PluginsStoreAR::model()->deleteAll('store_id=:sid AND plugin_id=:pid',
+											   		array(':sid'=>$sid, ':pid'=>0));
+			echo "0";
 		}
 	}
 }
