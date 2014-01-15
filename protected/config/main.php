@@ -39,6 +39,7 @@ return array(
 		'wap',
 		'errors',
 		'messages',
+		'payment',
 	),
 
 	// application components
