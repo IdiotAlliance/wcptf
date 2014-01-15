@@ -22,8 +22,18 @@ class AccountsModule extends CWebModule
 	{
 		if(parent::beforeControllerAction($controller, $action))
 		{
-			// this method is called before any module controller action is performed
-			// you may place customized code here
+			switch ($controller->id) {
+				case 'account':
+				case 'replyRules':
+					$uid  = Yii::app()->user->sellerId;
+					$user = UsersAR::model()->findByPK($uid);
+					if(!$user->wechat_bound)
+						$controller->redirect(array('/wechat/wechatBind'));
+					break;
+				default:
+					
+					break;
+			}
 			return true;
 		}
 		else

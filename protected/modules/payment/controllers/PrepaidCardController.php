@@ -7,7 +7,6 @@ class PrepaidCardController extends Controller{
     public $defaultAction = 'prepaidCard';
 	public function actionPrepaidCard()
 	{
-			
 		$this->render('prepaidCard');
 	}
 	public function actionGenerateCard(){

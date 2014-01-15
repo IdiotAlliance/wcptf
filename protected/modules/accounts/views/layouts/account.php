@@ -160,9 +160,10 @@
 			<a href="<?php echo Yii::app()->baseUrl?>" class="nav_title nav_item">微积分</a>
 			<a href="<?php echo $this->currentPage!='stores'?Yii::app()->createUrl('accounts/account/stores'):'#'?>" class="nav_item stores" data-toggle="tab_stores">店铺管理</a>
 			<a href="<?php echo Yii::app()->createUrl('accounts/replyRules/allRules');?>" class="nav_item msgs" data-toggle="tab_sdmessages">消息设置</a>
-			<a href="#" class="nav_item members" data-toggle="tab_members">会员管理</a>
+			<!--<a href="#" class="nav_item members" data-toggle="tab_members">会员管理</a>-->
 			<a href="<?php echo $this->currentPage!='profile'?Yii::app()->createUrl('accounts/account/profile'):'#'?>" class="nav_item profile" data-toggle="tab_settings">账户信息</a>
-			<a href="#" class="nav_item help" data-toggle="tab_help">帮助</a>
+			<a href="#" class="nav_item help" data-toggle="tab_help">帮助中心</a>
+			<a href="<?php echo Yii::app()->createUrl('site/logout') ?>" class="nav_item exit">退出</a>
 		</div>
 	    <!-- 页面主体内容-->
 	    <?php echo $content; ?>     
