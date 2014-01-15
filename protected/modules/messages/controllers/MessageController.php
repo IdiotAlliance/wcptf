@@ -40,7 +40,9 @@ class MessageController extends Controller{
 			switch ($type) {
 				case Constants::MSG_SYSTEM:
 					// system messages
-					
+					MsgQueueAR::model()->deleteAll('seller_id=:uid AND type=:type',
+													array(':uid'=>$uid, ':type'=>Constants::MSG_SYSTEM));
+					$this->redirect(Yii::app()->createUrl('accounts/account/profile#msg'));
 					break;
 				case Constants::MSG_ORDERS:
 					// order messages

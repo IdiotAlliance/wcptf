@@ -54,7 +54,7 @@
 		line-height: 35px;
 		font-size: 16px;
 		font-weight: bold;
-		background-color: #d3e8db;
+		background-color: #84a099;
 		color: #fff;
 	}
 	#profile_tab1 table tr td{
@@ -74,6 +74,62 @@
 		color: #a0a0a0;
 		font-weight: bold;
 		text-align: center;
+	}
+	#profile_tab1 #profile_deposite{
+		display: none;
+		position: absolute;
+		left: 25px;
+		top: 0px;
+		right: 25px;
+		bottom: 15px;
+		background-color: #fff;
+	}
+	#profile_tab1 #profile_deposite label{
+		font-size: 18px;
+		font-weight: bold;
+		height: 30px;
+		line-height: 30px;
+	}
+	#profile_tab1 #profile_deposite input{
+		width: 830px;
+		height: 35px;
+		font-size: 20px;
+		line-height: 35px;
+	}
+	#profile_tab1 #profile_deposite .profile_btn{
+		width: 120px;
+		height: 30px;
+		border-radius: 5px;
+		border: 1px solid #ddd;
+		display: inline-block;
+		float: right;
+		margin: 10px;
+		text-align: center;
+		line-height: 30px;
+		border: 2px solid #fff;
+	}
+	#profile_tab1 #profile_deposite .profile_btn:hover{
+		cursor: pointer;
+	}
+	.profile_btn.btn_ok{
+		background-color: #84a099;
+		color: #ffffff;
+	}
+	.profile_btn.btn_ok:hover{
+		border: 2px solid #84a099;
+	}
+	.profile_btn.btn_cancel{
+		background-color: #f6f6f6;
+		color: #808080;
+	}
+	.profile_btn.btn_cancel:hover{
+		border: 2px solid #f6f6f6;
+	}
+	#profile_tab1 #profile_deposite_step1 .alert-error{
+		display: none;
+	}
+	#profile_tab1 #profile_deposite_step2{
+		display: none;
 	}
 	#profile_tab2 #profile_tab2_load_more{
 		padding-left: 10px;
@@ -172,7 +228,10 @@
 				</tr>
 				<tr>
 					<td>账户余额</td>
-					<td><?php echo $model['balance']; ?>元&nbsp;&nbsp;<a href="#" onclick="showBillsTab()">查看账单</a></td>
+					<td><?php echo $model['balance']; ?>元&nbsp;&nbsp;
+						<a href="#" onclick="showBillsTab()">查看账单</a>&nbsp;&nbsp;
+						<a href="#" onclick="showDeposite()">充值</a>
+					</td>
 				</tr>
 				<tr>
 					<td>微信公众帐号昵称</td>
@@ -186,6 +245,43 @@
 		<div class="profile_tab_title">我的插件</div>
 		<div id="profile_tab1_plugins">
 			该功能暂未开放
+		</div>
+		<div id="profile_deposite">
+			<div id="profile_deposite_step1" class="profile_deposite">
+				<div class="profile_tab_title">账户充值</div><br>
+				<div>
+					<div class="alert alert-info">
+				  		<button type="button" class="close" data-dismiss="alert">&times;</button>
+				  		<strong>提示</strong> 请输入您购买的充值卡账户和密码，如果没有充值卡，请到<a href="http://www.taobao.com/" target="_blank">这里</a>购买
+					</div>
+					<div class="alert alert-error" id="empty_alert">
+				  		<button type="button" class="close" data-dismiss="alert">&times;</button>
+				  		<strong>错误</strong> 充值卡卡号和密码不能为空
+					</div>
+					<div class="alert alert-error" id="error_alert">
+				  		<button type="button" class="close" data-dismiss="alert">&times;</button>
+				  		<strong>提示</strong> 未能识别您输入的卡号和密码，请检查您的输入是否正确
+					</div>
+				</div>
+				<label>卡号：</label>
+				<input id="deposite_card_no" type="text" placeholder="请输入卡号"/>
+				<label>密码：</label>
+				<input id="deposite_card_pass" type="text" placeholder="请输入密码"/>
+				<div id="profile_deposite_btn_container">
+					<div class="profile_btn btn_ok" onclick="depositeNext()">下一步</div>
+					<div class="profile_btn btn_cancel" onclick="depositeCancel()">取消</div>
+				</div>
+			</div>
+			<div id="profile_deposite_step2" class="profile_deposite">
+				<div class="profile_tab_title">请确认您的充值信息</div>
+				<table id="deposite_step2_table">
+
+				</table>
+				<div id="profile_deposite_btn_container">
+					<div class="profile_btn btn_ok" onclick="depositeOk()">确定</div>
+					<div class="profile_btn btn_cancel" onclick="depositeCancel()">取消</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div id="profile_tab2" class="profile_tab">
@@ -275,6 +371,7 @@
 	var billCount   = <?php echo $bcount; ?>;
 	var pageCount   = <?php echo $pcount; ?>;
 	var currentPage = 1;
+	var action = window.location.href.substr(window.location.href.indexOf('#') + 1);
 
 	$(document).ready(function(){
 		$('.profile_nav_item').click(function(event){
@@ -313,8 +410,51 @@
 			billId = parseInt(event.target.id.substr(12));
 			getDetail(billId);
 		});
+		if(action){
+			switch(action){
+				case 'msg':
+					$('#profile_tag2').click();
+					break;
+			}
+		}
 		setCurrentPage(1);
 	});
+
+	function showDeposite(){
+		$('#profile_deposite').show();
+		$('#profile_deposite_step1').show();
+	}
+
+	function depositeNext(){
+		var no   = $('#deposite_card_no').val();
+		var pass = $('#deposite_card_pass').val();
+		if(!no || no == '' || !pass || pass == ''){
+			$('#profile_tab1 #empty_alert').show();
+		}else{
+			$.ajax({
+				url: '',
+				type: 'post',
+				dataType: 'json',
+				success: function(data){
+
+				},
+				fail: function(){
+
+				}
+			});
+		}
+	}
+
+	function depositeOk(){
+
+	}
+
+	function depositeCancel(){
+		$('#deposite_card_no').val('');
+		$('#deposite_card_pass').val('');
+		$('#profile_deposite_step2').hide();
+		$('#profile_deposite').hide();
+	}
 
 	function showBillsTab(){
 		$('#profile_tag3').click();

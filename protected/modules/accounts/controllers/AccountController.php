@@ -261,6 +261,20 @@ class AccountController extends Controller{
 		}
 	}
 
+	public function actionCheckCard(){
+		if(Yii::app()->user->isGuest){
+			throw new CHttpException(403, "You must sign in to use this service");
+		}else if(Yii::app()->request->isPostRequest){
+			if(isset($_POST['card_no']) && isset($_POST['card_pass']) && isset($_POST['timestamp'])){
+				
+			}
+		}
+	}
+
+	public function actionDeposite(){
+
+	}
+
 	public function getBillType($type){
 		switch ($type) {
 			case Constants::BILL_TYPE_NORMAL:
