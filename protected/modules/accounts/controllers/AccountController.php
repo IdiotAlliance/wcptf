@@ -74,6 +74,7 @@ class AccountController extends Controller{
 			$uid = Yii::app()->user->sellerId;
 			$user   = UsersAR::model()->findByPK($uid);
 			$stores = StoreAR::model()->getUndeletedStoreByUserId($uid);
+
 			$this->render("stores", array('user'=>$user, 
 										   'stores'=>$stores, 
 										   'editForm'=>$editForm,
@@ -189,13 +190,14 @@ class AccountController extends Controller{
 			$user = UsersAR::model()->findByPK($uid);
 			if($user){
 				$stats  = OrdersAR::model()->getOrderStats($uid);
-				$bills  = BillsAR::model()->getBills($uid, 8);
+				$bills  = BillsAR::model()->getBills($uid, 1, 8);
 				$bcount = BillsAR::model()->count('seller_id=:uid', array(':uid'=>$uid));
-				$pcount = floor(($bcount / 8)) + 1;
+				$pcount = ($bcount % 8 == 0) ? ($bcount / 8) : (floor(($bcount / 8)) + 1);
+				$sysmsgs   = $this->sysmsgsToArray(SystemmsgsAR::model()->getMsgsAfter($uid, 0, 10));
 				$model  = array('account'=>$user->email, 'wechat_name'=>$user->wechat_name,
 							   'balance'=>$user->balance, 'stats'=>$stats);
 				$this->render('profile', array('model'=>$model, 'bills'=>$bills, 
-							  'bcount'=>$bcount, 'pcount'=>$pcount));
+							  'bcount'=>$bcount, 'pcount'=>$pcount, 'sysmsgs'=>$sysmsgs));
 			}
 		}
 	}
@@ -206,47 +208,98 @@ class AccountController extends Controller{
 		}else{
 			$uid = Yii::app()->user->sellerId;
 			if($page > 0){
-				$bills = BillsAR::model()->findAll('seller_id=:uid and page=:page',
-												   array(':uid'=>$uid, ':page'=>$page));
+				$bills = BillsAR::model()->getBills($uid, $page, 8);
 				$result = array();
-				foreach ($bills as $bill) {
-					array_push($result, array('id'=>$bill->id,
-											  'flowid'=>$bill->flowid,
-											  'type'=>$bill->type,
-											  'income'=>$bill->income,
-											  'payment'=>$bill->payment,
-											  'balance'=>$bill->balance,
-											  'ctime'=>$bill->ctime));
-				}
+				for($index = ($page - 1) * 8; $index < count($bills); $index ++)
+					array_push($result, array('id'=>$bills[$index]->id,
+											  'flowid'=>$bills[$index]->flowid,
+											  'type'=>$this->getBillType($bills[$index]->type),
+											  'income'=>$bills[$index]->income,
+											  'payment'=>$bills[$index]->payment,
+											  'balance'=>$bills[$index]->balance,
+											  'ctime'=>$bills[$index]->ctime));
 				echo json_encode($result);
 			}
 		}
 	}
 
-	public function getBillDetail($bid){
+	public function actionBillDetail($bid){
 		$bill = BillsAR::model()->findByPK($bid);
 		if($bill){
 			$result = array('id' => $bill->id, 'flowid'=>$bill->flowid, 
-							'type'=>$bill->type, 'income'=>$bill->income, 
+							'type'=>$this->getBillType($bill->type), 'income'=>$bill->income, 
 							'payment'=>$bill->payment, 'ctime'=>$bill->ctime,
 							'balance'=>$bill->balance);
-			if(isset($bill->reference) && $bill->reference >= 0){
-				switch ($bill->type) {
-					case Constants::BILL_TYPE_NORMAL:
-						# code...
-						break;
-					case Constants::BILL_TYPE_SMS:
-
-						break;
-					case Constants::BILL_TYPE_PLUGIN:
-						
-						break;
-					default:
-						# code...
-						break;
-				}
+			switch ($bill->type) {
+				case Constants::BILL_TYPE_NORMAL:
+					$result['info'] = "系统日常维护费用";
+					break;
+				case Constants::BILL_TYPE_SMS:
+					$result['info'] = "短信服务费用，共发送1条，每条0.1元";
+					break;
+				case Constants::BILL_TYPE_PLUGIN:
+					$result['info'] = "";
+					break;
+				case Constants::BILL_TYPE_PREPAID:
+					$result['info'] = "";
+					break;
+				default:
+					# code...
+					break;
 			}
 			echo json_encode($result);
+		}
+	}
+
+	public function actionLoadSysmsgs($before){
+		if(Yii::app()->user->isGuest){
+			throw new CHttpException(403, "You must sign in to use this service");
+		}else{
+			$uid = Yii::app()->user->sellerId;
+			$sysmsgs = $this->sysmsgsToArray(SystemmsgsAR::model()->getMsgsBefore($uid, $before, 10));
+			echo json_encode($sysmsgs);
+		}
+	}
+
+	public function getBillType($type){
+		switch ($type) {
+			case Constants::BILL_TYPE_NORMAL:
+				return '日常维护费用';
+			case Constants::BILL_TYPE_SMS:
+				return '短信服务支出';
+			case Constants::BILL_TYPE_PLUGIN:
+				return '插件购买费用';
+			case Constants::BILL_TYPE_PREPAID:
+				return '账户充值';
+			default:
+				# code...
+				break;
+		}
+		return null;
+	}
+
+	public function sysmsgsToArray($msgs){
+		if($msgs){
+			$msgarr = array();
+			foreach ($msgs as $msg) {
+				$info = null;
+				switch ($msg->type) {
+					case Constants::MSG_SYSTEM_100:
+						$info = "您的账户余额已不足100元，为了保障店铺的正常运营，请尽快充值";
+						break;
+					case Constants::MSG_SYSTEM_50:
+						$info = "您的账户余额已不足50元，为了保障店铺的正常运营，请尽快充值";
+						break;
+					case Constants::MSG_SYSTEM_10:
+						$info = "您的账户余额已不足10元，店铺很快将会过期，请尽快充值，以免遭受不必要的损失";
+						break;
+					default:
+						$info = "";
+						break;
+				}
+				array_push($msgarr, array('id'=>$msg->id, 'ctime'=>$msg->ctime, 'info'=>$info));
+			}
+			return $msgarr;
 		}
 	}
 }

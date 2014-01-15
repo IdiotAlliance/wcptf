@@ -13,6 +13,7 @@ class SellerSettingsController extends TakeAwayController {
 			// 当前用户是游客，需要先登陆,跳转到登陆界面
 			$this->redirect ( 'index.php?r=accounts/login' );
 		} else if(isset($_GET['sid']) && $_GET['sid'] >= 0 && $this->setCurrentStore($_GET['sid'])){
+			$this->typeCount = ProductTypeAR::model()->getProductsByType($_GET['sid']);
 			$sid  = $_GET['sid'];
 			$json = null;
 			$userId = Yii::app ()->user->sellerId;
