@@ -166,8 +166,15 @@ class OrdersAR extends CActiveRecord
 		设置派送人员
 	*/
 	public function setPoster($orderId, $posterId){
+		$poster = PostersAR::model()->find('id=:posterId', array(':posterId'=>$posterId));
 		$order = OrdersAR::model()->find('id=:orderId', array(':orderId'=>$orderId));
 		$order->poster_id = $posterId;
+		if($poster!=null){
+			$name = $poster->name;
+			$phone = $poster->phone;
+			$order->poster_name = $name;
+			$order->poster_phone = $phone;
+		}
 		$order->status = 2;
 		$order->save();
 	}
@@ -485,11 +492,22 @@ class OrdersAR extends CActiveRecord
 		// $memberCar = $member->cardno;
 		// $timestamp = strtotime(date('Y-m-d H:i:s'));
 		// $
-
+		$area = DistrictsAR::model()->getDistrictById($areaid);
+		$member = MemberBoundAR::model()->getBoundByStoreAndMember($storeid, $memberid);
 		$order = new OrdersAR;
 		$order->store_id = $storeid;
 		$order->member_id = $memberid;
+		// 固化会员卡信息
+		if($member!=null){
+			$order->member_no = $member->cardno;
+			$order->member_phone = $member->phone;
+		}
+		// 固化区域信息
 		$order->area_id = $areaid;
+		if($area != null){
+			$order->area_name = $area->name;
+			$order->area_description = $area->description;
+		}
 		$order->address = $areadesc;
 		$order->phone = $phone;
 		$order->poster_id = 0;
@@ -522,14 +540,6 @@ class OrdersAR extends CActiveRecord
 		$orderId = str_pad($orderId, 6, "0", STR_PAD_LEFT);
 		return date('Ymd').$orderId;
 	}
-	/*
-		订单已读
-	*/
-	public function readOrder($orderId){
-		$order = OrdersAR::model()->findByPk($orderId);
-		$order->status = 0;
-		$order->save();
-	}
 
 	/*
 		删除订单
@@ -558,9 +568,6 @@ class OrdersAR extends CActiveRecord
 				case 3: 
 					$order->status = "已取消";
 					break;
-				case 4:
-					$order->status = "未读";
-					break;
 		}
 		switch ($order->type) {
 			case 0:
@@ -574,23 +581,21 @@ class OrdersAR extends CActiveRecord
 		
 		$posterId = $order->poster_id;
 		if($posterId==0){
-			$order->poster_id = "无";
-		}else{
-			$poster = PostersAR::model()->getPoster($posterId);
-			if(!empty($poster)){
-				$order->poster_id = $poster->name;
-			}else{
-				$order->poster_id = "无";
-			}
-		};
+			$order->poster_name = "无";
+		}
 		$order->store_id = OrderItemsAR::model()->generateItems($order->id);
-		$address = DistrictsAR::model()->getAreaName($order->area_id);
+		$address = $order->area_name;
 		if(!empty($address) && strlen($address)>0){
 			$address = $address."-".$order->address;
 		}else{
 			$address = $order->address;
 		}
 		$order->address = $address;
+		if($order->use_card ==0){
+			$order->use_card =  "没有使用会员卡";
+		}else{
+			$order->use_card = "使用会员卡";
+		}
 	}
 
 	public function changeOrdersToView($orders) {

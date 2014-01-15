@@ -134,6 +134,7 @@ class PrepaidCardAR extends CActiveRecord
 		$password = "";
 		for($i=0; $i<5; $i++){
 			$ranNum = rand(1, 1000);
+			$ranNum = $ranNum + hexdec(substr($checkStr, $i, 1));
 			$password = $password.PrepaidCardAR::model()->getPasswordChar($ranNum);
 		}
 		$password = $password.$checkStr;
