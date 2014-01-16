@@ -5,7 +5,7 @@
  *
  * The followings are the available columns in table 'hot_products':
  * @property string $store_id
- * @property string $desc
+ * @property string $description
  * @property string $pic_id
  * @property string $product_id
  * @property string $picurl
@@ -45,10 +45,10 @@ class HotProductsAR extends CActiveRecord
 		return array(
 			array('store_id, product_id', 'required'),
 			array('store_id, pic_id, product_id', 'length', 'max'=>11),
-			array('desc', 'length', 'max'=>128),
+			array('description', 'length', 'max'=>128),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('store_id, desc, pic_id, product_id', 'safe', 'on'=>'search'),
+			array('store_id, description, pic_id, product_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -73,7 +73,7 @@ class HotProductsAR extends CActiveRecord
 	{
 		return array(
 			'store_id' => 'Seller',
-			'desc' => 'Desc',
+			'description' => 'Desc',
 			'pic_id' => 'Pic',
 			'product_id' => 'Product',
 		);
@@ -91,7 +91,7 @@ class HotProductsAR extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('store_id',$this->store_id,true);
-		$criteria->compare('desc',$this->desc,true);
+		$criteria->compare('description',$this->description,true);
 		$criteria->compare('pic_id',$this->pic_id,true);
 		$criteria->compare('product_id',$this->product_id,true);
 

@@ -379,3 +379,70 @@
   float:right;
   border-left: 1px solid #c8c8c8;
 }
+
+/*loading animation*/
+#circular {
+    width: 64px;
+    position:absolute;
+    top:40%;
+    left:40%;
+    margin-left:auto;  
+    margin-right:auto;
+    margin-bottom: auto;
+    margin-top: auto;
+}
+.circular{
+    background-color:#5FB7FF;
+    float:left;
+    width:15px;
+    height:15px;
+    opacity: 0;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    -webkit-animation-name: bounce_circular;
+    -webkit-animation-duration: 0.7s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-direction: linear;
+}
+#circular_1{
+    margin-top:25px;
+    -webkit-animation-delay: .3s;
+}
+#circular_2{
+    margin-left:-8px;
+    margin-top:9px;
+    -webkit-animation-delay: .4s;
+}
+#circular_3{
+    margin-top:1px;
+    -webkit-animation-delay: .5s;
+}
+#circular_4{
+    margin-left:0;
+    margin-top:9px;
+    -webkit-animation-delay: .6s;
+}
+#circular_5{
+    margin-left:-8px;
+    margin-top:25px;
+    -webkit-animation-delay: .7s;
+}
+#circular_6{
+    margin-left:-22px;
+    margin-top:40px;
+    -webkit-animation-delay: .8s;
+}
+#circular_7{
+    margin-left:-37px;
+    margin-top:48px;
+    -webkit-animation-delay: .9s;
+}
+#circular_8{
+    margin-left:-53px;
+    margin-top:41px;
+    -webkit-animation-delay: 1s;
+}
+@-webkit-keyframes bounce_circular{
+    0%{-webkit-transform:scale(1); opacity: 1;}
+    100%{-webkit-transform:scale(.3); opacity: 1;}
+}

@@ -15,22 +15,16 @@ class ReplyRulesController extends Controller
 			try{
 				$autoMsgs = new SdmsgsAR;
 	    		$autoMsgs->type = 0;
-                $autpMsgs->seller_id = Yii::app()->user->sellerId;
+                $autoMsgs->seller_id = Yii::app()->user->sellerId;
 	    		$autoMsgs->save();
 	    		$defaultMsgs = new SdmsgsAR;
 	    		$defaultMsgs->type = 1;
-                $autpMsgs->seller_id = Yii::app()->user->sellerId;                
+                $defaultMsgs->seller_id = Yii::app()->user->sellerId;                         
 	    		$defaultMsgs->save();
-	    		$transaction->commit();
-	    		$setup = array();
-	    		$setup[0]['id'] = $autoMsgs->id;
-	    		$setup[0]['type_name'] = '文本';
-	    		$setup[1]['id'] = $defaultMsgs->id;
-	    		$setup[1]['type_name'] = '文本';
 	    		$autoItem = new SdmsgItemsAR;
 	    		$autoItem->sdmsg_id = $autoMsgs->id;
 	    		$autoItem->type = 0;
-	    		$defaultItem->save();
+	    		$autoItem->save();
 	    		$defaultItem = new SdmsgItemsAR;
 	    		$defaultItem->sdmsg_id = $defaultMsgs->id;
 	    		$defaultItem->type = 0;
@@ -38,7 +32,12 @@ class ReplyRulesController extends Controller
                 $transaction->commit();
 			}catch(Exception $e){
                 $transaction->rollback();
-            } 		
+            } 
+            $setup = array();
+            $setup[0]['id'] = $autoMsgs->id;
+            $setup[0]['type_name'] = '文本';
+            $setup[1]['id'] = $defaultMsgs->id;
+            $setup[1]['type_name'] = '文本';		
     	}else{
     		$setup = array();
             $setup[0]['id'] = $auto->id;         

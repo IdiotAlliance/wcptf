@@ -233,6 +233,19 @@
 </div>
 
 <div id="change-area" tabindex='-3'>
+<div id='loading' style="display:none">
+	<div id="circular" class="marginLeft">
+		<div id="circular_1" class="circular"></div>
+		<div id="circular_2" class="circular"></div>
+		<div id="circular_3" class="circular"></div>
+		<div id="circular_4" class="circular"></div>
+		<div id="circular_5" class="circular"></div>
+		<div id="circular_6" class="circular"></div>
+		<div id="circular_7" class="circular"></div>
+		<div id="circular_8" class="circular"></div>
+		<div id="clearfix"></div>
+	</div> 
+</div>
 <div class='task-detail'>
 	<?php if($productInfo!=null):?>
     <div class='prod'>
@@ -321,11 +334,12 @@
 <script type="text/javascript" src="<?php echo Yii::app()->baseUrl;?>/js/jquery.form.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(event){
-		var pdinfo = <?php echo CJSON::encode($productInfo);?>;//商品信息的全局变量
+		var pdinfo = <?php 
+							echo CJSON::encode($productInfo);
+					?>;//商品信息的全局变量
 		var isfocus = false;//当前编辑区域是否被选中
 		var prodList = <?php echo json_encode($prodList);?>;//类别下的商品列表
 		var sid = <?php echo $this->currentStore->id;?>;
-		var isRefresh = false;//用于修正离开编辑区域时，没有刷新到正确的产品
 		var editor = new UE.ui.Editor();
 	    editor.render("myEditor");
 		editor.addListener("ready", function () {
@@ -350,6 +364,20 @@
 			minView:2,
 			language:'zh-CN',
 		}).on('changeDate', function(ev){});
+
+		function loading(){
+			var load = "<div id='circular' class='marginLeft'>"
+				+"<div id='circular_1' class='circular'></div>"
+				+"<div id='circular_2' class='circular'></div>"
+				+"<div id='circular_3' class='circular'></div>"
+				+"<div id='circular_4' class='circular'></div>"
+				+"<div id='circular_5' class='circular'></div>"
+				+"<div id='circular_6' class='circular'></div>"
+				+"<div id='circular_7' class='circular'></div>"
+				+"<div id='circular_8' class='circular'></div>"
+				+"<div id='clearfix'></div></div>"
+			return load;
+		}
 
 		document.addEventListener('click',function(event){
 			if(isfocus){
@@ -497,14 +525,14 @@
 				$.ajax({
 	                type: 'POST',
 	                url: "<?php echo CHtml::normalizeUrl(array('productManager/delTypeNone'));?>",
-	                data: {'id':<?php echo $productType->id;?>},
+	                data: {'id':<?php echo $productType->id;?>,'sid':sid},
 	                dataType: 'json',
 	                
 	                success:function(json){
 	                	if(json.empty == 1){
-							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/noProducts'); ?>";
+							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/noProducts',array('sid'=>$this->currentStore->id));?>";
 						}else{
-							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>/typeId/" + json.id;
+							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>/typeId/" + json.id+"/prodId/0"+"/sid/"+sid;
 						}		            
 					},
 	                error:function(){
@@ -521,7 +549,7 @@
 				$.ajax({
 	                type: 'POST',
 	                url: "<?php echo CHtml::normalizeUrl(array('productManager/delCategory'));?>",
-	                data: {'newTypeId':choice,'deleteOr':deleteOr,'id':<?php echo $productType->id;?>},
+	                data: {'newTypeId':choice,'deleteOr':deleteOr,'id':<?php echo $productType->id;?>,'sid':sid},
 	                dataType: 'json',
 	                
 	                success:function(json){
@@ -536,12 +564,12 @@
 				$.ajax({
 	                type: 'POST',
 	                url: "<?php echo CHtml::normalizeUrl(array('productManager/delCategory'));?>",
-	                data: {'newTypeId':choice,'deleteOr':deleteOr,'id':<?php echo $productType->id;?>},
+	                data: {'newTypeId':choice,'deleteOr':deleteOr,'id':<?php echo $productType->id;?>,'sid':sid},
 	                dataType: 'json',
 	                
 	                success:function(json){
 	                	if(json.empty == 1){
-							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/noProducts'); ?>";
+							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/noProducts',array('sid'=>$this->currentStore->id)); ?>";
 						}else{
 							window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>/typeId/" + json.id+"/prodId/0"+"/sid/"+sid;
 						}
@@ -560,48 +588,50 @@
 			var id = $(this).find('input:checkbox').val();
 			$("#product-list li").removeClass('active');
 			$(this).addClass("active");
-			if(isRefresh){
+		
+			$.ajax({
+                type: 'POST',
+                url: "<?php echo CHtml::normalizeUrl(array('productManager/getProduct'));?>",
+                data: {'id':id},
+                dataType: 'json',
+                
+                beforeSend:function(){
+                	$("#loading").show();
+                	$(".task-detail").hide();
+                },
+                success:function(json){
+                	$(".task-detail").show();
+                	$("#loading").hide();
+                	var tmp = "<?php echo Yii::app()->createUrl('takeAway/productManager/coverUp');?>"+"/productId/"+json.id;
+                	$("#myupload").attr('action',tmp);
+                	$("#prod-id").html(json.id);
+                	$(".task-detail input").eq(0).val(json.pname);
+                	$(".task-detail input").eq(1).val(json.price+'￥');
+                	$(".task-detail input").eq(2).val(json.credit);
+                	$(".task-detail input").eq(4).val(json.description);
+                	$(".task-detail input").eq(5).val(json.stime);
+                	$(".task-detail input").eq(6).val(json.etime);
+                	$(".task-detail input").eq(7).val(json.instore);
+                	if(json.status=='未到期' || json.status=='已过期')
+		               	$("#shelfProd").html("当前不在有效期内");
+		            else if(json.status=='已上架')
+		               	$("#shelfProd").html("下架产品");
+		            else if(json.status=='已下架')
+		               	$("#shelfProd").html("上架产品");
+                	var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+json.cover;
+					$("#showimg").html("<img  width='200' class='left img-rounded'  src='"+img+"'>");
+        			editor.ready(function(){
+        				editor.setContent(json.richtext);
+        			})
 
-            	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+typeId+"/prodId/"+id+"/sid/"+sid;
-			}else{
+        			pdinfo = json;
 
-				$.ajax({
-	                type: 'POST',
-	                url: "<?php echo CHtml::normalizeUrl(array('productManager/getProduct'));?>",
-	                data: {'id':id},
-	                dataType: 'json',
-	                
-	                success:function(json){
-	                	var tmp = "<?php echo Yii::app()->createUrl('takeAway/productManager/coverUp');?>"+"/productId/"+json.id;
-	                	$("#myupload").attr('action',tmp);
-	                	$("#prod-id").html(json.id);
-	                	$(".task-detail input").eq(0).val(json.pname);
-	                	$(".task-detail input").eq(1).val(json.price+'￥');
-	                	$(".task-detail input").eq(2).val(json.credit);
-	                	$(".task-detail input").eq(4).val(json.description);
-	                	$(".task-detail input").eq(5).val(json.stime);
-	                	$(".task-detail input").eq(6).val(json.etime);
-	                	$(".task-detail input").eq(7).val(json.instore);
-	                	if(json.status=='未到期' || json.status=='已过期')
-			               	$("#shelfProd").html("当前不在有效期内");
-			            else if(json.status=='已上架')
-			               	$("#shelfProd").html("下架产品");
-			            else if(json.status=='已下架')
-			               	$("#shelfProd").html("上架产品");
-	                	var img = "<?php echo Yii::app()->baseUrl;?>"+"/"+json.cover;
-						$("#showimg").html("<img  width='200' class='left img-rounded'  src='"+img+"'>");
-	        			editor.ready(function(){
-	        				editor.setContent(json.richtext);
-	        			})
-
-	        			pdinfo = json;
-
-	                },
-	                error:function(){
-	                	alert('获取产品失败！');
-	                },				
-				})
-			}
+                },
+                error:function(){
+                	alert('获取产品失败！');
+                },				
+			})
+			
 			
 		})
 

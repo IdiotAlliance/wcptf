@@ -287,7 +287,7 @@
 	    		if(confirm('您将要开启会员卡绑定功能, 开启该功能需要使用短信服务，系统将会向您收取0.1元/条的短信服务费，是否确定开启？')){
 	    			
 	    			$.ajax({
-	    				url: '<?php echo Yii::app()->createUrl("takeAway/members/memberBoundOn/sid")?>/' + sid,
+	    				url: '<?php echo Yii::app()->createUrl("takeAway/members/memberBoundOn")?>/sid/' + sid,
 	    				success: function(result){
 	    					if(result == '0'){
 	    						$('.switch_container .onoff_switch').removeClass('off');

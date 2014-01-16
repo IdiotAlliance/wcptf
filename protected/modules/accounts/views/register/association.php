@@ -16,7 +16,7 @@
 ?>
 
 <fieldset>
-        <?php echo $form->dropDownListRow($model, 'sellerType', array('选择商家类型','外卖','桌游',)); ?> 
+        <?php echo $form->dropDownListRow($model, 'sellerType', array('选择商家类型','外卖',)); ?> 
         <?php echo $form->textFieldRow($model, 'email', array('class'=>'input-large')); ?>
         <?php echo $form->passwordFieldRow($model, 'password', array(
                                                                 'class'=>'input-large',

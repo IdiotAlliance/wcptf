@@ -2,6 +2,7 @@
 
 class SiteController extends Controller
 {
+    public $defaultAction = 'index';
 	/**
 	 * Declares class-based actions.
 	 */
@@ -41,8 +42,12 @@ class SiteController extends Controller
 		{
 			if(Yii::app()->request->isAjaxRequest)
 				echo $error['message'];
-			else
-				$this->render('error', $error);
+			else{
+				if($code == 404)
+					$this->render('error404', $error);
+				else
+					$this->render('error500',$error);
+			}
 		}
 	}
 
