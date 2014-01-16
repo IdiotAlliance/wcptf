@@ -410,8 +410,9 @@
 		if(orders.length > 0){
 			var html = '<b>历史订单</b>' + 
 							  '<span class="table-btn-container">' + 
-									'<img src="../../img/icon-chart.jpg" class="img-btn" onclick="showOrderChart()">' + 
-									'<img src="../../img/icon-excel.jpg" class="img-btn" onclick="downloadExcel()">' + 
+									'<img src="<?php echo Yii::app()->baseUrl?>/img/icon-chart.jpg" class="img-btn" onclick="showOrderChart()">' + 
+									'<a href="' + '<?php echo Yii::app()->createUrl("takeAway/members/downloadExcel")?>/memberId/' + member['id'] +
+									'">' + '<img src="<?php echo Yii::app()->baseUrl?>/img/icon-excel.jpg" class="img-btn"></a>' + 
 							  '</span>' +
 							  '<table class="table">' +
 							  	'<tbody><tr><td>编号</td><td>下单日期</th><td>状态</td><td>总价</td><td>详情</td></tr>';

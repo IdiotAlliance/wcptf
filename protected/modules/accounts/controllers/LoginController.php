@@ -27,8 +27,12 @@ class LoginController extends Controller
                         $user = UsersAR::model()->getUserByEmail($model->username);
                         switch ($user->type) {
                             case 0:
-                                if($user->wechat_bound)
-                                    $this->redirect(array('/accounts/account/stores'));
+                                if($user->wechat_bound){
+                                    if(isset(Yii::app()->user->referer))
+                                        $this->redirect(Yii::app()->user->referer);
+                                    else
+                                        $this->redirect(array('/accounts/account/stores'));
+                                }
                                 else
                                     $this->redirect(array('/wechat/wechatBind'));
                                 break;

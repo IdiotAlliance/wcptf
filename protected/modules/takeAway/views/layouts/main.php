@@ -52,12 +52,14 @@
 									<div id="system_msg_badge" class="badge"></div>
 								</a>
 							</li>
+							<!--
 							<li>
 								<a tabindex="-1" 
 									href="<?php echo Yii::app()->createUrl('messages/message/redirect', array('type'=>2))?>">微信消息
 									<div id="wechat_msg_badge" class="badge member-badge"></div>
 								</a>
 							</li>
+							-->
 							<li class="dropdown-submenu">
 								<a tabindex="-1" href="#">订单消息
 									<div id="order_msg_badge" class="badge order-badge"></div>
@@ -221,7 +223,7 @@
 						var total = 0;
 						total += self.handleSystemMessages(data['system']);
 						total += self.handleOrderMessages(data['orders']);
-						total += self.handleWechatMessages(data['wcmsgs']);
+						// total += self.handleWechatMessages(data['wcmsgs']);
 						total += self.handleCommentMessages(data['comments']);
 						self.setTotal(total);
 						setTimeout(self.loadMessage, self.getTimeoutTime(data));
