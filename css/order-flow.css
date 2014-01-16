@@ -80,6 +80,16 @@
     bottom: 0;
     left:810px;
 }
+/* 会员信息*/
+#order-member-info{
+    width: 30px;
+    height: 40px;
+    z-index: 1;
+    position: absolute;
+    top: 75px;
+    bottom: 0;
+    left:1010px;
+}
 
 /*第二栏效果*/
 .order {
@@ -528,6 +538,13 @@
 	line-height: 28px;
 	margin-left: 15px;
 }
+.order-body ul>li .order-item ul>li.order-content .order-username {
+    max-width: 200px;
+    white-space:nowrap;
+    word-break:keep-all; 
+    overflow:hidden; 
+    text-overflow:ellipsis;
+}
 .order-body ul>li .order-item ul>li.order-content .order-phonenumber {
 	margin-left: 20px;
 }
@@ -552,6 +569,13 @@
 	width: 50%;
 	display: inline-block;
 }
+.order-body ul>li .order-item ul>li.order-content .order-address {
+    width:531px;
+    white-space:nowrap; 
+    word-break:keep-all; 
+    overflow:hidden; 
+    text-overflow:ellipsis;
+}
 
 .order-body ul>li .order-item ul>li.order-content .item-line .item-line4 {
 	height: 1px;
@@ -560,7 +584,12 @@
 }
 
 .order-body ul>li .order-item ul>li.order-content .order-subitem {
-	margin-left: 30px;
+    width:481px;
+	margin-left: 10px;
+    white-space:nowrap; 
+    word-break:keep-all; 
+    overflow:hidden; 
+    text-overflow:ellipsis;
 }
 .order-body ul>li .order-item ul>li.order-content .order-desc {
     width:331px; white-space:nowrap; word-break:keep-all; overflow:hidden; text-overflow:ellipsis;

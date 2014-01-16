@@ -1,20 +1,22 @@
 <?php
 
 /**
- * This is the model class for table "bills".
+ * This is the model class for table "plugins_users".
  *
- * The followings are the available columns in table 'bills':
- * @property string $id
- * @property integer $type
+ * The followings are the available columns in table 'plugins_users':
+ * @property string $plugin_id
  * @property string $seller_id
- * @property double $bill
+ * @property integer $plugin_type
+ * @property string $ctime
+ * @property integer $span
+ * @property integer $onoff
  */
-class BillsAR extends CActiveRecord
+class PluginsUsersAR extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return BillsAR the static model class
+	 * @return PluginsUsersAR the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -26,7 +28,7 @@ class BillsAR extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'bills';
+		return 'plugins_users';
 	}
 
 	/**
@@ -37,12 +39,12 @@ class BillsAR extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('seller_id', 'required'),
-			array('type', 'numerical', 'integerOnly'=>true),
-			array('seller_id', 'length', 'max'=>11),
+			array('plugin_id, seller_id, plugin_type, ctime, onoff', 'required'),
+			array('plugin_type, span, onoff', 'numerical', 'integerOnly'=>true),
+			array('plugin_id, seller_id', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, type, seller_id', 'safe', 'on'=>'search'),
+			array('plugin_id, seller_id, plugin_type, ctime, span, onoff', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -63,9 +65,12 @@ class BillsAR extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'type' => 'Type',
+			'plugin_id' => 'Plugin',
 			'seller_id' => 'Seller',
+			'plugin_type' => 'Plugin Type',
+			'ctime' => 'Ctime',
+			'span' => 'Span',
+			'onoff' => 'Onoff',
 		);
 	}
 
@@ -80,19 +85,15 @@ class BillsAR extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('type',$this->type);
+		$criteria->compare('plugin_id',$this->plugin_id,true);
 		$criteria->compare('seller_id',$this->seller_id,true);
+		$criteria->compare('plugin_type',$this->plugin_type);
+		$criteria->compare('ctime',$this->ctime,true);
+		$criteria->compare('span',$this->span);
+		$criteria->compare('onoff',$this->onoff);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
-	}
-
-	public static function getBills($uid, $page, $limit){
-		return BillsAR::model()->findAll(array('condition'=>'seller_id=:userId',
-											   'params'=>array(':userId'=>$uid),
-											   'order'=>'ctime desc',
-											   'limit'=>($limit * $page)));
 	}
 }

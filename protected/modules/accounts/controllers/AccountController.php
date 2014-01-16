@@ -74,6 +74,7 @@ class AccountController extends Controller{
 			$uid = Yii::app()->user->sellerId;
 			$user   = UsersAR::model()->findByPK($uid);
 			$stores = StoreAR::model()->getUndeletedStoreByUserId($uid);
+
 			$this->render("stores", array('user'=>$user, 
 										   'stores'=>$stores, 
 										   'editForm'=>$editForm,
@@ -189,13 +190,33 @@ class AccountController extends Controller{
 			$user = UsersAR::model()->findByPK($uid);
 			if($user){
 				$stats  = OrdersAR::model()->getOrderStats($uid);
-				$bills  = BillsAR::model()->getBills($uid, 8);
+				$bills  = BillsAR::model()->getBills($uid, 1, 8);
+				foreach ($bills as $bill) {
+					switch ($bill->type) {
+						case Constants::BILL_TYPE_NORMAL:
+							$bill->type = "系统日常维护费用";
+							break;
+						case Constants::BILL_TYPE_SMS:
+							$bill->type = "短信服务费用，共发送1条，每条0.1元";
+							break;
+						case Constants::BILL_TYPE_PLUGIN:
+							$bill->type = "购买插件费用";
+							break;
+						case Constants::BILL_TYPE_PREPAID:
+							$bill->type = "充值卡充值成功";
+							break;
+						default:
+							# code...
+							break;
+					}
+				}
 				$bcount = BillsAR::model()->count('seller_id=:uid', array(':uid'=>$uid));
-				$pcount = floor(($bcount / 8)) + 1;
+				$pcount = ($bcount % 8 == 0) ? ($bcount / 8) : (floor(($bcount / 8)) + 1);
+				$sysmsgs   = $this->sysmsgsToArray(SystemmsgsAR::model()->getMsgsAfter($uid, 0, 10));
 				$model  = array('account'=>$user->email, 'wechat_name'=>$user->wechat_name,
 							   'balance'=>$user->balance, 'stats'=>$stats);
 				$this->render('profile', array('model'=>$model, 'bills'=>$bills, 
-							  'bcount'=>$bcount, 'pcount'=>$pcount));
+							  'bcount'=>$bcount, 'pcount'=>$pcount, 'sysmsgs'=>$sysmsgs));
 			}
 		}
 	}
@@ -206,47 +227,162 @@ class AccountController extends Controller{
 		}else{
 			$uid = Yii::app()->user->sellerId;
 			if($page > 0){
-				$bills = BillsAR::model()->findAll('seller_id=:uid and page=:page',
-												   array(':uid'=>$uid, ':page'=>$page));
+				$bills = BillsAR::model()->getBills($uid, $page, 8);
 				$result = array();
-				foreach ($bills as $bill) {
-					array_push($result, array('id'=>$bill->id,
-											  'flowid'=>$bill->flowid,
-											  'type'=>$bill->type,
-											  'income'=>$bill->income,
-											  'payment'=>$bill->payment,
-											  'balance'=>$bill->balance,
-											  'ctime'=>$bill->ctime));
-				}
+				for($index = ($page - 1) * 8; $index < count($bills); $index ++)
+					array_push($result, array('id'=>$bills[$index]->id,
+											  'flowid'=>$bills[$index]->flowid,
+											  'type'=>$this->getBillType($bills[$index]->type),
+											  'income'=>$bills[$index]->income,
+											  'payment'=>$bills[$index]->payment,
+											  'balance'=>$bills[$index]->balance,
+											  'ctime'=>$bills[$index]->ctime));
 				echo json_encode($result);
 			}
 		}
 	}
 
-	public function getBillDetail($bid){
+	public function actionBillDetail($bid){
 		$bill = BillsAR::model()->findByPK($bid);
 		if($bill){
 			$result = array('id' => $bill->id, 'flowid'=>$bill->flowid, 
-							'type'=>$bill->type, 'income'=>$bill->income, 
+							'type'=>$this->getBillType($bill->type), 'income'=>$bill->income, 
 							'payment'=>$bill->payment, 'ctime'=>$bill->ctime,
 							'balance'=>$bill->balance);
-			if(isset($bill->reference) && $bill->reference >= 0){
-				switch ($bill->type) {
-					case Constants::BILL_TYPE_NORMAL:
-						# code...
-						break;
-					case Constants::BILL_TYPE_SMS:
-
-						break;
-					case Constants::BILL_TYPE_PLUGIN:
-						
-						break;
-					default:
-						# code...
-						break;
-				}
+			switch ($bill->type) {
+				case Constants::BILL_TYPE_NORMAL:
+					$result['info'] = "系统日常维护费用";
+					break;
+				case Constants::BILL_TYPE_SMS:
+					$result['info'] = "短信服务费用，共发送1条，每条0.1元";
+					break;
+				case Constants::BILL_TYPE_PLUGIN:
+					$result['info'] = "购买插件费用";
+					break;
+				case Constants::BILL_TYPE_PREPAID:
+					$result['info'] = "充值卡充值成功";
+					break;
+				default:
+					# code...
+					break;
 			}
 			echo json_encode($result);
+		}
+	}
+
+	public function actionLoadSysmsgs($before){
+		if(Yii::app()->user->isGuest){
+			throw new CHttpException(403, "You must sign in to use this service");
+		}else{
+			$uid = Yii::app()->user->sellerId;
+			$sysmsgs = $this->sysmsgsToArray(SystemmsgsAR::model()->getMsgsBefore($uid, $before, 10));
+			echo json_encode($sysmsgs);
+		}
+	}
+
+	public function actionCheckCard(){
+		if(Yii::app()->user->isGuest){
+			throw new CHttpException(403, "You must sign in to use this service");
+		}else if(Yii::app()->request->isPostRequest){
+			if(isset($_POST['card_no']) && isset($_POST['card_pass']) && isset($_POST['timestamp'])){
+				$no    = $_POST['card_no'];
+				$pass  = $_POST['card_pass'];
+				$time  = $_POST['timestamp'];
+				$card  = PrepaidCardAR::model()->find('card_no=:cno AND password=:pword AND is_use<>1',
+													  array(':cno'=>$no, ':pword'=>$pass));
+				if($card){
+					$ctime = time();
+					$signature = md5($no.$pass.$time.$ctime);
+					$result = array('success'=>'1', 'time'=>$ctime, 'signature'=>$signature,
+									'value'=>$card->value, 'duetime'=>$card->duetime);
+					$card->signature = $signature;
+					$card->update();
+					echo json_encode($result);
+				}else{
+					$result = array('success'=>'0', 'error'=>'PR_0001', 'info'=>'您输入的卡号或密码无效，请检查您的输入是否正确');
+					echo json_encode($result);
+				}
+			}
+		}
+	}
+
+	public function actionDeposite(){
+		if(Yii::app()->user->isGuest){
+			throw new CHttpException(403, "You must sign in to use this service");
+		}else if(Yii::app()->request->isPostRequest){
+			$uid = Yii::app()->user->sellerId;
+			if(isset($_POST['card_no']) && isset($_POST['card_pass']) 
+				&& isset($_POST['ctime']) && isset($_POST['stime'])){
+				$cardno    = $_POST['card_no'];
+				$cardpass  = $_POST['card_pass'];
+				$stime     = $_POST['stime'];
+				$ctime     = $_POST['ctime'];
+				$signature = md5($cardno.$cardpass.$ctime.$stime);
+				$card = PrepaidCardAR::model()->find('card_no=:cno AND password=:pword AND is_use<>1 AND signature=:sig',
+													  array(':cno'=>$cardno, ':pword'=>$cardpass, ':sig'=>$signature));
+				if($card){
+					$user = UsersAR::model()->findByPK($uid);
+					$user->balance = $user->balance + $card->value;
+					$user->update();
+					$card->is_use = 1;
+					$card->update();
+
+					$bill = new BillsAR();
+					$bill->income    = $card->value;
+					$bill->type      = Constants::BILL_TYPE_PREPAID;
+					$bill->reference = $card->id;
+					$bill->seller_id = $uid;
+					$bill->payment   = 0;
+					$bill->balance   = $user->balance;
+					$bill->flowid    = date('Ymd', time()).(time() % 86400000);
+					$bill->save();
+					echo json_encode(array('success'=>'1'));
+				}else{
+					echo json_encode(array('success'=>'0', 'info'=>'充值失败，无法确认您的充值卡的有效性，请重试'));
+				}
+			}
+		}
+	}
+
+	public function getBillType($type){
+		switch ($type) {
+			case Constants::BILL_TYPE_NORMAL:
+				return '日常维护费用';
+			case Constants::BILL_TYPE_SMS:
+				return '短信服务支出';
+			case Constants::BILL_TYPE_PLUGIN:
+				return '插件购买费用';
+			case Constants::BILL_TYPE_PREPAID:
+				return '账户充值';
+			default:
+				# code...
+				break;
+		}
+		return null;
+	}
+
+	public function sysmsgsToArray($msgs){
+		if($msgs){
+			$msgarr = array();
+			foreach ($msgs as $msg) {
+				$info = null;
+				switch ($msg->type) {
+					case Constants::MSG_SYSTEM_100:
+						$info = "您的账户余额已不足100元，为了保障店铺的正常运营，请尽快充值";
+						break;
+					case Constants::MSG_SYSTEM_50:
+						$info = "您的账户余额已不足50元，为了保障店铺的正常运营，请尽快充值";
+						break;
+					case Constants::MSG_SYSTEM_10:
+						$info = "您的账户余额已不足10元，店铺很快将会过期，请尽快充值，以免遭受不必要的损失";
+						break;
+					default:
+						$info = "";
+						break;
+				}
+				array_push($msgarr, array('id'=>$msg->id, 'ctime'=>$msg->ctime, 'info'=>$info));
+			}
+			return $msgarr;
 		}
 	}
 }

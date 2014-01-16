@@ -12,7 +12,7 @@
 		cleanAllLocalCache();
 		//点击订单
 		$('.order-header').delegate('.order-body ul>li .order-item ul>li.order-content', 'mousedown', function(e){
-			if($(this).css("background-color") == 'rgb(247, 247, 247)'){
+			if($(this).css(4"background-color") == 'rgb(247, 247, 247)'){
 				$('.order-body ul>li .order-item ul>li.order-content').css("background-color", "#f7f7f7");
 			}
 			$(this).css("background-color", "#e7e7e7");
@@ -309,7 +309,7 @@
 					    						</div>
 					    						<div class="item-line item-line5">
 					    							<label class="order-subitem-header">订单子项：</label>
-					    							<label class="order-subitem order-1">{{:orderData.order_item}}</label>
+					    							<label class="order-subitem order-1">{{:orderData.order_items}}</label>
 					    						</div>
 					    						<div class="item-line item-line6">
 					    							<label class="order-desc">备注：{{:orderData.desc}}</label>
@@ -368,7 +368,7 @@
     						</div>
     						<div class="item-line item-line5">
     							<label class="order-subitem-header">订单子项：</label>
-    							<label class="order-subitem order-1">{{:orderData.order_item}}</label>
+    							<label class="order-subitem order-1">{{:orderData.order_items}}</label>
     						</div>
     						<div class="item-line item-line6">
     							<label class="order-desc">备注：{{:orderData.desc}}</label>
@@ -390,7 +390,7 @@
 			   		</div>
 			   		<div class="order-line line-2">
 			   			<label class="order-username">姓名：{{:head.orderData.name}}</label>
-			   			<label class="order-date">下单时间：{{:head.orderData.ctime}}</label>
+			   			
 			   		</div>
 			   		<div class="order-line line-3">
 			       		<label class="order-phone">手机：{{:head.orderData.phone}}</label>
@@ -400,6 +400,7 @@
 			   		</div>
 			   		<div class="order-line line-5">
 			   			<label class="order-total">总价：{{:head.orderData.total}}</label>
+			   			<label class="order-date">下单时间：{{:head.orderData.ctime}}</label>
 			   		</div>
 			   		<div class="order-line line-6">
 			   			<a href="#" class='order-cancel-menu'>取消订单</a>

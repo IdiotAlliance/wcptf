@@ -89,7 +89,7 @@ class OrderFlowController extends TakeAwayController
 					 "areaId"=>$order->area_id,
 					 "ctime"=>$order->ctime,
 					 "status"=>$order->status,
-					 "poster_name"=>$order->poster_id,
+					 "poster_name"=>$order->poster_name,
 					 'desc'=>$order->description,
 					 'update_time'=>$order->update_time
 					));

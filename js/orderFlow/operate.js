@@ -87,8 +87,10 @@ $(document).ready(function(){
 	});
 	//test clean all localstorge
 	$(".footer-left-btn.new-order").click(function(){
-		cleanAllLocalCache();
-		alert("clean all the cache!");
+		// cleanAllLocalCache();
+		// alert("clean all the cache!");
+		var url = '/weChat/index.php/payment/prepaidCard/prepaidCard';
+		window.open(url);
 	});
 	// 批量取消订单
 	$('#batOperate .bat-cancel').click(function(){
@@ -135,6 +137,9 @@ function orderDownload(){
 	// alert(filter);
 	var area = "";
 	//area pick
+	if($("input[name='area-pick-all']").is(':checked')){
+		area = area + $(this).attr('id')+",";
+	}
 	$("input[name='area-pick']").each(function(){
 		if($(this).is(':checked')){
 			area = area + $(this).attr('id') + ',';

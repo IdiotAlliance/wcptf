@@ -1,11 +1,7 @@
 <?php
 
-class AccountsModule extends CWebModule
+class PaymentModule extends CWebModule
 {
-
-
-	public $defaultController = 'login';
-
 	public function init()
 	{
 		// this method is called when the module is being created
@@ -13,8 +9,8 @@ class AccountsModule extends CWebModule
 
 		// import the module-level models and components
 		$this->setImport(array(
-			'accounts.models.*',
-			'accounts.components.*',
+			'payment.models.*',
+			'payment.components.*',
 		));
 	}
 
@@ -22,18 +18,8 @@ class AccountsModule extends CWebModule
 	{
 		if(parent::beforeControllerAction($controller, $action))
 		{
-			switch ($controller->id) {
-				case 'account':
-				case 'replyRules':
-					$uid  = Yii::app()->user->sellerId;
-					$user = UsersAR::model()->findByPK($uid);
-					if(!$user->wechat_bound)
-						$controller->redirect(array('/wechat/wechatBind'));
-					break;
-				default:
-					
-					break;
-			}
+			// this method is called before any module controller action is performed
+			// you may place customized code here
 			return true;
 		}
 		else

@@ -39,6 +39,7 @@ return array(
 		'wap',
 		'errors',
 		'messages',
+		'payment',
 	),
 
 	// application components
@@ -65,7 +66,6 @@ return array(
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'showScriptName'=>false,
-			'urlSuffix'=>'.html',
 			'rules'=>array(
 				''=>'site/index',
 				'logout'=>'site/logout',

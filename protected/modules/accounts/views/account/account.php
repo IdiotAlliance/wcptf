@@ -163,7 +163,6 @@
 		width: 120px;
 		height: 30px;
 		border-radius: 5px;
-		border: 1px solid #ddd;
 		display: inline-block;
 		float: right;
 		margin: 10px;

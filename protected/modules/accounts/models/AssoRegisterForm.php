@@ -51,6 +51,7 @@ class AssoRegisterForm extends CFormModel
 
         $userAr = new UsersAR();
         $userAr->email = $this->email;
+        $userAr->balance = 100;
         $userAr->password = md5($this->password);
         $userAr->type = UsersAR::TYPE_SELLER;
         $userAr->register_time = date('Y-m-d H:i:s');
