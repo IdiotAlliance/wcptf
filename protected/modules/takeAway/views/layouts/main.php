@@ -301,6 +301,7 @@
 	})(window);
 
 	$(document).ready(function(){
+		var sid = <?php echo $this->currentStore->id;?>;
 		//显示添加分组输入框
 		$('#newCategory').click(function(event){		
 			event.stopPropagation();
@@ -315,11 +316,11 @@
 					$.ajax({
 		                type: 'POST',
 		                url: "<?php echo CHtml::normalizeUrl(array('productManager/addCategory'));?>",
-		                data: {'typeName':inputText,'sid':<?php echo $this->currentStore->id;?>},
+		                data: {'typeName':inputText,'sid':sid},
 		                dataType: 'json',
 		                
 		                success:function(json){
-		                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+json.success+"/prodId/0";
+		                	window.location.href = "<?php echo Yii::app()->createUrl('takeAway/productManager/allProducts');?>"+"/typeId/"+json.success+"/prodId/0/sid/"+sid;
 		                },
 		                error:function(json){
 		                	$("#categoryInput").css('display','none');

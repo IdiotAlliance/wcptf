@@ -5,7 +5,6 @@ class UserIdentity extends CUserIdentity
 	const SESSION_SELLERTYPE = 'sellerType';
 	const SESSION_SELLERID = 'sellerId';
 	const SESSION_HOMEURL = 'homeUrl';
-	const SESSION_TYPECOUNT = 'typeCount';
 
 	/**
 	 * @author  luwenbin
@@ -26,9 +25,6 @@ class UserIdentity extends CUserIdentity
 		else{
 			Yii::app()->user->setState(UserIdentity::SESSION_SELLERID, $user->id);
 			$this->errorCode=self::ERROR_NONE;
-
-			// $typeCount = ProductTypeAR::model()->getProductsByType(Yii::app()->user->sellerId);
-			// Yii::app()->session[UserIdentity::SESSION_TYPECOUNT] = $typeCount;
 		}	
 		return !$this->errorCode;
 	}

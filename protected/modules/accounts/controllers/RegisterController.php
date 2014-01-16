@@ -48,7 +48,7 @@ class RegisterController extends Controller
 					}
 				}
 				else {
-					
+					throw new CHttpException(500,'注册账号失败');
 				}
 			}
 			

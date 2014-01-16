@@ -53,20 +53,16 @@ class AssoRegisterForm extends CFormModel
         $userAr->email = $this->email;
         $userAr->password = md5($this->password);
         $userAr->type = UsersAR::TYPE_SELLER;
-
-        switch ($this->sellerType) {
-            case '0':
-                $userAr->seller_type = UsersAR::SELLERTYPE_TAKEAWAY;
-                break;     
-            default:
-                $userAr->seller_type = UsersAR::SELLERTYPE_TAKEAWAY;
-                break;
-        }
-        $userAr->register_time = new CDbExpression('NOW()');
+        $userAr->register_time = date('Y-m-d H:i:s');
         $userAr->email_verified = UsersAR::STATUS_NOT_VERIFIED;
         $userAr->verify_code = $userAr->generateVerifyCode();
-        EmailHelper::sendVerifyEmail($userAr, $this->email);
-        return $userAr->save();
+        $isSave = $userAr->save();
+        if($isSave){
+            EmailHelper::sendVerifyEmail($userAr, $this->email);
+            return true;
+        }else
+            return false;
+
     }
 
     public function login()

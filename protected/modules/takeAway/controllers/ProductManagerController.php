@@ -16,15 +16,16 @@ class ProductManagerController extends TakeAwayController
 				if($typeId==0){
 					$typeId = $typeCount[0]['typeId'];
 				}
-				$productList = ProductsAR::model()->getCategoryProducts($typeId,Yii::app()->user->sellerId);
+				$productList = ProductsAR::model()->getCategoryProducts($typeId);
 				$prodList = ProductsAR::model()->getAllProducts($productList);
 				$productInfo = null;
 				if($productList != null && $prodId==0){
 					$productInfo = $productList[0];
 				}
+
 				if($prodId!=0){
 					$productInfo = ProductsAR::model()->findByPK($prodId);
-					$now = date('Y-m-d');
+					$now = date('Y-m-d h:m:s');
 					if($now< $productInfo->stime )
 						$productInfo->status = "未到期";
 					else if($now > $productInfo->etime)
@@ -53,6 +54,14 @@ class ProductManagerController extends TakeAwayController
 			}			
 		}		
 	}
+
+	public function actionNoProducts(){
+		if(isset($_GET['sid']) && $_GET['sid'] >= 0 && $this->setCurrentStore($_GET['sid'])){
+			$this->typeCount = ProductTypeAR::model()->getProductsByType($_GET['sid']);			
+			$this->render('noProducts');
+		}
+	}
+
 	//ajax:编辑类别和其描述
 	public function actionUpdateCategory()
 	{
@@ -139,7 +148,7 @@ class ProductManagerController extends TakeAwayController
             		}
             	}
                 $transaction->commit();
-            	$types = ProductTypeAR::model()->getUndeletedProductTypeBySellerId(Yii::app()->user->sellerId);
+            	$types = ProductTypeAR::model()->getUndeletedProductTypeByStoreId($_POST['sid']);
             	if(!empty($types)){
             		echo json_encode(array('empty'=>0, 'id'=>$types[0]->id));
             	}else{
@@ -157,7 +166,7 @@ class ProductManagerController extends TakeAwayController
 			$category = ProductTypeAR::model()->findByPK($_POST['id']);
 			$category->deleted = 1;
 			$category->save();
-			$types = ProductTypeAR::model()->getUndeletedProductTypeBySellerId(Yii::app()->user->sellerId);
+			$types = ProductTypeAR::model()->getUndeletedProductTypeByStoreId($_POST['sid']);
 			if(!empty($types)){
 				echo json_encode(array('empty'=>0, 'id'=>$types[0]->id));
 			}else{

@@ -12,7 +12,7 @@ return array(
 
 	// preloading 'log' component
 	'preload'=>array('log'),
-
+	'defaultController'=>'site',
 	// autoloading model and component classes
 	'import'=>array(
 		'application.models.*',
@@ -54,7 +54,7 @@ return array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
 			'loginUrl'=>array('accounts/login/login'),
-			'returnUrl'=>array('/site/index'),
+			'returnUrl'=>array('site/index'),
 		),
 		'session'=>array(
 		   'autoStart'=>true,
@@ -64,8 +64,10 @@ return array(
 		// uncomment the following to enable URLs in path-format
 		'urlManager'=>array(
 			'urlFormat'=>'path',
+			'showScriptName'=>false,
+			'urlSuffix'=>'.html',
 			'rules'=>array(
-				''=>'index',
+				''=>'site/index',
 				'logout'=>'site/logout',
 				
 				'takeAway/orderFlow/orderFlow'=>'takeAway/orderFlow/orderFlow',

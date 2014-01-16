@@ -85,16 +85,12 @@ class UsersAR extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('email, password, register_time', 'required'),
-			array('type, email_verified, logo, estimated_time', 'numerical', 'integerOnly'=>true),
-			array('start_price, takeaway_fee, threshold', 'numerical'),
-			array('email, password, store_name', 'length', 'max'=>128),
+			array('type, email_verified', 'numerical', 'integerOnly'=>true),
+			array('email, password', 'length', 'max'=>128),
 			array('verify_code, token', 'length', 'max'=>64),
-			array('seller_type, phone', 'length', 'max'=>32),
-			array('store_address', 'length', 'max'=>256),
-			array('stime, etime', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, email, password, type, register_time, email_verified, verify_code, seller_type, token, store_name, phone, stime, etime, store_address, logo, start_price, takeaway_fee, threshold, estimated_time', 'safe', 'on'=>'search'),
+			array('id, email, password, type, register_time, email_verified, verify_code, token,', 'safe', 'on'=>'search'),
 		);
 	}
 
