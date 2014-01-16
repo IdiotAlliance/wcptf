@@ -118,6 +118,21 @@ $(document).ready(function(){
 	});
 
 });
+// 会员确认
+function confirmMember(memberId){
+	$.ajax({
+		url: "<?php echo Yii::app()->createUrl('takeAway/members/confirmMember/memberId/')?>" + 
+			 "/" + memberId + "?sid=<?php echo $this->currentStore->id?>"
+	}).success(function (data){
+		if (data == 'ok'){
+			
+		}else{
+			alert('绑定失败');
+		}
+	});
+}
+
+
 // 订单导出
 function orderDownload(){
 	var startDate = $("input[name='order-start-time']").val();

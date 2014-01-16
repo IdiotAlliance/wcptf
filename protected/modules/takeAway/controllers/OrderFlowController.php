@@ -89,8 +89,11 @@ class OrderFlowController extends TakeAwayController
 					 "areaId"=>$order->area_id,
 					 "ctime"=>$order->ctime,
 					 "status"=>$order->status,
+					 "orderType"=>$order->type,
+					 "useCard"=>$order->use_card,
 					 "poster_name"=>$order->poster_name,
 					 'desc'=>$order->description,
+					 'memberStatus'=>$order->member_status,
 					 'update_time'=>$order->update_time
 					));
 		}
@@ -119,8 +122,10 @@ class OrderFlowController extends TakeAwayController
 						 "ctime"=>$order->ctime,
 						 "status"=>$order->status,
 						 "orderType"=>$order->type,
+						 "useCard"=>$order->use_card,
 						 "poster_name"=>$order->poster_id,
 						 'desc'=>$order->description,
+						 'memberStatus'=>$order->member_status,
 						 'update_time'=>$order->update_time
 						);
 			$arr=array('success'=>'1', 'order'=>$orderView);

@@ -109,6 +109,7 @@ class OrdersAR extends CActiveRecord
 			'member_id' => 'Member',
 			'member_no' => 'Member No',
 			'member_phone' => 'Member Phone',
+			'member_status' => 'Member Status',
 			'order_name' => 'Order Name',
 			'phone' => 'Phone',
 			'address' => 'Address',
@@ -147,6 +148,7 @@ class OrdersAR extends CActiveRecord
 		$criteria->compare('member_id',$this->member_id,true);
 		$criteria->compare('member_no',$this->member_no,true);
 		$criteria->compare('member_phone',$this->member_phone,true);
+		$criteria->compare('member_status',$this->member_status,true);
 		$criteria->compare('order_name',$this->order_name,true);
 		$criteria->compare('phone',$this->phone,true);
 		$criteria->compare('address',$this->address,true);
@@ -335,6 +337,7 @@ class OrdersAR extends CActiveRecord
 			$order->member_id = $arr['member_id'];
 			$order->member_no = $arr['member_no'];
 			$order->member_phone = $arr['member_phone'];
+			$order->member_status = $arr['member_status'];
 			$order->order_name = $arr['order_name'];
 			$order->phone = $arr['phone'];
 			$order->address = $arr['address'];
@@ -482,6 +485,26 @@ class OrdersAR extends CActiveRecord
 		);
 		return $orders;
 	}
+
+	/**
+	 * 修改会员的状态   by storeId&memberId
+	 * @param $memberId $storeId
+	 */
+	public function modifyMemberStatus($memberId, $storeId, $status){
+		$orders = OrdersAR::model()->findAll(
+			array(
+				'condition'=>'member_id=:memberId and store_id=:storeId',
+				'params'=>array(':memberId'=>$memberId, ":storeId"=>$storeId),
+				'order'=>'ctime DESC',
+			)
+		);
+		//改变订单状态
+		foreach ($orders as $order) {
+			$order->member_status = $status;
+			$order->update_time = round(microtime(true) * 1000);
+			$order->save();
+		}
+	}
 	
 	/**
 	 *	订订单
@@ -494,6 +517,7 @@ class OrdersAR extends CActiveRecord
 		// $
 		$area = DistrictsAR::model()->getDistrictById($areaid);
 		$member = MemberBoundAR::model()->getBoundByStoreAndMember($storeid, $memberid);
+		$memberNum = MemberNumbersAR::model()->getRequest($storeid, $memberid);
 		$order = new OrdersAR;
 		$order->store_id = $storeid;
 		$order->member_id = $memberid;
@@ -501,6 +525,10 @@ class OrdersAR extends CActiveRecord
 		if($member!=null){
 			$order->member_no = $member->cardno;
 			$order->member_phone = $member->phone;
+			$order->member_status = 2;
+		}
+		if($memberNum!=null){
+			$order->member_status = 1;
 		}
 		// 固化区域信息
 		$order->area_id = $areaid;
@@ -590,11 +618,18 @@ class OrdersAR extends CActiveRecord
 		}else{
 			$address = $order->address;
 		}
+		if($order->member_status == 1){
+			$order->member_status = "会员待确认";
+		}else if($order->member_status == 2){
+			$order->member_status = "0";
+		}else if($order->member_status == 0){
+			$order->member_status = "0";
+		}
 		$order->address = $address;
 		if($order->use_card ==0){
-			$order->use_card =  "没有使用会员卡";
+			$order->use_card =  "(非会员下单)";
 		}else{
-			$order->use_card = "使用会员卡";
+			$order->use_card = "(会员下单)";
 		}
 	}
 

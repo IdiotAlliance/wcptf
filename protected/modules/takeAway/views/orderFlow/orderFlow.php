@@ -12,11 +12,11 @@
 		cleanAllLocalCache();
 		//点击订单
 		$('.order-header').delegate('.order-body ul>li .order-item ul>li.order-content', 'mousedown', function(e){
-			if($(this).css(4"background-color") == 'rgb(247, 247, 247)'){
+			if($(this).css("background-color") == 'rgb(247, 247, 247)'){
 				$('.order-body ul>li .order-item ul>li.order-content').css("background-color", "#f7f7f7");
 			}
 			$(this).css("background-color", "#e7e7e7");
-			$(this).css("color", "#000000");
+			$(this).css("color", "#000000");    
 		});
 		$(".test").click(function(){
 			alert(0);
@@ -390,7 +390,10 @@
 			   		</div>
 			   		<div class="order-line line-2">
 			   			<label class="order-username">姓名：{{:head.orderData.name}}</label>
-			   			
+			   			<label class="order-usecard">{{:head.orderData.useCard}}</label>
+			   			{{if head.orderData.memberStatus != '0'}}
+			   				<label class="order-confirm-member">{{:head.orderData.memberStatus}}</label>
+			   			{{/if}}
 			   		</div>
 			   		<div class="order-line line-3">
 			       		<label class="order-phone">手机：{{:head.orderData.phone}}</label>
