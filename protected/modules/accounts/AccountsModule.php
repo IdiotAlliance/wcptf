@@ -24,17 +24,22 @@ class AccountsModule extends CWebModule
 		{
 			switch ($controller->id) {
 				case 'account':
+				case 'help':
 				case 'replyRules':
-					$uid  = Yii::app()->user->sellerId;
-					$user = UsersAR::model()->findByPK($uid);
-					if(!$user->wechat_bound)
-						$controller->redirect(array('/wechat/wechatBind'));
+					if(Yii::app()->user->isGuest){
+						$controller->redirect(Yii::app()->createUrl('accounts/login'));
+					}else{
+						$uid  = Yii::app()->user->sellerId;
+						$user = UsersAR::model()->findByPK($uid);
+						if(!$user->wechat_bound)
+							$controller->redirect(array('/wechat/wechatBind'));
+					}		
 					break;
-				default:
-					
+				default:			
 					break;
 			}
 			return true;
+			
 		}
 		else
 			return false;

@@ -12,7 +12,7 @@
 		cleanAllLocalCache();
 		//点击订单
 		$('.order-header').delegate('.order-body ul>li .order-item ul>li.order-content', 'mousedown', function(e){
-			if($(this).css(4"background-color") == 'rgb(247, 247, 247)'){
+			if($(this).css("background-color") == 'rgb(247, 247, 247)'){
 				$('.order-body ul>li .order-item ul>li.order-content').css("background-color", "#f7f7f7");
 			}
 			$(this).css("background-color", "#e7e7e7");

@@ -114,7 +114,7 @@
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">帮助 <span class="caret"></span></a>
 						<ul id="yw4" class="dropdown-menu">
 							<li>
-								<a tabindex="-1" href="#">功能向导</a>
+								<a tabindex="-1" href="<?php echo Yii::app()->createUrl('accounts/help/help')?>">常见问题</a>
 							</li>
 							<li>
 								<a tabindex="-1" href="#">视频教程</a>
