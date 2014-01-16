@@ -38,7 +38,7 @@ class SellerSettingsController extends TakeAwayController {
 						if(isset($type->picurl) && $type->picurl)
 							$dbhot->pic_url = $type->picurl;
 						$dbhot->onindex = (int)$type->onindex;
-						$dbhot->desc = $type->tag;
+						$dbhot->description = $type->tag;
 						$dbhot->save();
 					}
 					
@@ -104,7 +104,7 @@ class SellerSettingsController extends TakeAwayController {
 					foreach ( $hots as $hot ) {
 						if ($hot->product_id == $type->id) {
 							$typearr [$i]['hot']     = true;
-							$typearr [$i]['tag']     = $hot->desc;
+							$typearr [$i]['tag']     = $hot->description;
 							$typearr [$i]['picurl']  = $hot->pic_url;
 							$typearr [$i]['onindex'] = $hot->onindex;
 						}

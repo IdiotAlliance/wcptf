@@ -163,7 +163,7 @@ class WapController extends Controller{
 		foreach($hots as $hot){
 			array_push($recomends, array("recommendid"=> $hot->product_id,
 					"recommendtype" => "recsort",
-					"recommendtag" => $hot->desc,
+					"recommendtag" => $hot->description,
 					"recommendimg"  => $hot->pic_url,
 					"objectid"  => $hot->product_id,
 				));
