@@ -66,7 +66,7 @@
 	#profile_tab1 table tr td{
 		font-size: 16px;
 	}
-	#profile_tab1 #profile_tab1_plugins{
+	.profile_tab_unavailable{
 		width: 100%;
 		height: 70px;
 		line-height: 70px;
@@ -240,7 +240,7 @@
 			</table>
 		</div>
 		<div class="profile_tab_title">我的插件</div>
-		<div id="profile_tab1_plugins">
+		<div class="profile_tab_unavailable">
 			该功能暂未开放
 		</div>
 		<div id="profile_deposite">
@@ -287,9 +287,13 @@
 			</thead>
 			<tbody id="profile_msg_tbody">
 				<?php 
-				foreach ($sysmsgs as $msg) {
-					echo '<tr><td>'.$msg['ctime'].'</td><td>'.$msg['info'].'</td></tr>';
-				}
+					if($sysmsgs){
+						foreach ($sysmsgs as $msg) {
+							echo '<tr><td>'.$msg['ctime'].'</td><td>'.$msg['info'].'</td></tr>';
+						}
+					} else{
+						echo '<div class="profile_tab_unavailable">暂时没有系统消息</div>';		
+					}
 				?>
 			</tbody>
 		</table>

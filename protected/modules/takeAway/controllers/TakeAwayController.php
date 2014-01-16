@@ -13,6 +13,10 @@ class TakeAwayController extends Controller{
 		// call parent's constructor
 		parent::__construct($id, $module);
 		
+		if(Yii::app()->user->isGuest){
+			Yii::app()->user->setState('referer', Yii::app()->request->getUrl());
+			$this->redirect(Yii::app()->createUrl('accounts/login'));
+		}
 		// get stores information from db
 		$this->stores = StoreAR::model()->getUndeletedStoreByUserId(Yii::app()->user->sellerId);
 	}

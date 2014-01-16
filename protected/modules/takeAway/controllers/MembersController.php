@@ -191,18 +191,18 @@ class MembersController extends TakeAwayController{
 	}
 
 	function actionDownloadExcel($memberId){
+		// echo "string";
 		if($memberId){
+			// echo $memberId;
 			// 从数据库中获取数据
-			$data = array();
 			$orders = OrdersAR::model()->getOrdersByMemeberId($memberId);
-			$data['orders'] = $orders;
-			$data['memberid'] = $memberId;
-			 
-			// 首先创建文件
-			ExcelGenerator::generateOrderExcelForMember($data);
-			
-			// 将请求跳转到对应的文件链接
-			
+			$data   = array();
+			array_push($data, array("编号", "下单日期", "状态", "总价", "详情"));
+			foreach ($orders as $order) {
+				$items = OrderItemsAR::model()->generateItems($order->id);
+				array_push($data, array($order->order_no, $order->ctime, $order->status, $order->total, $items));
+			}
+			ExcelDownload::downloadExcelByArray("会员".$memberId."历史订单", "会员".$memberId."历史订单", $data);
 		}
 	}
 
