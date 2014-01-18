@@ -8,6 +8,7 @@
 <script type="text/javascript">
 	var currentTab = "#tab1";
 	var baseUrl;
+	var currentOrder = null;
 	$(document).ready(function(){	
 		baseUrl = $(".base-url").attr("id");
 		//清除缓存
@@ -17,6 +18,7 @@
 			if($(this).css("background-color") == 'rgb(247, 247, 247)'){
 				$('.order-body ul>li .order-item ul>li.order-content').css("background-color", "#f7f7f7");
 			}
+			currentOrder = $(this).attr("id");
 			$(this).css("background-color", "#e7e7e7");
 			$(this).css("color", "#000000");
 		});
