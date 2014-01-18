@@ -8,7 +8,6 @@
  * @property string $seller_id
  * @property string $openid
  * @property string $fakeid
- * @property string $memberid
  * @property integer $credits
  * @property string $ctime
  * @property string $wxid
@@ -49,11 +48,11 @@ class MembersAR extends CActiveRecord
 			array('seller_id, openid', 'required'),
 			array('credits', 'numerical', 'integerOnly'=>true),
 			array('seller_id', 'length', 'max'=>11),
-			array('openid, fakeid, memberid', 'length', 'max'=>64),
+			array('openid, fakeid', 'length', 'max'=>64),
 			array('wxid, wxnickname', 'length', 'max'=>128),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, seller_id, openid, fakeid, memberid, credits, ctime, wxid, wxnickname', 'safe', 'on'=>'search'),
+			array('id, seller_id, openid, fakeid, credits, ctime, wxid, wxnickname', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -79,7 +78,6 @@ class MembersAR extends CActiveRecord
 			'seller_id' => 'Seller',
 			'openid' => 'Openid',
 			'fakeid' => 'Fakeid',
-			'memberid' => 'Memberid',
 			'credits' => 'Credits',
 			'ctime' => 'Ctime',
 			'wxid' => 'Wxid',
@@ -102,7 +100,6 @@ class MembersAR extends CActiveRecord
 		$criteria->compare('seller_id',$this->seller_id,true);
 		$criteria->compare('openid',$this->openid,true);
 		$criteria->compare('fakeid',$this->fakeid,true);
-		$criteria->compare('memberid',$this->memberid,true);
 		$criteria->compare('credits',$this->credits);
 		$criteria->compare('ctime',$this->ctime,true);
 		$criteria->compare('wxid',$this->wxid,true);
