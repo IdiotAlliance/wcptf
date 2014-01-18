@@ -8,9 +8,7 @@ class MembersController extends TakeAwayController{
 	
 	function actionMembers(){
 		
-		if(Yii::app()->user->isGuest){
-			$this->redirect('index.php/accounts/login');
-		}else if(isset($_GET['sid']) && $_GET['sid'] >= 0 && $this->setCurrentStore($_GET['sid'])){
+		if(isset($_GET['sid']) && $_GET['sid'] >= 0 && $this->setCurrentStore($_GET['sid'])){
 
 			$sid      = $_GET['sid'];
 			$this->typeCount = ProductTypeAR::model()->getProductsByType($_GET['sid']);
@@ -96,9 +94,7 @@ class MembersController extends TakeAwayController{
 	}
 	
 	function actionGetHistory($memberId){
-		if(Yii::app()->user->isGuest){
-			$this->redirect('index.php/accounts/login');
-		}else if(isset($_GET['sid']) && $_GET['sid'] >= 0){
+		if(isset($_GET['sid']) && $_GET['sid'] >= 0){
 			$sid = $_GET['sid'];
 			$userId = Yii::app()->user->sellerId;
 			$dbmember = MembersAR::model()->findByPK($memberId);
@@ -168,9 +164,7 @@ class MembersController extends TakeAwayController{
 	}
 	
 	function actionConfirmMember($memberId){
-		if(Yii::app()->user->isGuest){
-			$this->redirect('index.php/accounts/login');
-		}else if(isset($_GET['sid']) && $_GET['sid'] >= 0){
+		if(isset($_GET['sid']) && $_GET['sid'] >= 0){
 			$sid = $_GET['sid'];
 			$request = MemberNumbersAR::model()->getRequest($sid, $memberId);
 			if($request){
@@ -190,6 +184,38 @@ class MembersController extends TakeAwayController{
 		}
 	}
 
+	function actionCancelMember($memberId){
+		if(isset($_GET['sid']) && $_GET['sid'] >= 0){
+			$sid = $_GET['sid'];
+			$requests = MemberNumbersAR::model()->findAll("store_id=:sid AND member_id=:mid",
+														  array(':sid'=>$sid, ':mid'=>$memberId));
+			if($requests){
+				foreach ($requests as $request) {
+					$request->delete();
+				}
+			}
+			echo "ok";
+			exit();
+		}
+		echo "fail";
+	}
+
+	function actionDeleteMember($memberId){
+		if(isset($_GET['sid']) && $_GET['sid'] >= 0){
+			$sid = $_GET['sid'];
+			$members = MemberBoundAR::model()->findAll('store_id=:sid AND member_id=:mid',
+													  array(':sid'=>$sid, ':mid'=>$memberId));
+			if($members){
+				foreach ($members as $member) {
+					$member->delete();
+				}
+			}
+			echo "ok";
+			exit();
+		}
+		echo "fail";
+	}
+
 	function actionDownloadExcel($memberId){
 		// echo "string";
 		if($memberId){
@@ -207,31 +233,23 @@ class MembersController extends TakeAwayController{
 	}
 
 	function actionMemberBoundOn($sid){
-		if(Yii::app()->user->isGuest){
-			throw new CHttpException(403, "You must sign in to use this function.");
-		}else{
-			$store = StoreAR::model()->findByPK($sid);
-			if($store){
-				$r = new PluginsStoreAR();
-				$r->store_id  = $sid;
-				$r->plugin_id = 0;
-				$r->onoff     = 1;
-				if($r->save()){
-					echo "0";
-					exit();
-				}
+		$store = StoreAR::model()->findByPK($sid);
+		if($store){
+			$r = new PluginsStoreAR();
+			$r->store_id  = $sid;
+			$r->plugin_id = 0;
+			$r->onoff     = 1;
+			if($r->save()){
+				echo "0";
+				exit();
 			}
-			echo "1";
 		}
+		echo "1";
 	}
 
 	function actionMemberBoundOff($sid){
-		if(Yii::app()->user->isGuest){
-			throw new CHttpException(403, "You must sign in to use this function.");
-		}else{
-			$rs = PluginsStoreAR::model()->deleteAll('store_id=:sid AND plugin_id=:pid',
-											   		array(':sid'=>$sid, ':pid'=>0));
-			echo "0";
-		}
+		$rs = PluginsStoreAR::model()->deleteAll('store_id=:sid AND plugin_id=:pid',
+										   		array(':sid'=>$sid, ':pid'=>0));
+		echo "0";
 	}
 }

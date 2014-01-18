@@ -107,9 +107,6 @@
 							<li>
 								<a tabindex="-1" href="<?php echo Yii::app()->createUrl('accounts/account/profile')?>">账户信息</a>
 							</li>
-							<li>
-								<a tabindex="-1" href="/weChat/index.php/logout">退出</a>
-							</li>
 						</ul>
 					</li>
 					<li class="dropdown">
@@ -125,6 +122,9 @@
 								<a tabindex="-1" href="#">联系我们</a>
 							</li>
 						</ul>
+					</li>
+					<li>
+						<a tabindex="-1" href="/weChat/index.php/logout">退出</a>
 					</li>
 				</ul>
 			</div>
