@@ -7,7 +7,7 @@
 <div class='headtips'>
     <strong>您已成功重置密码！</strong>
     <br/>
-    <?php echo CHtml::link('登录玉米地', 
+    <?php echo CHtml::link('登录微积分', 
         array('/accounts/login/login'),
         array()
         ); ?>

@@ -29,7 +29,7 @@
     </strong>
 <br/>
     <span>
-        我们已将“玉米地 - 找回密码”邮件发送到您的邮箱<?php echo str_mid_replace($model->email) ?>中，<br/>
+        我们已将“微积分 - 找回密码”邮件发送到您的邮箱<?php echo str_mid_replace($model->email) ?>中，<br/>
         请在30分钟内点击邮件中的链接，重设您的密码。
     </span>
 </div>
