@@ -278,6 +278,7 @@
 	</div>
 	<div id="profile_tab2" class="profile_tab">
 		<div class="profile_tab_title">系统消息列表</div>
+		<?php if($sysmsgs){?>
 		<table class="table">
 			<thead>
 				<tr>
@@ -286,18 +287,16 @@
 				</tr>
 			</thead>
 			<tbody id="profile_msg_tbody">
-				<?php 
-					if($sysmsgs){
-						foreach ($sysmsgs as $msg) {
-							echo '<tr><td>'.$msg['ctime'].'</td><td>'.$msg['info'].'</td></tr>';
-						}
-					} else{
-						echo '<div class="profile_tab_unavailable">暂时没有系统消息</div>';		
-					}
-				?>
+			<?php	
+				foreach ($sysmsgs as $msg) {
+					echo '<tr><td>'.$msg['ctime'].'</td><td>'.$msg['info'].'</td></tr>';
+				}?>
 			</tbody>
 		</table>
 		<div id="profile_tab2_load_more" onclick="loadMoreMsgs()">加载更多</div>
+		<?php } else { 
+			echo '<div class="profile_tab_unavailable">暂时没有系统消息</div>';		
+		?>
 	</div>
 	<div id="profile_tab3" class="profile_tab">
 		<div class="profile_tab_title">账户消费记录</div>
