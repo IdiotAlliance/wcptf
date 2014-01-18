@@ -143,6 +143,17 @@ var MyOrderFilter = {
 　　　　　　return order;
 　　　　}
 };
+// 获取会员id
+function fetchMemberStatusByOrderId(orderId){
+	var myOrder = MyOrder.getOrder(orderId);
+	return myOrder.orderData.memberStatus;
+}
+// 确认会员状态id
+function saveMemberStatusByOrderId(orderId){
+	var myOrder = MyOrder.getOrder(orderId);
+	myOrder.orderData.memberId = "0";
+	myOrder.save();
+}
 
 // 获取订单列表&并且刷新界面inclue cache
 function fetchAndRenderOrderList(storeid, day, filter){

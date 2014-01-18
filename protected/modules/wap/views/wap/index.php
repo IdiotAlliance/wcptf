@@ -745,6 +745,9 @@ var BASEURLICON='/weChat/img/wap/myicon.png';
 var MYJQUERY='http://libs.baidu.com/jquery/2.0.3/jquery.min.js';
 var MYOWNJS='<?php echo Yii::app()->baseUrl?>/js/wap/wechat1.2.js';
 
+//
+var AJAXFORSHOPLIST='http://192.168.1.196/weChat/index.php/wap/wap/getShopList';
+
 //fake
 var AJAXFORDATA='http://192.168.1.196/weChat/index.php/wap/wap/getData';
 
