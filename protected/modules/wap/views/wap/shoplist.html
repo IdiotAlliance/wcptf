@@ -835,19 +835,18 @@ footer {
 		var mystorelist=datasource.storelist;
 		insert='';
 		for(var i=0;i<mystorelist.length;i++){
-			insert+='<li class="store-item-nor">'+
-			'<div class="store-item-nor">'+
+			insert+='<a class="store-item-nor" href="'+mystorelist[i].url+'">'+
 			'<img src='+mystorelist[i].logo+'>'+
 			'<div class="mainarea-in-list">'+
 			'<h4>'+mystorelist[i].storename+'</h4>'+
 			'<p>'+mystorelist[i].announcement+'</p>'+
 			'</div>';
-			if(mystorelist[i].storestatus!='innormal'){
+			if(mystorelist[i].storestatus=='innormal'){
 				insert+='<div class="list-item-icon" style="background:url('+BASEURLICON+')"></div>';
 			}else{
 				insert+='<h4 class="list-item-tips">休息中</h4>'
 			}
-			insert+='</li>';
+			insert+='</a>';
 
 		}
 		document.getElementById("storelistcontent").innerHTML=insert;
@@ -855,12 +854,12 @@ footer {
 
 	//fakedatasource
     var datasource={"storelist":[
-	{"storeid":0,"storename":"茹果","announcement":"开业八折酬宾","storestatus":"fruitjuice.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.png","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
-	{"storeid":1,"storename":"黄焖鸡","announcement":"开业八折酬宾","storestatus":"fruitdish.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.png","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
-	{"storeid":2,"storename":"吉祥馄饨","announcement":"开业八折酬宾","storestatus":"importedfruit.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.png","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
-	{"storeid":3,"storename":"锅盖面","announcement":"开业八折酬宾","storestatus":"charlotte.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.png","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
-	{"storeid":4,"storename":"梓研汤包","announcement":"开业八折酬宾","storestatus":"localfruit.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.png","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
-	{"storeid":5,"storename":"淡然粥道","announcement":"开业八折酬宾","storestatus":"fruitmask.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.png","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"}
+	{"storeid":0,"storename":"茹果","announcement":"开业八折酬宾","storestatus":"innormal","logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":1,"storename":"黄焖鸡","announcement":"开业八折酬宾","storestatus":"innormal","logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":2,"storename":"吉祥馄饨","announcement":"开业八折酬宾","storestatus":"innormal","logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":3,"storename":"锅盖面","announcement":"开业八折酬宾","storestatus":"enclosed","logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":4,"storename":"梓研汤包","announcement":"开业八折酬宾","storestatus":"localfruit.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":5,"storename":"淡然粥道","announcement":"开业八折酬宾","storestatus":"fruitmask.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"}
 	]
 	};
 
