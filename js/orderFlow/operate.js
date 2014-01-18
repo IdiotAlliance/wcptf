@@ -8,7 +8,19 @@ $(document).ready(function(){
 	});
 	// 完成订单
 	$(".order-detail").delegate("#btn-confirm", "click", function(e){
-		finish();
+		if($(".order-detail .order-member-confirm").html()=="会员待确认"){
+			alert("你选择的订单会员待确认, 请确认后在操作！");
+		}else{
+			finish();
+		}
+	});
+	//派送订单
+	$(".order-detail").delegate(".order-choose-menu", "click", function(e){
+		if($(".order-detail .order-member-confirm").html()=="会员待确认"){
+			alert("你选择的订单会员待确认, 请确认后在操作！");
+		}else{
+			$("#choosePosterModal").modal("show");
+		}
 	});
 	// 添加订单子项
 	$(".order-detail").delegate(".order-item.add-item", "click", function(e){
@@ -69,22 +81,6 @@ $(document).ready(function(){
 	$('.footer-right-btn.all-pick').click(function(){
 		pickAll();
 	});
-	// 批量派送订单
-	$('#batOperate .bat-dispatch').click(function(){
-		$('#batOperate').toggle();
-		if(currentTab=='#tab3'){
-			alert('该订单处于取消状态，无法派送');
-		}else{
-			var orders = getBatOrders();
-			if(orders.length==0){
-				alert("请选择一个订单！");
-			}else{
-				$('.order-footer .isBatOperate').attr('id', 1);
-				$('#choosePosterModal').modal('show');
-			}
-		}
-		// batDispatchOrders();
-	});
 	//test clean all localstorge
 	$(".footer-left-btn.new-order").click(function(){
 		// cleanAllLocalCache();
@@ -97,10 +93,47 @@ $(document).ready(function(){
 		$('#batOperate').toggle();
 		batCancelOrders();
 	});
+	// 批量派送订单
+	$('#batOperate .bat-dispatch').click(function(){
+		$('#batOperate').toggle();
+		if(currentTab=='#tab3'){
+			alert('该订单处于取消状态，无法派送');
+		}else{
+			var orders = getBatOrders();
+			if(orders.length==0){
+				alert("请选择一个订单！");
+			}else{
+				var result = checkOrdersMemberStatus(orders);
+				if(result.length>0){
+					var output = "";
+					for(var i=0; i<result.length-1; i++){
+						output=output+result[i]+"、";
+					}
+					output=output+result[result.length-1];
+					alert("以下订单:"+output+"中的会员待确认, 请确认后在进行操作！");
+				}else{
+					$('.order-footer .isBatOperate').attr('id', 1);
+					$('#choosePosterModal').modal('show');
+				}
+			}
+		}
+		// batDispatchOrders();
+	});
 	// 批量完成订单
 	$('#batOperate .bat-finish').click(function(){
 		$('#batOperate').toggle();
-		batfinishOrders();
+		var orders = getBatOrders();
+		var result = checkOrdersMemberStatus(orders);
+		if(result.length>0){
+			var output = "";
+			for(var i=0; i<result.length-1; i++){
+				output=output+result[i]+"、";
+			}
+			output=output+result[result.length-1];
+			alert("以下订单:"+output+"中的会员待确认, 请确认后在进行操作！");
+		}else{
+			batfinishOrders();
+		}
 	});
 	// 订单导出
 	$('#order-download-modal .btn.btn-primary').click(function(){
@@ -116,8 +149,116 @@ $(document).ready(function(){
 	    $("input[name='order-notsend']").attr('checked', true);
 
 	});
+	//单个会员确认
+	$("#order-member-confirm-modal").on('show', function (e) {
+		var memberId = $(".order-detail .order-memberid").attr("id");
+		// alert(memberId);
+		fetchMember(memberId);
+	});
+	$("#order-member-confirm-modal .btn.btn-primary").click(function(){
+		var memberId = $(".order-detail .order-memberid").attr("id");
+		confirmMember(memberId);
+	});
 
 });
+// 检查会员是否是待确认的状态
+function checkOrdersMemberStatus(orders){
+	var waitConfirm=[];
+	for (var i = 0; i < orders.length; i++) {
+		if(fetchMemberStatusByOrderId(orders[i])=="会员待确认"){
+			waitConfirm.push(orders[i]);
+		}
+	};
+	return waitConfirm;
+}
+// 获取会员的信息
+function fetchMember(memberId){
+	var ctUrl = '/weChat/index.php/takeAway/orderFlow/fetchMember';
+	$.ajax({
+	    url      : ctUrl,
+	    type     : 'POST',
+	    dataType : 'json',
+	    data 	 : {memberId: memberId, storeid: getStoreId()},
+	    cache    : false,
+	    success  : function(data)
+	    {
+	    	//alert(html);
+	        if(data.success == 1){
+	        	var cardNo = data.cardno;
+	        	var phone = data.phone;
+	        	var html = '<div class="member-info" id="'+memberId+'">';
+	        	html = html + '<label class="cardno">'+"会员卡号："+cardNo+'</label>'+"<br/>";
+	        	html = html + '<label class="phone">'+"会员绑定电话："+phone+'</label>';
+	        	html = html + '</div>';
+	        	$("#order-member-confirm-modal .member-pick").html(html);
+	        } else if(data.success == 2){
+	        	alert('该会员已经确认过了!');
+	        	$("#order-member-confirm-modal").modal('hide');
+	        } else{
+	        	alert('Request failed');
+	        }
+	    },
+	    error:function(){
+	        alert('Request failed');
+	    }
+	});
+}
+function fetchMembers(memberIds){
+	var ctUrl = '/weChat/index.php/?r=takeAway/orderFlow/fetchAreas';
+	$.ajax({
+	    url      : ctUrl,
+	    type     : 'POST',
+	    dataType : 'json',
+	    data 	 : {storeid: getStoreId()},
+	    cache    : false,
+	    success  : function(data)
+	    {
+	    	//alert(html);
+	        if(data.success == 1){
+	        	var areas = data.area;
+	        	var html = '<p>选择区域</p>';
+	        	html = html + '<label class="checkbox inline"><input type="checkbox" id='
+	        		+0+' value="option1" name="area-pick-all">'+'全部'+'</label>';
+	        	for (var i = 0; i < areas.length; i++) {
+	        		var id = areas[i]['id'];
+	        		var name = areas[i]['name'];
+	        		html = html+ '<label class="checkbox inline"><input type="checkbox" id='
+	        		+id+' value="option1" name="area-pick">'+name+'</label>';
+	        	};
+	        	$('#order-download-modal .area-pick').html(html);
+	        	$("input[name='area-pick-all']").attr("checked", true);
+	        } else{
+	        	alert('Request failed');
+	        }
+	    },
+	    error:function(){
+	        alert('Request failed');
+	    }
+	});
+}
+// 会员确认
+function confirmMember(memberId){
+	$.ajax({
+		url: "/weChat/index.php/takeAway/members/confirmMember/memberId/"+
+			 memberId + "?sid=" + getStoreId()
+	}).success(function (data){
+		if (data == 'ok'){
+			// 主动更新
+			updateOperate();
+			//修改本地数据库 #TODO:全局本地数据库
+			var orderId = $('.order-detail-header .order-name').attr("id");
+			alert(orderId);
+			saveMemberStatusByOrderId(orderId);
+			// fetchAndRenderOrderItems(orderId);
+			$(".order-detail-header .order-member-confirm").toggle();
+			alert("绑定成功！");
+		}else{
+			alert('绑定失败');
+		}
+	});
+}
+
+
 // 订单导出
 function orderDownload(){
 	var startDate = $("input[name='order-start-time']").val();
@@ -733,7 +874,6 @@ function chooseArea(areaid, areaname){
 	dynamicAreaOrderList(currentTab);
 	//更新头
 	updateTabHeadersByLocal();
-	//updateOperate();
 	$(".order-footer #popup").toggle();
 }
 // 日期向后
@@ -770,31 +910,6 @@ function dayFront(){
 		alert("已经是最新的日期");
 	}
 	//alert(date);
-}
-/*
-	实时更新
-*/
-function updateOperate(){
-    var day = $('.order-footer .order-date-container').attr("id");
-    var areaId = $('.order-footer .order-area-container').attr("id");
-    $.ajax({
-        type:'POST',
-        dataType: 'json',
-        url:  '/weChat/index.php/takeAway/orderFlow/updateOperate',
-        timeout: 60000,
-        data:{day:day, areaId:areaId},
-        success:function(data,textStatus){
-            if(data.operate=='1'){
-                updateTabContent(currentTab);
-                updateTabHeaders("#tab1", data.header[0]);
-                updateTabHeaders("#tab2", data.header[1]);
-                updateTabHeaders("#tab3", data.header[2]);
-            }
-        },
-        error:function(XMLHttpRequest,textStatus,errorThrown){    
-            alert("更新超时");
-        }
-    });
 }
 /*#new 新的订单更新接口*/
 function updateListener(){
@@ -977,6 +1092,185 @@ function updateListener(){
                 alert("更新超时");
             }
             setTimeout('updateListener()', 10000);
+        }
+    });
+}
+/*#new 主动更新校验的订单更新接口*/
+function updateOperate(){
+
+	//获取当前的偏移时间
+    var day = $('.order-footer .order-date-container').attr("id");
+    var areaId = $('.order-footer .order-area-container').attr("id");
+    var tabOneOrderList = null;
+    var tabTwoOrderList = null;
+    var tabThreeOrderList = null;
+    if(MyOrderList.getList(getStoreId(), day, "#tab1") != null || MyOrderList.getList(getStoreId(), day, "#tab1") != undefined){
+    	tabOneOrderList =  MyOrderList.getList(getStoreId(), day, "#tab1").list;
+    }else{
+    	return;
+    }
+    if(MyOrderList.getList(getStoreId(), day, "#tab2") != null || MyOrderList.getList(getStoreId(), day, "#tab2") != undefined){
+    	tabTwoOrderList =  MyOrderList.getList(getStoreId(), day, "#tab2").list;
+    }else{
+    	return;
+    }
+    if(MyOrderList.getList(getStoreId(), day, "#tab3") != null || MyOrderList.getList(getStoreId(), day, "#tab3") != undefined){
+    	tabThreeOrderList =  MyOrderList.getList(getStoreId(), day, "#tab3").list;
+    }else{
+    	return;
+    }
+	//获取tab头
+	var nums = [];
+	var temp1 = getTabHeaders("#tab1");
+	var temp2 = getTabHeaders("#tab2");
+	var temp3 = getTabHeaders("#tab3");
+	nums.push(temp1);
+	nums.push(temp2);
+	nums.push(temp3);
+	
+    $.ajax({
+        type:'POST',
+        dataType: 'json',
+        url:  '/weChat/index.php/takeAway/orderFlow/update',
+        timeout: 60000,
+        data:{storeid: getStoreId(), time:'1', day:day},
+        success:function(data,textStatus){
+            if(data.success=='1'){
+                // updateTabContent(currentTab);
+                if(currentTab == "#tab1"){
+                	var len  = data.tabOneOrderIdList.length;
+                	//current tab update
+                	if (data.tabOneOrderIdList!=null && len>0) {
+                		//add & render order
+                		for(var i=0; i<len; i++){
+                			updateAndRenderOrder(day, currentTab, data.tabOneUpdateQueue[i], data.tabOneOrderIdList[i]);
+                			if($.inArray(data.tabOneOrderIdList[i], tabOneOrderList) == -1){
+                				fetchAndRenderOrder(day, currentTab, data.tabOneOrderIdList[i]);
+                			}
+                		}
+                		//delete order
+                		if(tabOneOrderList!=null){
+                			len = tabOneOrderList.length;
+                			for(var i=0; i<len; i++){
+                				if($.inArray(tabOneOrderList[i]+"", data.tabOneOrderIdList) == -1){
+                					renderDeleOrder(day, currentTab, tabOneOrderList[i]);
+                				}
+                			}
+                		}
+                	};
+                	// 更新订单
+                	//#tab2
+                	len = data.tabTwoOrderIdList.length;
+                	for (var i = 0; i < len; i++) {
+                		fetchOrder(data.tabTwoOrderIdList[i]);
+                		updateOrder(data.tabTwoUpdateQueue[i], data.tabTwoOrderIdList[i]);
+                	};                               
+                	var myOrderList = MyOrderList.getList(getStoreId(), day, "#tab2");
+                	myOrderList.list = data.tabTwoOrderIdList;
+                	myOrderList.save();
+                	//#tab3
+                	len = data.tabThreeOrderIdList.length;
+                	for (var i = 0; i < len; i++) {
+                		fetchOrder(data.tabThreeOrderIdList[i]);
+                		updateOrder(data.tabThreeUpdateQueue[i], data.tabThreeOrderIdList[i]);
+                	};
+                	myOrderList = MyOrderList.getList(getStoreId(), day, "#tab3");
+                	myOrderList.list = data.tabThreeOrderIdList;
+                	myOrderList.save();
+                }
+                if(currentTab == "#tab2"){
+                	var len  = data.tabTwoOrderIdList.length;
+                	//current tab update
+                	if (data.tabTwoOrderIdList!=null && len>0) {
+                		//add & render order
+                		for(var i=0; i<len; i++){
+                			updateAndRenderOrder(day, currentTab, data.tabTwoUpdateQueue[i], data.tabTwoOrderIdList[i]);
+                			if($.inArray(data.tabTwoOrderIdList[i], tabTwoOrderList) == -1){
+                				// alert("update #tab2");
+                				fetchAndRenderOrder(day, currentTab, data.tabTwoOrderIdList[i]);
+                			}
+                		}
+                		//delete order
+                		if(tabTwoOrderList!=null){
+                			len = tabTwoOrderList.length;
+                			for(var i=0; i<len; i++){
+                				if($.inArray(tabTwoOrderList[i]+"", data.tabTwoOrderIdList) == -1){
+                					renderDeleOrder(day, currentTab, tabTwoOrderList[i]);
+                				}
+                			}
+                		}
+                	};
+                	// 更新订单 
+                	//#tab1
+                	len = data.tabOneOrderIdList.length;
+                	for (var i = 0; i < len; i++) {
+                		fetchOrder(data.tabOneOrderIdList[i]);
+                		updateOrder(data.tabOneUpdateQueue[i], data.tabOneOrderIdList[i]);
+                	};
+                	var myOrderList = MyOrderList.getList(getStoreId(), day, "#tab1");
+                	myOrderList.list = data.tabOneOrderIdList;
+                	myOrderList.save();
+                	//#tab3
+                	len = data.tabThreeOrderIdList.length;
+                	for (var i = 0; i < len; i++) {
+                		fetchOrder(data.tabThreeOrderIdList[i]);
+                		updateOrder(data.tabThreeUpdateQueue[i], data.tabThreeOrderIdList[i]);
+                	};
+                	myOrderList = MyOrderList.getList(getStoreId(), day, "#tab3");
+                	myOrderList.list = data.tabThreeOrderIdList;
+                	myOrderList.save();
+                }
+                if(currentTab == "#tab3"){
+                	var len  = data.tabThreeOrderIdList.length;
+                	//current tab update
+                	if (data.tabThreeOrderIdList!=null && len>0) {
+                		//add & render order
+                		for(var i=0; i<len; i++){
+                			updateAndRenderOrder(day, currentTab, data.tabThreeUpdateQueue[i], data.tabThreeOrderIdList[i]);
+                			if($.inArray(data.tabThreeOrderIdList[i], tabThreeOrderList) == -1){
+                				fetchAndRenderOrder(day, currentTab, data.tabThreeOrderIdList[i]);
+                			}
+                		}
+                		//delete order
+                		if(tabThreeOrderList!=null){
+                			len = tabThreeOrderList.length;
+                			for(var i=0; i<len; i++){
+                				if($.inArray(tabThreeOrderList[i]+"", data.tabThreeOrderIdList) == -1){
+                					renderDeleOrder(day, currentTab, tabThreeOrderList[i]);
+                				}
+                			}
+                		}
+                	};
+                	// 更新订单 
+                	//#tab1
+                	len = data.tabOneOrderIdList.length;
+                	for (var i = 0; i < len; i++) {
+                		fetchOrder(data.tabOneOrderIdList[i]);
+                		updateOrder(data.tabOneUpdateQueue[i], data.tabOneOrderIdList[i]);
+                	};
+                	myOrderList = MyOrderList.getList(getStoreId(), day, "#tab1");
+                	myOrderList.list = data.tabOneOrderIdList;
+                	myOrderList.save();
+                	//#tab2
+                	len = data.tabTwoOrderIdList.length;
+                	for (var i = 0; i < len; i++) {
+                		fetchOrder(data.tabTwoOrderIdList[i]);
+                		updateOrder(data.tabTwoUpdateQueue[i], data.tabTwoOrderIdList[i]);
+                	};
+                	var myOrderList = MyOrderList.getList(getStoreId(), day, "#tab2");
+                	myOrderList.list = data.tabTwoOrderIdList;
+                	myOrderList.save();
+                }
+
+            }
+                
+            //更新头
+            updateTabHeadersByLocal();
+        },
+        error:function(XMLHttpRequest,textStatus,errorThrown){    
+            if(textStatus=="timeout"){
+                alert("更新超时");
+            }
         }
     });
 }
