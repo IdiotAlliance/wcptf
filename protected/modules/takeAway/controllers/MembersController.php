@@ -195,6 +195,7 @@ class MembersController extends TakeAwayController{
 					$request->delete();
 				}
 			}
+			OrdersAR::model()->modifyMemberStatus($memberId, $sid, 0);
 			echo "ok";
 			exit();
 		}
@@ -211,6 +212,7 @@ class MembersController extends TakeAwayController{
 					$member->delete();
 				}
 			}
+			OrdersAR::model()->modifyMemberStatus($memberId, $sid, 0);
 			echo "ok";
 			exit();
 		}
