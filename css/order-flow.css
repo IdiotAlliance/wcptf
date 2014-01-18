@@ -253,6 +253,10 @@
 .order-footer label i{
     font-weight: bold;
 }
+.order-footer .footer-left-btn.area-picker{
+    width: 120px;
+    padding-top: 15%;
+}
 .order-footer .order-date-container{
     display: none;
 }
@@ -481,7 +485,7 @@
 .order-body ul>li .item-wait ul>li.order-state {
     width: 6%;
     height: 100%;
-    background-color: #f0f9fe;
+    background-color: #ECFFA8;
     border-bottom: 1px solid #c8c8c8;
 }
 /*待生产*/
@@ -489,28 +493,28 @@
 	width: 6%;
 	height: 100%;
 	background-color: #f8c0c0;
-    border-bottom: 1px solid #ffc8c8;
+    border-bottom: 1px solid #c8c8c8;
 }
  /*派送中*/
 .order-body ul>li .item-sending ul>li.order-state {
     width: 6%;
     height: 100%;
-    background-color: #f0f9fe;
-    border-bottom: 1px solid #ffc8c8;
+    background-color: #B3DEB5;
+    border-bottom: 1px solid #c8c8c8;
 }
  /*已完成*/
 .order-body ul>li .item-finish ul>li.order-state {
     width: 6%;
     height: 100%;
-    background-color: #f8c0c0;
-    border-bottom: 1px solid #ffc8c8;
+    background-color: #E8CECF;
+    border-bottom: 1px solid #c8c8c8;
 }
  /*已取消*/
 .order-body ul>li .item-cancel ul>li.order-state {
     width: 6%;
     height: 100%;
-    background-color: #f8c0c0;
-    border-bottom: 1px solid #ffc8c8;
+    background-color: #E85454;
+    border-bottom: 1px solid #c8c8c8;
 }
 .order-body ul>li .order-item .order-state label{
 	width: 20px;
@@ -637,6 +641,15 @@
 	-moz-box-shadow: 0 0 5px rgba(0,0,0,0.15);
 	-webkit-box-shadow: 0 0 5px rgba(0,0,0,0.15);
 	box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+/*订单无数据*/
+.main .order-detail .order-detail-nodata {
+    margin-top: 45%;
+    line-height: 40px;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    color: #a0a0a0;
 }
 
 .order-detail .order-detail-scroll {

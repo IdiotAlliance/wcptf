@@ -171,54 +171,20 @@
 	//加载切换TAB订单列表
 	function loadContent(e){
 	    var tabId = e.target.getAttribute("href");
-	    var ctUrl = ''; 
+	    var ctUrl = baseUrl; 
 	    currentTab = tabId;
 	    var areaId = $('.order-footer .order-area-container').attr("id");
 	    var day = $('.order-footer .order-date-container').attr("id");
 	    if(tabId == '#tab1') {
-			ctUrl = '/weChat/index.php?r=takeAway/orderFlow/notSend';
+			ctUrl = '/index.php?r=takeAway/orderFlow/notSend';
 	    } else if(tabId == '#tab2') {
-	        ctUrl = '/weChat/index.php?r=takeAway/orderFlow/sended';
+	        ctUrl = '/index.php?r=takeAway/orderFlow/sended';
 	    } else if(tabId == '#tab3') {
-	    	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/cancel';
+	    	ctUrl = '/index.php?r=takeAway/orderFlow/cancel';
 	    }
 	    fetchAndRenderOrderList(getStoreId(), day, tabId);
 	    $('.footer-right-btn.all-pick').html("全选");
 	    return false;
-	}
-	function toChooseDay(newDateString){
-		//将字符串转为时间
-		var tempDateString = newDateString;
-		var newDate =  new Date(Date.parse(newDateString.replace(/-/g,   "/"))); 
-		var day = $('.order-footer .order-date-container').attr("id");
-		var a = new Date();
-		var currentDateString = new Date(a).Format("yyyy-MM-dd");
-		var currentDate = new Date(Date.parse(currentDateString.replace(/-/g,   "/"))); 
-		var difTime = newDate.getTime()-currentDate.getTime();
-		var difDay  = difTime / (24*3600*1000);
-		if(difDay<=0){
-			$('.order-footer .order-date-container').attr("id", difDay);
-			$('.order-footer-date').html(tempDateString);
-			loadTab(currentTab);
-			updateTabHeadersByLocal();
-		}else{
-			alert("已经是最新的日期");
-		}
-		// if(parseInt(day)<0){
-		// 	day = parseInt(day) + 1;
-		// 	$('.order-footer .order-date-container').attr("id", day);
-		// 	var date = $('.order-footer .order-footer-wrap .order-footer-date').html();
-		// 	var a = new Date();
-		// 	a = a.valueOf();
-		// 	a = a + parseInt(day) * 24 * 60 * 60 * 1000;
-		// 	//a = new Date(a);
-		// 	var currentDate = new Date(a).Format("yyyy-MM-dd");
-		// 	$('.order-footer .order-footer-wrap .order-footer-date').html(currentDate);
-		// 	loadTab(currentTab);
-		// 	updateTabHeadersByLocal();
-		// }else{
-		// 	alert("已经是最新的日期");
-		// }
 	}
 	//获取当前店铺id
 	function getStoreId(){
@@ -458,7 +424,7 @@
 				<div class="order-area-container" id="0"></div>
 				<div class="footer-left-btn area-picker">片区筛选</div>
 			</li>
-			<li><div class="footer-left-btn new-order">+订单</div></li>
+			<!-- <li><div class="footer-left-btn new-order">+订单</div></li> -->
 			<li>
 				<div class="footer-btn order-left"><i class="icon-chevron-left"></i></div>
 			</li>
