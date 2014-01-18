@@ -367,7 +367,10 @@
 	var cardpass    = '';
 	var ctime       = 0;
 	var stime       = 0;
-	var maxmsgid    = <?php echo $sysmsgs[count($sysmsgs) - 1]['id']; ?>;
+	var maxmsgid    = <?php if($sysmsgs && count($sysmsgs) > 0)
+								echo $sysmsgs[count($sysmsgs) - 1]['id']; 
+							else echo 0;
+					  ?>;
 	var billCount   = <?php echo $bcount; ?>;
 	var pageCount   = <?php echo $pcount; ?>;
 	var currentPage = 1;
