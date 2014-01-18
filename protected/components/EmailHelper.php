@@ -1,6 +1,6 @@
 <?php
 /**
- * @author  zhoushuai
+ * @author  lwb
  */
 class EmailHelper {
 
@@ -12,7 +12,7 @@ class EmailHelper {
                     .'欢迎您加入微积分！'."\r\n"
                     .'请点击下面的链接完成注册：'."\r\n"
                     .Yii::app()->request->hostInfo.Yii::app()->createUrl(
-                        '/accounts/verifyEmail/check',
+                        '/accountserifyEmaileck',
                         array(
                             'login'=>$userAr->email,
                             'code'=>$userAr->verify_code,
@@ -21,8 +21,8 @@ class EmailHelper {
         // $headers = 'From:玉米地<yumifield@.com>'."yumifield\r\n".
         //            'Reply-To:yumifield@yumifield.com'."\r\n".
         //            'MIME-Version:1.0'."\r\n".
-        //            'Content-type:text/html; charset=utf-8'."\r\n";
-        $headers = "From:weijifen@v7fen.com"."\r\n";
+        //            'Content-type:textml; charset=utf-8'."\r\n";
+        $headers = "From:register@v7fen.com"."\r\n";
 
         return mail($to, $subject, $message, $headers);
     }
@@ -30,41 +30,24 @@ class EmailHelper {
     //发送找回密码邮件
     public static function sendFindPwdEmail($email, $token){
         $to = $email;
-        $subject = '玉米地 - 找回密码';
+        $subject = '微积分- 找回密码';
         $message = '亲爱的'.$email."：\r\n"
-                    .'您申请了重置您的玉米地帐号密码，请点击下面的链接继续操作：'."\r\n"
+                    .'您申请了重置您的微积分帐号密码，请点击下面的链接继续操作：'."\r\n"
                     .Yii::app()->request->hostInfo.Yii::app()->createUrl(
-                        '/accounts/verifyEmail/findPwd',
+                        '/accountserifyEmail/findPwd',
                         array(
                             'token'=>$token,
                             )
                         );
-        $headers = 'From:玉米地<yumifield@yumifield.com>'."\r\n".
-                   'Reply-To:yumifield@yumifield.com'."\r\n".
+        $headers = 'From:微积分<findPwd@v7fen.com>'."\r\n".
+                   'Reply-To:findPwd@v7fen.com'."\r\n".
                    'MIME-Version:1.0'."\r\n".
-                   'Content-type:text/html; charset=utf-8'."\r\n";
+                   'Content-type:textml; charset=utf-8'."\r\n";
 
-        Yii::trace('message'.$message);
         return mail($to, $subject, $message, $headers);
     }
 
-    public static function sendFeedbackEmail($id){
-        $feedbackAr = FeedbackAR::model()->findByPk($id);
-        $userAr = UsersAR::model()->findByPk($feedbackAr->user_id);
-        $to = 'yumifield@163.com';
-        $subject = '玉米地 - 用户意见反馈-'.$feedbackAr->submit_time;
-        $message =  'user:'.$feedbackAr->specific_name."\r\n"
-                    .'email:'.$userAr->email. "\r\n"
-                    .'url:'.$feedbackAr->url."\r\n"
-                    .'content:'.$feedbackAr->content."\r\n";
-        $headers = 'From:玉米地<yumifield@yumifield.com>'."\r\n".
-                   'Reply-To:yumifield@yumifield.com'."\r\n".
-                   'MIME-Version:1.0'."\r\n".
-                   'Content-type:text/html; charset:utf-8'."\r\n";
 
-        Yii::trace('message'.$message);
-        return mail($to, $subject, $message, $headers);        
-    }
     public static function sendMail($to,$subject,$message,$headers){
         $tmp = explode('@',$to);
         $toDomain = $tmp[1];
@@ -78,5 +61,5 @@ class EmailHelper {
 
     public static function smtpMail($to,$subject,$message,$headers){
 
-	}
+    }
 }
