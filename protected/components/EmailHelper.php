@@ -12,7 +12,7 @@ class EmailHelper {
                     .'欢迎您加入微积分！'."\r\n"
                     .'请点击下面的链接完成注册：'."\r\n"
                     .Yii::app()->request->hostInfo.Yii::app()->createUrl(
-                        '/accountserifyEmaileck',
+                        '/accounts/verifyEmail/check',
                         array(
                             'login'=>$userAr->email,
                             'code'=>$userAr->verify_code,
@@ -34,7 +34,7 @@ class EmailHelper {
         $message = '亲爱的'.$email."：\r\n"
                     .'您申请了重置您的微积分帐号密码，请点击下面的链接继续操作：'."\r\n"
                     .Yii::app()->request->hostInfo.Yii::app()->createUrl(
-                        '/accountserifyEmail/findPwd',
+                        '/accounts/verifyEmail/findPwd',
                         array(
                             'token'=>$token,
                             )

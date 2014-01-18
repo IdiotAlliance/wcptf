@@ -129,7 +129,7 @@
 			<label>标题</label>
 			<input type='text' placeholder='输入标题...'>
 			<label>封面图片（建议360*200）</label>
-			<img width='360' height='auto' src="<?php echo Yii::app()->baseUrl."/img/replyCover.png";?>">
+			<img width='360' height='auto' src="<?php echo Yii::app()->baseUrl."/img/replycover.png";?>">
 	    	<div class="cover-desc">
 				<span>上传图片</span>
 				<input type='file' id='coverimgupload' name='coverImg'>
@@ -161,7 +161,7 @@
 				<label>标题</label>
 				<input type='text' placeholder='输入标题...'>
 				<label>封面图片（建议360*200）</label>
-				<img width="360" height="auto" src="<?php echo Yii::app()->baseUrl."/img/replyCover.png";?>">
+				<img width="360" height="auto" src="<?php echo Yii::app()->baseUrl."/img/replycover.png";?>">
 		    	<div class="cover-desc">
 					<span>上传图片</span>
 					<input type='file' name='typeImg'>
@@ -190,7 +190,7 @@
 				<label>标题</label>
 				<input type='text' placeholder='输入标题...'>
 				<label>缩略图片（建议200*200）</label>
-				<img src='/weChat/img/thumbnail.png'>
+				<img width="80" height='auto' src='/weChat/img/thumbnail.png'>
 		    	<div class="cover-desc">
 					<span>上传图片</span>
 					<input type='file' id='coverimgupload' name='typeImg'>
@@ -332,7 +332,7 @@ $(document).ready(function(event){
 			else{
 				current_json[i].resource = $("#image-texts select").eq(2*i).val();
 				current_json[i].store_id = $("#image-texts select").eq(2*i+1).val();
-				}
+			}
 		}
 		$.ajax({
             type: 'POST',
@@ -488,22 +488,20 @@ $(document).ready(function(event){
 		$.ajax({
             type: 'POST',
             url: "<?php echo CHtml::normalizeUrl(array('replyRules/saveText'));?>",
-            data: {'current_rule':'customize','sdmsgId':current_sdmsgs_id,'content':content},
+            data: {'current_rule':'default','sdmsgId':current_sdmsgs_id,'content':content},
             dataType: 'json',
              
             success:function(json){
             	if(current_rule=='auto'){
-            		$("#rule-list").eq(0).find("h5").text(ruleName);
             		$("#rule-list").eq(0).find("label").eq(1).text("回复类型："+current_type);
             	}else{
-            		$("#rule-list").eq(1).find("h5").text(ruleName);
             		$("#rule-list").eq(1).find("label").eq(1).text("回复类型："+current_type);
             	}
             	current_text = json;
             	alert('保存成功！');
             },
             error:function(){
-            	alert('保存单图文失败！');
+            	alert('保存文本失败！');
             },				
 		})
 	}
@@ -731,7 +729,7 @@ $(document).ready(function(event){
 						$("#image-text input:text").eq(1).val("");
 						$("#image-text input:text").eq(2).val("");
 
-						$("#image-text img").attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/replyCover.png");
+						$("#image-text img").attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/replycover.png");
 						$("#image-text").show();
 						$("#text").hide();
 						$("#image-texts").hide();
@@ -756,7 +754,7 @@ $(document).ready(function(event){
 						$("#image-texts input:text").eq(3).val("");
 						$("#image-texts input:file").eq(0).attr("id","coverimgupload0_"+json[0].id);
 						$("#image-texts input:file").eq(1).attr("id","coverimgupload1_"+json[1].id);							
-						$("#image-texts img").eq(0).attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/replyCover.png");
+						$("#image-texts img").eq(0).attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/replycover.png");
 						$("#image-texts img").eq(1).attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/thumbnail.png");		                	
 		                $("#image-texts").show();
 						$("#text").hide();
@@ -803,7 +801,7 @@ $(document).ready(function(event){
 						$("#image-text input:text").eq(1).val("");
 						$("#image-text input:text").eq(2).val("");
 
-						$("#image-text img").attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/replyCover.png");
+						$("#image-text img").attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/replycover.png");
 						$("#image-text").show();
 						$("#text").hide();
 						$("#image-texts").hide();
@@ -828,7 +826,7 @@ $(document).ready(function(event){
 						$("#image-texts input:text").eq(3).val("");
 						$("#image-texts input:file").eq(0).attr("id","coverimgupload0_"+json[0].id);
 						$("#image-texts input:file").eq(1).attr("id","coverimgupload1_"+json[1].id);							
-						$("#image-texts img").eq(0).attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/replyCover.png");
+						$("#image-texts img").eq(0).attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/replycover.png");
 						$("#image-texts img").eq(1).attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/thumbnail.png");		                	
 		                $("#image-texts").show();
 						$("#text").hide();
@@ -875,7 +873,7 @@ $(document).ready(function(event){
 						$("#image-text input:text").eq(1).val("");
 						$("#image-text input:text").eq(2).val("");
 
-						$("#image-text img").attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/replyCover.png");
+						$("#image-text img").attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/replycover.png");
 						$("#image-text").show();
 						$("#text").hide();
 						$("#image-texts").hide();
@@ -900,7 +898,7 @@ $(document).ready(function(event){
 						$("#image-texts input:text").eq(3).val("");
 						$("#image-texts input:file").eq(0).attr("id","coverimgupload0_"+json[0].id);
 						$("#image-texts input:file").eq(1).attr("id","coverimgupload1_"+json[1].id);							
-						$("#image-texts img").eq(0).attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/replyCover.png");
+						$("#image-texts img").eq(0).attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/replycover.png");
 						$("#image-texts img").eq(1).attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/img/thumbnail.png");		                	
 		                $("#image-texts").show();
 						$("#text").hide();
@@ -981,6 +979,7 @@ $(document).ready(function(event){
 					for(var i=0;i<json.length;i++){
 						$("#image-texts input:text").eq(2*i).val(json[i].title);
 						$("#image-texts input:file").eq(i).attr("id","coverimgupload"+i+"_"+json[i].id);
+						$("#image-texts img").eq(i).attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/"+json[i].picurl);						
 						if(json[i].resource=='外部链接'){
 							$("#image-texts select").eq(2*i+1).html(select_store);
 							$("#image-texts input:radio[name='link"+i+"'][value='outer-link']").attr('checked',"true");
@@ -1101,6 +1100,7 @@ $(document).ready(function(event){
 					for(var i=0;i<json.length;i++){
 						$("#image-texts input:text").eq(2*i).val(json[i].title);
 						$("#image-texts input:file").eq(i).attr("id","coverimgupload"+i+"_"+json[i].id);
+						$("#image-texts img").eq(i).attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/"+json[i].picurl);						
 						if(json[i].resource=='外部链接'){
 							$("#image-texts select").eq(2*i+1).html(select_store);
 							$("#image-texts input:radio[name='link"+i+"'][value='outer-link']").attr('checked',"true");
@@ -1197,6 +1197,7 @@ $(document).ready(function(event){
 					$("#default-reply").hide();
 					$("#image-text input").eq(0).val(json[0].title);
 					$("#image-text input").eq(2).val(json[0].content);
+					$("#image-text img").attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/"+json[0].picurl);
 					if(json[0].resource=='外部链接'){
 						$("#image-text select").eq(1).html(select_store);
 						$("#image-text input:radio[name='link'][value='outer-link']").attr('checked',"true");
@@ -1220,10 +1221,10 @@ $(document).ready(function(event){
 					$("#customize-reply").show();
 					$("#default-reply").hide();
 					$("#auto-reply").hide();
-
 					for(var i=0;i<json.length;i++){
 						$("#image-texts input:text").eq(2*i).val(json[i].title);
 						$("#image-texts input:file").eq(i).attr("id","coverimgupload"+i+"_"+json[i].id);
+						$("#image-texts img").eq(i).attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/"+json[i].picurl);
 						if(json[i].resource=='外部链接'){
 							$("#image-texts select").eq(2*i+1).html(select_store);
 							$("#image-texts input:radio[name='link"+i+"'][value='outer-link']").attr('checked',"true");
@@ -1286,7 +1287,7 @@ $(document).ready(function(event){
 	$("#coverimgupload").change(function(){
 		var up = $("#image-text span");
 		var showTypeImg = $("#image-text img");
-		var wrap_content = "<form id='myupload1' action='<?php echo Yii::app()->createUrl('weiXinReply/replyRules/imgUp');?>"+"/sdmsgsId/"+current_sdmsgs_id+"' method='get' enctype='multipart/form-data'></form>";
+		var wrap_content = "<form id='myupload1' action='<?php echo Yii::app()->createUrl('accounts/replyRules/imgUp');?>"+"/sdmsgsId/"+current_sdmsgs_id+"' method='get' enctype='multipart/form-data'></form>";
 		$("#coverimgupload").wrap(wrap_content);
 		$("#myupload1").ajaxSubmit({
 			dataType:  'json',
@@ -1312,7 +1313,7 @@ $(document).ready(function(event){
 		var item_id = id.substring(16);
 		var up = $(this).prev();
 		var showTypeImg = $(this).parent().prev();
-		var wrap_content = "<form action='<?php echo Yii::app()->createUrl('weiXinReply/replyRules/typeImgUp');?>"+"/itemId/"+item_id+"' method='get' enctype='multipart/form-data'></form>";
+		var wrap_content = "<form action='<?php echo Yii::app()->createUrl('accounts/replyRules/typeImgUp');?>"+"/itemId/"+item_id+"' method='get' enctype='multipart/form-data'></form>";
 		$(this).wrap(wrap_content);
 		var form = $(this).parent();
 		form.ajaxSubmit({
@@ -1345,14 +1346,14 @@ $(document).ready(function(event){
                 dataType: 'json',
                 
                 success:function(json){
-                	var item ="<div class='image-text' id='"+json.id+"'><a class='del-item'>删除</a><label class='resize'>普通图文</label><label>标题</label>"
+                	var item ="<div class='image-text' id='"+json[0][0].id+"'><a class='del-item'>删除</a><label class='resize'>普通图文</label><label>标题</label>"
 					+"<input type='text' placeholder='输入标题...'><label>缩略图片（建议200*200）</label><img width='80' height='auto'  src='<?php echo Yii::app()->baseUrl;?>"
-					+"/img/thumbnail.png'><div class='cover-desc'><span>上传图片</span><input type='file' id='coverimgupload"+serial+"_"+json[0].id+"' name='typeImg'></div><label>"
-					+"<input type='radio' name='link' value='outer-link'>外部链接</label><input type='text' placeholder='输入外链url...'><label>"
-					+"<input type='radio' name='link' value='inner-link'>功能</label><select class='sp-select'><option value='在线订单'>在线订单</option>"
+					+"/img/thumbnail.png'><div class='cover-desc'><span>上传图片</span><input type='file' id='coverimgupload"+serial+"_"+json[0][0].id+"' name='typeImg'></div><label>"
+					+"<input type='radio' name='link"+serial+"' value='outer-link'>外部链接</label><input type='text' placeholder='输入外链url...'><label>"
+					+"<input type='radio' name='link"+serial+"' value='inner-link'>功能</label><select class='sp-select'><option value='在线订单'>在线订单</option>"
 			    	+"<option value='个人中心'>个人中心</option><option value='首页推荐'>首页推荐</option><option value='联系我们'>联系我们</option></select><select class='sp-select'>"+select_store;
 			    	$("#subitems").append(item);
-			    	current_json[serial] = json;
+			    	current_json = json[1];
                 },
                 error:function(){
                 	alert('添加图文失败！');
