@@ -646,6 +646,43 @@ footer {
 	top:40%;
 	z-index:0
 }
+.backkit{
+	position: fixed;
+	top: 50%;
+	left:0;
+}
+.backtolist-hide{
+	position: absolute;
+	width: 140px;
+	height: 40px;
+	left:-140px;
+	top: 0;
+	line-height:40px;
+	text-align:center;
+	background: #fff;
+	-webkit-transition:all 200ms ease;
+	-webkit-transition-property:left
+}
+.backtolist-show{
+	position: absolute;
+	width: 140px;
+	height: 40px;
+	left:0px;
+	top: 0;
+	line-height:40px;
+	text-align:center;
+	background: #fff;
+	-webkit-transition:all 200ms ease;
+	-webkit-transition-property:left
+}
+.tiny{
+	position: absolute;
+	width: 15px;
+	height: 40px;
+	left:0;
+	top:0;
+	background: #fff;
+}
 </style>
 <title>茹果</title>
 <div id="warning" style="display:none"><h4>您当前处于非验证状态，页面仅供浏览。如需使用预约服务，敬请关注微信号:iFruits_cn。</h4></div>
@@ -724,6 +761,12 @@ footer {
 <div class="right-footer"></div>
 </footer>
 <div class="toast" id="mytoast"></div>
+<div class="backkit" id="backkit" style="display:none">
+<div class="tiny" id="tiny">
+<div class="backtolist-hide" id="backtolist" >
+<h4>返回至店铺列表</h4>
+</div>
+</div>
 <script type="text/javascript">
 
 var storeid=1;
@@ -731,6 +774,7 @@ var storeid=1;
 var sellerid="<?php echo $sellerId?>";
 var openid="<?php echo $openId?>";
 var firstsortid=-1;
+var isfromfather=true;
 var identitykey="<?php echo ($key?$key:'');?>";
 
 //错误常量
@@ -743,7 +787,7 @@ var BASEURL='/weChat/';
 var BASEURLICON='/weChat/img/wap/myicon.png';
 
 var MYJQUERY='http://libs.baidu.com/jquery/2.0.3/jquery.min.js';
-var MYOWNJS='<?php echo Yii::app()->baseUrl?>/js/wap/wechat1.2.js';
+var MYOWNJS='<?php echo Yii::app()->baseUrl?>/js/wap/wechat1.3.js';
 
 //
 var AJAXFORSHOPLIST='http://192.168.1.196/weChat/index.php/wap/wap/getShopList';
@@ -760,6 +804,9 @@ var isverified=true;
 var myanimation=null;
 
 window.onload = function(){
+	document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+		WeixinJSBridge.call('hideToolbar');
+	});
 	if(verifybaseid()){
 		if(!verifyidentitykey()){
 			callwrongkey();

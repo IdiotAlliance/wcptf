@@ -188,10 +188,22 @@ function fetchAndRenderOrderList(storeid, day, filter){
             		updateTabHeaders(filter, myOrderList.list.length);
             		// alert("stop");
             		renderOrderListByOrders(filter, myOrderList);
-        			//默认选取第一个订单
-        		    var orderId = $((filter+" .order-body ul>li .order-item ul>li.order-content")).attr("id");
-        		    $((filter+" .order-body ul>li .order-item ul>li.order-content")).first().css("background-color", "#e7e7e7");
-        		    fetchAndRenderOrderItems(orderId);
+        			// //默认选取第一个订单
+        		 //    var orderId = null;
+    		   	 //    $((filter+" .order-body ul>li .order-item ul>li.order-content")).each(function(){
+    		   	 //    	if($(this).is(":visible")){
+    		   	 //    		orderId = $(this).attr("id");
+    		   	 //    		return false;
+    		   	 //    	}
+    		   	 //    });
+    		   	 //    //改变选择颜色
+        		 //    $((filter+" .order-body ul>li .order-item ul>li.order-content")).each(function(){
+		       	 //    	if($(this).is(":visible")){
+		       	 //    		$(this).css("background-color", "#e7e7e7");
+		       	 //    		return false;
+		       	 //    	}
+		       	 //    });
+        		 //    fetchAndRenderOrderItems(orderId);
             	}
             },
             error:function(){
@@ -201,9 +213,25 @@ function fetchAndRenderOrderList(storeid, day, filter){
     }else{
     	renderOrderListByOrders(filter, myOrderList);
     	//默认选取第一个订单
-	    var orderId = $((filter+" .order-body ul>li .order-item ul>li.order-content")).attr("id");
-	    $((filter+" .order-body ul>li .order-item ul>li.order-content")).first().css("background-color", "#e7e7e7");
-	    fetchAndRenderOrderItems(orderId);
+    	// var orderId = null;
+   	 //    $((filter+" .order-body ul>li .order-item ul>li.order-content")).each(function(){
+   	 //    	if($(this).is(":visible")){
+   	 //    		orderId = $(this).attr("id");
+   	 //    		return false;
+   	 //    	}
+   	 //    });
+   	 //    // 改变选择颜色
+   	 //    $((filter+" .order-body ul>li .order-item ul>li.order-content")).each(function(){
+   	 //    	if($(this).is(":visible")){
+   	 //    		$(this).css("background-color", "#e7e7e7");
+   	 //    		return false;
+   	 //    	}
+   	 //    });
+	    // fetchAndRenderOrderItems(orderId);
+    	// //默认选取第一个订单
+	    // var orderId = $((filter+" .order-body ul>li .order-item ul>li.order-content")).attr("id");
+	    // $((filter+" .order-body ul>li .order-item ul>li.order-content")).first().css("background-color", "#e7e7e7");
+	    // fetchAndRenderOrderItems(orderId);
     }
     return false;
 }
@@ -393,7 +421,7 @@ function fetchAndRenderOrderItems(orderId){
 	var html  = $("#orderProgress").render();
 	$(".order-detail").html(html);
 	if(orderId == null || orderId == undefined){
-		$(".order-detail").html("无订单数据");
+		$(".order-detail").html("<div class='order-detail-nodata'>无订单数据</div>");
 		return false;
 	}
 	var myOrderItemList = MyOrderItemList.getItemList(orderId);
@@ -656,14 +684,30 @@ function dynamicAreaOrderList(filter){
 	}else{
 		for (var i=0;i<t;i++)
 		{
-			if($(".order-item.item-wait", s.children()[i]).attr("id") == areaId){
+			if($(".order-item", s.children()[i]).attr("id") == areaId){
 				$(s.children()[i]).show();
 			}else{
 				$(s.children()[i]).hide();
 			}
 		}
 	}
-	
+ 	//默认选取第一个订单
+ 	var orderId = null;
+    $((filter+" .order-body ul>li .order-item ul>li.order-content")).each(function(){
+    	if($(this).is(":visible")){
+    		orderId = $(this).attr("id");
+    		return false;
+    	}
+    });
+    // 改变选择颜色
+    $('.order-body ul>li .order-item ul>li.order-content').css("background-color", "#f7f7f7");
+    $((filter+" .order-body ul>li .order-item ul>li.order-content")).each(function(){
+    	if($(this).is(":visible")){
+    		$(this).css("background-color", "#e7e7e7");
+    		return false;
+    	}
+    });
+    fetchAndRenderOrderItems(orderId);
 }
 
 //将数组转换成json数组 只限于1纬

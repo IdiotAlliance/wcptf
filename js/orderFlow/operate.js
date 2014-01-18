@@ -876,6 +876,27 @@ function chooseArea(areaid, areaname){
 	updateTabHeadersByLocal();
 	$(".order-footer #popup").toggle();
 }
+// 选择日期
+function toChooseDay(newDateString){
+	//将字符串转为时间
+	var tempDateString = newDateString;
+	var newDate =  new Date(Date.parse(newDateString.replace(/-/g,   "/"))); 
+	var day = $('.order-footer .order-date-container').attr("id");
+	var a = new Date();
+	var currentDateString = new Date(a).Format("yyyy-MM-dd");
+	var currentDate = new Date(Date.parse(currentDateString.replace(/-/g,   "/"))); 
+	var difTime = newDate.getTime()-currentDate.getTime();
+	var difDay  = difTime / (24*3600*1000);
+	if(difDay<=0){
+		$('.order-footer .order-date-container').attr("id", difDay);
+		$('.order-footer-date').html(tempDateString);
+		loadTab(currentTab);
+		updateTabHeadersByLocal();
+		$('.footer-right-btn.all-pick').html("全选");
+	}else{
+		alert("已经是最新的日期");
+	}
+}
 // 日期向后
 function dayBack(){
 	var day = $('.order-footer .order-date-container').attr("id");
@@ -890,6 +911,7 @@ function dayBack(){
 	$('.order-footer .order-footer-wrap .order-footer-date').html(currentDate);
 	loadTab(currentTab);
 	updateTabHeadersByLocal();
+	$('.footer-right-btn.all-pick').html("全选");
 }
 // 日期向前
 function dayFront(){
@@ -906,6 +928,7 @@ function dayFront(){
 		$('.order-footer .order-footer-wrap .order-footer-date').html(currentDate);
 		loadTab(currentTab);
 		updateTabHeadersByLocal();
+		$('.footer-right-btn.all-pick').html("全选");
 	}else{
 		alert("已经是最新的日期");
 	}
