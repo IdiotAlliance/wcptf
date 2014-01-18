@@ -648,8 +648,12 @@ footer {
 }
 .backkit{
 	position: fixed;
+	display: block;
 	top: 50%;
 	left:0;
+	height: 40px;
+	width: 20px;
+	background: #fff;
 }
 .backtolist-hide{
 	position: absolute;
@@ -676,12 +680,14 @@ footer {
 	-webkit-transition-property:left
 }
 .tiny{
-	position: absolute;
-	width: 15px;
-	height: 40px;
+	position: relative;
+	vertical-align: text-top;
+	text-align: center;
+	display: inline-block;
+	width: 20px;
+	height: 20px;
 	left:0;
-	top:0;
-	background: #fff;
+	top:10px;
 }
 </style>
 <title>茹果</title>

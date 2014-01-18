@@ -387,6 +387,10 @@ function updateAndRenderOrder(day, filter, updateTime, orderId){
 	            		var t = s.children().length;
 	            		var pos = dynamicQueryOrderToList(day, filter, orderId)
 	            		$(s.children()[pos]).html($("#orderTemplate").render(myOrder));
+	            		// 如果是选择的当前订单刷新详情页
+	            		if(orderId == currentOrder){
+	            			fetchAndRenderOrderItems(orderId);
+	            		}
 	            	}
 	            },
 	            error:function(){
@@ -707,6 +711,8 @@ function dynamicAreaOrderList(filter){
     		return false;
     	}
     });
+    currentOrder = orderId;
+    // alert(currentOrder);
     fetchAndRenderOrderItems(orderId);
 }
 
