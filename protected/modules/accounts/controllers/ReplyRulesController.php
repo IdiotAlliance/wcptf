@@ -254,7 +254,11 @@ class ReplyRulesController extends Controller
 	    	
 	    	$item->save();
 	    	$itemArray = SdmsgItemsAR::model()->getItemById($item->id);
-	    	echo json_encode($itemArray);
+            $current_json = SdmsgItemsAR::model()->getImageTexts($_POST['sdmsg_id']);
+            $result = array();
+            $result[] = $itemArray;
+            $result[] = $current_json;
+	    	echo json_encode($result);
     	}
     }
 

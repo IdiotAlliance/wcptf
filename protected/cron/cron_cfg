@@ -1,1 +1,1 @@
-0/1 * * * * /var/www/weChat/protected/cron/cron.php
+* 2 * * * /var/www/weChat/protected/cron/cron.php >> /var/www/weChat/protected/runtime/cron.log

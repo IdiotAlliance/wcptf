@@ -60,7 +60,7 @@
 								</a>
 							</li>
 							-->
-							<li class="dropdown-submenu">
+							<li class="<?php if($orderItems) echo 'dropdown-submenu'; else echo '';?>">
 								<a tabindex="-1" href="#">订单消息
 									<div id="order_msg_badge" class="badge order-badge"></div>
 								</a>
@@ -76,7 +76,7 @@
 									?>
 								</ul>
 							</li>
-							<li class="dropdown-submenu">
+							<li class="<?php if($orderItems) echo 'dropdown-submenu'; else echo '';?>">
 								<a tabindex="-1" href="#">最新评论
 									<div id="comment_msg_badge" class="badge comment-badge"></div>
 								</a>

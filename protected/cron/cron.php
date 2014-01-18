@@ -1,6 +1,6 @@
 #!/usr/bin/php5
 <?php
-	require '../components/Constants.php';
+	require '/var/www/weChat/protected/components/Constants.php';
 	date_default_timezone_set("Asia/Shanghai");
 	
 	$db_name = 'wcptf_dev';
@@ -24,6 +24,7 @@
 		mysql_select_db($db_name, $con1);
 		// reset instore every day at 2:00 am
 		mysql_query("UPDATE products SET products.daily_instore=products.instore WHERE products.deleted<>1;");
+		echo Date("Y-m-d H:i:s", time())." Updated all user instore\n";
 
 		// create daily bills for each user
 		$result = mysql_query("SELECT users.id AS uid, store.id AS sid, users.balance AS balance FROM users JOIN store ON 
@@ -42,7 +43,9 @@
 							  $row['sid'], 0, $daily_srv, $bal);
 			$update = sprintf($UPDATE_BAL, $bal, $row['uid']);
 			mysql_query($insert);
+			echo Date("Y-m-d H:i:s", time())." Created daily bill for user [".$row['uid']."]\n";
 			mysql_query($update);
+			echo Date("Y-m-d H:i:s", time())." Updated balance for user [".$row['uid']."]\n";
 			$index ++;
 		}
 		//mysql_close($con2);
@@ -61,6 +64,7 @@
 				$newid = mysql_insert_id();
 				$insert = sprintf($CREATE_MQ, $row['id'], $newid, Constants::MSG_SYSTEM);
 				mysql_query($insert);
+				echo Date("Y-m-d H:i:s", time())." Sent system messge to user [".$row['id']."]\n";
 			}
 		}
 		mysql_close($con1);

@@ -13,7 +13,7 @@ $this->breadcrumbs=array(
 	}
 </style>
 <div id='error'>
-<h2>错误500，请求发生错误</h2>
+<h2>错误<?php echo $code;?>，请求发生错误</h2>
 
 <div class="error">
 <?php echo CHtml::encode($message); ?>

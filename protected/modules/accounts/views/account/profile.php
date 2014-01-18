@@ -1,4 +1,9 @@
 <style type="text/css">
+	.highlight_text{
+		font-size: 22px;
+		color: #E85454;
+		font-weight: bold;
+	}
 	#profile_main_container{
 		display: block;
 		position: absolute;
@@ -16,6 +21,10 @@
 		position: relative;
 		height: 40px;
 		padding-left: 15px;
+	}
+	#profile_nav_bar a{
+		text-decoration: none;
+		color: #000;
 	}
 	.profile_nav_item{
 		text-align: center;
@@ -210,9 +219,15 @@
 
 <div id="profile_main_container">
 	<div id="profile_nav_bar">
-		<div class="profile_nav_item active" id="profile_tag1" data-toggle="profile_tab1">基本信息</div>
-		<div class="profile_nav_item" id="profile_tag2" data-toggle="profile_tab2">系统消息</div>
-		<div class="profile_nav_item" id="profile_tag3" data-toggle="profile_tab3">账单</div>
+		<a href="#info">
+			<div class="profile_nav_item active" id="profile_tag1" data-toggle="profile_tab1">基本信息</div>
+		</a>
+		<a href="#msg">
+			<div class="profile_nav_item" id="profile_tag2" data-toggle="profile_tab2">系统消息</div>
+		</a>
+		<a href="#bills">
+			<div class="profile_nav_item" id="profile_tag3" data-toggle="profile_tab3">账单</div>
+		</a>
 	</div>
 
 	<div id="profile_tab1" class="profile_tab active">
@@ -226,7 +241,7 @@
 				<tr>
 					<td>账户余额</td>
 					<td><?php echo $model['balance']; ?>元&nbsp;&nbsp;
-						<a href="#" onclick="showBillsTab()">查看账单</a>&nbsp;&nbsp;
+						<a href="#bills" onclick="showBillsTab()">查看账单</a>&nbsp;&nbsp;
 						<a href="#" onclick="showDeposite()">充值</a>
 					</td>
 				</tr>
@@ -235,7 +250,7 @@
 					<td><?php echo $model['wechat_name']; ?></td>
 				</tr>
 				<tr>
-					<td colspan="2">您在微积分的订单总额为<span><?php echo $model['stats']; ?></span>元</td>
+					<td colspan="2">您在微积分的有效订单总额为<span class="highlight_text"><?php echo round($model['stats'], 2); ?></span>元</td>
 				</tr>
 			</table>
 		</div>
