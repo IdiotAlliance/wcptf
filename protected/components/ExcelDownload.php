@@ -5,7 +5,7 @@ class ExcelDownload {
     public static function downloadExcelByArray($filename, $title, $data){
         $file_type = "vnd.ms-excel";
         $file_ending = "xls";  
-        header("Content-Type: application/$file_type;charset=gbk");
+        header("Content-Type: application/$file_type;charset=utf-8");
 
         header("Content-Disposition: attachment; filename=".$filename.".$file_ending");
         header("Pragma: no-cache"); 

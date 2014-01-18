@@ -146,13 +146,11 @@
 	    		<option value='联系我们'>联系我们</option>
 	    	</select>
 	    	<select class="sp-select">
+	    		<option value="0">全部</option>
     		<?php foreach($storeList as $store):?>
     		<?php if($store->deleted== 0):?>
     			<option value="<?php echo $store->id;?>"><?php echo $store->name;?></option>
     		<?php endif;?>
-    		<?php if($store->deleted== 1):?>
-    			<option value="<?php echo $store->id;?>"><?php echo $store->name;?>（店铺已被删除，请不要选择）</option>
-    		<?php endif;?>		    		
     		<?php endforeach;?>
     	</select>
 		</div>
@@ -178,13 +176,11 @@
 		    		<option value='联系我们'>联系我们</option>
 		    	</select>
 		    	<select class="sp-select">
+		    			<option value="0">全部</option>
 		    		<?php foreach($storeList as $store):?>
 		    		<?php if($store->deleted== 0):?>
 		    			<option value="<?php echo $store->id;?>"><?php echo $store->name;?></option>
 		    		<?php endif;?>
-		    		<?php if($store->deleted== 1):?>
-		    			<option value="<?php echo $store->id;?>"><?php echo $store->name;?>（店铺已被删除，请不要选择）</option>
-		    		<?php endif;?>		    		
 		    		<?php endforeach;?>
 		    	</select>
 			</div>
@@ -209,13 +205,11 @@
 		    		<option value='联系我们'>联系我们</option>
 		    	</select>
 		    	<select class="sp-select">
+		    			<option value="0">全部</option>
 		    		<?php foreach($storeList as $store):?>
 		    		<?php if($store->deleted== 0):?>
 		    			<option value="<?php echo $store->id;?>"><?php echo $store->name;?></option>
 		    		<?php endif;?>
-		    		<?php if($store->deleted== 1):?>
-		    			<option value="<?php echo $store->id;?>"><?php echo $store->name;?>（店铺已被删除，请不要选择）</option>
-		    		<?php endif;?>		    		
 		    		<?php endforeach;?>
 		    	</select>	    	
 			</div>
@@ -251,14 +245,16 @@ $(document).ready(function(event){
 	var current_rule = 'default';//存储当前规则是自定义还是默认
 	var is_focus = false;//当前是否在规则编辑区域
 	var current_store = <?php echo CJSON::encode($storeList);?>;
+	var id_deleted = new Array();
+	var id_name = new Array();
 	var select_store = "<option value='0'>全部</option>";
 	for(var j=0;j<current_store.length;j++){
+		id_deleted[current_store[j].id]= current_store[j].deleted;
+		id_name[current_store[j].id]= current_store[j].name;
+
 		if(current_store[j].deleted == 0)
 			select_store = select_store + "<option value='"+current_store[j].id+"'>"+current_store[j].name+"</option>";
-		else
-			select_store = select_store + "<option value='"+current_store[j].id+"'>"+current_store[j].name+"(店铺已被删除，请不要选择)</option>";				
 	}
-	select_store = select_store + "</select></div>";
 
 	//全选
 	$("#checkAll").click(function(){
@@ -957,10 +953,14 @@ $(document).ready(function(event){
 					$("#image-text input").eq(2).val(json[0].content);
 					$("#image-text img").attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/"+json[0].picurl);
 					if(json[0].resource=='外部链接'){
+						$("#image-text select").eq(1).html(select_store);
 						$("#image-text input:radio[name='link'][value='outer-link']").attr('checked',"true");
 						$("#image-text input").eq(4).val(json[0].url);
 					}
 					else{
+						if(id_deleted[json[0].store_id]==1)
+							var item_store = select_store+"<option value="+json[0].store_id+">"+id_name[json[0].store_id]+"(该店铺已被删除，请不要选择)</option>";
+						$("#image-text select").eq(1).html(item_store);
 						$("#image-text input:radio[name='link'][value='inner-link']").attr('checked',"true");
 						$("#image-text select").eq(0).val(json[0].resource);
 						$("#image-text select").eq(1).val(json[0].store_id);
@@ -982,10 +982,14 @@ $(document).ready(function(event){
 						$("#image-texts input:text").eq(2*i).val(json[i].title);
 						$("#image-texts input:file").eq(i).attr("id","coverimgupload"+i+"_"+json[i].id);
 						if(json[i].resource=='外部链接'){
+							$("#image-texts select").eq(2*i+1).html(select_store);
 							$("#image-texts input:radio[name='link"+i+"'][value='outer-link']").attr('checked',"true");
 							$("#image-texts input:text").eq(2*i+1).val(json[i].url);
 						}
 						else{
+							if(id_deleted[json[i].store_id]==1)
+								var item_store = select_store+"<option value="+json[i].store_id+">"+id_name[json[i].store_id]+"(该店铺已被删除，请不要选择)</option>";
+							$("#image-text select").eq(2*i+1).html(item_store);
 							$("#image-texts input:radio[name='link"+i+"'][value='inner-link']").attr('checked',"true");
 							$("#image-texts select").eq(2*i).val(json[i].resource);
 							$("#image-texts select").eq(2*i+1).val(json[i].store_id);
@@ -998,13 +1002,19 @@ $(document).ready(function(event){
 							item =item + "<div class='image-text' id='"+json[i].id+"'><a class='del-item'>删除</a><label class='resize'>普通图文 "+i+"</label><label>标题</label><input type='text' placeholder='输入标题...' value='"
 							+json[i].title+"'><label>缩略图片（建议200*200）</label><img width='80' height='auto' src='<?php echo Yii::app()->baseUrl;?>"+"/"+json[i].picurl+"'><div class='cover-desc'><span>上传图片</span><input type='file' id='coverimgupload"+i+"_"+json[i].id+"' name='typeImg'></div>";
 							if(json[i].resource=='外部链接'){
+								var item_store = select_store+"</select></div>";
 								var itemThen = "<label><input type='radio' name='link"+i+"' value='outer-link' checked>外部链接</label><input type='text' placeholder='输入外链url...' value='"
 								+json[i].url+"'><label><input type='radio' name='link"+i+"' value='inner-link'>功能</label><select class='sp-select'><option value='在线订单'>在线订单</option><option value='个人中心'>个人中心</option><option value='首页推荐'>首页推荐</option><option value='联系我们'>联系我们</option></select><select class='sp-select' value='"
-								+json[i].store_id+"'>"+select_store;
+								+json[i].store_id+"'>"+item_store;
 								item = item + itemThen;
 							}else{
+								var item_store = "";
+								if(id_deleted[json[i].store_id]==1)
+									item_store = select_store+"<option value='"+json[i].store_id+"'>"+id_name[json[i].store_id]+"(该店铺已被删除，请不要选择)</option></select></div>";
+								else
+									item_store = select_store+"</select></div>";
 								var itemThen = "<label><input type='radio' name='link"+i+"' value='outer-link'>外部链接</label><input type='text' placeholder='输入外链url...'><label><input type='radio' name='link"+i+"' value='inner-link' checked>功能</label><select class='sp-select' value='"
-								+json[i].resource+"'><option value='在线订单'>在线订单</option><option value='个人中心'>个人中心</option><option value='首页推荐'>首页推荐</option><option value='联系我们'>联系我们</option></select><select class='sp-select' value='"+json[i].store_id+"'>"+select_store;
+								+json[i].resource+"'><option value='在线订单'>在线订单</option><option value='个人中心'>个人中心</option><option value='首页推荐'>首页推荐</option><option value='联系我们'>联系我们</option></select><select class='sp-select' value='"+json[i].store_id+"'>"+item_store;
 								item = item + itemThen;
 							}
 						}
@@ -1064,14 +1074,19 @@ $(document).ready(function(event){
 					$("#image-text input").eq(2).val(json[0].content);
 					$("#image-text img").attr('src',"<?php echo Yii::app()->baseUrl;?>"+"/"+json[0].picurl);						
 					if(json[0].resource=='外部链接'){
+						$("#image-text select").eq(1).html(select_store);
 						$("#image-text input:radio[name='link'][value='outer-link']").attr('checked',"true");
 						$("#image-text input").eq(4).val(json[0].url);
 					}
 					else{
+						if(id_deleted[json[0].store_id]==1)
+							var item_store = select_store+"<option value="+json[0].store_id+">"+id_name[json[0].store_id]+"(该店铺已被删除，请不要选择)</option>";
+						$("#image-text select").eq(1).html(item_store);
 						$("#image-text input:radio[name='link'][value='inner-link']").attr('checked',"true");
 						$("#image-text select").eq(0).val(json[0].resource);
 						$("#image-text select").eq(1).val(json[0].store_id);
 					}
+
 					$("#image-text").show();
 					$("#text").hide();
 					$("#image-texts").hide();
@@ -1087,10 +1102,14 @@ $(document).ready(function(event){
 						$("#image-texts input:text").eq(2*i).val(json[i].title);
 						$("#image-texts input:file").eq(i).attr("id","coverimgupload"+i+"_"+json[i].id);
 						if(json[i].resource=='外部链接'){
+							$("#image-texts select").eq(2*i+1).html(select_store);
 							$("#image-texts input:radio[name='link"+i+"'][value='outer-link']").attr('checked',"true");
 							$("#image-texts input:text").eq(2*i+1).val(json[i].url);
 						}
 						else{
+							if(id_deleted[json[i].store_id]==1)
+								var item_store = select_store+"<option value="+json[i].store_id+">"+id_name[json[i].store_id]+"(该店铺已被删除，请不要选择)</option>";
+							$("#image-text select").eq(2*i+1).html(item_store);
 							$("#image-texts input:radio[name='link"+i+"'][value='inner-link']").attr('checked',"true");
 							$("#image-texts select").eq(2*i).val(json[i].resource);
 							$("#image-texts select").eq(2*i+1).val(json[i].store_id);
@@ -1103,13 +1122,19 @@ $(document).ready(function(event){
 							item =item + "<div class='image-text' id='"+json[i].id+"'><a class='del-item'>删除</a><label class='resize'>普通图文 "+i+"</label><label>标题</label><input type='text' placeholder='输入标题...' value='"
 							+json[i].title+"'><label>缩略图片（建议200*200）</label><img width='80' height='auto' src='<?php echo Yii::app()->baseUrl;?>"+"/"+json[i].picurl+"'><div class='cover-desc'><span>上传图片</span><input type='file' id='coverimgupload"+i+"_"+json[i].id+"' name='typeImg'></div>";
 							if(json[i].resource=='外部链接'){
+								var item_store = select_store+"</select></div>";
 								var itemThen = "<label><input type='radio' name='link"+i+"' value='outer-link' checked>外部链接</label><input type='text' placeholder='输入外链url...' value='"
 								+json[i].url+"'><label><input type='radio' name='link"+i+"' value='inner-link'>功能</label><select class='sp-select'><option value='在线订单'>在线订单</option><option value='个人中心'>个人中心</option><option value='首页推荐'>首页推荐</option><option value='联系我们'>联系我们</option></select><select class='sp-select' value='"
-								+json[i].store_id+"'>"+select_store;
+								+json[i].store_id+"'>"+item_store;
 								item = item + itemThen;
 							}else{
+								var item_store = "";
+								if(id_deleted[json[i].store_id]==1)
+									item_store = select_store+"<option value='"+json[i].store_id+"'>"+id_name[json[i].store_id]+"(该店铺已被删除，请不要选择)</option></select></div>";
+								else
+									item_store = select_store+"</select></div>";
 								var itemThen = "<label><input type='radio' name='link"+i+"' value='outer-link'>外部链接</label><input type='text' placeholder='输入外链url...'><label><input type='radio' name='link"+i+"' value='inner-link' checked>功能</label><select class='sp-select' value='"
-								+json[i].resource+"'><option value='在线订单'>在线订单</option><option value='个人中心'>个人中心</option><option value='首页推荐'>首页推荐</option><option value='联系我们'>联系我们</option></select><select class='sp-select' value='"+json[i].store_id+"'>"+select_store;
+								+json[i].resource+"'><option value='在线订单'>在线订单</option><option value='个人中心'>个人中心</option><option value='首页推荐'>首页推荐</option><option value='联系我们'>联系我们</option></select><select class='sp-select' value='"+json[i].store_id+"'>"+item_store;
 								item = item + itemThen;
 							}
 						}
@@ -1173,10 +1198,14 @@ $(document).ready(function(event){
 					$("#image-text input").eq(0).val(json[0].title);
 					$("#image-text input").eq(2).val(json[0].content);
 					if(json[0].resource=='外部链接'){
+						$("#image-text select").eq(1).html(select_store);
 						$("#image-text input:radio[name='link'][value='outer-link']").attr('checked',"true");
 						$("#image-text input").eq(4).val(json[0].url);
 					}
 					else{
+						if(id_deleted[json[0].store_id]==1)
+							var item_store = select_store+"<option value="+json[0].store_id+">"+id_name[json[0].store_id]+"(该店铺已被删除，请不要选择)</option>";
+						$("#image-text select").eq(1).html(item_store);
 						$("#image-text input:radio[name='link'][value='inner-link']").attr('checked',"true");
 						$("#image-text select").eq(0).val(json[0].resource);
 						$("#image-text select").eq(1).val(json[0].store_id);
@@ -1196,10 +1225,14 @@ $(document).ready(function(event){
 						$("#image-texts input:text").eq(2*i).val(json[i].title);
 						$("#image-texts input:file").eq(i).attr("id","coverimgupload"+i+"_"+json[i].id);
 						if(json[i].resource=='外部链接'){
+							$("#image-texts select").eq(2*i+1).html(select_store);
 							$("#image-texts input:radio[name='link"+i+"'][value='outer-link']").attr('checked',"true");
 							$("#image-texts input:text").eq(2*i+1).val(json[i].url);
 						}
 						else{
+							if(id_deleted[json[i].store_id]==1)
+								var item_store = select_store+"<option value="+json[i].store_id+">"+id_name[json[i].store_id]+"(该店铺已被删除，请不要选择)</option>";
+							$("#image-text select").eq(2*i+1).html(item_store);
 							$("#image-texts input:radio[name='link"+i+"'][value='inner-link']").attr('checked',"true");
 							$("#image-texts select").eq(2*i).val(json[i].resource);
 							$("#image-texts select").eq(2*i+1).val(json[i].store_id);
@@ -1212,13 +1245,19 @@ $(document).ready(function(event){
 							item =item + "<div class='image-text' id='"+json[i].id+"'><a class='del-item'>删除</a><label class='resize'>普通图文 "+i+"</label><label>标题</label><input type='text' placeholder='输入标题...' value='"
 							+json[i].title+"'><label>缩略图片（建议200*200）</label><img width='80' height='auto' src='<?php echo Yii::app()->baseUrl;?>"+"/"+json[i].picurl+"'><div class='cover-desc'><span>上传图片</span><input type='file' id='coverimgupload"+i+"_"+json[i].id+"' name='typeImg'></div>";
 							if(json[i].resource=='外部链接'){
+								var item_store = select_store+"</select></div>";
 								var itemThen = "<label><input type='radio' name='link"+i+"' value='outer-link' checked>外部链接</label><input type='text' placeholder='输入外链url...' value='"
 								+json[i].url+"'><label><input type='radio' name='link"+i+"' value='inner-link'>功能</label><select class='sp-select'><option value='在线订单'>在线订单</option><option value='个人中心'>个人中心</option><option value='首页推荐'>首页推荐</option><option value='联系我们'>联系我们</option></select><select class='sp-select' value='"
-								+json[i].store_id+"'>"+select_store;
+								+json[i].store_id+"'>"+item_store;
 								item = item + itemThen;
 							}else{
+								var item_store = "";
+								if(id_deleted[json[i].store_id]==1)
+									item_store = select_store+"<option value='"+json[i].store_id+"'>"+id_name[json[i].store_id]+"(该店铺已被删除，请不要选择)</option></select></div>";
+								else
+									item_store = select_store+"</select></div>";
 								var itemThen = "<label><input type='radio' name='link"+i+"' value='outer-link'>外部链接</label><input type='text' placeholder='输入外链url...'><label><input type='radio' name='link"+i+"' value='inner-link' checked>功能</label><select class='sp-select' value='"
-								+json[i].resource+"'><option value='在线订单'>在线订单</option><option value='个人中心'>个人中心</option><option value='首页推荐'>首页推荐</option><option value='联系我们'>联系我们</option></select><select class='sp-select' value='"+json[i].store_id+"'>"+select_store;
+								+json[i].resource+"'><option value='在线订单'>在线订单</option><option value='个人中心'>个人中心</option><option value='首页推荐'>首页推荐</option><option value='联系我们'>联系我们</option></select><select class='sp-select' value='"+json[i].store_id+"'>"+item_store;
 								item = item + itemThen;
 							}
 						}

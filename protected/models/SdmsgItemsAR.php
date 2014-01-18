@@ -238,7 +238,7 @@ class SdmsgItemsAR extends CActiveRecord
 				}
 			}
 			if($imageTexts[0]['picurl']=="")
-				$imageTexts[0]['picurl'] = 'img/replyCover.png';
+				$imageTexts[0]['picurl'] = 'img/replycover.png';
 			for ($i=1; $i<count($imageTexts); $i++) { 
 				if($imageTexts[$i]['picurl'] == "")
 					$imageTexts[$i]['picurl'] = 'img/thumbnail.png';
@@ -274,7 +274,7 @@ class SdmsgItemsAR extends CActiveRecord
 			$result[0]['keyword'] = $sdmsgs->keyword;
 			$result[0]['match_rule'] = $sdmsgs->match_rule;
 			if($result[0]['picurl']==null)
-				$result[0]['picurl'] = 'img/replyCover.png';
+				$result[0]['picurl'] = 'img/replycover.png';
 			return $result;
 		}else{
 			$result[0]['keyword'] = $sdmsgs->keyword;
