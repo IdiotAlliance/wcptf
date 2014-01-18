@@ -173,7 +173,7 @@ function checkOrdersMemberStatus(orders){
 }
 // 获取会员的信息
 function fetchMember(memberId){
-	var ctUrl = '/weChat/index.php/takeAway/orderFlow/fetchMember';
+	var ctUrl = baseUrl+'/index.php/takeAway/orderFlow/fetchMember';
 	$.ajax({
 	    url      : ctUrl,
 	    type     : 'POST',
@@ -204,7 +204,7 @@ function fetchMember(memberId){
 	});
 }
 function fetchMembers(memberIds){
-	var ctUrl = '/weChat/index.php/?r=takeAway/orderFlow/fetchAreas';
+	var ctUrl = baseUrl + '/index.php/?r=takeAway/orderFlow/fetchAreas';
 	$.ajax({
 	    url      : ctUrl,
 	    type     : 'POST',
@@ -239,7 +239,7 @@ function fetchMembers(memberIds){
 // 会员确认
 function confirmMember(memberId){
 	$.ajax({
-		url: "/weChat/index.php/takeAway/members/confirmMember/memberId/"+
+		url: baseUrl+"/index.php/takeAway/members/confirmMember/memberId/"+
 			 memberId + "?sid=" + getStoreId()
 	}).success(function (data){
 		if (data == 'ok'){
@@ -287,7 +287,7 @@ function orderDownload(){
 		}
 	});
 	// alert(area);
-	var url = '/weChat/index.php/takeAway/orderFlow/orderDownload';
+	var url = baseUrl + '/index.php/takeAway/orderFlow/orderDownload';
 	// var url = ''
 	url = url+'/storeid/'+getStoreId()+ 
 	'/startDate/'+startDate+'/endDate/'+endDate+'/filter/'+filter+'/area/'+area;
@@ -315,7 +315,7 @@ function orderDownload(){
 }
 //获取订单导出筛选区域
 function getAreas(){
-	var ctUrl = '/weChat/index.php/?r=takeAway/orderFlow/fetchAreas';
+	var ctUrl = baseUrl + '/index.php/?r=takeAway/orderFlow/fetchAreas';
 	$.ajax({
 	    url      : ctUrl,
 	    type     : 'POST',
@@ -350,7 +350,7 @@ function getAreas(){
 //添加订单子项
 function addItem(){
 	var orderId = $('.order-detail-header .order-name').attr("id");
-	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/orderAddItemForm';
+	ctUrl = baseUrl +  '/index.php?r=takeAway/orderFlow/orderAddItemForm';
 	var productId = $('#OrderAddItemForm_productId').attr("value");
 	var num = $('#OrderAddItemForm_num').attr("value");
 	if(ctUrl != '') {
@@ -375,7 +375,7 @@ function addItem(){
 //保存订单头修改
 function saveOrderHeaderModify(){
 	var orderId = $('.order-detail-header .order-name').attr("id");
-	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/modifyOrderHeaderForm';
+	ctUrl = baseUrl + '/index.php?r=takeAway/orderFlow/modifyOrderHeaderForm';
 	var name = $('#ModifyOrderHeaderForm_username').attr("value");
 	var phone = $('#ModifyOrderHeaderForm_phone').attr("value");
 	var desc = $('#ModifyOrderHeaderForm_desc').attr("value");
@@ -488,7 +488,7 @@ function getModifyOrderEle(orderId){
 //获取派送人员
 function getPosters(){
 	var orderId = $('.order-detail-header .order-name').attr("id");
-	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/getPosters';
+	ctUrl = baseUrl + '/index.php?r=takeAway/orderFlow/getPosters';
 	if(ctUrl != '') {
 	    $.ajax({
 	        url      : ctUrl,
@@ -515,7 +515,7 @@ function setPosters(){
 	if(posterId==null){
 		alert("没有选择派送人员!");
 	}else{
-		ctUrl = '/weChat/index.php?r=takeAway/orderFlow/setPosters';
+		ctUrl = baseUrl + '/index.php?r=takeAway/orderFlow/setPosters';
 		if(ctUrl != '') {
 		    $.ajax({
 		        url      : ctUrl,
@@ -560,7 +560,7 @@ function batDispatchOrders(){
 	if(posterId==null){
 		alert("没有选择派送人员!");
 	}else{
-		ctUrl = '/weChat/index.php/takeAway/orderFlow/batSetPosters';
+		ctUrl = baseUrl + '/index.php/takeAway/orderFlow/batSetPosters';
 		if(ctUrl != '') {
 		    $.ajax({
 		        url      : ctUrl,
@@ -599,7 +599,7 @@ function batDispatchOrders(){
 function cancel(){
 	var orderId = $('.order-detail-header .order-name').attr("id");
 	var day = $('.order-footer .order-date-container').attr("id");
-	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/cancelOrder';
+	ctUrl = baseUrl + '/index.php?r=takeAway/orderFlow/cancelOrder';
 	if(currentTab=='#tab3'){
 		alert('该订单处于取消状态！');
 		return false;
@@ -644,7 +644,7 @@ function batCancelOrders(){
 		alert("请选择一个订单！");
 		return false;
 	}
-	ctUrl = '/weChat/index.php/takeAway/orderFlow/batCancelOrder';
+	ctUrl = baseUrl + '/index.php/takeAway/orderFlow/batCancelOrder';
 	if(currentTab=='#tab3'){
 		alert('该订单处于取消状态！');
 		return false;
@@ -686,7 +686,7 @@ function batCancelOrders(){
 function finish(){
 	var orderId = $('.order-detail-header .order-name').attr("id");
 	var day = $('.order-footer .order-date-container').attr("id");
-	ctUrl = '/weChat/index.php?r=takeAway/orderFlow/finishOrder';
+	ctUrl = baseUrl + '/index.php?r=takeAway/orderFlow/finishOrder';
 	// if(currentTab=='#tab3'){
 	// 		alert('该订单已经取消无法完成！');
 	// 		return false;
@@ -729,7 +729,7 @@ function batfinishOrders(){
 		alert("请选择一个订单！");
 		return false;
 	}
-	ctUrl = '/weChat/index.php/takeAway/orderFlow/batFinishOrder';
+	ctUrl = baseUrl + '/index.php/takeAway/orderFlow/batFinishOrder';
 	// if(currentTab=='#tab3'){
 	// 	alert('该订单已经取消无法完成！');
 	// 	return false;
@@ -835,7 +835,7 @@ function cleanAllLocalCache(){
 
 // 获取派送地区
 function fetchAreas(){
-	var ctUrl = '/weChat/index.php/takeAway/orderFlow/fetchAreas';
+	var ctUrl = baseUrl + '/index.php/takeAway/orderFlow/fetchAreas';
 	$.ajax({
 	    url      : ctUrl,
 	    type     : 'POST',
@@ -950,7 +950,7 @@ function updateListener(){
     $.ajax({
         type:'POST',
         dataType: 'json',
-        url:  '/weChat/index.php/takeAway/orderFlow/update',
+        url:  baseUrl+'/index.php/takeAway/orderFlow/update',
         timeout: 60000,
         data:{storeid: getStoreId(), time:'1', day:day},
         success:function(data,textStatus){
@@ -1131,7 +1131,7 @@ function updateOperate(){
     $.ajax({
         type:'POST',
         dataType: 'json',
-        url:  '/weChat/index.php/takeAway/orderFlow/update',
+        url:  baseUrl + '/index.php/takeAway/orderFlow/update',
         timeout: 60000,
         data:{storeid: getStoreId(), time:'1', day:day},
         success:function(data,textStatus){
@@ -1364,17 +1364,17 @@ function updateTabHeaders(tabId, num){
 }
 //更新订单内容
 function updateTabContent(tabId){
-    var ctUrl = ''; 
+    var ctUrl = baseUrl; 
     setBatOrdersCache();
    // alert(currentTab);
     var day = $('.order-footer .order-date-container').attr("id");
     var areaId = $('.order-footer .order-area-container').attr("id");
     if(tabId == '#tab1') {
-		ctUrl = '/weChat/index.php/takeAway/orderFlow/notSend';
+		ctUrl = '/index.php/takeAway/orderFlow/notSend';
     } else if(tabId == '#tab2') {
-        ctUrl = '/weChat/index.php/takeAway/orderFlow/sended';
+        ctUrl = '/index.php/takeAway/orderFlow/sended';
     } else if(tabId == '#tab3') {
-    	ctUrl = '/weChat/index.php/takeAway/orderFlow/cancel';
+    	ctUrl = '/index.php/takeAway/orderFlow/cancel';
     }
 
     if(ctUrl != '') {

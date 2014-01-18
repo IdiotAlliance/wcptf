@@ -7,7 +7,9 @@
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/orderFlow/operate.js"></script>
 <script type="text/javascript">
 	var currentTab = "#tab1";
+	var baseUrl;
 	$(document).ready(function(){	
+		baseUrl = $(".base-url").attr("id");
 		//清除缓存
 		cleanAllLocalCache();
 		//点击订单
@@ -16,7 +18,7 @@
 				$('.order-body ul>li .order-item ul>li.order-content').css("background-color", "#f7f7f7");
 			}
 			$(this).css("background-color", "#e7e7e7");
-			$(this).css("color", "#000000");    
+			$(this).css("color", "#000000");
 		});
 		// $(".order-detail ").delegate('.order-member-confirm', 'mouseup', function(e){
 		// 	alert("0");
@@ -230,7 +232,7 @@
 </script>
 <div id="action-name">
 </div>
-<div id="order-download">
+<div id="order-download"  data-toggle="tooltip" title="下载订单">
 	<img src="../../../img/icon-excel.jpg" class="img-btn" data-toggle="modal" data-target="#order-download-modal">
 </div>
 <?php echo '<div class="store-id" id='.$this->currentStore->id.'></div>'; ?>
@@ -610,8 +612,8 @@
 		</div>
 	</div>
 	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">只导本列表</button>
-		<button class="btn" data-dismiss="modal" aria-hidden="true">只导出今天</button>
+		<!-- <button class="btn" data-dismiss="modal" aria-hidden="true">只导本列表</button>
+		<button class="btn" data-dismiss="modal" aria-hidden="true">只导出今天</button> -->
 		<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
 		<button class="btn btn-primary" data-dismiss="modal" >导出</button>
 	</div>

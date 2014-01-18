@@ -17,7 +17,7 @@ class PrepaidCardController extends Controller{
 				if($value>0 && $num>0){
 					$cards = array();
 					for($i=0; $i<$num; $i++){
-						$card = prepaidCardAR::model()->generateCard($value);
+						$card = PrepaidCardAR::model()->generateCard($value);
 						array_push($cards, array("cardNo"=>$card->card_no,
 							"password"=>$card->password,
 							"value"=>$card->value));

@@ -641,42 +641,58 @@ class OrderFlowController extends TakeAwayController
 			$endDate = $_GET['endDate'];
 			$filter = $_GET['filter'];
 			$areas = $_GET['area'];
+			$title = "";
 			//转换时间格式
 			$startDate = date("Y-m-d H:i:s", $this->getDateTimestamp($startDate));
 			$endDate = date("Y-m-d H:i:s", $this->getDateTimestamp($endDate));
+			$title = $title."From: ".$startDate."To:".$endDate;
+
 			// 处理type过滤器 按顺序展示优先级
 			$filterType = array();
+			$title = $title."订单类型(";
 			if(($filter&1) == 1){
 				array_push($filterType, "#tab1");
+				$title = $title."未派送";
 			}
 			if(($filter&2) == 2){
 				array_push($filterType, "#tab2");
+				$title = $title."已派送";
 			}
 			if(($filter&4) == 4){
 				array_push($filterType, "#tab3");
+				$title = $title."已取消";
 			}
+			$title = $title.")";
 			//
 			$areas = explode(',', $areas);
 			$data = array();
-			$item = array('订单id','订单编号', '预约人', '下单时间');
+			$item = array('订单id','订单编号', '预约人', "下单电话", "派送人员",
+			"订单子项", "订单总价", "派送地址", "备注", "订单状态", "订单来源",'下单时间');
 			array_push($data, $item);
 			foreach ($filterType as $type) {
 				if($areas[0] == 0){
+					$title = $title."区域:"."全部";
 					$orders = OrdersAR::model()->filterOrderDownLoad($storeid, $startDate, $endDate, 0, $type);
 					foreach ($orders as $order) {
-						$item = array($order->id, $order->order_no, $order->phone, $order->ctime);
+						$item = array($order->id, $order->order_no, $order->order_name, $order->phone,
+						$order->poster_name, $order->store_id, $order->total, $order->address,
+						$order->description, $order->status, $order->type, $order->ctime);
 						array_push($data, $item);
 					}
 				}else{
+					foreach ($areas as $area) {
+						$title = $title."区域:".$area;
+					}
 					$orders = OrdersAR::model()->filterOrderDownLoad($storeid, $startDate, $endDate, $areas, $type);
 					foreach ($orders as $order) {
-						$item = array($order->id, $order->order_no, $order->phone, $order->ctime);
+						$item = array($order->id, $order->order_no, $order->order_name, $order->phone,
+						$order->poster_name, $order->storeid, $order->total, $order->address,
+						$order->description, $order->status, $order->type, $order->ctime);
 						array_push($data, $item);
 					}
 				}
 			}
-			$filename = "orderFile";
-			$title = "微积分历史订单";
+			$filename = "历史订单";
 			ExcelDownload::downloadExcelByArray($filename, $title, $data);	   	
 		}
     }

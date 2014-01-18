@@ -183,7 +183,7 @@ class OrdersAR extends CActiveRecord
 	/*
 		获取店铺ID
 	*/
-	public function getstoreId($orderId){
+	public function getStoreIdByOrder($orderId){
 		$order = OrdersAR::model()->find('id=:orderId', array(':orderId'=>$orderId));
 		return $order->store_id;
 	}
@@ -316,6 +316,7 @@ class OrdersAR extends CActiveRecord
 		    }
 		    $result = $stmt->queryAll();
 		    $orders = OrdersAR::model()->changeArrayToAR($result);
+		    OrdersAR::model()->changeOrdersToView($orders);
 		    return $orders;
 		}
 	}

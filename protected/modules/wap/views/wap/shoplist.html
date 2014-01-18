@@ -144,67 +144,8 @@ footer {
 	margin:0;
 	padding:0
 }
-.sort-item-rec {
+.store-item-nor {
 	background:#f5f5f5;
-	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.2);
-	list-style:none;
-	width:100%;
-	height:100%;
-	min-height:80px;
-	padding:0;
-	border:0;
-	margin:0;
-	margin-bottom:10px;
-	display:block;
-	position:relative;
-	overflow:hidden;
-	white-space:nowrap;
-	text-align:left
-}
-.sort-item-rec:active {
-	-webkit-box-shadow:none
-}
-.sort-item-rec>img {
-	height:auto;
-	width:100%;
-	display:block;
-	position:relative
-}
-.sort-item-rec>.mainarea-in-list {
-	height:auto;
-	display:block;
-	position:absolute;
-	width:100%;
-	bottom:0;
-	padding:8px 10px;
-	background:#505050;
-	opacity:0.75;
-}
-.sort-item-rec>.mainarea-in-list>h4,.sort-item-rec>.mainarea-in-list>h5 {
-	width:100%;
-	position:relative;
-	text-overflow:ellipsis;
-	white-space:nowrap;
-	overflow:hidden;
-	color:#fff
-}
-.sort-item-rec>.mainarea-in-list>h5 {
-	margin-top:5px
-}
-.sort-item-rec>.p-aside {
-	padding:2px 10px;
-	position:absolute;
-	width:auto;
-	height:auto;
-	top:0;
-	left:auto;
-	right:0;
-	bottom:auto;
-	color:#fff;
-	background:rgba(216,14,95,.85)
-}
-.sort-item-nor {
-	background:#f3eaf2;
 	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.2);
 	list-style:none;
 	width:100%;
@@ -219,11 +160,11 @@ footer {
 	white-space:nowrap;
 	text-align:left
 }
-.sort-item-nor:active {
-	background:#c56bb8;
+.store-item-nor:active {
+	background:#c1c1c1;
 	-webkit-box-shadow:none
 }
-.sort-item-nor>img {
+.store-item-nor>img {
 	float:left;
 	height: 80px;
 	width:auto;
@@ -232,10 +173,9 @@ footer {
 	overflow:hidden
 	z-index:-1;
 }
-.sort-item-nor>.list-item-icon {
+.store-item-nor>.list-item-tips {
 	height:20px;
 	margin:30px 0;
-	width:20px;
 	float:right;
 	position:relative;
 	display:inline-block;
@@ -244,7 +184,19 @@ footer {
 	overflow:hidden;
 	margin-right:20px
 }
-.sort-item-nor>.mainarea-in-list {
+.store-item-nor>.list-item-icon {
+	height:20px;
+	width: 20px;
+	margin:30px 0;
+	float:right;
+	position:relative;
+	display:inline-block;
+	border-width:0;
+	white-space:nowrap;
+	overflow:hidden;
+	margin-right:20px
+}
+.store-item-nor>.mainarea-in-list {
 	position: absolute;
 	height:100%;
 	display:block;
@@ -252,12 +204,12 @@ footer {
 	margin-left:80px;
 	margin-right:40px;
 	padding:20px 10px;
-	background:linear-gradient(to right, rgba(255, 255, 255, 0.75) -20px, #f5f5f5 40px, #f5f5f5 100%);
+	background:linear-gradient(to right, rgba(245, 245, 245, 0.75) -40px, #f5f5f5 30px, rgba(245, 245, 245, 0.75) 100%);
 	-webkit-box-shadow:-3px 0px 2px rgba(0,0,0,0.2);
 
 }
 }
-.sort-item-nor>.mainarea-in-list>h4,.sort-item-nor>.mainarea-in-list>h5 {
+.store-item-nor>.mainarea-in-list>h4,.store-item-nor>.mainarea-in-list>h5 {
 	text-align:left;
 	position:relative;
 	text-overflow:ellipsis;
@@ -266,7 +218,7 @@ footer {
 	white-space:nowrap;
 	overflow:hidden
 }
-.sort-item-nor>.mainarea-in-list>h5 {
+.store-item-nor>.mainarea-in-list>h5 {
 	margin-top:5px
 }
 .catalog-item {
@@ -759,16 +711,8 @@ footer {
 	z-index:0
 }
 </style>
-<div id="shoplistcontent" class="content-frame">
+<div id="storelistcontent" class="content-frame">
 	<ul id="sort-normallist" class="ul-sort-listview"></ul>
-	<li class="sort-item-nor">
-	<img src="http://192.168.1.196/weChat/img/20131122223211131.jpg" alt="无真相>_<~">
-	<div class="list-item-icon">营业中</div>
-	<div class="mainarea-in-list">
-	<h4>青露馒头</h4>
-	<h5>开业五折</h5>
-	</div>
-	</li>
 </div>
 <div id="error" class="up-frame" style="display: none;">
 	<section class="tips" id='tips-error'>
@@ -793,8 +737,6 @@ footer {
 <div class="toast" id="mytoast"></div>
 <script type="text/javascript">
 
-
-
     //fake
 	var sellerid=9;
 	var openid='lvxiang';
@@ -811,67 +753,24 @@ footer {
 	var WRONGDATA='wrongdata';
 	var WRONGINIT='wronginit';
 
+	//fake
+	var BASEURLICON='http://192.168.1.196/weChat/img/wap/myicon-storelist.png';
 	//基地址
-	var BASEURL='/weChat/';
-	var BASEURLICON='/weChat/img/wap/myicon.png';
-
-	var MYJQUERY='http://libs.baidu.com/jquery/2.0.3/jquery.min.js';
-	// var MYOWNJS='<?php echo Yii::app()->baseUrl?>/js/wap/shoplist.js';
-
-	// var AJAXFORDATA='<?php echo Yii::app()->createUrl('wap/wap/getData'); ?>';
-	// var AJAXFORSUBMIT='<?php echo Yii::app()->createUrl('wap/order/order'); ?>';
-	// var AJAXFORRESULT='<?php echo Yii::app()->createUrl('wap/order/getPartOrders'); ?>';
-
-	var shoplist='{}'
+	// var BASEURL='/weChat/';
+	// var BASEURLICON='/weChat/img/wap/myicon-storelist.png';
 
 	//全局运行变量
 	var isverified=true;
-	var myanimation=null;
 
 	window.onload = function(){
-		//filllist();
-		// if(verifybaseid()){
-		// 	if(!verifyidentitykey()){
-		// 		callwrongkey();
-		// 	}
-		// 	//jsinit();
-		// }else{
-		// 	callerror(WRONGURL);
-		// }
-	}
-
-	//初始化js
-	function jsinit(){
-		var isjqueryready=false;
-		var isownjsready=false;
-		startloading('正在初始化');
-		jsloader.load(MYJQUERY , function () {
-			readytogo(MYJQUERY);
-		});
-		jsloader.load(MYOWNJS, function () {
-	    	readytogo(MYOWNJS);
-		});
-		setTimeout(function(){
-			if(isjqueryready==false||isownjsready==false){
-		    	stoploading();
-				callerror(WRONGINIT,jsinit);
+		if(verifybaseid()){
+			if(!verifyidentitykey()){
+				callwrongkey();
 			}
-		},15000);
-		//等待script全部载入
-		function readytogo(ready){
-	    	switch(ready){
-	    		case MYJQUERY:
-	    		isjqueryready=true;
-	    		break;
-	    		case MYOWNJS:
-	    		isownjsready=true;
-	    		break;
-	    	}
-	    	if(isjqueryready==true&&isownjsready==true){
-		    	stoploading();
-				firstinit();
-	    	}
-	    }
+			filllist();
+		}else{
+			callerror();
+		}
 	}
 
 	//基础id获取及url校验
@@ -932,235 +831,54 @@ footer {
 		}
 	}
 
-    //工具 异步载入js
-	var jsloader = function(){
-		var scripts = {}; 
-		function getScript(url){
-			var script = scripts[url];
-			if (!script){
-	            script = {loaded:false, funs:[]};
-	            scripts[url] = script;
-			}    
-			return script;
-		}
-		function run(script){
-			var funs = script.funs,
-			            len = funs.length,
-			            i = 0;
-			for (; i<len; i++){
-			var fun = funs.pop();
-			            fun();
-		    }
-		}
-		function add(script, url){
-			var scriptdom = document.createElement('script');
-	        scriptdom.type = 'text/javascript';
-	        scriptdom.loaded = false;
-	        scriptdom.src = url;
-	        scriptdom.onload = function(){
-	            scriptdom.loaded = true;
-	            run(script);
-	            scriptdom.onload = scriptdom.onreadystatechange = null;
-	        };
-		    document.getElementsByTagName('head')[0].appendChild(scriptdom);
-		    
-		}
-		return {
-			load: function(url){
-				var arg = arguments,
-			    len = arg.length,
-			    i = 1,
-			    script = getScript(url),
-			    loaded = script.loaded;
-				for (; i<len; i++){
-					var fun = arg[i];
-					if (typeof fun === 'function'){
-						if (loaded) {
-					        fun();
-					    }else{
-					        script.funs.push(fun);
-					    }
-					}
-				}
-	            add(script, url);
-			}
-		};
-	}();
-
-	//工具 loading动画
-	function loadinganimation(){
-		var wwidth=0;
-		var wheight=0;
-		var tipswidth=0;
-		var barwidth = 50;
-		var movex = 54;
-		var animation=null;
-		var darkleft=true;
-		this.firstinit=function(){
-			document.getElementById('loading').style.display='block';
-			wwidth = document.getElementById('loading').clientWidth;
-			wheight = document.getElementById('loading').clientHeight;
-			document.getElementById('loadingshapedark').style.left = (wwidth/2) - barwidth-2+'px';
-			document.getElementById('loadingshapelight').style.left = (wwidth/2)+4+'px';
-			
-		}
-	    function moveleft(el) {
-	        document.getElementById(el).style.zIndex=-100;
-	        document.getElementById(el).style.left = (wwidth/2) - barwidth-2+'px';
-	        document.getElementById(el).style.webkitTransition='all 800ms ease-out';
-	        document.getElementById(el).style.webkitTransitionProperty="left";
-	        document.getElementById(el).style.transition='all 800ms ease-out';
-	        document.getElementById(el).style.transitionProperty="left";
-	    }
-
-	    function moveright(el) {
-	        document.getElementById(el).style.zIndex=100;
-	        document.getElementById(el).style.left = (wwidth/2)+4+'px';
-	        document.getElementById(el).style.webkitTransition='all 800ms ease-out';
-	        document.getElementById(el).style.webkitTransitionProperty="left";
-	        document.getElementById(el).style.transition='all 800ms ease-out';
-	        document.getElementById(el).style.transitionProperty="left";
-	    }
-	    this.isloading=function(){
-	    	return animation==null;
-	    }
-	    this.playanimation=function(){
-	    	if(darkleft){
-		        moveleft('loadingshapelight');
-		       	moveright('loadingshapedark');
-	    	}else{
-	    		moveleft('loadingshapedark');
-		        moveright('loadingshapelight');
-	    	}
-	    	darkleft=!darkleft;
-	    }
-	    this.start=function(content,tips){
-			document.getElementById('loading').style.display='block';
-			document.getElementById('loadingtips').innerHTML=tips;
-			tipswidth=document.getElementById('loadingtips').clientWidth;
-			document.getElementById('loadingtips').style.left=(wwidth/2)-(tipswidth/2)+'px';
-			content.playanimation();
-			if(animation==null){
-		    	animation=window.setInterval(function(){content.playanimation();},800);
-		    }
-	    }
-	   	this.stop=function(){
-			document.getElementById('loading').style.display='none';
-	    	animation=window.clearInterval(animation);
-	    	animation=null;
-	    }
-	}
-
-    //全局唤起loading
-    startloading=function(tips){
-    	if(myanimation==null){
-    		myanimation=new loadinganimation();
-			myanimation.firstinit();
-    	}
-    	myanimation.start(myanimation,tips==null?'载入中…':tips);
-    }
-
-    stoploading=function(){
-    	myanimation.stop();
-    }
-
-	//全局唤起出错
-	function callerror(error, method){
-    	switch(error){
-    		case WRONGURL:
-    		document.getElementById('error').style.display='block';
-    		document.getElementById('tips-error').style.display='block';
-    		document.getElementById('reload-btnarea').style.display='none';
-    		document.getElementById('tips-errordesc-error').innerHTML='检测到您的url异常，请确保从微信公众账号访问哦~';
-    		break;
-    		case WRONGKEY:
-    		document.getElementById('error').style.display='block';
-    		document.getElementById('tips-error').style.display='block';
-    		document.getElementById('reload-btnarea').style.display='none';
-    		document.getElementById('tips-errordesc-error').innerHTML='身份校验失败，请按如下步骤操作：<br />1.返回公众账号对话页面，回复关键字得到“菜单”<br />2.从“菜单”中点击“在线点单”';
-    		break;
-    		case WRONGDATA:
-    		document.getElementById('error').style.display='block';
-    		document.getElementById('tips-error').style.display='block';
-    		document.getElementById('reload-btnarea').style.display='block';
-    		document.getElementById('tips-errordesc-error').innerHTML='数据载入错误，请检查您当前的网络环境，并重试';
-    		document.getElementById("reload-btn").onclick=function(){
-				document.getElementById('error').style.display='none';
-				method();
-    		};
-    		break;
-    		case WRONGINIT:
-    		document.getElementById('error').style.display='block';
-    		document.getElementById('tips-error').style.display='block';
-    		document.getElementById('reload-btnarea').style.display='block';
-    		document.getElementById('tips-errordesc-error').innerHTML='初始化失败，请检查您当前的网络环境，并重试';
-    		document.getElementById("reload-btn").onclick=function(){
-				document.getElementById('error').style.display='none';
-				method();
-    		};
-    		break;
-    	}
-
-    }
-
-    //key错误
-	function callwrongkey(){
-		isverified=false;
-		document.getElementById('warning').style.display = 'block';
-	}
-
 	function filllist(){
-
 		var mystorelist=datasource.storelist;
 		insert='';
 		for(var i=0;i<mystorelist.length;i++){
-			insert+='<li>'+
-			'<div class="sort-item-nor">'+
-			'<img src="/weChat/img/default-logo.png">'+
+			insert+='<li class="store-item-nor">'+
+			'<div class="store-item-nor">'+
+			'<img src='+mystorelist[i].logo+'>'+
+			'<div class="mainarea-in-list">'+
 			'<h4>'+mystorelist[i].storename+'</h4>'+
 			'<p>'+mystorelist[i].announcement+'</p>'+
-			'<div class="list-item-icon">营业中</div>'+
-			'</div>'+
-			'</li>';
+			'</div>';
+			if(mystorelist[i].storestatus!='innormal'){
+				insert+='<div class="list-item-icon" style="background:url('+BASEURLICON+')"></div>';
+			}else{
+				insert+='<h4 class="list-item-tips">休息中</h4>'
+			}
+			insert+='</li>';
+
 		}
-		document.getElementById("insert").innerHTML(insertText);
-	}
-
-	function DrawImage(ImgD,inputheight,inputwidth){
-		alert(ImgD.width);
-		//取得图片的宽度
-		ImgWidth=ImgD.width
-		//取得图片的高度
-		ImgHeight=ImgD.height;
-
-		if(ImgWidth>0 && ImgHeight>0)
-		{
-
-		//flag=true;
-		if((ImgWidth/ImgHeight) >= (inputwidth/inputheight))
-		{
-
-		ImgD.height=inputheight;
-		ImgD.width=(ImgWidth*inputheight)/ImgHeight;
-
-		} else if((ImgWidth/ImgHeight) < (inputwidth/inputheight)){
-		ImgD.width=inputwidth;
-		ImgD.height=(ImgHeight*inputwidth)/ImgWidth;
-		}
-		}
-
+		document.getElementById("storelistcontent").innerHTML=insert;
 	}
 
 	//fakedatasource
     var datasource={"storelist":[
-	{"storeid":0,"storename":"茹果","announcement":"开业八折酬宾","storestatus":"fruitjuice.jpg","logo":"/weChat/img/default-logo.png"},
-	{"storeid":1,"storename":"黄焖鸡","announcement":"开业八折酬宾","storestatus":"fruitdish.jpg","logo":"/weChat/img/default-logo.png"},
-	{"storeid":2,"storename":"吉祥馄饨","announcement":"开业八折酬宾","storestatus":"importedfruit.jpg","logo":"/weChat/img/default-logo.png"},
-	{"storeid":3,"storename":"锅盖面","announcement":"开业八折酬宾","storestatus":"charlotte.jpg","logo":"/weChat/img/default-logo.png"},
-	{"storeid":4,"storename":"梓研汤包","announcement":"开业八折酬宾","storestatus":"localfruit.jpg","logo":"/weChat/img/default-logo.png"},
-	{"storeid":5,"storename":"淡然粥道","announcement":"开业八折酬宾","storestatus":"fruitmask.jpg","logo":"/weChat/img/default-logo.png"}
+	{"storeid":0,"storename":"茹果","announcement":"开业八折酬宾","storestatus":"fruitjuice.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.png","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":1,"storename":"黄焖鸡","announcement":"开业八折酬宾","storestatus":"fruitdish.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.png","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":2,"storename":"吉祥馄饨","announcement":"开业八折酬宾","storestatus":"importedfruit.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.png","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":3,"storename":"锅盖面","announcement":"开业八折酬宾","storestatus":"charlotte.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.png","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":4,"storename":"梓研汤包","announcement":"开业八折酬宾","storestatus":"localfruit.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.png","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":5,"storename":"淡然粥道","announcement":"开业八折酬宾","storestatus":"fruitmask.jpg","logo":"http://192.168.1.196/weChat/img/default-logo.png","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"}
 	]
 	};
+
+//全局唤起出错
+function callerror(){
+	document.getElementById('error').style.display='block';
+	document.getElementById('tips-error').style.display='block';
+	document.getElementById('reload-btnarea').style.display='none';
+	document.getElementById('tips-errordesc-error').innerHTML='检测到您的url异常，请确保从微信公众账号访问哦~';
+
+}
+
+
+//key错误
+function callwrongkey(){
+	isverified=false;
+	document.getElementById('warning').style.display = 'block';
+}
 	
 </script>
 </body>
