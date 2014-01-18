@@ -22,7 +22,7 @@
     	$(".card-area").append(initTitle);
     });
     function generateCard(value, num){
-    	var ctUrl = <?php echo Yii::app()->request->baseUrl; ?> + '/index.php/payment/prepaidCard/generateCard';
+    	var ctUrl = "<?php echo Yii::app()->request->baseUrl; ?>" + '/index.php/payment/prepaidCard/generateCard';
     	$.ajax({
     	    url      : ctUrl,
     	    type     : 'POST',
