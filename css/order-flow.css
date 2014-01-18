@@ -694,6 +694,9 @@
 .order-detail-header .order-modify-menu {
 	margin-left: 5%;
 }
+.order-detail-header .order-choose-menu {
+    margin-left: 5%;
+}
 .order-detail-header .order-line{
     min-height: 30px;
     line-height: 30px;
@@ -844,6 +847,19 @@
 }
 #orderAddItemModal .modal-body label .required{
     display: none;
+}
+/* 会员确认*/
+#order-member-confirm-modal label {
+    display: inline-block;
+    min-width: 150px;
+    line-height: 30px;
+    margin: 5px;
+}
+#order-members-confirm-modal label {
+    display: inline-block;
+    min-width: 150px;
+    line-height: 30px;
+    margin: 5px;
 }
 
 

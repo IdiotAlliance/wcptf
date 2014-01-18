@@ -93,6 +93,7 @@ class OrderFlowController extends TakeAwayController
 					 "useCard"=>$order->use_card,
 					 "poster_name"=>$order->poster_name,
 					 'desc'=>$order->description,
+					 "memberId"=>$order->member_id,
 					 'memberStatus'=>$order->member_status,
 					 'update_time'=>$order->update_time
 					));
@@ -125,6 +126,7 @@ class OrderFlowController extends TakeAwayController
 						 "useCard"=>$order->use_card,
 						 "poster_name"=>$order->poster_id,
 						 'desc'=>$order->description,
+						 "memberId"=>$order->member_id,
 						 'memberStatus'=>$order->member_status,
 						 'update_time'=>$order->update_time
 						);
@@ -693,6 +695,48 @@ class OrderFlowController extends TakeAwayController
 
     	$minute = ((int) substr($date, 14, 2));
     	return mktime($hour, $minute, 0, $month, $day, $year);
+    }
+
+    /*
+		获取待验证的会员信息
+    */
+    public static function actionFetchMember(){
+    	if(isset($_POST['memberId'])&&isset($_POST["storeid"])){
+    		$memberId = $_POST["memberId"];
+    		$sid = $_POST['storeid'];
+    		$memberNum = MemberNumbersAR::model()->getRequest($sid, $memberId);
+    		if($memberNum!=null){
+    			$arr=array('success'=>'1', 'cardno'=>$memberNum->cardno, "phone"=>$memberNum->number);
+    			echo json_encode($arr);
+    		}else{
+    			$arr=array('success'=>'2');
+    			echo json_encode($arr);
+    		}
+    		
+    	}else{
+    		$arr=array('success'=>'0');
+    		echo json_encode($arr);
+    	}
+    	
+    }
+    /*
+		获取待验证的会员信息
+    */
+    public static function actionFetchMembers($memberIds){
+    	if(isset($_POST['memberIds'])&&isset($_POST["storeid"])){
+    		$memberIds = $_POST["memberIds"];
+    		$sid = $_POST['storeid'];
+    		$result = array();
+    		foreach ($memberIds as $memberId) {
+    			$memberNum = MemberNumbersAR::model()->getRequest($sid, $memberId);
+    			array_push($result, array('cardno'=>$memberNum->cardno, "phone"=>$memberNum->number));
+    		}
+    		$arr=array('success'=>'1', "membersInfo"=>$result);
+    		echo json_encode($arr);
+    	}else{
+    		$arr=array('success'=>'0');
+    		echo json_encode($arr);
+    	}
     }
 
     /*

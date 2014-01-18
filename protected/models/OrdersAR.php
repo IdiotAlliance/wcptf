@@ -627,9 +627,9 @@ class OrdersAR extends CActiveRecord
 		}
 		$order->address = $address;
 		if($order->use_card ==0){
-			$order->use_card =  "(非会员下单)";
+			$order->use_card =  "(非会员卡下单)";
 		}else{
-			$order->use_card = "(会员下单)";
+			$order->use_card = "(会员卡下单)";
 		}
 	}
 

@@ -18,10 +18,12 @@
 			$(this).css("background-color", "#e7e7e7");
 			$(this).css("color", "#000000");    
 		});
-		$(".test").click(function(){
-			alert(0);
-		});
-
+		// $(".order-detail ").delegate('.order-member-confirm', 'mouseup', function(e){
+		// 	alert("0");
+		// 	var memberId = $(".order-detail .order-memberid").attr("id");
+		// 	alert(memberId);
+		// 	fetchMember(memberId);
+		// });
 		$('.order-header').delegate('.order-body ul>li .order-item ul>li.order-content', 'mouseup', function(e){
 			//更新订单详情
 			var orderId = $(this).attr("id");
@@ -392,8 +394,10 @@
 			   			<label class="order-username">姓名：{{:head.orderData.name}}</label>
 			   			<label class="order-usecard">{{:head.orderData.useCard}}</label>
 			   			{{if head.orderData.memberStatus != '0'}}
-			   				<label class="order-confirm-member">{{:head.orderData.memberStatus}}</label>
+			   				<a href="#" data-toggle='modal' data-target='#order-member-confirm-modal' class='order-member-confirm'>{{:head.orderData.memberStatus}}</a>
 			   			{{/if}}
+			   			<div class="order-memberid" id={{:head.orderData.memberId}} style="display:none">
+			   			</div>
 			   		</div>
 			   		<div class="order-line line-3">
 			       		<label class="order-phone">手机：{{:head.orderData.phone}}</label>
@@ -407,7 +411,7 @@
 			   		</div>
 			   		<div class="order-line line-6">
 			   			<a href="#" class='order-cancel-menu'>取消订单</a>
-			   			<a href="#" data-toggle='modal' data-target='#choosePosterModal' class='order-modify-menu'>指定派送人员</a>
+			   			<a href="#" class='order-choose-menu'>指定派送人员</a>
 			   			<a href="#" data-toggle='modal' data-target='#modifyOrderHeaderModal' class='order-modify-menu'>修改</a>
 			   			<button type="button" id="btn-confirm" class="btn btn-default btn-xs">完成</button>
 			   		</div>
@@ -465,7 +469,7 @@
 					    <input size="16" type="text" value="" class='input-date' style="display:none">
 					    <label class="order-footer-date"></label>
 					    <span class="add-on"><i class="icon-th"></i></span>
-						<label class="order-footer-info">订单总量:120</label>
+						<label class="order-footer-info">订单总量:0</label>
 					</div>
 					<!-- <input size="16" type="text" readonly class="form_datetime" style="display:none"> -->
 					
@@ -610,5 +614,37 @@
 		<button class="btn" data-dismiss="modal" aria-hidden="true">只导出今天</button>
 		<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
 		<button class="btn btn-primary" data-dismiss="modal" >导出</button>
+	</div>
+</div>
+<!-- 会员确认modal -->
+<div id="order-member-confirm-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">会员确认</h3>
+	</div>
+	<div class="modal-body">
+		<div class="member-pick">
+			
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">跳过</button>
+		<button class="btn btn-primary" data-dismiss="modal" >确认</button>
+	</div>
+</div>
+<!-- 批量会员确认modal -->
+<div id="order-members-confirm-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">会员确认</h3>
+	</div>
+	<div class="modal-body">
+		<div class="member-pick">
+			
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">跳过</button>
+		<button class="btn btn-primary" data-dismiss="modal" >确认</button>
 	</div>
 </div>

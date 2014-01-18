@@ -182,7 +182,7 @@ class MembersController extends TakeAwayController{
 				$bound->save();
 				if($bound->attributes['id'] >= 0){
 					$request->delete();
-					OrdersAR::modle()->modifyMemberStatus($memberId, $storeId, 2);
+					OrdersAR::model()->modifyMemberStatus($memberId, $sid, 2);
 					echo 'ok';
 					exit();
 				}
