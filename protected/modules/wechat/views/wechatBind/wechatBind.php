@@ -36,7 +36,7 @@
 
 <script type="text/javascript">
 	var userId  = <?php echo $user->id?>;
-	var baseurl = "<?php echo Yii::app()->createAbsoluteUrl('wechat/weChatAccess')?>/";
+	var baseurl = "<?php echo Yii::app()->createAbsoluteUrl('wechat/wechatAccess')?>/";
 	
 	function setUrl(){
 		var value = $('#wechat_bind_token').val();

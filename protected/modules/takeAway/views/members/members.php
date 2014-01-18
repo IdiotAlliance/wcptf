@@ -101,8 +101,9 @@
 		padding-left: 20px;
 		padding-right: 20px;
 	}
-	#tab1 .mem-comfirm-btn{
+	#tab1 .mem-op-btn{
 		float: right;
+		margin-left: 10px;
 	}
 	.table-btn-container{
 		float: right;
@@ -388,7 +389,13 @@
 			'<table class="table table-bordered">' + 
 				'<thead><tr>' + 
 					'<th colspan="2">' + 
-						'会员信息' + (member['request'] == "1" ? '<div class="btn btn-primary mem-comfirm-btn" onclick="confirmMember()">确认</div>':'') + 
+						'会员信息' + 
+						(member['request'] == "1" ? 
+							'<div class="btn btn-primary mem-op-btn" onclick="confirmMember()">确认</div>' +
+							'<div class="btn btn-danger mem-op-btn" onclick="cancelMember()">取消</div>'
+							:(member['bound']=="1"?
+								'<div class="btn btn-danger mem-op-btn" onclick="deleteMember()">删除会员</div>':'')
+						) + 
 					'</th></tr>' + 
 				'</thead>' + 
 				'<tbody>' + 
@@ -462,29 +469,6 @@
 				'<div>这位用户还木有发表过评论</div>'
 			);
 		}
-
-		// 
-		// if(messages.length > 1){
-		// 	var html = '<table class="table">' + 
-		// 			   		'<thead><tr><th>历史消息</th></tr></thead>' +
-		// 			   		'<thead><tr><th>发送日期</th><th>消息内容</th><th>回复状态</th></tr></thead>';
-		// 	for(index in messages){
-		// 		var message = messages[index];
-		// 		html += '<tr><td>' + message['ctime'] + '</td>' +
-		// 				    '<td>' + message['content']['0'] + '</td>' +
-		// 				    '<td>' + message['replied'] + '</td>' + 
-		// 				'</tr>';
-		// 		console.log(message['content']);
-		// 	}
-		// 	html += '</table>';
-		// 	$('#tab4').html(
-		// 			html
-		// 	);
-		// }else{
-		// 	$('#tab4').html(
-		// 		'<div>这位用户还木有发过消息</div>'
-		// 	);
-		// }
 	}
 	
 	function filterMembers(){
@@ -556,7 +540,7 @@
 			$.ajax({
 				url: "<?php echo Yii::app()->createUrl('takeAway/members/confirmMember/memberId/')?>" + 
 					 "/" + member['id'] + "?sid=<?php echo $this->currentStore->id?>"
-			}).success(function (data){
+				}).success(function (data){
 				if (data == 'ok'){
 					var item = $('#member_item_' + member['id']);
 					$('#option_bnd').html("已绑定会员卡(" + (++cbound) + ")");
@@ -568,6 +552,11 @@
 						label.removeClass('label-warning');
 						label.addClass('label-success');
 						label.html('已绑定');
+					}else{
+						var label = item.find('#item_label_' + member['id']);
+						label.removeClass('label-warning');
+						label.addClass('label-important');
+						label.html('已取消关注');
 					}
 					item.click();
 					filterMembers();
@@ -578,8 +567,64 @@
 		}
 	}
 	
-
-	function downloadExcel(){
-		
+	function cancelMember(){
+		if(member && confirm("您确定要拒绝该用户的会员绑定申请吗？")){
+			$.ajax({
+					url: "<?php echo Yii::app()->createUrl('takeAway/members/cancelMember/memberId/')?>" + 
+					 "/" + member['id'] + "?sid=<?php echo $this->currentStore->id?>"
+				}).success(function (data){
+				if (data == 'ok'){
+					var item = $('#member_item_' + member['id']);
+					$('#option_req').html("请求绑定会员卡(" + (--crequest) + ")");
+					item.removeClass('request');
+					if(member['unsubscribed'] != '1'){
+						var label = item.find('#item_label_' + member['id']);
+						label.removeClass('label-warning');
+						label.addClass('label-info');
+						label.html('已关注');
+					}else{
+						var label = item.find('#item_label_' + member['id']);
+						label.removeClass('label-warning');
+						label.addClass('label-important');
+						label.html('已取消关注');
+					}
+					item.click();
+					filterMembers();
+				}else{
+					alert('操作失败');
+				}
+			});
+		}
 	}
+
+	function deleteMember(){
+		if(member && confirm("您确定要删除该会员吗？这会导致丢失该会员的积分等信息")){
+			$.ajax({
+					url: "<?php echo Yii::app()->createUrl('takeAway/members/deleteMember/memberId/')?>" + 
+					 "/" + member['id'] + "?sid=<?php echo $this->currentStore->id?>"
+				}).success(function (data){
+				if (data == 'ok'){
+					var item = $('#member_item_' + member['id']);
+					$('#option_bnd').html("已绑定会员卡(" + (--cbound) + ")");
+					item.removeClass('bound');
+					if(member['unsubscribed'] != '1'){
+						var label = item.find('#item_label_' + member['id']);
+						label.removeClass('label-success');
+						label.addClass('label-info');
+						label.html('已关注');
+					}else{
+						var label = item.find('#item_label_' + member['id']);
+						label.removeClass('label-success');
+						label.addClass('label-important');
+						label.html('已取消关注');
+					}
+					item.click();
+					filterMembers();
+				}else{
+					alert('操作失败');
+				}
+			});
+		}
+	}
+
 </script>

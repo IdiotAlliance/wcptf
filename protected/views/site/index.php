@@ -28,13 +28,13 @@
 </div>
     
 <div id='features'>
-    <div class='container'>
+    <div class='index-container'>
         <a class='feature'><i class="icon-shopping-cart icon-white"></i> 商品管理</a>
         <a class='feature'><i class="icon-user icon-white"></i> 会员管理</a>
         <a class='feature'><i class="icon-list-alt icon-white"></i> 订单管理</a>
         <a class='feature'><i class="icon-star icon-white"></i> 活动管理</a>
         <a class='feature'><i class="icon-align-left icon-white"></i> 统计分析</a>
-        <a class='feature'><i class="icon-bullhorn icon-white"></i> 及时通知</a>
+        <!--<a class='feature'><i class="icon-bullhorn icon-white"></i> 及时通知</a>-->
         <a class="tour-link">
             了解详细 <span class="icon-play icon-white"></span>     
         </a>
@@ -62,45 +62,41 @@
         <div class='row'>
             <div class='span4'>
                 <img src='' class='img-circle' data-src="holder.js/140x140" src="data:image/png;base64,">
-                <h2>特点1</h2>
-                <p>甚至我在windows下找搜狗甚至百度自家的输入法，都没有完全相同的功能。
-                似乎都要先切到自身输入法的英文输入模式才能实现自动空格，但这样来回切换显
-                然太繁琐，而且我的习惯是如果要切换就直接切换到英文键盘，免得一不小心和其
-                他操作的快捷键冲突</p>
+                <h2>独特的三栏式布局</h2>
+                <p>独一无二的三栏式界面设计，让您在PC机上享受到手机APP般的流畅用户体验</p>
                 <p>
-                    <a class="btn btn-default" role="button" href="#">
+                    <!--<a class="btn btn-default" role="button" href="#">
                       查看详情 »
                     </a>
+                    -->
                 </p>
             </div>
         
             <div class='span4'>
                 <img src='' class='img-circle' data-src="holder.js/140x140" src="data:image/png;base64,">
-                <h2>特点1</h2>
-                <p>甚至我在windows下找搜狗甚至百度自家的输入法，都没有完全相同的功能。
-                似乎都要先切到自身输入法的英文输入模式才能实现自动空格，但这样来回切换显
-                然太繁琐，而且我的习惯是如果要切换就直接切换到英文键盘，免得一不小心和其
-                他操作的快捷键冲突</p>
+                <h2>高效的订单流管理</h2>
+                <p>订单流实时推送、同步，订单管理精准迅速，让您绝不错过每一个可能的商机</p>
                 <p>
-                    <a class="btn btn-default" role="button" href="#">
+                    <!--<a class="btn btn-default" role="button" href="#">
                       查看详情 »
-                    </a>
+                    </a>-->
                 </p>
             </div>
         
             <div class='span4'>
                 <img src='' class='img-circle' data-src="holder.js/140x140" src="data:image/png;base64,">
-                <h2>特点1</h2>
-                <p>甚至我在windows下找搜狗甚至百度自家的输入法，都没有完全相同的功能。
-                似乎都要先切到自身输入法的英文输入模式才能实现自动空格，但这样来回切换显
-                然太繁琐，而且我的习惯是如果要切换就直接切换到英文键盘，免得一不小心和其
-                他操作的快捷键冲突</p>
+                <h2>精美的微站点设计</h2>
+                <p>业内最专业的设计师为您倾心打造微信站点，精美模板一键切换，用户体流畅爽快</p>
                 <p>
-                    <a class="btn btn-default" role="button" href="#">
+                    <!--<a class="btn btn-default" role="button" href="#">
                       查看详情 »
-                    </a>
+                    </a>-->
                 </p>
             </div>
         </div>
     </div>
 </div>
+
+<footer>
+
+</footer>

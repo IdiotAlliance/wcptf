@@ -22,6 +22,7 @@ class TakeAwayModule extends CWebModule
 		{
 			// if not signed in
 			if(Yii::app()->user->isGuest){
+				Yii::app()->session->setState('referer', Yii::app()->request->getUrl());
 				$controller->redirect(Yii::app()->createUrl('accounts/login'));
 			}else{
 				// if no wechat account has been bound go to the bind action
