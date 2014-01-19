@@ -365,6 +365,13 @@ class AccountController extends Controller{
 		if($msgs){
 			$msgarr = array();
 			foreach ($msgs as $msg) {
+				if(!$msg->read){
+					$msg->read = 1;
+					$msg->update();
+					$mq = MsgQueueAR::model()->delete('type=:type AND msg_id=:mid',
+													array(':type'=>Constants::MSG_SYSTEM, 
+														  ':mid'=>$msg->id));
+				}
 				$info = null;
 				switch ($msg->type) {
 					case Constants::MSG_SYSTEM_100:

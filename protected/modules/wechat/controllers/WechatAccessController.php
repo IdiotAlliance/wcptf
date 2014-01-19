@@ -153,8 +153,9 @@ class WechatAccessController extends Controller {
 			}else{
 				// get default msg from db
 				$sdmsg = SdmsgsAR::model()->getMsgByType($sellerId, Constants::SDMSG_DEFAULT);
+				//echo $sdmsg->id;
 				$wcmsg->replied = Constants::REPLIED_DEFAULT;
-				var_dump($sdmsg);
+				//var_dump($sdmsg);
 			}
 			
 			if($sdmsg){
@@ -198,7 +199,7 @@ class WechatAccessController extends Controller {
 								   </xml>";
 						$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, $item->content);
 						break;
-					case 1:
+					default:
 						// dan tiao mu tu wen
 						$msgtpl = "<xml>
 									<ToUserName><![CDATA[%s]]></ToUserName>
@@ -206,17 +207,19 @@ class WechatAccessController extends Controller {
 									<CreateTime>%s</CreateTime>
 									<MsgType><![CDATA[news]]></MsgType>
 									<ArticleCount>1</ArticleCount>
-									<Articles>
-										<item>
-											<Title><![CDATA[%s]]></Title> 
-											<Description><![CDATA[%s]]></Description>
-											<PicUrl><![CDATA[%s]]></PicUrl>
-											<Url><![CDATA[%s]]></Url>
-										</item>
-									</Articles>
+									<Articles>%s</Articles>
 									</xml> ";
-						$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, 
-										  $item->title, $item->content, $item->picurl, $item->url);
+						$token = null;
+						if(($item->type & 0x80) > 0){
+							$token = SeriesGenerator::generateMemeberToken();
+							$memtoken = new MemberTokenAR();
+							$memtoken->seller_id = $sellerId;
+							$memtoken->openid    = $openid;
+							$memtoken->token     = $token;
+							$memtoken->save();
+						}
+						$itemtpl = $this->getNewsItem($item, $sellerId, $openid, $token);
+						$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, $itemtpl);
 						break;
 				}
 			}else{
@@ -232,52 +235,11 @@ class WechatAccessController extends Controller {
 				$msgitems = array();
 				$token = null;
 				foreach ($items as $item) {
-				 	$itemtpl = "<item>
-				 					<Title><![CDATA[%s]]></Title>
-				 					<Description><![CDATA[%s]]></Description>
-									<PicUrl><![CDATA[%s]]></PicUrl>
-									<Url><![CDATA[%s]]></Url>
-				 				</item>";
-				 	$type = ($item->type & 0xFF);
-				 	$index = (($item->type >> 8) & 0xFF) - 1;
-				 	if(($type & 0x80) > 0){
-				 		$url = null;
-				 		// functional item
-				 		// generate and save token
-				 		if(!$token)
-				 			$token = SeriesGenerator::generateMemeberToken();
-
-				 		switch ($type) {
-				 			case 0x80:
-				 				# order
-				 				$url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token);
-				 				break;
-				 			case 0x81:
-				 				# history
-								$url = Yii::app()->createAbsoluteUrl('/wap/wap/history/'.$sellerId.'?openid='.$openid.'&token='.$token).'#mp.weixin.qq.com';					 				
-				 				break;
-				 			case 0x82:
-				 				# promotions
-				 				$hot_url = $url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token);
-				 				$hot_products = HotProductsAR::model()->getHotProductsById($sellerId);
-				 				foreach ($hot_products as $hot) {
-				 					$hot_url = $url.'&sortid='.$hot->product_id;
-				 					if($hot->onindex == 1){
-				 						break;
-				 					}
-				 				}
-				 				$url = $hot_url;
-				 				break;
-				 			case 0x83:
-				 				# contact us
-				 				
-				 				break;
-				 		}
-				 		$itemtpl = sprintf($itemtpl, $item->title, $item->content, $item->picurl, $url);
-				 	}else{
-				 		// non functional item
-				 		$itemtpl = sprintf($itemtpl, $item->title, $item->content, $item->picurl, $item->url);
-				 	}
+					$index = (($item->type >> 8) & 0xFF) - 1;
+					if(!$token && (($item->type & 0x80) > 0)){
+						$token = SeriesGenerator::generateMemeberToken();
+					}
+				 	$itemtpl = $this->getNewsItem($item, $sellerId, $openid, $token);
 				 	$msgitems[$index] = $itemtpl;
 				}
 				if($token){
@@ -287,13 +249,61 @@ class WechatAccessController extends Controller {
 					$memtoken->token     = $token;
 					$memtoken->save();
 				}
-				$itemstr = "";
-				foreach ($msgitems as $msgitem) {
-					$itemstr = $itemstr.$msgitem;
-				}
+				$itemstr = implode($msgitems);
 				$msgtpl = sprintf($msgtpl, $openid, $selfid, $time, count($items), $itemstr);
 			}
 		}
 		return $msgtpl;
+	}
+
+	public function getNewsItem($item, $sellerId, $openid, $token=null){
+		$itemtpl = "<item>
+	 					<Title><![CDATA[%s]]></Title>
+	 					<Description><![CDATA[%s]]></Description>
+						<PicUrl><![CDATA[%s]]></PicUrl>
+						<Url><![CDATA[%s]]></Url>
+	 				</item>";
+	 	$type = ($item->type & 0xFF);
+	 	if(($type & 0x80) > 0){
+	 		$url = null;
+	 		switch ($type) {
+	 			case 0x80:
+	 				# order
+	 				$url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token);
+	 				break;
+	 			case 0x81:
+	 				# history
+					$url = Yii::app()->createAbsoluteUrl('/wap/wap/history/'.$sellerId.'?openid='.$openid.'&token='.$token).'#mp.weixin.qq.com';					 				
+	 				break;
+	 			case 0x82:
+	 				# promotions
+	 				$hot_url = $url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token);
+	 				$hot_products = HotProductsAR::model()->getHotProductsById($sellerId);
+	 				foreach ($hot_products as $hot) {
+	 					$hot_url = $url.'&sortid='.$hot->product_id;
+	 					if($hot->onindex == 1){
+	 						break;
+	 					}
+	 				}
+	 				$url = $hot_url;
+	 				break;
+	 			case 0x83:
+	 				# contact us
+	 				
+	 				break;
+	 		}
+	 		$itemtpl = sprintf($itemtpl, $item->title, $item->content, $this->getAbsoluteImgUrl($item->picurl), $url);
+	 	}else{
+	 		// non functional item
+	 		$itemtpl = sprintf($itemtpl, $item->title, $item->content, $this->getAbsoluteImgUrl($item->picurl), $item->url);
+	 	}
+	 	return $itemtpl;
+	}
+
+	public function getAbsoluteImgUrl($imgUrl){
+		$url = Yii::app()->request->baseUrl.'/'.$imgUrl;
+		$url = str_replace('//', '/', $url);
+		$url = Yii::app()->request->hostInfo.$url;
+		return $url;
 	}
 }

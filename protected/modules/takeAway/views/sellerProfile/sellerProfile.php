@@ -24,19 +24,19 @@
 	}
 	#seller_profile_actions{
 		position: fixed;
+		left: 201px;
 		width: 100%;
 		padding-top: 10px;
 		padding-bottom: 10px;
 		padding-left: 20px;
 		background-color: #ffffff;
-		box-shadow: 0px 1px 3px #808080;
-		-moz-box-shadow: 0px 1px 3px #808080;
+		border-bottom: 1px solid #808080;
 	}
 </style>
 <div id="seller_profile_config">
 	<div id="seller_profile_actions">
 		<button id="seller_profile_save" class="btn btn-primary action_btn" onclick="submit()">保存</button>
-		<button id="seller_profile_cancel" class="btn action_btn" onclick="window.location.reload()">放弃更改</button>
+		<button id="seller_profile_cancel" class="btn btn-default action_btn" onclick="window.location.reload()">放弃更改</button>
 	</div>
 	<div id="seller_profile_main_container">
 		<form style="display: none" 

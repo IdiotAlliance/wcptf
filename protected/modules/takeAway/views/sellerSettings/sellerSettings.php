@@ -40,14 +40,14 @@
 		width: expression(document.width - 200 + "px");
 	}
 	#seller_settings_actions{
-		position:fixed;
-		background-color: #ffffff;
+		position: fixed;
+		left: 201px;
 		width: 100%;
 		padding-top: 10px;
 		padding-bottom: 10px;
 		padding-left: 20px;
-		box-shadow: 0px 1px 3px #808080;
-		-moz-box-shadow: 0px 1px 3px #808080;
+		background-color: #ffffff;
+		border-bottom: 1px solid #808080;
 	}
 	#seller_settings_main_container{
 		margin-top: 60px;
@@ -64,7 +64,7 @@
 	</form>
 	<div id="seller_settings_actions">
 		<button id="seller_settings_save" class="btn btn-primary action_btn" onclick="submit()">保存</button>
-		<button id="seller_settings_cancel" class="btn action_btn" onclick="cancel()">放弃更改</button>
+		<button id="seller_settings_cancel" class="btn btn-default action_btn" onclick="cancel()">放弃更改</button>
 	</div>
 	
 	<div id="seller_settings_main_container">
