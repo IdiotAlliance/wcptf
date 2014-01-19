@@ -129,10 +129,10 @@
   }
 
   #product-list .seal{
-    margin-left: 40px;
+    margin-left: 35px;
   }
   #product-list .grey-seal{
-    margin-left: 40px;
+    margin-left: 35px;
   }
   .shift{
     padding-top: 5px;
@@ -148,14 +148,14 @@
   font-size: 14px;
   line-height: 16px;
   margin-left: 20px;
-    max-width: 220px;
+  width: 210px;
   }
 
   #product-list .prod-link .prod-name{
     color: #333333;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   #product-list .prod-link .prod-price{

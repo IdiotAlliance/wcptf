@@ -175,9 +175,18 @@
     overflow-x: hidden !important;
     overflow-y: auto !important;
   }
+
+  #custom-list h5{
+    overflow: hidden;
+    width: 250px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   #rule-list li,#custom-list li{
   	overflow: hidden;
     border-bottom: 1px solid #d3d3d3;
+
   }
 
   #rule-list li:nth-child(1),#rule-list li:nth-child(2){
