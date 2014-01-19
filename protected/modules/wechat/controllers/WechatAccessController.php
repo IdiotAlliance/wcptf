@@ -144,10 +144,9 @@ class WechatAccessController extends Controller {
 			$wcmsg->msgtype    = $msg->MsgType;
 			$wcmsg->createtime = $msg->CreateTime;
 			$wcmsg->replied    = Constants::REPLIED_NONE;
-			
 			$sdmsg = null;
 			$matchId = SdmsgsAR::model()->findMatch($sellerId, $content);
-			if($matchId >= 0){
+			if($matchId && $matchId >= 0){
 				// get related sdmsg from db
 				$sdmsg = SdmsgsAR::model()->findByPK($matchId);
 				$wcmsg->replied = Constants::REPLIED_KEYWORD;
@@ -155,6 +154,7 @@ class WechatAccessController extends Controller {
 				// get default msg from db
 				$sdmsg = SdmsgsAR::model()->getMsgByType($sellerId, Constants::SDMSG_DEFAULT);
 				$wcmsg->replied = Constants::REPLIED_DEFAULT;
+				var_dump($sdmsg);
 			}
 			
 			if($sdmsg){

@@ -332,6 +332,8 @@ $(document).ready(function(event){
 			else{
 				current_json[i].resource = $("#image-texts select").eq(2*i).val();
 				current_json[i].store_id = $("#image-texts select").eq(2*i+1).val();
+				if(id_deleted[current_json[i].store_id]==1)
+					alert("功能不能与已删除的店铺绑定！");
 			}
 		}
 		$.ajax({
@@ -342,7 +344,7 @@ $(document).ready(function(event){
              
             success:function(json){
             	customize_li.find("h5").text(ruleName);
-            	customize_li.find("label").eq(1).text("回复类型："+current_type);
+            	customize_li.find("label").text("回复类型："+current_type);
             	current_json = json;
             	alert('保存成功！');
             },
@@ -380,7 +382,7 @@ $(document).ready(function(event){
              
             success:function(json){
             	customize_li.find("h5").text(ruleName);
-            	customize_li.find("label").eq(1).text("回复类型："+current_type);
+            	customize_li.find("label").text("回复类型："+current_type);
             	current_imageText = json;
             	alert('保存成功！');
             },
@@ -391,6 +393,7 @@ $(document).ready(function(event){
 	}
 	//保存自定义文本
 	function saveCustomText(ruleName,keyword,match_rule){
+		var content = $("#text textarea").val();
 		$.ajax({
             type: 'POST',
             url: "<?php echo CHtml::normalizeUrl(array('replyRules/saveText'));?>",
@@ -399,7 +402,7 @@ $(document).ready(function(event){
              
             success:function(json){
             	customize_li.find("h5").text(ruleName);
-            	customize_li.find("label").eq(1).text("回复类型："+current_type);
+            	customize_li.find("label").text("回复类型："+current_type);
             	current_text = json;
             	alert('保存成功！');
             },
@@ -421,7 +424,9 @@ $(document).ready(function(event){
 			else{
 				current_json[i].resource = $("#image-texts select").eq(2*i).val();
 				current_json[i].store_id = $("#image-texts select").eq(2*i+1).val();
-				}
+				if(id_deleted[current_json[i].store_id]==1)
+					alert("功能不能与已删除的店铺绑定！");
+			}
 		}
 		$.ajax({
             type: 'POST',
@@ -431,11 +436,11 @@ $(document).ready(function(event){
              
             success:function(json){
             	if(current_rule=='auto'){
-            		$("#rule-list").eq(0).find("h5").text(ruleName);
-            		$("#rule-list").eq(0).find("label").eq(1).text("回复类型："+current_type);
+            		$("#rule-list li").eq(0).find("h5").text(ruleName);
+            		$("#rule-list li").eq(0).find("label").text("回复类型："+current_type);
             	}else{
-            		$("#rule-list").eq(1).find("h5").text(ruleName);
-            		$("#rule-list").eq(1).find("label").eq(1).text("回复类型："+current_type);
+            		$("#rule-list li").eq(1).find("h5").text(ruleName);
+            		$("#rule-list li").eq(1).find("label").text("回复类型："+current_type);
             	}
             	
             	current_json = json;
@@ -470,9 +475,9 @@ $(document).ready(function(event){
              
             success:function(json){
             	if(current_rule=='auto'){
-            		$("#rule-list").eq(0).find("label").eq(1).text("回复类型："+current_type);
+            		$("#rule-list li").eq(0).find("label").text("回复类型："+current_type);
             	}else{
-            		$("#rule-list").eq(1).find("label").eq(1).text("回复类型："+current_type);
+            		$("#rule-list li").eq(1).find("label").text("回复类型："+current_type);
             	}
             	current_imageText = json;
             	alert('保存成功！');
@@ -493,9 +498,9 @@ $(document).ready(function(event){
              
             success:function(json){
             	if(current_rule=='auto'){
-            		$("#rule-list").eq(0).find("label").eq(1).text("回复类型："+current_type);
+            		$("#rule-list li").eq(0).find("label").text("回复类型："+current_type);
             	}else{
-            		$("#rule-list").eq(1).find("label").eq(1).text("回复类型："+current_type);
+            		$("#rule-list li").eq(1).find("label").text("回复类型："+current_type);
             	}
             	current_text = json;
             	alert('保存成功！');
@@ -709,6 +714,8 @@ $(document).ready(function(event){
 	                data: {'sdmsgId':current_sdmsgs_id},
 	                dataType: 'json',
 	                success:function(json){
+	                	current_text = json;
+            			$("#rule-list li").eq(0).find("label").text("回复类型："+current_type);
 						$("#text textarea").val("");
 						$("#text").show();
 						$("#image-text").hide();
@@ -725,6 +732,9 @@ $(document).ready(function(event){
 	                data: {'sdmsgId':current_sdmsgs_id},
 	                dataType: 'json',
 	                success:function(json){
+	                	current_imageText = json;
+	                	//更新左侧规则栏回复类型
+            			$("#rule-list li").eq(0).find("label").text("回复类型："+current_type);
 						$("#image-text input:text").eq(0).val("");
 						$("#image-text input:text").eq(1).val("");
 						$("#image-text input:text").eq(2).val("");
@@ -746,6 +756,7 @@ $(document).ready(function(event){
 	                dataType: 'json',
 	                 
 	                success:function(json){
+            			$("#rule-list li").eq(0).find("label").text("回复类型："+current_type);
 	                	current_json = json;
 	                	$("#subitems").html("");
 						$("#image-texts input:text").eq(0).val("");
@@ -781,6 +792,8 @@ $(document).ready(function(event){
 	                data: {'sdmsgId':current_sdmsgs_id},
 	                dataType: 'json',
 	                success:function(json){
+	                	current_text = json;
+            			$("#rule-list li").eq(1).find("label").text("回复类型："+current_type);
 						$("#text textarea").val("");
 						$("#text").show();
 						$("#image-text").hide();
@@ -797,6 +810,9 @@ $(document).ready(function(event){
 	                data: {'sdmsgId':current_sdmsgs_id},
 	                dataType: 'json',
 	                success:function(json){
+	                	current_imageText = json;
+            			$("#rule-list li").eq(1).find("label").text("回复类型："+current_type);
+
 						$("#image-text input:text").eq(0).val("");
 						$("#image-text input:text").eq(1).val("");
 						$("#image-text input:text").eq(2).val("");
@@ -818,6 +834,7 @@ $(document).ready(function(event){
 	                dataType: 'json',
 	                 
 	                success:function(json){
+            			$("#rule-list li").eq(1).find("label").text("回复类型："+current_type);	                	
 	                	current_json = json;
 	                	$("#subitems").html("");
 						$("#image-texts input:text").eq(0).val("");
@@ -853,6 +870,8 @@ $(document).ready(function(event){
 	                data: {'sdmsgId':current_sdmsgs_id},
 	                dataType: 'json',
 	                success:function(json){
+    	            	customize_li.find("label").text("回复类型："+current_type);
+						current_text = json;
 						$("#text textarea").val("");
 						$("#text").show();
 						$("#image-text").hide();
@@ -869,6 +888,8 @@ $(document).ready(function(event){
 	                data: {'sdmsgId':current_sdmsgs_id},
 	                dataType: 'json',
 	                success:function(json){
+    	            	customize_li.find("label").text("回复类型："+current_type);
+						current_imageText = json;
 						$("#image-text input:text").eq(0).val("");
 						$("#image-text input:text").eq(1).val("");
 						$("#image-text input:text").eq(2).val("");
@@ -890,6 +911,7 @@ $(document).ready(function(event){
 	                dataType: 'json',
 	                 
 	                success:function(json){
+	            		customize_li.find("label").text("回复类型："+current_type);          
 	                	current_json = json;
 	                	$("#subitems").html("");
 						$("#image-texts input:text").eq(0).val("");
