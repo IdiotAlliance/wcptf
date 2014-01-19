@@ -30,7 +30,9 @@
 	<div class='batch-menu'>
 		<ul>
 			<li>
-				<input id='checkAll' type='checkbox'>  全选
+				<label class="checkbox">
+					<input id='checkAll' type='checkbox'>  全选
+				</label>
 			</li>
 			<li><a id='batch-option' href="javascript:;">批量操作</a></li>
 			<li><a href="#addModal" role="button" data-toggle="modal">添加新规则</a></li>

@@ -141,7 +141,7 @@
 			  	<label>详细描述：</label><textarea id="add_district_desc"></textarea>
 			  </div>
 			  <div class="modal-footer">
-			    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+			    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">取消</button>
 			    <button class="btn btn-primary" onclick="districtProxy()">确定</button>
 			  </div>
 			</div>
@@ -158,7 +158,7 @@
 			  	<label>描述：</label><textarea id="add_poster_desc" ></textarea>
 			  </div>
 			  <div class="modal-footer">
-			    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+			    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">取消</button>
 			    <button class="btn btn-primary" onclick="posterProxy()">确定</button>
 			  </div>
 			</div>
@@ -240,7 +240,10 @@
 		$('#stime').val(data['shopinfo']['stime']);
 		$('#etime').val(data['shopinfo']['etime']);
 		$('#store_address').val(data['shopinfo']['address']);
-		$('#logoimg').attr('src', "<?php echo Yii::app()->baseUrl?>/" + data['shopinfo']['logo']);
+		if(data['shopinfo']['logo'])
+			$('#logoimg').attr('src', "<?php echo Yii::app()->baseUrl?>/" + data['shopinfo']['logo']);
+		else
+			$('#logoimg').attr('src', "<?php echo Yii::app()->baseUrl?>/img/default-logo.jpg");
 		$('#start_price').val(data['shopinfo']['start_price']);
 		$('#takeaway_fee').val(data['shopinfo']['takeaway_fee']);
 		if(data['shopinfo']['takeaway_fee'] > "0" && data['shopinfo']['threshold'] == "1")
