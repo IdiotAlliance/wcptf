@@ -20,7 +20,7 @@ a,input,button,li {
 	-ms-touch-action:none!important
 }
 h4,h5,p,label {
-	color:#95067f
+	color:#505050
 }
 h4 {
 	font-size:16px;
@@ -42,7 +42,7 @@ input,textarea {
 	-webkit-user-select:auto
 }
 body {
-	background-color:#f4f2f4;
+	background-color:#f4f4f4;
 	font-size:16px;
 	font-weight:normal;
 	font-family:"Arial",Helvetica,sans-serif;
@@ -63,7 +63,7 @@ footer {
 	height:auto;
 	width:100%;
 	border:0;
-	background:#f3eaf2;
+	background:#f8f8f8;
 	display:block;
 	-webkit-box-shadow:0 0 1px rgba(0,0,0,0.2)
 }
@@ -111,7 +111,7 @@ footer {
 	position:relative
 }
 .tips {
-	background:#ecdaea;
+	background:#ebebeb;
 	width:100%;
 	-webkit-box-shadow:0 0 1px rgba(0,0,0,0.2);
 	border:0;
@@ -126,10 +126,10 @@ footer {
 }
 .tips>.tips-content {
 	padding:8px 10px;
-	background:#f3eaf2
+	background:#f8f8f8
 }
 .tips>.tips-content>p {
-	color:#95067f;
+	color:#505050;
 	margin:0
 }
 .ul-sort-listview {
@@ -137,7 +137,7 @@ footer {
 	padding:0
 }
 .sort-item-rec {
-	background:#f3eaf2;
+	background:#f8f8f8;
 	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.2);
 	list-style:none;
 	width:100%;
@@ -169,7 +169,7 @@ footer {
 	width:100%;
 	bottom:0;
 	padding:8px 10px;
-	background:rgba(125,14,108,.8)
+	background:rgba(80,80,80,.8)
 }
 .sort-item-rec>.mainarea-in-list>h4,.sort-item-rec>.mainarea-in-list>h5 {
 	width:100%;
@@ -192,10 +192,10 @@ footer {
 	right:0;
 	bottom:auto;
 	color:#fff;
-	background:rgba(216,14,95,.85)
+	background:rgba(211, 15, 70, 0.85)
 }
 .sort-item-nor {
-	background:#f3eaf2;
+	background:#f8f8f8;
 	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.2);
 	list-style:none;
 	width:100%;
@@ -211,7 +211,7 @@ footer {
 	text-align:left
 }
 .sort-item-nor:active {
-	background:#c56bb8;
+	background:#c1c1c1;
 	-webkit-box-shadow:none
 }
 .sort-item-nor>img {
@@ -267,7 +267,7 @@ footer {
 	width:100%;
 	height:100%;
 	margin:0;
-	background:#f3eaf2;
+	background:#f8f8f8;
 	box-shadow:0 0 2px rgba(0,0,0,0.2);
 	-webkit-box-shadow:0 0 1px rgba(0,0,0,0.2);
 	list-style:none;
@@ -278,7 +278,7 @@ footer {
 }
 .product-item-showdesc {
 	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.25) inset;
-	background-color:#fffafe
+	background-color:#fdfdfd;
 }
 .product-item>.mainarea-in-list {
 	position:relative;
@@ -304,12 +304,10 @@ footer {
 	margin-top:8px
 }
 .product-item>.showmore {
-	width:100%;
+	position: absolute;
+	width:auto;
 	margin:0;
-	padding-bottom:2px;
-	position:absolute;
-	text-align:center;
-	top:auto;
+	right: 2px;
 	bottom:0;
 	opacity:.45;
 	font-size:8px;
@@ -323,7 +321,7 @@ footer {
 	top:0;
 	bottom:auto;
 	color:#fff;
-	background:#95067f;
+	background:#666666;
 	-webkit-box-shadow:1px .5px 1px rgba(0,0,0,0.45);
 	border:0
 }
@@ -369,7 +367,7 @@ footer {
 	bottom:0;
 	margin:0;
 	color:#fff;
-	background:rgba(196,110,182,0.8);
+	background:rgba(80,80,80,0.8);
 	position:absolute;
 	text-overflow:ellipsis;
 	white-space:normal;
@@ -379,7 +377,7 @@ footer {
 #product-first-item,#order-first-item {
 	height:100%;
 	min-height:0;
-	background:#ecdaea
+	background:#ebebeb
 }
 #product-first-item>.mainarea-in-list {
 	margin-right:0
@@ -407,17 +405,17 @@ footer {
 	padding:0;
 	width:50px;
 	border:0;
-	background:#f7ecf5;
-	-webkit-box-shadow:0 0 1px rgba(80,0,70,0.4)
+	background:#eeeeee;
+	-webkit-box-shadow:0 0 1px rgba(80,80,80,0.4)
 }
 .btn-icon:active {
-	background:#c56bb8;
+	background:#c1c1c1;
 	-webkit-box-shadow:none;
 	transition:all 100ms ease-out;
 	-webkit-transition:all 100ms ease-out
 }
 .btn-icon:disabled {
-	background:#fbf3fa;
+	background:#f3f3f3;
 	-webkit-box-shadow:none
 }
 .btn-icon>.img-in-btn {
@@ -434,17 +432,17 @@ footer {
 	width:auto;
 	position:relative;
 	border:0;
-	background:#f7ecf5;
-	-webkit-box-shadow:0 0 1px rgba(80,0,70,0.4)
+	background:#eeeeee;
+	-webkit-box-shadow:0 0 1px rgba(80,80,80,0.4)
 }
 .btn-icon-text:active {
-	background:#c56bb8;
+	background:#c1c1c1;
 	-webkit-box-shadow:none;
 	transition:all 100ms ease-out;
 	-webkit-transition:all 100ms ease-out
 }
 .btn-icon-text:disabled {
-	background:#fbf3fa;
+	background:#f3f3f3;
 	-webkit-box-shadow:none
 }
 .btn-icon-text>.text-in-btn {
@@ -455,7 +453,7 @@ footer {
 	vertical-align:text-top;
 	display:inline-block;
 	font-weight:700;
-	color:#95067f
+	color:#505050
 }
 .btn-icon-text>.img-in-btn {
 	margin-right:10px;
@@ -466,7 +464,7 @@ footer {
 	position:relative
 }
 .btn-highlight {
-	background-color:#f8ccec
+	background-color:#ffffff
 }
 .btn-icon.button-minus,.btn-icon.button-plus {
 	height:40px;
@@ -475,7 +473,7 @@ footer {
 #pay-btn {
 	height:100%;
 	width:auto;
-	-webkit-box-shadow:-1px 0 2px rgba(80,0,70,0.4)
+	-webkit-box-shadow:-1px 0 2px rgba(80,80,80,0.4)
 }
 #pay-btn:active,#pay-btn:disabled {
 	-webkit-box-shadow:none
@@ -491,7 +489,7 @@ footer {
 	width:100%
 }
 #personalinfo {
-	background:#ecdaea;
+	background:#ebebeb;
 	margin-bottom:10px;
 	-webkit-box-shadow:0 0 1px rgba(0,0,0,0.2)
 }
@@ -499,11 +497,11 @@ footer {
 	padding:8px 10px
 }
 #personalinfo>header>h4 {
-	color:#95067f
+	color:#505050
 }
 #personalinfo-content {
 	padding:8px 10px;
-	background:#f3eaf2;
+	background:#f8f8f8;
 	display:block
 }
 #personalinfo-content>.label-main {
@@ -613,7 +611,7 @@ footer {
 	top:40%
 }
 #warning {
-	background:#e7322c;
+	background:#b00;
 	margin-top:10px;
 	padding:8px 10px;
 	color:#fff;
@@ -634,64 +632,63 @@ footer {
 	border-radius:7.5em;
 	margin-right:2px;
 	position:absolute;
-	-webkit-box-shadow:0 3px 16px rgba(149,6,127,0.35)
+	-webkit-box-shadow:0 3px 16px rgba(150,150,150,0.35)
 }
 #loadingshapedark {
-	background:#f3eaf2;
+	background:#f8f8f8;
 	top:40%;
 	z-index:1
 }
 #loadingshapelight {
-	background:#95067f;
+	background:#505050;
 	top:40%;
 	z-index:0
 }
-.backkit{
+.backkit-hide{
 	position: fixed;
 	display: block;
-	top: 50%;
-	left:0;
-	height: 40px;
-	width: 20px;
-	background: #fff;
-}
-.backtolist-hide{
-	position: absolute;
-	width: 140px;
-	height: 40px;
+	top: 45%;
 	left:-140px;
-	top: 0;
-	line-height:40px;
-	text-align:center;
-	background: #fff;
+	height: 40px;
+	width: 160px;
+	background: rgba(255,255,255,0.75);
+	-webkit-box-shadow:0 0 1px rgba(80,80,80,0.2);
 	-webkit-transition:all 200ms ease;
 	-webkit-transition-property:left
 }
-.backtolist-show{
+.backkit-show{
+	position: fixed;
+	display: block;
+	top: 45%;
+	left:0px;
+	height: 40px;
+	width: 160px;
+	background: rgba(255,255,255,0.75);
+	-webkit-box-shadow:0 0 1px rgba(80,80,80,0.2);
+	-webkit-transition:all 200ms ease;
+	-webkit-transition-property:left
+}
+.backtolist{
 	position: absolute;
 	width: 140px;
 	height: 40px;
-	left:0px;
-	top: 0;
+	left: 0;
+	top: 0;text-align: center;
 	line-height:40px;
-	text-align:center;
-	background: #fff;
-	-webkit-transition:all 200ms ease;
-	-webkit-transition-property:left
 }
 .tiny{
-	position: relative;
+	position: absolute;
 	vertical-align: text-top;
 	text-align: center;
 	display: inline-block;
 	width: 20px;
 	height: 20px;
-	left:0;
-	top:10px;
+	left: 140px;
+	top: 10px;
 }
 </style>
-<title>茹果</title>
-<div id="warning" style="display:none"><h4>您当前处于非验证状态，页面仅供浏览。如需使用预约服务，敬请关注微信号:iFruits_cn。</h4></div>
+<title>在线点单</title>
+<div id="warning" style="display:none"><h4 id="warning-desc"></h4></div>
 <div id="sortcontent" class="content-frame" style="display: none;">
 	<section class="tips" id='tips-sortcontent'>
 		<header>
@@ -767,21 +764,25 @@ footer {
 <div class="right-footer"></div>
 </footer>
 <div class="toast" id="mytoast"></div>
-<div class="backkit" id="backkit" style="display:none">
-<div class="tiny" id="tiny">
-<div class="backtolist-hide" id="backtolist" >
-<h4>返回至店铺列表</h4>
-</div>
-</div>
+<div class="backkit-hide" id="backkit" style="display:none">
+<span class="backtolist" id="backtolist" >
+<h4>返回列表</h4>
+</span>
+<span class="tiny" id="tiny"></div>
+</span>
 <script type="text/javascript">
 
-var storeid=1;
 //baseid
+var storeid=1;
 var sellerid="<?php echo $sellerId?>";
 var openid="<?php echo $openId?>";
 var firstsortid=-1;
 var isfromfather=true;
-var identitykey="<?php echo ($key?$key:'');?>";
+//fake
+identitykey=123123123123123123123;
+//var identitykey="<?php echo ($key?$key:'');?>";
+var publicID=null;
+var isvip=true;
 
 //错误常量
 var WRONGURL='wrongurl';
@@ -813,6 +814,7 @@ window.onload = function(){
 	document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
 		WeixinJSBridge.call('hideToolbar');
 	});
+	document.getElementById("warning-desc").innerHTML='您当前处于非验证状态，页面仅供浏览。如需使用预约服务，敬请关注微信号:'+publicID;
 	if(verifybaseid()){
 		if(!verifyidentitykey()){
 			callwrongkey();
@@ -869,7 +871,7 @@ function verifybaseid(){
 			}
 		}
 	}
-	if(openid==null||openid==''||sellerid==null||sellerid==''){
+	if(openid==null||openid==''||sellerid==null||sellerid==''||storeid==null||storeid==''){
 		return false;
 	}else{
 		return true;

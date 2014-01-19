@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=100%, initial-scale=1.0, user-scalable=no">
+	<meta content="telephone=no" name="format-detection">
+	<script type="text/javascript" charset="utf-8" src="shoplist.js"></script>
+</head>
+
+<body ontouchstart="return true;">
+<style>
+* {
+	-webkit-touch-callout:none;
+	-webkit-text-size-adjust:none;
+	-webkit-tap-highlight-color:rgba(0,0,0,0);
+	-webkit-user-select:none;
+	-webkit-box-sizing:border-box
+}
+a:link;
+	a:visited;
+	a:hover;
+	a:active {
+	text-decoration:none;
+	color:inherit;
+	font-weight:inherit
+}
+a,input,button,li {
+	-ms-touch-action:none!important
+}
+h4,h5,p,label {
+	color:#505050
+}
+h4 {
+	font-size:16px;
+	margin:0;
+	font-weight:bold
+}
+p,label {
+	font-size:13px;
+	margin:0;
+	font-weight:normal
+}
+h5 {
+	opacity:.75;
+	font-size:13px;
+	margin:0;
+	font-weight:normal
+}
+input,textarea {
+	-webkit-user-select:auto
+}
+body {
+	background-color:#f9f9f9;
+	font-size:16px;
+	font-weight:normal;
+	font-family:"Arial",Helvetica,sans-serif;
+	padding:0;
+	margin:0
+}
+.body-with-header {
+	padding-bottom:0;
+	padding-top:50px
+}
+.body-with-footer {
+	padding-bottom:50px;
+	padding-top:0
+}
+footer {
+	position:fixed;
+	z-index:100;
+	height:auto;
+	width:100%;
+	border:0;
+	background:#f5f5f5;
+	display:block;
+	-webkit-box-shadow:0 0 1px rgba(0,0,0,0.2)
+}
+.footer-to-top {
+	top:0;
+	bottom:auto
+}
+.footer-to-bottom {
+	top:auto;
+	bottom:0
+}
+.left-footer {
+	float:left;
+	height:100%;
+	width:auto;
+	display:inline-block;
+	z-index:1
+}
+.center-footer {
+	height:100%;
+	padding:8px 10px;
+	width:auto;
+	display:inline-block;
+	z-index:-1
+}
+.right-footer {
+	float:right;
+	height:100%;
+	width:auto;
+	display:inline-block;
+	z-index:1
+}
+#mainfooter {
+	height:50px
+}
+#paytitle {
+	position:relative;
+	line-height:34px;
+	float:left
+}
+.content-frame {
+	margin:0;
+	margin-top:10px;
+	width:100%;
+	position:relative
+}
+.tips {
+	background:#e9e9e9;
+	width:100%;
+	-webkit-box-shadow:0 0 1px rgba(0,0,0,0.2);
+	border:0;
+	margin:0;
+	margin-bottom:10px
+}
+.tips>header {
+	padding:8px 10px
+}
+.tips>header>h5 {
+	margin-top:3px
+}
+.tips>.tips-content {
+	padding:8px 10px;
+	background:#f5f5f5
+}
+.tips>.tips-content>p {
+	color:#505050;
+	margin:0
+}
+.ul-sort-listview {
+	margin:0;
+	padding:0
+}
+.store-item-nor {
+	background:#f5f5f5;
+	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.2);
+	list-style:none;
+	width:100%;
+	height:80px;
+	padding:0;
+	border:0;
+	margin:0;
+	margin-bottom:10px;
+	display:block;
+	position:relative;
+	overflow:hidden;
+	white-space:nowrap;
+	text-align:left
+}
+.store-item-nor:active {
+	background:#c1c1c1;
+	-webkit-box-shadow:none
+}
+.store-item-nor>img {
+	float:left;
+	height: 80px;
+	width:auto;
+	border-width:0;
+	white-space:nowrap;
+	overflow:hidden
+	z-index:-1;
+}
+.store-item-nor>.list-item-tips {
+	height:20px;
+	margin:30px 0;
+	float:right;
+	position:relative;
+	display:inline-block;
+	border-width:0;
+	white-space:nowrap;
+	overflow:hidden;
+	margin-right:20px
+}
+.store-item-nor>.list-item-icon {
+	height:20px;
+	width: 20px;
+	margin:30px 0;
+	float:right;
+	position:relative;
+	display:inline-block;
+	border-width:0;
+	white-space:nowrap;
+	overflow:hidden;
+	margin-right:20px
+}
+.store-item-nor>.mainarea-in-list {
+	position: absolute;
+	height:100%;
+	display:block;
+	width:100%;
+	margin-left:80px;
+	margin-right:40px;
+	padding:20px 10px;
+	background:linear-gradient(to right, rgba(245, 245, 245, 0.75) -40px, #f5f5f5 30px, rgba(245, 245, 245, 0.75) 100%);
+	-webkit-box-shadow:-3px 0px 2px rgba(0,0,0,0.2);
+
+}
+}
+.store-item-nor>.mainarea-in-list>h4,.store-item-nor>.mainarea-in-list>h5 {
+	text-align:left;
+	position:relative;
+	text-overflow:ellipsis;
+	-webkit-background-clip:padding;
+	background-clip:padding-box;
+	white-space:nowrap;
+	overflow:hidden
+}
+.store-item-nor>.mainarea-in-list>h5 {
+	margin-top:5px
+}
+.catalog-item {
+	background:#f5f5f5;
+	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.2);
+	list-style:none;
+	width:100%;
+	height:80px;
+	padding:0;
+	border:0;
+	margin:0;
+	margin-bottom:10px;
+	display:block;
+	position:relative;
+	overflow:hidden;
+	white-space:nowrap;
+	text-align:left
+}
+.catalog-item:active {
+	background:#c1c1c1;
+	-webkit-box-shadow:none
+}
+.catalog-item>img {
+	float:left;
+	position:relative;
+	height:80px;
+	width:80px;
+	border-width:0;
+	white-space:nowrap;
+	overflow:hidden
+}
+.catalog-item>.list-item-icon {
+	height:20px;
+	margin:30px 0;
+	width:20px;
+	float:right;
+	position:relative;
+	display:inline-block;
+	border-width:0;
+	white-space:nowrap;
+	overflow:hidden;
+	margin-right:20px
+}
+.catalog-item>.mainarea-in-list {
+	height:100%;
+	display:block;
+	width:auto;
+	margin-left:80px;
+	margin-right:40px;
+	padding:20px 10px
+}
+.catalog-item>.mainarea-in-list>h4,.catalog-item>.mainarea-in-list>h5 {
+	text-align:left;
+	position:relative;
+	text-overflow:ellipsis;
+	-webkit-background-clip:padding;
+	background-clip:padding-box;
+	white-space:nowrap;
+	overflow:hidden
+}
+.catalog-item>.mainarea-in-list>h5 {
+	margin-top:5px
+}
+.ul-catalog-listview {
+	margin:0;
+	padding:0;
+	margin-bottom:10px
+}
+.catalog-item-back {
+	display:block;
+	position:relative;
+	padding:0;
+	width:100%;
+	height:100%;
+	margin:0;
+	background:#f5f5f5;
+	box-shadow:0 0 2px rgba(0,0,0,0.2);
+	-webkit-box-shadow:0 0 1px rgba(0,0,0,0.2);
+	list-style:none;
+	border:0;
+	overflow:hidden;
+	white-space:nowrap;
+	text-align:left
+}
+.catalog-item-back-showdesc {
+	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.25) inset;
+	background-color:#fffafe
+}
+.catalog-item-back>.mainarea-in-list {
+	position:relative;
+	display:block;
+	margin-right:100px;
+	padding:18px 0;
+	padding-left:10px;
+	height:100%;
+	width:auto
+}
+.catalog-item-back>.mainarea-in-list>h4,.catalog-item-back>.mainarea-in-list>h5 {
+	text-align:left;
+	margin:0;
+	width:auto;
+	position:relative;
+	text-overflow:ellipsis;
+	-webkit-background-clip:padding;
+	background-clip:padding-box;
+	white-space:nowrap;
+	overflow:hidden
+}
+.catalog-item-back>.mainarea-in-list>h5 {
+	margin-top:8px
+}
+.catalog-item-back>.showmore {
+	width:100%;
+	margin:0;
+	padding-bottom:2px;
+	position:absolute;
+	text-align:center;
+	top:auto;
+	bottom:0;
+	opacity:.45;
+	font-size:8px;
+	border:0
+}
+.catalog-item-back>.p-aside {
+	max-width:85px;
+	padding:1px 5px;
+	margin:0;
+	position:absolute;
+	top:0;
+	bottom:auto;
+	color:#fff;
+	background:#95067f;
+	-webkit-box-shadow:1px .5px 1px rgba(0,0,0,0.45);
+	border:0
+}
+.catalog-item-back>.btnarea-in-list {
+	float:right;
+	height:100%;
+	padding:20px 0;
+	padding-right:10px;
+	position:relative;
+	display:inline-block
+}
+.catalog-item-back>.tipsarea-in-list {
+	display:inline-block;
+	float:right;
+	height:100%;
+	padding:30px 10px;
+	position:relative;
+	border:0
+}
+.catalog-item-back>.descarea-in-list {
+	padding:0;
+	position:relative;
+	min-height:100px;
+	width:100%;
+	height:auto;
+	display:block;
+	overflow:hidden;
+	border-width:0;
+	white-space:nowrap
+}
+.catalog-item-back>.descarea-in-list>img {
+	height:auto;
+	width:100%;
+	display:block;
+	position:relative
+}
+.catalog-item-back>.descarea-in-list>p {
+	padding:10px 10px;
+	height:auto;
+	width:auto;
+	left:0;
+	right:0;
+	bottom:0;
+	margin:0;
+	color:#fff;
+	background:rgba(196,110,182,0.8);
+	position:absolute;
+	text-overflow:ellipsis;
+	white-space:normal;
+	overflow:hidden;
+	display:block
+}
+#catalog-first-item,#order-first-item {
+	height:100%;
+	min-height:0;
+	background:#e9e9e9
+}
+#catalog-first-item>.mainarea-in-list {
+	margin-right:0
+}
+#catalog-first-item>.mainarea-in-list>h5 {
+	white-space:pre-wrap
+}
+#catalog-first-item>.mainarea-in-list,#order-first-item>.mainarea-in-list {
+	padding:8px 10px
+}
+#catalog-first-item>.mainarea-in-list>h5,#order-first-item>.mainarea-in-list>h5 {
+	margin-top:4px
+}
+#order-first-item>.btnarea-in-list {
+	padding:8px
+}
+.single-btnarea {
+	width:100%;
+	margin-bottom:10px
+}
+.btn-icon {
+	position:relative;
+	display:block;
+	margin:0;
+	padding:0;
+	width:50px;
+	border:0;
+	background:#f1f1f1;
+	-webkit-box-shadow:0 0 1px rgba(0,0,0,0.4)
+}
+.btn-icon:active {
+	background:#c1c1c1;
+	-webkit-box-shadow:none;
+	transition:all 100ms ease-out;
+	-webkit-transition:all 100ms ease-out
+}
+.btn-icon:disabled {
+	background:#fbf3fa;
+	-webkit-box-shadow:none
+}
+.btn-icon>.img-in-btn {
+	height:20px;
+	width:20px;
+	vertical-align:text-top;
+	display:inline-block;
+	position:relative
+}
+.btn-icon-text {
+	display:block;
+	margin:0;
+	padding:0;
+	width:auto;
+	position:relative;
+	border:0;
+	background:#f1f1f1;
+	-webkit-box-shadow:0 0 1px rgba(0,0,0,0.4)
+}
+.btn-icon-text:active {
+	background:#c1c1c1;
+	-webkit-box-shadow:none;
+	transition:all 100ms ease-out;
+	-webkit-transition:all 100ms ease-out
+}
+.btn-icon-text:disabled {
+	background:#fbf3fa;
+	-webkit-box-shadow:none
+}
+.btn-icon-text>.text-in-btn {
+	font-size:16px;
+	margin-left:10px;
+	margin-right:10px;
+	line-height:20px;
+	vertical-align:text-top;
+	display:inline-block;
+	font-weight:700;
+	color:#505050
+}
+.btn-icon-text>.img-in-btn {
+	margin-right:10px;
+	height:20px;
+	width:20px;
+	vertical-align:text-top;
+	display:inline-block;
+	position:relative
+}
+.btn-highlight {
+	background-color:#f8ccec
+}
+.btn-icon.button-minus,.btn-icon.button-plus {
+	height:40px;
+	width:45px
+}
+#pay-btn {
+	height:100%;
+	width:auto;
+	-webkit-box-shadow:-1px 0 2px rgba(0,0,0,0.4)
+}
+#pay-btn:active,#pay-btn:disabled {
+	-webkit-box-shadow:none
+}
+#back-btn,#sort-btn {
+	height:100%
+}
+#havelook-btn,#clear-btn {
+	height:40px
+}
+#reload-btn,#newstart-btn,#submit-btn,#phonenext-btn{
+	height:50px;
+	width:100%
+}
+.info {
+	background:#e9e9e9;
+	margin-bottom:10px;
+	-webkit-box-shadow:0 0 1px rgba(0,0,0,0.2)
+}
+.info>header {
+	padding:8px 10px
+}
+.info>header>h4 {
+	color:#505050
+}
+.info-content {
+	padding:8px 10px;
+	background:#f5f5f5;
+	display:block
+}
+.form-content{
+	margin-top:10px;
+	margin-bottom: 10px;
+}
+.form-content>.label-main {
+	margin-bottom:3px;
+	margin-right:20px;
+	display:inline-block;
+	vertical-align:text-top
+}
+.form-content>.label-tips {
+	color:#b00;
+	margin-bottom:3px;
+	display:inline-block;
+	vertical-align:text-top
+}
+.form-content>.label-desc {
+	width:100%;
+	margin-top:3px;
+	display:block;
+	opacity:.45
+}
+.form-content>input {
+	width:100%;
+	padding:0;
+	margin:0;
+	height:30px;
+	font-size:16px;
+	font-family:"Arial",Helvetica,sans-serif;
+	border:0
+}
+.form-content>select {
+	width:100%;
+	padding:0;
+	margin:0;
+	height:30px;
+	font-size:16px;
+	font-family:"Arial",Helvetica,sans-serif;
+	background-color:#fff;
+	border:0;
+	-webkit-appearance:none
+}
+.form-content>textarea {
+	width:100%;
+	padding:0;
+	margin:0;
+	height:70px;
+	resize:none;
+	white-space:pre-wrap;
+	font-size:16px;
+	font-family:"Arial",Helvetica,sans-serif;
+	border:0
+}
+.verifycode-area{
+	width:100%;
+	height: 50px;
+	padding:0;
+	margin:0;
+	display: block;
+}
+.verifycode-area>input{
+	display: inline;
+	width:48%;
+	padding:0;
+	margin:0;
+	height:30px;
+	font-size:16px;
+	float: left;
+	vertical-align: text-top;
+	font-family:"Arial",Helvetica,sans-serif;
+	border:0
+}
+.verifycode-area>img{
+	display: inline;
+	width:48%;
+	padding:0;
+	margin:0;
+	float: right;
+	height:30px;
+	vertical-align: text-top;
+	border:0
+}
+.verifycode-area>.label-desc{
+	display: block;
+	float: right;
+	margin-top:3px;
+	opacity:.45
+}
+.toast {
+	background:rgba(0,0,0,0.5);
+	width:auto;
+	padding:0 2.5%;
+	left:-105%;
+	min-width:100px;
+	max-width:100%;
+	min-height:40px;
+	color:#fff;
+	line-height:40px;
+	text-align:center;
+	position:fixed;
+	float:center;
+	top:30px;
+	z-index:999999;
+	font-weight:bold
+}
+.toast-hide {
+	left:-105%;
+	-webkit-transition:all 200ms ease;
+	-webkit-transition-property:left
+}
+.toast-show {
+	left:0;
+	-webkit-transition:all 200ms ease;
+	-webkit-transition-property:left
+}
+.up-frame {
+	position:absolute;
+	height:100%;
+	width:100%;
+	padding-top:10px;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	z-index:200;
+	background-color:#f9f9f9
+}
+#error {
+	z-index:1000
+}
+#loading {
+	position:fixed;
+	top:0;
+	opacity:.75
+}
+#loading>#loadingtips {
+	position:absolute;
+	padding:0;
+	margin:0;
+	font-size:16px;
+	padding-top:75px;
+	top:40%
+}
+#warning {
+	background:#e7322c;
+	margin-top:10px;
+	padding:8px 10px;
+	color:#fff;
+	-webkit-box-shadow:0 0 1px rgba(0,0,0,0.2);
+	border:0
+}
+#warning>h4 {
+	margin:0;
+	padding:0;
+	color:#fff;
+	font-size:14px
+}
+.bar {
+	width:50px;
+	height:50px;
+	top:50%;
+	-webkit-border-radius:7.5em;
+	border-radius:7.5em;
+	margin-right:2px;
+	position:absolute;
+	-webkit-box-shadow:0 3px 16px rgba(149,6,127,0.35)
+}
+#loadingshapedark {
+	background:#f3eaf2;
+	top:40%;
+	z-index:1
+}
+#loadingshapelight {
+	background:#95067f;
+	top:40%;
+	z-index:0
+}
+</style>
+<title>店铺列表</title>
+<div id="warning" style="display:none"><h4 id="warning-desc"></h4></div>
+<div id="storelisttitle" class="titlebar"><h4 id="title-desc"></h4></div>
+<div id="storelistcontent" class="content-frame">
+	<ul id="sort-normallist" class="ul-sort-listview"></ul>
+</div>
+<div id="error" class="up-frame" style="display: none;">
+	<section class="tips" id='tips-error'>
+		<header>
+			<h4 id="tips-title-error">>_<~ 出错了</h4>
+		</header>
+		<div class="tips-content">
+			<p id="tips-errordesc-error"></p>
+		</div>
+	</section>
+	<div class="single-btnarea" id="reload-btnarea">
+		<button class="btn-icon-text" id="reload-btn">
+			<span class="text-in-btn">重试</span>
+		</button>
+	</div>
+</div>
+<div id="loading" class="up-frame" style="display: none;">
+	<div id="loadingshapedark" class="bar"></div>
+	<div id="loadingshapelight" class="bar"></div>
+	<p id="loadingtips"></p>
+</div>
+<div class="toast" id="mytoast"></div>
+<script type="text/javascript">
+
+    //fake
+	var sellerid=9;
+	var openid='lvxiang';
+	var identitykey=123123123;
+	var publicID='iFruits_cn';
+	//baseid
+	// var sellerid="<?php echo $sellerId?>";
+	// var openid="<?php echo $openId?>";
+	// var identitykey="<?php echo ($key?$key:'');?>";
+	
+	//错误常量
+	var WRONGURL='wrongurl';
+	var WRONGKEY='wrongkey';
+	var WRONGDATA='wrongdata';
+	var WRONGINIT='wronginit';
+
+	//fake
+	var BASEURLICON='http://192.168.1.196/weChat/img/wap/myicon-storelist.png';
+	//基地址
+	// var BASEURL='/weChat/';
+	// var BASEURLICON='/weChat/img/wap/myicon-storelist.png';
+
+	//全局运行变量
+	var isverified=true;
+
+	window.onload = function(){
+		document.getElementById("warning-desc").innerHTML='您当前处于非验证状态，页面仅供浏览。如需使用预约服务，敬请关注微信号:'+publicID;
+		if(verifybaseid()){
+			if(!verifyidentitykey()){
+				callwrongkey();
+			}
+			filllist();
+		}else{
+			callerror();
+		}
+	}
+
+	//基础id获取及url校验
+	function verifybaseid(){
+		if(openid==null||openid==''||sellerid==null||sellerid==''){
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	//身份key校验
+	function verifyidentitykey(){
+		function writetocookie(){
+			var cookiestring=sellerid+'-'+openid+'-'+'identitykey'+'&='+identitykey;
+			var date=new Date(); 
+			date.setTime(date.getTime()+30*24*3600*1000); 
+			cookiestring=cookiestring+'; expires='+date.toGMTString()+';path=/'; 
+			document.cookie=cookiestring; 
+		}
+		function readfromcookie(){
+			var cookiestring=document.cookie.split('; ');
+			var iskeyready=false;
+			for(var i=0;i<cookiestring.length;i++){
+				var cookieitem=cookiestring[i].split('&=');
+				if(cookieitem[0]==sellerid+'-'+openid+'-'+'identitykey'){
+					identitykey=cookieitem[1];
+					iskeyready=true;
+				}
+			} 
+			return iskeyready;
+		}	
+		function writetolocalstorage(){
+			if (localStorage) {
+				localStorage.setItem(sellerid+'-'+openid+'-'+'identitykey',identitykey);
+			}
+		}
+		function readfromlocalstorage(){
+			var iskeyready=false;
+			if (localStorage) {
+				if(localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey')){
+					identitykey=localStorage.getItem(sellerid+'-'+openid+'-'+'identitykey');
+					var iskeyready=true;
+				}
+			}
+			return iskeyready;
+		}
+		if(identitykey==null||identitykey==''){
+			if(!readfromcookie()&&!readfromlocalstorage()){
+				return false;
+			}else{
+				return true;
+			}
+		}else{
+			writetocookie();
+			writetolocalstorage();
+			return true;
+		}
+	}
+
+	function filllist(){
+		var mystorelist=datasource.storelist;
+		insert='';
+		for(var i=0;i<mystorelist.length;i++){
+			insert+='<a class="store-item-nor" href="'+mystorelist[i].url+'">'+
+			'<img src='+mystorelist[i].logo+'>'+
+			'<div class="mainarea-in-list">'+
+			'<h4>'+mystorelist[i].storename+'</h4>'+
+			'<p>'+mystorelist[i].announcement+'</p>'+
+			'</div>';
+			if(mystorelist[i].storestatus=='innormal'){
+				insert+='<div class="list-item-icon" style="background:url('+BASEURLICON+')"></div>';
+			}else{
+				insert+='<h4 class="list-item-tips">休息中</h4>'
+			}
+			insert+='</a>';
+
+		}
+		document.getElementById("storelistcontent").innerHTML=insert;
+	}
+
+	//fakedatasource
+    var datasource={"storelist":[
+	{"storeid":0,"storename":"茹果","announcement":"开业八折酬宾","storestatus":"true","":"","logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":1,"storename":"黄焖鸡","announcement":"开业八折酬宾","storestatus":"true","logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":2,"storename":"吉祥馄饨","announcement":"开业八折酬宾","storestatus":"true","logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":3,"storename":"锅盖面","announcement":"开业八折酬宾","storestatus":"false","logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":4,"storename":"梓研汤包","announcement":"开业八折酬宾","storestatus":"false","logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
+	{"storeid":5,"storename":"淡然粥道","announcement":"开业八折酬宾","storestatus":"true","logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"}
+	]
+	};
+	//storestatus分true和false，当且仅当店铺处于正常状态并在营业时间内，值为true。
+
+	//全局唤起出错
+	function callerror(){
+		document.getElementById('error').style.display='block';
+		document.getElementById('tips-error').style.display='block';
+		document.getElementById('reload-btnarea').style.display='none';
+		document.getElementById('tips-errordesc-error').innerHTML='检测到您的url异常，请确保从微信公众账号访问哦~';
+
+	}
+
+
+	//key错误
+	function callwrongkey(){
+		isverified=false;
+		document.getElementById('warning').style.display = 'block';
+	}
+	
+</script>
+</body>
+</html>

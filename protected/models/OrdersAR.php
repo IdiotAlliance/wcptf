@@ -170,15 +170,20 @@ class OrdersAR extends CActiveRecord
 	public function setPoster($orderId, $posterId){
 		$poster = PostersAR::model()->find('id=:posterId', array(':posterId'=>$posterId));
 		$order = OrdersAR::model()->find('id=:orderId', array(':orderId'=>$orderId));
-		$order->poster_id = $posterId;
-		if($poster!=null){
-			$name = $poster->name;
-			$phone = $poster->phone;
-			$order->poster_name = $name;
-			$order->poster_phone = $phone;
+		if($order->status ==3){
+			return false;
+		}else{
+			$order->poster_id = $posterId;
+			if($poster!=null){
+				$name = $poster->name;
+				$phone = $poster->phone;
+				$order->poster_name = $name;
+				$order->poster_phone = $phone;
+			}
+			$order->status = 2;
+			$order->save();
+			return true;
 		}
-		$order->status = 2;
-		$order->save();
 	}
 	/*
 		获取店铺ID
@@ -405,8 +410,25 @@ class OrdersAR extends CActiveRecord
 	public function finishOrder($storeId, $orderId){
 		$order = OrdersAR::model()->find('store_id=:storeId and id=:orderId', 
 			array(':storeId'=>$storeId, ':orderId'=>$orderId));
-		$order->status=1;
-		$order->save();
+		if($order->status ==3){
+			return false;
+		}else{
+			$order->status=1;
+			$order->save();
+			return true;
+		}	
+	}
+	/*
+		检查订单状态
+	*/
+	public function checkOrderStatus($storeId, $orderId){
+		$order = OrdersAR::model()->find('store_id=:storeId and id=:orderId', 
+			array(':storeId'=>$storeId, ':orderId'=>$orderId));
+		if($order->status ==3){
+			return false;
+		}else{
+			return true;
+		}	
 	}
 
 	/*

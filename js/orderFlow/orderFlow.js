@@ -385,7 +385,7 @@ function updateAndRenderOrder(day, filter, updateTime, orderId){
 	            		var ele = filter+" .order-body .order-list";
 	            		var s= $(ele);
 	            		var t = s.children().length;
-	            		var pos = dynamicQueryOrderToList(day, filter, orderId)
+	            		var pos = dynamicQueryOrderToList(day, filter, orderId);
 	            		$(s.children()[pos]).html($("#orderTemplate").render(myOrder));
 	            		// 如果是选择的当前订单刷新详情页
 	            		if(orderId == currentOrder){
@@ -400,6 +400,14 @@ function updateAndRenderOrder(day, filter, updateTime, orderId){
 		}
 	}
     return myOrder;
+}
+//本地刷新订单
+function localDataUpdateOrder(day, filter, orderId, myOrder){
+	var ele = filter+" .order-body .order-list";
+	var s= $(ele);
+	var t = s.children().length;
+	var pos = dynamicQueryOrderToList(day, filter, orderId);
+	$(s.children()[pos]).html($("#orderTemplate").render(myOrder));
 }
 //动态查询订单在列表&&h获取订单在列表中的位置
 function dynamicQueryOrderToList(day, filter, orderId){
@@ -695,6 +703,11 @@ function dynamicAreaOrderList(filter){
 			}
 		}
 	}
+	refreshChooseOrder(filter);
+
+}
+//刷新订单当前选中
+function refreshChooseOrder(filter){
  	//默认选取第一个订单
  	var orderId = null;
     $((filter+" .order-body ul>li .order-item ul>li.order-content")).each(function(){
@@ -703,17 +716,32 @@ function dynamicAreaOrderList(filter){
     		return false;
     	}
     });
+	//判断当前订单在不在显示订单中
+	var tagIn = false;
+	$((filter+" .order-body ul>li .order-item ul>li.order-content")).each(function(){
+    	if($(this).is(":visible")){
+    		var tempId = $(this).attr("id");
+    		if(tempId == currentOrder){
+    			tagIn = true;
+    		}
+    	}
+    });
+    if(tagIn){
+    	
+    }else{
+    	currentOrder = orderId;
+    	$(".tab-content").scrollTop(0);
+    	//当前选中订单保持不变
+    }
     // 改变选择颜色
     $('.order-body ul>li .order-item ul>li.order-content').css("background-color", "#f7f7f7");
     $((filter+" .order-body ul>li .order-item ul>li.order-content")).each(function(){
-    	if($(this).is(":visible")){
+    	if($(this).attr("id")==currentOrder){
     		$(this).css("background-color", "#e7e7e7");
     		return false;
     	}
     });
-    currentOrder = orderId;
-    // alert(currentOrder);
-    fetchAndRenderOrderItems(orderId);
+    fetchAndRenderOrderItems(currentOrder);
 }
 
 //将数组转换成json数组 只限于1纬

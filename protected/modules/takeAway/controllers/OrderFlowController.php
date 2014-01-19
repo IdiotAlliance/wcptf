@@ -255,7 +255,7 @@ class OrderFlowController extends TakeAwayController
 		if(isset($_POST['orderId']) && isset($_POST['storeid'])){
 			$orderId = $_POST['orderId'];
 			$storeid = $_POST['storeid'];
-			ordersAR::model()->cancelOrder($storeid, $orderId);
+			OrdersAR::model()->cancelOrder($storeid, $orderId);
 			$arr=array('success'=>'1');
 			echo json_encode($arr);
 		}else{
@@ -272,7 +272,7 @@ class OrderFlowController extends TakeAwayController
 			$orderIds = $_POST['orderIds'];
 			$storeid = $_POST['storeid'];
 			foreach ($orderIds as $orderId) {
-				ordersAR::model()->cancelOrder($storeid, $orderId);
+				OrdersAR::model()->cancelOrder($storeid, $orderId);
 			}
 			$arr=array('success'=>'1');
 			echo json_encode($arr);
@@ -289,9 +289,14 @@ class OrderFlowController extends TakeAwayController
 		if(isset($_POST['orderId']) && isset($_POST['storeid'])){
 			$orderId = $_POST['orderId'];
 			$storeid = $_POST['storeid'];
-			ordersAR::model()->finishOrder($storeid, $orderId);
-			$arr=array('success'=>'1');
-			echo json_encode($arr);
+			$result = OrdersAR::model()->finishOrder($storeid, $orderId);
+			if($result){
+				$arr=array('success'=>'1');
+				echo json_encode($arr);
+			}else{
+				$arr=array('success'=>'2');
+				echo json_encode($arr);
+			}
 		}else{
 			$arr=array('success'=>'0');
 			echo json_encode($arr);
@@ -304,11 +309,22 @@ class OrderFlowController extends TakeAwayController
 		if(isset($_POST['orderIds']) && isset($_POST['storeid'])){
 			$orderIds = $_POST['orderIds'];
 			$storeid = $_POST['storeid'];
+			$result = true;
 			foreach ($orderIds as $orderId) {
-				ordersAR::model()->finishOrder($storeid, $orderId);
+				if(OrdersAR::model()->checkOrderStatus($storeId, $orderId)==false){
+					$result = false;
+				}
 			}
-			$arr=array('success'=>'1');
-			echo json_encode($arr);
+			if($result){
+				foreach ($orderIds as $orderId) {
+					OrdersAR::model()->finishOrder($storeid, $orderId);
+				}
+				$arr=array('success'=>'1');
+				echo json_encode($arr);
+			}else{
+				$arr=array('success'=>'2');
+				echo json_encode($arr);
+			}
 		}else{
 			$arr=array('success'=>'0');
 			echo json_encode($arr);
@@ -463,11 +479,22 @@ class OrderFlowController extends TakeAwayController
     	if(isset($_POST['orderIds']) && isset($_POST['posterId'])){
     		$orderIds = $_POST['orderIds'];
     		$posterId = $_POST['posterId'];
-    		foreach ($orderIds as $orderId) {
-    			OrdersAR::model()->setPoster($orderId, $posterId);
-    		}
-    		$arr=array('success'=>'1');
-			echo json_encode($arr);
+    		$result = true;
+			foreach ($orderIds as $orderId) {
+				if(OrdersAR::model()->checkOrderStatus($storeId, $orderId)==false){
+					$result = false;
+				}
+			}
+			if($result){
+	    		foreach ($orderIds as $orderId) {
+	    			OrdersAR::model()->setPoster($orderId, $posterId);
+	    		}
+	    		$arr=array('success'=>'1');
+				echo json_encode($arr);
+			}else{
+	    		$arr=array('success'=>'2');
+				echo json_encode($arr);
+			}	
     	}else{
     		$arr=array('success'=>'0');
 			echo json_encode($arr);
