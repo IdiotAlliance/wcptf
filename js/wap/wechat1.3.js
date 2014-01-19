@@ -43,11 +43,12 @@ function order(productid1) {
     this.productid = productid1;
     this.count = 0;
 }
-function personalinfo(name1,phonenumber1,areaid1,areadesc1,tips1){
+function personalinfo(name1,phonenumber1,areaid1,areadesc1,vipcheck1,tips1){
 	this.uesrname=name1;
 	this.phonenumber=phonenumber1;
 	this.areaid=areaid1;
 	this.areadesc=areadesc1;
+	this.vipcheck=vipcheck1;
 	this.tips=tips1;
 }
 function hashMap(){  
@@ -78,8 +79,8 @@ function baseeventbind(){
 	//显示并绑定
 	if(isfromfather){
 		$('#backkit').show();
-		$('#tiny').click(function(){showbacktolist()});
-		$('#tiny').css('background',getbackground(TINYBTN));
+		$('#backkit').click(function(){showbacktolist();});
+		$('#tiny').css('background',getbackground(TINYSHOWBTN));
 		$('#backtolist').click(function(){history.back();});
 	}else{
 		$('#backkit').hide();
@@ -200,8 +201,8 @@ function readhistory(){
 function readorderlocal(){
 	orderarray=new Array();
 	if (localStorage) {
-		if(localStorage.getItem(sellerid+'-'+openid+'-'+'order')){
-			var orderarraytemp=localStorage.getItem(sellerid+'-'+openid+'-'+'order').split('&');
+		if(localStorage.getItem(storeid+'-'+openid+'-'+'order')){
+			var orderarraytemp=localStorage.getItem(storeid+'-'+openid+'-'+'order').split('&');
 			var orderindex=0;
 			for(var i=0;i<orderarraytemp.length;i++){
 				var ordertemp=orderarraytemp[i].split('*');
@@ -228,7 +229,7 @@ function writeorderlocal(){
 				orderstring+=orderarray[i].productid+'*'+orderarray[i].count;
 			}
 		}
-		localStorage.setItem(sellerid+'-'+openid+'-'+'order',orderstring);
+		localStorage.setItem(storeid+'-'+openid+'-'+'order',orderstring);
 	}
 	calctotalpay();
 }
@@ -236,21 +237,22 @@ function writeorderlocal(){
 function readinfolocal(){
 	mypersonalinfo=new personalinfo();
 	if (localStorage) {
-		if(localStorage.getItem(sellerid+'-'+openid+'-'+'info')){
-			var personalinfotemp=localStorage.getItem(sellerid+'-'+openid+'-'+'info').split('&');
-			mypersonalinfo=new personalinfo(personalinfotemp[0],personalinfotemp[1],personalinfotemp[2],personalinfotemp[3],null);
+		if(localStorage.getItem(storeid+'-'+openid+'-'+'info')){
+			var personalinfotemp=localStorage.getItem(storeid+'-'+openid+'-'+'info').split('&');
+			mypersonalinfo=new personalinfo(personalinfotemp[0],personalinfotemp[1],personalinfotemp[2],personalinfotemp[3],personalinfotemp[4],null);
 		}
 	}
 }
 //向本地写收货信息缓存
-function writeinfolocal(name1,number1,areaid1,areadesc){
+function writeinfolocal(name1,number1,areaid1,areadesc1,vipcheck1){
 	mypersonalinfo.uesrname=name1;
 	mypersonalinfo.phonenumber=number1;
 	mypersonalinfo.areaid=areaid1;
-	mypersonalinfo.areadesc=areadesc;
+	mypersonalinfo.areadesc=areadesc1;
+	mypersonalinfo.vipcheck=vipcheck1;
 	if(localStorage){	
-		var personalinfostring=mypersonalinfo.uesrname+'&'+mypersonalinfo.phonenumber+'&'+mypersonalinfo.areaid+'&'+mypersonalinfo.areadesc;
-		localStorage.setItem(sellerid+'-'+openid+'-'+'info',personalinfostring);
+		var personalinfostring=mypersonalinfo.uesrname+'&'+mypersonalinfo.phonenumber+'&'+mypersonalinfo.areaid+'&'+mypersonalinfo.areadesc+'&'+mypersonalinfo.vipcheck;
+		localStorage.setItem(storeid+'-'+openid+'-'+'info',personalinfostring);
 	}
 }
 
@@ -444,7 +446,8 @@ var PLUSBTN='.button-plus';
 var RIGHTARROR='rightarror';
 var NEWSTARTBTN='#newstart-btn';
 var INSLEEPBTN='insleepbtn';
-var TINYBTN='#tiny'
+var TINYSHOWBTN='tinyshow';
+var TINYHIDEBTN='tinyhide';
 
 //icon大小
 var ICONSIZE=20;
@@ -541,9 +544,26 @@ function personalinfoprepare(){
     insert+='</select>'+
     '<label class="label-desc"></label>'+
     '<label class="label-main">详细收货地点:*</label><label class="label-tips" style="display:none"></label>'+
-    '<textarea type="text" placeholder="请输入详细收货地址，如：仙1-202" data-maxinput="40" data-nonull="true" onblur=checkinput(this) id="areadesc" value=""></textarea>'+
-    '<label class="label-main">备注:</label><label class="label-tips" style="display:none"></label>'+
-    '<textarea type="text"  placeholder="请输入备注（如需使用会员卡，请留下卡号与登记时预留手机号，我们将与您电话核实）" data-maxinput="40" data-nonull="false" onblur=checkinput(this) id="tips" value=""></textarea>';
+    '<textarea type="text" placeholder="请输入详细收货地址，如：仙1-202" data-maxinput="40" data-nonull="true" onblur=checkinput(this) id="areadesc" value=""></textarea>';
+   	if(shopinfo.vipinfo!=null&&shopinfo.vipinfo!=''){
+    	if(isvip){
+	    	insert+='<label class="label-main">会员卡:</label><label class="label-tips" style="display:none"></label>'+
+		    '<div class="vip" style="width:100%">'+
+		    '<h4 style="width:auto;display:inline-block;margin-right:10px;font-size:14px;line-height:20px">使用会员卡</h4>'+
+		    '<input id="vipcheck" type="checkbox" name="checkbox1" style="width:20px;height:20px;margin:0;float:right;display:inline-block;vertical-align: text-top;"> '+
+		    '</div>'+
+		    '<label class="label-desc">会员卡服务:'+shopinfo.vipinfo+'</label>';
+	    }else{
+	    	insert+='<label class="label-main">会员卡:</label><label class="label-tips" style="display:none"></label>'+
+		    '<div class="vip" style="width:100%">'+
+		    '<h4 style="width:auto;display:inline-block;margin-right:10px;font-size:14px;line-height:20px;color:#909090">您尚未绑定会员卡</h4>'+
+		    '<input id="vipcheck" type="checkbox" name="checkbox1" disabled="true" style="width:20px;height:20px;margin:0;float:right;display:inline-block;vertical-align: text-top;"> '+
+		    '</div>'+
+		    '<label class="label-desc">会员卡服务:'+shopinfo.vipinfo+'</label>';
+	    }
+   	}
+   	insert+='<label class="label-main">备注:</label><label class="label-tips" style="display:none"></label>'+
+    '<textarea type="text"  placeholder="请输入备注" data-maxinput="40" data-nonull="false" onblur=checkinput(this) id="tips" value=""></textarea>';
 	$('#personalinfo-content').html(insert);
 	insert='';
 	insert+='<button class="btn-icon-text" onclick=submit() id="submit-btn">'+
@@ -555,6 +575,8 @@ function personalinfoprepare(){
 	$('#number').val(mypersonalinfo.phonenumber);
 	$('#select-area').val(mypersonalinfo.areaid);
 	$('#areadesc').val(mypersonalinfo.areadesc);
+	$('#vipcheck').attr("checked", mypersonalinfo.vipcheck==true);
+
 	if(!(mypersonalinfo.areaid==null||mypersonalinfo.areaid=='')){
 		checkselect('#select-area');
 	}
@@ -795,7 +817,7 @@ function fillproductcontent(sortid1){
 		        '<h5>￥'+productarray[i].price+'</h5>'+
 	    		'</div>'+
 	    		'<p class="p-aside"></p>'+
-	    		'<p class="showmore">···</p>'+
+	    		'<p class="showmore">◢</p>'+
         		'</li>';
             }
 		}
@@ -1074,13 +1096,20 @@ function Toast(msg,duration){
 }
 
 function showbacktolist(){
-	$('#backtolist').removeClass('backtolist-hide');
-	$('#backtolist').addClass('backtolist-show');
+	$('#backkit').removeClass('backkit-hide');
+	$('#backkit').addClass('backkit-show');
+	$('#tiny').css('background',getbackground(TINYHIDEBTN));
+	$('#backkit').click(function(){hidebacktolist();});
     clearTimeout(mytoasttimeout);
 	mytoasttimeout=setTimeout(function() {
-		$('#backtolist').removeClass('backtolist-show');
-		$('#backtolist').addClass('backtolist-hide');
-	}, 5000);
+		hidebacktolist();
+	}, 3000);
+	function hidebacktolist(){
+		$('#backkit').removeClass('backkit-show');
+		$('#backkit').addClass('backkit-hide');
+		$('#backkit').click(function(){showbacktolist();});
+		$('#tiny').css('background',getbackground(TINYSHOWBTN));
+	}
 }
 
 
@@ -1159,17 +1188,16 @@ function submit(){
 		myareaid=$('#select-area').val();
 		myareadesc=$('#areadesc').val();
 		mytips=$('#tips').val();
-		writeinfolocal(myuesrname,myphonenumber,myareaid,myareadesc);
+		myvipcheck=$('#vipcheck').is(':checked');
 
-		//fake
-		usecard=0;
+		writeinfolocal(myuesrname,myphonenumber,myareaid,myareadesc,myvipcheck);
 
 		if(confirm('确认提交订单？')){
 			$.ajax({
 		        type:'POST',
 		        dataType: 'json',
 		        url:  AJAXFORSUBMIT,
-		        data:{sellerid:sellerid,storeid:storeid,openid:openid,wapKey:identitykey,name:myuesrname,phone:myphonenumber,usecard:usecard,areaid:myareaid,areadesc:myareadesc,tips:mytips, products:products, nums:nums},
+		        data:{sellerid:sellerid,storeid:storeid,openid:openid,wapKey:identitykey,name:myuesrname,phone:myphonenumber,usecard:myvipcheck,areaid:myareaid,areadesc:myareadesc,tips:mytips, products:products, nums:nums},
 		        success:function(data,textStatus){
 		            if(data.success=='1'){
 						Toast('下单成功',2000);
@@ -1476,8 +1504,11 @@ function getbackground(btnname){
 		case INSLEEPBTN:
 		position=11;
 		break;
-		case TINYBTN:
+		case TINYSHOWBTN:
 		position=12;
+		break;
+		case TINYHIDEBTN:
+		position=13;
 		break;
 	}
 	var positionx=0-position*ICONSIZE;

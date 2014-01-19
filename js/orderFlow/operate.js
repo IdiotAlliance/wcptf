@@ -511,6 +511,10 @@ function setPosters(){
 	var orderId = $('.order-detail-header .order-name').attr("id");
 	var day = $('.order-footer .order-date-container').attr("id");
 	var posterId = $("input[name='ChoosePosterForm[poster]']:checked").val();
+	if(currentTab=='#tab3'){
+			alert('该订单已经取消无法完成！');
+			return false;
+	}
 	if(posterId==null){
 		alert("没有选择派送人员!");
 	}else{
@@ -529,11 +533,16 @@ function setPosters(){
 			        	var myOrder = MyOrder.getOrder(orderId);
 			        	myOrder.orderData.status = "派送中";
 		        		myOrder.save();
-			        	renderDeleOrder(day, currentTab, orderId);
-			        	dynamicAddOrderToList(day, "#tab2", myOrder);
-			        	//清除订单详情
-			        	fetchAndRenderOrderItems(null);
+		        		if(currentTab!="#tab2"){
+		        			renderDeleOrder(day, currentTab, orderId);
+			        		dynamicAddOrderToList(day, "#tab2", myOrder);
+		        		}else{
+		        			localDataUpdateOrder(day, currentTab, orderId, myOrder);
+		        		}
+		        		refreshChooseOrder(currentTab);
 		        		alert("订单派送成功！");
+		        	}else if(data.success==2){
+		        		alert("订单已被取消！");
 		        	}else{
 		        		alert("订单派送失败！");
 		        	}
@@ -554,6 +563,10 @@ function batDispatchOrders(){
 	if(orders.length==0){
 		alert("请选择一个订单！");
 		return false;
+	}
+	if(currentTab=='#tab3'){
+			alert('该订单已经取消无法完成！');
+			return false;
 	}
 	var posterId = $("input[name='ChoosePosterForm[poster]']:checked").val();
 	if(posterId==null){
@@ -576,12 +589,17 @@ function batDispatchOrders(){
 				        	var myOrder = MyOrder.getOrder(orders[i]);
 				        	myOrder.orderData.status = "派送中";
 			        		myOrder.save();
-				        	renderDeleOrder(day, currentTab, orders[i]);
-				        	dynamicAddOrderToList(day, "#tab2", myOrder);
-				        	//清除订单详情
-			        		fetchAndRenderOrderItems(null);
+    		        		if(currentTab!="#tab2"){
+    		        			renderDeleOrder(day, currentTab, orders[i]);
+    			        		dynamicAddOrderToList(day, "#tab2", myOrder);
+    		        		}else{
+    		        			localDataUpdateOrder(day, currentTab, orders[i], myOrder);
+    		        		}
 		        		}
+		        		refreshChooseOrder(currentTab);
 		        		alert("订单派送成功！");
+		        	}else if(data.success==2){
+		        		alert("订单已被取消！");
 		        	}else{
 		        		alert("订单派送失败！");
 		        	}
@@ -621,7 +639,7 @@ function cancel(){
 		        	renderDeleOrder(day, currentTab, orderId);
 		        	dynamicAddOrderToList(day, "#tab3", myOrder);
 		        	//清除订单详情
-			        fetchAndRenderOrderItems(null);
+			        refreshChooseOrder(currentTab);
 		        	alert("取消成功！");
 	        	}else{
 	        		alert("取消失败！");
@@ -668,8 +686,7 @@ function batCancelOrders(){
 			        	renderDeleOrder(day, currentTab, orders[i]);
 			        	dynamicAddOrderToList(day, "#tab3", myOrder);
 	        		}
-	        		//清除订单详情
-			        fetchAndRenderOrderItems(null);
+	        		refreshChooseOrder(currentTab);
 	        		alert("取消成功！");
 	        	}else{
 	        		alert("取消失败！");
@@ -686,10 +703,10 @@ function finish(){
 	var orderId = $('.order-detail-header .order-name').attr("id");
 	var day = $('.order-footer .order-date-container').attr("id");
 	ctUrl = baseUrl + '/index.php?r=takeAway/orderFlow/finishOrder';
-	// if(currentTab=='#tab3'){
-	// 		alert('该订单已经取消无法完成！');
-	// 		return false;
-	// }
+	if(currentTab=='#tab3'){
+			alert('该订单已经取消无法完成！');
+			return false;
+	}
 	if(ctUrl != '') {
 	    $.ajax({
 	        url      : ctUrl,
@@ -700,16 +717,20 @@ function finish(){
 	        success  : function(data)
 	        {
 	        	if(data.success==1){
-	        		//alert(html);
 	        		var myOrder = MyOrder.getOrder(orderId);
 	        		myOrder.orderData.status = "已完成";
 	        		myOrder.save();
-		        	renderDeleOrder(day, currentTab, orderId);
-		        	dynamicAddOrderToList(day, "#tab2", myOrder);
-		        	//清除订单详情
-			        fetchAndRenderOrderItems(null);
+	        		if(currentTab!="#tab2"){
+	        			renderDeleOrder(day, currentTab, orderId);
+		        		dynamicAddOrderToList(day, "#tab2", myOrder);
+	        		}else{
+	        			localDataUpdateOrder(day, currentTab, orderId, myOrder);
+	        		}
+	        		refreshChooseOrder(currentTab);
 		        	alert("订单已成功完成");
-	        	}else{
+	        	}else if(data.success==2){
+		        	alert("订单已被取消！");
+		        }else{
 	        		alert("订单完成失败！");
 	        	}
 	        },
@@ -729,10 +750,10 @@ function batfinishOrders(){
 		return false;
 	}
 	ctUrl = baseUrl + '/index.php/takeAway/orderFlow/batFinishOrder';
-	// if(currentTab=='#tab3'){
-	// 	alert('该订单已经取消无法完成！');
-	// 	return false;
-	// }
+	if(currentTab=='#tab3'){
+		alert('该订单已经取消无法完成！');
+		return false;
+	}
 	if(ctUrl != '') {
 	    $.ajax({
 	        url      : ctUrl,
@@ -751,13 +772,18 @@ function batfinishOrders(){
 			        	var myOrder = MyOrder.getOrder(orders[i]);
 		        		myOrder.orderData.status = "已完成";
 		        		myOrder.save();
-			        	renderDeleOrder(day, currentTab, orders[i]);
-			        	dynamicAddOrderToList(day, "#tab2", myOrder);
-			        	//清除订单详情
-			        	fetchAndRenderOrderItems(null);
+		        		if(currentTab!="#tab2"){
+		        			renderDeleOrder(day, currentTab, orders[i]);
+			        		dynamicAddOrderToList(day, "#tab2", myOrder);
+		        		}else{
+		        			localDataUpdateOrder(day, currentTab, orders[i], myOrder);
+		        		}
 	        		}
+	        		refreshChooseOrder(currentTab);
 	        		alert("订单已完成");
-	        	}else{
+	        	}else if(data.success==2){
+		        	alert("订单已被取消！");
+		        }else{
 	        		alert("订单完成失败！");
 	        	}
 	        	
