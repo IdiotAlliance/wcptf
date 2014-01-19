@@ -381,7 +381,6 @@ function saveOrderHeaderModify(){
 	var desc = $('#ModifyOrderHeaderForm_desc').attr("value");
 	var total = $('#ModifyOrderHeaderForm_total').attr("value");
 	var timestamp = (new Date()).valueOf();
-	alert(timestamp);
 	if(ctUrl != '') {
 	    $.ajax({
 	        url      : ctUrl,
