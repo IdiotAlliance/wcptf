@@ -10,6 +10,7 @@
 			<label>回复类型：<?php echo $setup[1]['type_name'];?></label>
         </li> 	
 	</ul>
+	<div id='custom-title'><label>自定义规则</label></div>
 	<ul id='custom-list'>
         <?php foreach($itemList as $item):?> 
         <li>
@@ -224,7 +225,7 @@
 				
 	</div>
 
-	<div class='batch-menu'>
+	<div class='batch-menu' style="display:none">
 		<ul>
 			<li><a href="javascript:;" id='saveRule'>保存</a></li>
 			<li><a href="javascript:;" id='cancelChange'>取消修改</a></li>			
@@ -737,6 +738,7 @@ $(document).ready(function(event){
 	                	current_imageText = json;
 	                	//更新左侧规则栏回复类型
             			$("#rule-list li").eq(0).find("label").text("回复类型："+current_type);
+            			$("input:file[name='coverImg']").prev().html('点击上传');						
 						$("#image-text input:text").eq(0).val("");
 						$("#image-text input:text").eq(1).val("");
 						$("#image-text input:text").eq(2).val("");
@@ -761,6 +763,7 @@ $(document).ready(function(event){
             			$("#rule-list li").eq(0).find("label").text("回复类型："+current_type);
 	                	current_json = json;
 	                	$("#subitems").html("");
+            			$("input:file[name='typeImg']").prev().html('点击上传');	                	
 						$("#image-texts input:text").eq(0).val("");
 						$("#image-texts input:text").eq(1).val("");
 						$("#image-texts input:text").eq(2).val("");
@@ -813,6 +816,7 @@ $(document).ready(function(event){
 	                dataType: 'json',
 	                success:function(json){
 	                	current_imageText = json;
+            			$("input:file[name='coverImg']").prev().html('点击上传');	         
             			$("#rule-list li").eq(1).find("label").text("回复类型："+current_type);
 
 						$("#image-text input:text").eq(0).val("");
@@ -839,6 +843,7 @@ $(document).ready(function(event){
             			$("#rule-list li").eq(1).find("label").text("回复类型："+current_type);	                	
 	                	current_json = json;
 	                	$("#subitems").html("");
+            			$("input:file[name='typeImg']").prev().html('点击上传');	                	
 						$("#image-texts input:text").eq(0).val("");
 						$("#image-texts input:text").eq(1).val("");
 						$("#image-texts input:text").eq(2).val("");
@@ -890,6 +895,7 @@ $(document).ready(function(event){
 	                data: {'sdmsgId':current_sdmsgs_id},
 	                dataType: 'json',
 	                success:function(json){
+    	             	$("input:file[name='coverImg']").prev().html('点击上传');           	
     	            	customize_li.find("label").text("回复类型："+current_type);
 						current_imageText = json;
 						$("#image-text input:text").eq(0).val("");
@@ -916,6 +922,7 @@ $(document).ready(function(event){
 	            		customize_li.find("label").text("回复类型："+current_type);          
 	                	current_json = json;
 	                	$("#subitems").html("");
+            			$("input:file[name='typeImg']").prev().html('点击上传');
 						$("#image-texts input:text").eq(0).val("");
 						$("#image-texts input:text").eq(1).val("");
 						$("#image-texts input:text").eq(2).val("");
@@ -952,6 +959,9 @@ $(document).ready(function(event){
             dataType: 'json',
             
             success:function(json){
+             	$("input:file[name='coverImg']").prev().html('点击上传');           	
+            	$("input:file[name='typeImg']").prev().html('点击上传');
+            	$(".batch-menu").eq(1).show();
             	$("#delRule").hide();
             	if(typeName == "回复类型：文本"){
             		current_text = json;
@@ -1074,6 +1084,9 @@ $(document).ready(function(event){
             dataType: 'json',
             
             success:function(json){
+             	$("input:file[name='coverImg']").prev().html('点击上传');           	
+            	$("input:file[name='typeImg']").prev().html('点击上传');
+            	$(".batch-menu").eq(1).show();
         	    $("#delRule").hide();
             	if(typeName == "回复类型：文本"){
             		current_text = json;
@@ -1197,6 +1210,10 @@ $(document).ready(function(event){
             dataType: 'json',
             
             success:function(json){
+             	$("input:file[name='coverImg']").prev().html('点击上传');           	
+            	$("input:file[name='typeImg']").prev().html('点击上传');
+            	$(".batch-menu").eq(1).show();            	
+        	    $("#delRule").show();
             	$("#customize-reply input").eq(0).val(ruleName);
             	$("#customize-reply input").eq(1).val(json[0].keyword);
             	$("#customize-reply select").eq(0).val(json[0].match_rule);

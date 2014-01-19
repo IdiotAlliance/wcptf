@@ -119,7 +119,7 @@
   #rule-left .batch-menu ul li a:hover{
     color: black;
 /*    background-color:#e9e9e9;
-    background-image:-moz-linear-gradient(top, #fff, #c8c8c8);
+    background-imag:-moz-linear-gradient(top, #fff, #c8c8c8);
     background-image:-ms-linear-gradient(top, #fff, #c8c8c8);
     background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#c8c8c8));
     background-image:-webkit-linear-gradient(top, #fff, #c8c8c8);
@@ -172,10 +172,18 @@
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#c8c8c8', GradientType=0)
   }
 
+  #custom-title{
+    position: fixed;
+    background-color: #E9E9E9;
+    width: 300px;
+    padding-top: 5px;
+    padding-left: 12px;
+  }
 
   #custom-list{
+    margin-top: 20px;
     margin-bottom: 20px;
-    max-height: 90%;
+    max-height: -webkit-calc(100% - 162px);;
     overflow: scroll;
     overflow-x: hidden !important;
     overflow-y: auto !important;
@@ -183,7 +191,7 @@
 
   #custom-list h5{
     overflow: hidden;
-    width: 250px;
+    width: 244px;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
