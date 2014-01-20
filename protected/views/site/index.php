@@ -42,8 +42,7 @@
     <div class='container'>
         <div class='row'>
             <div class='span4'>
-                <img src='' class='img-circle' data-src="holder.js/140x140" src="data:image/png;base64,">
-                <h2>独特的三栏式布局</h2>
+                <h3>独特的三栏式布局</h3>
                 <p>独一无二的三栏式界面设计，让您在PC机上享受到手机APP般的流畅用户体验</p>
                 <p>
                     <!--<a class="btn btn-default" role="button" href="#">
@@ -54,8 +53,7 @@
             </div>
         
             <div class='span4'>
-                <img src='' class='img-circle' data-src="holder.js/140x140" src="data:image/png;base64,">
-                <h2>高效的订单流管理</h2>
+                <h3>高效的订单流管理</h3>
                 <p>订单流实时推送、同步，订单管理精准迅速，让您绝不错过每一个可能的商机</p>
                 <p>
                     <!--<a class="btn btn-default" role="button" href="#">
@@ -65,8 +63,7 @@
             </div>
         
             <div class='span4'>
-                <img src='' class='img-circle' data-src="holder.js/140x140" src="data:image/png;base64,">
-                <h2>精美的微站点设计</h2>
+                <h3>精美的微站点设计</h3>
                 <p>业内最专业的设计师为您倾心打造微信站点，精美模板一键切换，用户体流畅爽快</p>
                 <p>
                     <!--<a class="btn btn-default" role="button" href="#">
