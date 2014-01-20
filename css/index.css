@@ -1,9 +1,44 @@
-#myCarousel{
-    margin-top:-20px;
+
+body{
+    font-family: "helvetica neue", helvetica, arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "Microsoft Yahei", "SimHei", Sans-serif
+}
+
+#intro{
+    margin-top: 41px;
+    height: 410px;
+    background:#022b47 url(../img/bg2.png);
+    background-size: cover;
+}
+
+.inr{
+    text-align: center;
+    padding-top: 130px;
+    margin: 0 auto;
+    width: 420px;
+}
+
+.btn-larger{
+    padding: 15px 100px;
+    font-size: 20px;
+    font-weight: bold;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+#intro h1{
+    font-size: 32px;
+    color: white;
+}
+
+#intro h2{
+    font-size: 18px;
+    color: #ccc;
+    font-weight: normal;
 }
 
 #features {
-    padding: 40px 0px;
+    padding: 30px 0px 60px 0;
     background: none repeat scroll 0% 0% rgb(67, 128, 121);
 }
 

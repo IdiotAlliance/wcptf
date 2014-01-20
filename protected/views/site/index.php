@@ -1,40 +1,21 @@
-<div id="myCarousel" class="carousel slide">
-    <ol class="carousel-indicators">
-    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-    <li data-target="#myCarousel" data-slide-to="1"></li>
-    </ol>
-    <!-- Carousel items -->
-    <div class="carousel-inner">
-        <div class="active item">
-            <img src='data:image/png;base64,'data-src="holder.js/1400x500/auto/#666:#6a6a6a/text:Welcome" alt="Welcome">
-            <div class="carousel-caption">
-              <h3>面向商家的第三方服务工具</h3>
-              <p>在这里你可以第一时间获取订单，与用户沟通</p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="data:image/png;base64," data-src="holder.js/1400x500/auto/#666:#6a6a6a/text:Welcome" alt="Welcome">  
-                <div class='container'>
-                <div class="carousel-caption">
-                    <h3>简单，好用的客户营销工具</h3>
-                    <p>在这里你可以第一时间获取订单，与用户沟通</p>
-                </div>
-                </div>
-        </div>
+
+<div id='intro'>
+    <div class="inr">
+        <h1>面向商家的第三方服务工具</h1>
+        <h2>在这里你可以管理好您的店铺、商品及其订单，随时与您的客户交流</h2>
+        <a class='btn btn-larger btn-success' href="<?php echo Yii::app()->createUrl('/accounts/register/association');?>">立即注册</a>
     </div>
-    <!-- Carousel nav -->
-    <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-    <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
 </div>
+
     
 <div id='features'>
     <div class='index-container'>
         <a class='feature'><i class="icon-shopping-cart icon-white"></i> 商品管理</a>
         <a class='feature'><i class="icon-user icon-white"></i> 会员管理</a>
         <a class='feature'><i class="icon-list-alt icon-white"></i> 订单管理</a>
-        <a class='feature'><i class="icon-star icon-white"></i> 活动管理</a>
         <a class='feature'><i class="icon-align-left icon-white"></i> 统计分析</a>
-        <!--<a class='feature'><i class="icon-bullhorn icon-white"></i> 及时通知</a>-->
+        <a class='feature'><i class="icon-bell icon-white"></i> 及时通知</a>
+        <a class='feature'><i class="icon-th-large icon-white"></i> 多店铺管理</a>
         <a class="tour-link">
             了解详细 <span class="icon-play icon-white"></span>     
         </a>
