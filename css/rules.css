@@ -20,7 +20,7 @@
 
   .sp-select{
     width: 100px;
-    height:25px;
+    height:30px;
     line-height: 20px;
     display: inline-block;
   }
@@ -278,12 +278,14 @@
 
   .imagetext-add{
   	text-align: center;
-  	padding-top: 12px;
+    vertical-align: center
+  	margin-top: 12px;
   	width: 90%;
   }
 
   .imagetext-add a{
   	padding-top: 7px;
+    padding-bottom: 7px;
   	display: block;
   	border-radius: 5px;
   	-moz-border-radius: 5px;
@@ -291,6 +293,10 @@
   	border: 3px dotted #b8b8b8;
   	height: 22px;
   	font-size: 16px;
+  }
+
+  .imagetext-add a:hover{
+    border: 3px solid #E9E9E9;
   }
 
   .reply-checkbox{

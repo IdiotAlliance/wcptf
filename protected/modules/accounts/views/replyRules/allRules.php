@@ -122,7 +122,7 @@
 				</div>
 			</div>
 		</div>
-		<label class='title-change resize'>回复内容：</label>
+		<label class='title-change resize' style="display:none" id='reply-title'>回复内容：</label>
 		<!--文本-->
 		<div class='reply-content' style="display:none" id='text'>
 			<textarea placeholder='请输入文本' style="width:90%;height:150px;overflow-y:auto;"></textarea>
@@ -959,6 +959,7 @@ $(document).ready(function(event){
             dataType: 'json',
             
             success:function(json){
+            	$("#reply-title").show();
              	$("input:file[name='coverImg']").prev().html('点击上传');           	
             	$("input:file[name='typeImg']").prev().html('点击上传');
             	$(".batch-menu").eq(1).show();
@@ -1084,6 +1085,7 @@ $(document).ready(function(event){
             dataType: 'json',
             
             success:function(json){
+            	$("#reply-title").show();
              	$("input:file[name='coverImg']").prev().html('点击上传');           	
             	$("input:file[name='typeImg']").prev().html('点击上传');
             	$(".batch-menu").eq(1).show();
@@ -1210,6 +1212,7 @@ $(document).ready(function(event){
             dataType: 'json',
             
             success:function(json){
+            	$("#reply-title").show();            	
              	$("input:file[name='coverImg']").prev().html('点击上传');           	
             	$("input:file[name='typeImg']").prev().html('点击上传');
             	$(".batch-menu").eq(1).show();            	
