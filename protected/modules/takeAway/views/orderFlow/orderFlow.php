@@ -362,7 +362,7 @@
 			   		</div>
 			   		<div class="order-line line-2">
 			   			<label class="order-username">姓名：{{:head.orderData.name}}</label>
-			   			<label class="order-usecard">{{:head.orderData.useCard}}</label>
+			   			<label class="order-usecard">({{:head.orderData.useCard}})</label>
 			   			{{if head.orderData.memberStatus != '0'}}
 			   				<a href="#" data-toggle='modal' data-target='#order-member-confirm-modal' class='order-member-confirm'>{{:head.orderData.memberStatus}}</a>
 			   			{{/if}}

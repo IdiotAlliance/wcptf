@@ -1188,7 +1188,7 @@ function submit(){
 		myareaid=$('#select-area').val();
 		myareadesc=$('#areadesc').val();
 		mytips=$('#tips').val();
-		myvipcheck=$('#vipcheck').is(':checked');
+		myvipcheck=($('#vipcheck').is(':checked'))?1:0;
 
 		writeinfolocal(myuesrname,myphonenumber,myareaid,myareadesc,myvipcheck);
 
@@ -1278,6 +1278,7 @@ function callsuccesspay(order){
 		'<br />联系电话：'+order.phone+
 		'<br />收货地点：'+order.address+
 		'<br />下单时间：'+order.ctime+
+		'<br />使用会员卡：'+order.use_card+
 		'<br />订单备注：'+(order.tips!=''?order.tips:'无')+
 		'<br />'+
 		'<br />订单明细：'+order.order_items+

@@ -42,7 +42,7 @@ input,textarea {
 	-webkit-user-select:auto
 }
 body {
-	background-color:#f4f4f4;
+	background-color:#fdfdfd;
 	font-size:16px;
 	font-weight:normal;
 	font-family:"Arial",Helvetica,sans-serif;
@@ -63,7 +63,7 @@ footer {
 	height:auto;
 	width:100%;
 	border:0;
-	background:#f8f8f8;
+	background:rgba(248, 248, 248, 0.8);
 	display:block;
 	-webkit-box-shadow:0 0 1px rgba(0,0,0,0.2)
 }
@@ -192,7 +192,8 @@ footer {
 	right:0;
 	bottom:auto;
 	color:#fff;
-	background:rgba(211, 15, 70, 0.85)
+	background:rgba(211, 15, 70, 0.75);
+	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.25);
 }
 .sort-item-nor {
 	background:#f8f8f8;
@@ -233,7 +234,7 @@ footer {
 	border-width:0;
 	white-space:nowrap;
 	overflow:hidden;
-	margin-right:20px
+	margin-right:10px
 }
 .sort-item-nor>.mainarea-in-list {
 	height:100%;
@@ -768,8 +769,8 @@ footer {
 <span class="backtolist" id="backtolist" >
 <h4>返回列表</h4>
 </span>
-<span class="tiny" id="tiny"></div>
-</span>
+<span class="tiny" id="tiny"></span>
+</div>
 <script type="text/javascript">
 
 //baseid
@@ -779,7 +780,7 @@ var openid="<?php echo $openId?>";
 var firstsortid=-1;
 var isfromfather=true;
 //fake
-identitykey=123123123123123123123;
+identitykey='123123123123123123123';
 //var identitykey="<?php echo ($key?$key:'');?>";
 var publicID=null;
 var isvip=true;
@@ -801,7 +802,6 @@ var AJAXFORSHOPLIST='http://192.168.1.196/weChat/index.php/wap/wap/getShopList';
 
 //fake
 var AJAXFORDATA='http://192.168.1.196/weChat/index.php/wap/wap/getData';
-
 //var AJAXFORDATA='<?php echo Yii::app()->createUrl('wap/wap/getData'); ?>';
 var AJAXFORSUBMIT='<?php echo Yii::app()->createUrl('wap/order/order'); ?>';
 var AJAXFORRESULT='<?php echo Yii::app()->createUrl('wap/order/getPartOrders'); ?>';
@@ -814,7 +814,6 @@ window.onload = function(){
 	document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
 		WeixinJSBridge.call('hideToolbar');
 	});
-	document.getElementById("warning-desc").innerHTML='您当前处于非验证状态，页面仅供浏览。如需使用预约服务，敬请关注微信号:'+publicID;
 	if(verifybaseid()){
 		if(!verifyidentitykey()){
 			callwrongkey();
@@ -1100,6 +1099,7 @@ function callerror(error, method){
 
 //key错误
 function callwrongkey(){
+	document.getElementById("warning-desc").innerHTML='您当前处于非验证状态，页面仅供浏览。如需使用本页面服务，敬请关注微信号:'+publicID;
 	isverified=false;
 	document.getElementById('warning').style.display = 'block';
 }

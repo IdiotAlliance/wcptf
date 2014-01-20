@@ -13,7 +13,7 @@ class OrderController extends Controller
 		$areaid = 0;
 		$sellerid = 0;
 		$storeid = 0;
-		$usecard = false;
+		$usecard = 0;
 		$areadesc = "";
 		$phone = 0;
 		$tips = "";
@@ -197,6 +197,7 @@ class OrderController extends Controller
 		}
 		//订单
 		$order = OrdersAR::model()->makeOrder($storeid, $member->id, $areaid, $areadesc, $phone, $tips, $name, $usecard);
+		
 		//子项订单
 		$len = count($products);
 		$total = 0;
@@ -251,7 +252,6 @@ class OrderController extends Controller
 		} else{
 			$arr=array('success'=>'2', 'result'=>$result);
 		}
-		// $arr=array('success'=>'1', 'result'=>'ok');
 		echo json_encode($arr);
 	}
 
@@ -351,6 +351,7 @@ class OrderController extends Controller
 							 "address"=>$order->address,
 							 "ctime"=>$order->ctime,
 							 "status"=>$order->status,
+							 "use_card"=>$order->use_card,
 							 "poster_name"=>$order->poster_id,
 							 'poster_phone'=>$posterPhone,
 							 'tips'=>$order->description,

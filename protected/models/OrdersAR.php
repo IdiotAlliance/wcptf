@@ -544,6 +544,7 @@ class OrdersAR extends CActiveRecord
 		$order = new OrdersAR;
 		$order->store_id = $storeid;
 		$order->member_id = $memberid;
+		$order->member_status = 0;
 		// 固化会员卡信息
 		if($member!=null){
 			$order->member_no = $member->cardno;
@@ -558,6 +559,8 @@ class OrdersAR extends CActiveRecord
 		if($area != null){
 			$order->area_name = $area->name;
 			$order->area_description = $area->description;
+		}else{
+			return false;
 		}
 		$order->address = $areadesc;
 		$order->phone = $phone;
@@ -650,9 +653,9 @@ class OrdersAR extends CActiveRecord
 		}
 		$order->address = $address;
 		if($order->use_card ==0){
-			$order->use_card =  "(非会员卡下单)";
+			$order->use_card =  "非会员卡下单";
 		}else{
-			$order->use_card = "(会员卡下单)";
+			$order->use_card = "会员卡下单";
 		}
 	}
 
