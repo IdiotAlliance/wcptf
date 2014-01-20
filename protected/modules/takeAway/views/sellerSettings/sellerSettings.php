@@ -29,6 +29,32 @@
 		-webkit-box-shadow: 0xp 1px 3px #808080;
 		margin-bottom: 10px;
 	}
+	.cover-desc {
+		margin-left: 50px;
+		position: relative;
+		overflow: hidden;
+		margin-right: 4px;
+		display: inline-block;
+		padding: 4px 10px 4px;
+		font-size: 14px;
+		line-height: 18px;
+		color: #fff;
+		text-align: center;
+		vertical-align: middle;
+		cursor: pointer;
+		background-color: #5bb75b;
+		border: 1px solid #cccccc;
+		border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+		border-bottom-color: #b3b3b3;
+		-webkit-border-radius: 4px;
+		-moz-border-radius: 4px;
+		border-radius: 4px;
+	}
+	.cover-desc.disabled{
+		background-color: #808080;
+		color: #fff;
+		cursor: default;
+	}
 	#seller_settings_container{
 		position: absolute;
 		left: 200px;
@@ -40,20 +66,66 @@
 		width: expression(document.width - 200 + "px");
 	}
 	#seller_settings_actions{
-		position:fixed;
-		background-color: #ffffff;
+		position: fixed;
+		left: 201px;
 		width: 100%;
 		padding-top: 10px;
 		padding-bottom: 10px;
 		padding-left: 20px;
-		box-shadow: 0px 1px 3px #808080;
-		-moz-box-shadow: 0px 1px 3px #808080;
+		background-color: #ffffff;
+		border-bottom: 1px solid #808080;
+		z-index: 100;
 	}
 	#seller_settings_main_container{
 		margin-top: 60px;
 		padding-left: 20px;
 		padding-right: 20px;
 		padding-bottom: 20px;
+	}
+	#instore_management table tr{
+		line-height: 100%;
+		vertical-align: center;
+	}
+	#instore_management table tr.instore_header{
+		background: #d3e8db;
+	}
+	#instore_management table tr.tr_type1{
+		background: #fff;
+	}
+	#instore_management table tr.tr_type2{
+		background: #f0f0f0;
+	}
+	#instore_management .instore_item{
+		display: inline-block;
+		height: 25px;
+		line-height: 25px;
+	}
+	#instore_management .instore_num{
+		position: relative;
+		display: inline-block;
+		top: -8px;
+		border-radius: 3px;
+		padding-left: 3px;
+		padding-right: 3px;
+		font-weight: bold;
+		color: #fff;
+	}
+	#instore_management .instore_num.safe{
+		background: #47a447;
+	}
+	#instore_management .instore_num.warning{
+		background: #ed9c28;
+	}
+	#instore_management .instore_num.danger{
+		background: #d2322d;
+	}
+	#instore_management .instore_label_text{
+		display: inline-block;
+		max-width: 100px;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		height: 25px;
+		line-height: 25px;
 	}
 </style>
 <div id="seller_settings_container">
@@ -64,7 +136,7 @@
 	</form>
 	<div id="seller_settings_actions">
 		<button id="seller_settings_save" class="btn btn-primary action_btn" onclick="submit()">保存</button>
-		<button id="seller_settings_cancel" class="btn action_btn" onclick="cancel()">放弃更改</button>
+		<button id="seller_settings_cancel" class="btn btn-default action_btn" onclick="cancel()">放弃更改</button>
 	</div>
 	
 	<div id="seller_settings_main_container">
@@ -102,7 +174,7 @@
 		<div class="config_card">
 			<div class="row">
 				<h4 class="span2">今日库存管理</h4>
-				<span class="btn span2" onclick="showEditModal()">
+				<span class="btn btn-default span2" onclick="showEditModal()">
 					<span class="icon-edit"></span>&nbsp;编辑产品库存
 				</span>
 			</div><br>
@@ -122,7 +194,7 @@
   	<input type="text" id="instore_modal_num">
   </div>
   <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">取消</button>
     <button class="btn btn-primary" onclick="editInstore()">确认修改</button>
   </div>
 </div>
@@ -179,7 +251,9 @@
 			 types.append('<tr>' +
 						  		'<td><b>' + type.type_name + '</b></td>' +
 						  		'<td id="pic_url_' + type.id + '">' + (type.picurl?type.picurl:"未上传图片") + '</td>' + 
-						  		'<td>' + '<input type="file" id="fileupload_' + type.id +'" name="hots"></td>' +
+						  		'<td>' + 
+						  			'<div id="uploadmask_' + type.id + '" class="cover-desc" onclick="$(\'#fileupload_' + type.id + '\').click();">点击上传图片</div>' +
+						  			'<input class="hidden" type="file" id="fileupload_' + type.id +'" name="hots"></td>' +
 						  		'<td>' + 
 						  			'<select onchange="select(this)" id="select_' + type.id + '">' +
 										'<option value="无">无</option>' +
@@ -193,6 +267,7 @@
 			//设置选项
 			$('#select_' + type.id).val(type.tag);
 			if(!type.hot){
+				$('#uploadmask_' + type.id).addClass('disabled');
 				$('#fileupload_' + type.id).attr('disabled', true);
 				$('#set_index_' + type.id).addClass('index_switch_disabled');
 			}else{
@@ -203,7 +278,7 @@
 			}
 			
 			/*图片上传*/
-			$("#fileupload_" + type.id).wrap("<form class='span2' id=\"myupload_" + type.id + "\" action='<?php echo Yii::app()->createUrl('takeAway/sellerSettings/imgUpload')?>/typeId/" + type.id + "' method='post' enctype='multipart/form-data'></form>");
+			$("#fileupload_" + type.id).wrap("<form class=\"hidden\" id=\"myupload_" + type.id + "\" action='<?php echo Yii::app()->createUrl('takeAway/sellerSettings/imgUpload')?>/typeId/" + type.id + "' method='post' enctype='multipart/form-data'></form>");
 		}
 	}
 
@@ -236,32 +311,55 @@
 
 	function initInstore(){
 		var instore = $('#instore_management');
+		var html = '<table class="table">';
 		for(index1 in data['types']){
 			var type = data['types'][index1];
-			if(type)
-			instore.append('<div class="row-fluid">' +
-								'<label class="span2 checkbox">' + 
-									'<input onclick="ontype(this)" type="checkbox" id="instore_type_cb_' + type.id + '" ' + 
-									'<b>' + type.type_name + '</b>' +
-								'</label>' +
-						   '</div>'
-					);
-			var html = '<div class="row-fluid" style="padding-left:20px;">';
-			for(index2 in type['products']){
-				var product = type['products'][index2];
-				html += '<div class="span3">' + 
-							'<label class="checkbox label">' +
-								'<input onclick="onpro(this)" type="checkbox" id="instore_pro_cb_' + 
-								product.id + '" name="' + type.id + '"/>' + 
-								product.pname +
-								'<div class="badge badge-' + (product.daily_instore>info_threshold?'success':(product.daily_instore>warn_threshold?'warning':'important')) + 
-								'" id="daily_instore_' + product.id + '">' + product['daily_instore'] + '</div>' +
+			if(type){
+				html += '<tr class="instore_header"><td colspan="4">' +
+							'<label class="checkbox">' + 
+								'<input onclick="ontype(this)" type="checkbox" id="instore_type_cb_' + type.id + '" ' + 
+								'<b>' + type.type_name + '</b>' +
 							'</label>' +
-						'</div>'
+						'</td></tr>';
+				if(type['products'].length > 0) html += '<tr class="tr_type1">';
+				length = type['products'].length - 1;
+				for(index2 in type['products']){
+					if(index2 % 4 == 0 && index2 / 4 > 0){
+						html += '</tr>';
+						if(length > index2){
+							if(Math.floor(index2 / 4) % 2 == 0){
+								html += '<tr class="tr_type1">';
+							}
+							else{
+								html += '<tr class="tr_type2">';
+							}
+						}
+					}
+					var product = type['products'][index2];
+					if(index2 == length)
+						html += '<td colspan="' + (4 - index2 % 4) + '">'; 
+					else
+						html += '<td>';
+					html += 	'<label class="checkbox">' +
+									'<input onclick="onpro(this)" type="checkbox" id="instore_pro_cb_' + 
+									product.id + '" name="' + type.id + '"/>' + 
+									'<div>' +
+									'<span class="instore_label_text">' + product.pname + 
+									'</span>&nbsp;<div class="instore_num ' + 
+									(product.daily_instore>info_threshold?'safe':(product.daily_instore>warn_threshold?'warning':'danger')) + 
+									'" id="daily_instore_' + product.id + '">' + 
+									product['daily_instore'] + '</div></div>' +
+									// '<div class="badge badge-' + (product.daily_instore>info_threshold?'success':(product.daily_instore>warn_threshold?'warning':'important')) + 
+									// '" id="daily_instore_' + product.id + '">' +  + '</div>' +
+								'</label>' + 
+							'</td>';
+				}
+				if(type['products'].length % 4 > 0)
+					html += '</tr>';
 			}
-			html += '</div><br>';
-			instore.append(html);
 		}
+		html += '</table>';
+		instore.html(html);
 	}
 
 	// 推荐商品事件
@@ -270,12 +368,15 @@
 		if($(elem).val()=='无'){
 			if($('#set_index_' + typeid).html() == '首页推荐'){
 				$('#set_index_' + typeid).html('设为首页');
+				$('#set_index_' + typeid).removeClass('set_index');
 			}
 			$('#set_index_' + typeid).addClass('index_switch_disabled');
 			$('#fileupload_' + typeid).attr('disabled', true);
+			$('#uploadmask_' + typeid).addClass('disabled');
 		}else{
 			$('#set_index_' + typeid).removeClass('index_switch_disabled');
 			$('#fileupload_' + typeid).attr('disabled', false);
+			$('#uploadmask_' + typeid).removeClass('disabled');
 		}
 	}
 
@@ -358,15 +459,15 @@
 						var proid   = product.id;
 						if($('#instore_pro_cb_' + proid).attr('checked')){
 							$('#daily_instore_' + proid).html(num);
-							$('#daily_instore_' + proid + '.badge-success').removeClass('badge-success');
-							$('#daily_instore_' + proid + '.badge-warning').removeClass('badge-warning');
-							$('#daily_instore_' + proid + '.badge-important').removeClass('badge-important');
+							$('#daily_instore_' + proid).removeClass('safe');
+							$('#daily_instore_' + proid).removeClass('warning');
+							$('#daily_instore_' + proid).removeClass('danger');
 							if(parseInt(num) > info_threshold){
-								$('#daily_instore_' + proid).addClass('badge-success');
+								$('#daily_instore_' + proid).addClass('safe');
 							}else if(parseInt(num) > warn_threshold){
-								$('#daily_instore_' + proid).addClass('badge-warning');
+								$('#daily_instore_' + proid).addClass('warning');
 							}else{
-								$('#daily_instore_' + proid).addClass('badge-important');
+								$('#daily_instore_' + proid).addClass('danger');
 							}
 						}
 					}

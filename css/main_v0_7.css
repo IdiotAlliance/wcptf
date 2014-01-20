@@ -1,7 +1,7 @@
   /*组件全局样式设置 */
   html,body{
     height: 100%;
-    overflow-x:hidden;  
+    min-width: 1020px;
   }
 
   .task{
@@ -28,6 +28,60 @@
   p.desc{
     font-size: 12px;
     color: #999;
+  }
+
+  .btn{
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.428571429;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+  }
+  .btn-default {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+  }
+  .btn-primary {
+    color: #fff;
+    background-color: #428bca;
+    border-color: #357ebd;
+  }
+
+  .btn-success {
+    color: #fff;
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+  }
+
+  .btn-info {
+  color: #fff;
+  background-color: #5bc0de;
+  border-color: #46b8da;
+  }
+  .btn-warning {
+  color: #fff;
+  background-color: #f0ad4e;
+  border-color: #eea236;
+  }
+
+  .btn-danger {
+  color: #fff;
+  background-color: #d9534f;
+  border-color: #d43f3a;
   }
 
   .left{
@@ -206,12 +260,13 @@
     margin:0; 
     margin-bottom:1px;
     background-color:#e7e7e7;
-    background-image:-moz-linear-gradient(top, #f7f7f7, #cfcfcf);
+    /*background-image:-moz-linear-gradient(top, #f7f7f7, #cfcfcf);
     background-image:-ms-linear-gradient(top, #f7f7f7, #cfcfcf);
     background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#f7f7f7), to(#cfcfcf));
     background-image:-webkit-linear-gradient(top, #f7f7f7, #cfcfcf);
     background-image:-o-linear-gradient(top, #f7f7f7, #cfcfcf);
     background-image:linear-gradient(top, #f7f7f7, #cfcfcf);
+    */
     background-repeat:repeat-x;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f7f7f7', endColorstr='#cfcfcf', GradientType=0);
     -webkit-box-shadow:0 1px 0 0 rgba(255,255,255,0.8) inset,0 1px 0 0 rgba(0,0,0,0.2);
     -moz-box-shadow:0 1px 0 0 rgba(255,255,255,0.8) inset,0 1px 0 0 rgba(0,0,0,0.2);
@@ -220,12 +275,13 @@
 
 .main .sidebar h4:hover{
   background-color:#ecf2f5;
+  /*
   background-image:-moz-linear-gradient(top, #f4fafd, #e0e5e8);
   background-image:-ms-linear-gradient(top, #f4fafd, #e0e5e8);
   background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#f4fafd), to(#e0e5e8));
   background-image:-webkit-linear-gradient(top, #f4fafd, #e0e5e8);
   background-image:-o-linear-gradient(top, #f4fafd, #e0e5e8);
-  background-image:linear-gradient(top, #f4fafd, #e0e5e8);
+  background-image:linear-gradient(top, #f4fafd, #e0e5e8);*/
   background-repeat:repeat-x;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4fafd', endColorstr='#e0e5e8', GradientType=0)
 }
 

@@ -15,10 +15,9 @@
 		right: 0px;
 		overflow: auto;
 		z-index: 100;
-		box-sizing: border-box;
-		-moz-box-shadow: 0 0 5px rgba(0,0,0,0.15);
-		-webkit-box-shadow: 0 0 5px rgba(0,0,0,0.15);
-		box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+		-moz-box-shadow: -1px 0 2px rgba(0,0,0,0.15);
+		-webkit-box-shadow: -1px 0 2px rgba(0,0,0,0.15);
+		box-shadow: -1px 0 2px rgba(0,0,0,0.15);
 	}
 	.members_title{
 		position: fixed;
@@ -26,7 +25,7 @@
 		padding-top: 10px;
 		padding-bottom: 10px;
 		padding-left: 10px;
-		box-shadow: -1px 1px 3px #808080;
+		border-bottom: 1px solid #808080;
 		margin-top: 0px;
 		overflow: hidden;
 		height: 75px;
@@ -39,9 +38,9 @@
 	.members_list{
 		position: absolute;
 		left: 1px;
-		top: 99px;
+		top: 96px;
 		bottom: 0px;
-		width: 100%;
+		right: 0;
 		overflow-x: hidden !important;
 		overflow-y: auto !important;
 	}
@@ -55,12 +54,6 @@
 	.member_item:hover{
 		cursor: pointer;
 		background-color:#ecf2f5;
-  		background-image:-moz-linear-gradient(top, #f4fafd, #e0e5e8);
-  		background-image:-ms-linear-gradient(top, #f4fafd, #e0e5e8);
-  		background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#f4fafd), to(#e0e5e8));
- 	 	background-image:-webkit-linear-gradient(top, #f4fafd, #e0e5e8);
-  		background-image:-o-linear-gradient(top, #f4fafd, #e0e5e8);
- 		background-image:linear-gradient(top, #f4fafd, #e0e5e8);
 	}
 	.member_item.selected{
 		background-color: #f4fafd;

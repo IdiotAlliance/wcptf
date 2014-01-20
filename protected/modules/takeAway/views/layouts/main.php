@@ -109,22 +109,11 @@
 							</li>
 						</ul>
 					</li>
-					<li class="dropdown">
-						<a class="dropdown-toggle" data-toggle="dropdown" href="#">帮助 <span class="caret"></span></a>
-						<ul id="yw4" class="dropdown-menu">
-							<li>
-								<a tabindex="-1" href="<?php echo Yii::app()->createUrl('accounts/help/help')?>">常见问题</a>
-							</li>
-							<li>
-								<a tabindex="-1" href="#">视频教程</a>
-							</li>
-							<li>
-								<a tabindex="-1" href="#">联系我们</a>
-							</li>
-						</ul>
+					<li>
+						<a href="<?php echo Yii::app()->createUrl('accounts/help/help'); ?>">帮助</a>
 					</li>
 					<li>
-						<a tabindex="-1" href="/weChat/index.php/logout">退出</a>
+						<a tabindex="-1" href="<?php echo Yii::app()->createUrl('site/logout'); ?>">退出</a>
 					</li>
 				</ul>
 			</div>
@@ -196,19 +185,21 @@
 			<div class='menu'>
 				<h4><a href="<?php echo Yii::app()->createUrl('takeAway/sellerSettings').'?sid='.$this->currentStore->id;?>">
 					<i class='icon-wrench'></i> &nbsp&nbsp店铺设置</a></h4>
-			</div>
+			</div><!-- 
 			<div class='menuAction'>
 				<ul>
 					<li><a href="#"><i class='icon-plus'></i></a></li>
 					<li><a href="#"><i class='icon-cog'></i></a></li>
 				</ul>
-			</div>
+			</div> -->
 		</div>
 
         <!-- 页面主体内容-->
         <?php echo $content; ?>		
 	</div>
 <script type="text/javascript">
+	var storeCount = <?php echo count($this->stores); ?>;
+
 	(function(win){
 		var self = this;
 		win.MESSAGE_LOADER = self;
@@ -366,7 +357,8 @@
 	});
 	// this is a foo line
 	function expandStoreSwitch(){
-		$('.store_switch').slideToggle('fast');
+		if(storeCount > 1)
+			$('.store_switch').slideToggle('fast');
 	}
 
 </script>
