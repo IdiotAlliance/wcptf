@@ -42,7 +42,7 @@ function baseeventbind(){
   if(isfromfather){
     $('#backkit').show();
     $('#backkit').click(function(){showbacktolist();});
-    $('#tiny').css('background',getbackground(TINYSHOWBTN));
+    $('#tiny').css('background',getbackground(MAKECALLBTN));
     $('#backtolist').click(function(){history.back();});
   }else{
     $('#backkit').hide();
@@ -61,11 +61,11 @@ function baseinfoload(){
   $.ajax({
         type:'POST',
         dataType: 'json',
-        url:  AJAXFORRESULT,
-        data:{storeid:storeid,wapKey:identitykey,openid:openid},
+        url:  AJAXFORBASEINFO,
+        data:{storeid:storeid,wapKey:identitykey,openid:openid,sellerid:sellerid},
         success:function(data,textStatus){
             if(data.success=='1'){
-              personalinfo=data.success;
+              personalinfo=data.result;
               callmaincontent();
             }else{  
               $(MAINCONTENT).hide();

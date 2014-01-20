@@ -700,4 +700,13 @@ class OrdersAR extends CActiveRecord
 		}
 		return 0;
 	}
+
+	public static function getMaxOrderTime($storeId, $memberId){
+		$connection = OrdersAR::model()->getDbConnection();
+		$query = "SELECT max(ctime) AS mtime FROM orders WHERE store_id={$storeId} AND member_id={$memberId}";
+		if($stmt=$connection->createCommand($query)){
+			return $stmt->queryAll();
+		}
+		return null;
+	}
 }

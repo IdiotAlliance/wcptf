@@ -144,8 +144,7 @@ class StoreAR extends CActiveRecord
 	}
 
 	public static function nameExsits($userId, $name){
-		return StoreAR::model()->find('seller_id=:userId and name=:name',
-									  array(':userId'=>$userId, ':name'=>$name)) ? true : false;
+		return count(StoreAR::model()->findAll("seller_id={$userId} AND name='{$name}' AND deleted<>1")) > 0;
 	}
 
 }

@@ -1505,13 +1505,13 @@ footer {
 
 <script type="text/javascript">
     //fake
-	var sellerid=9;
-	var storeid=1;
-	var openid='lvxiang';
-	var identitykey='123123123123';
-	var publicID=null;
-	var isfromfather=true;
-
+	var storeid="<?php echo $storeid?>";
+	var sellerid="<?php echo $sellerId?>";
+	var openid="<?php echo $openId?>";
+	var isfromfather=(('<?php echo $referer?>')=='1');
+	//fake
+	var identitykey='<?php echo $key?>';
+	var publicID='<?php echo $wxname?>';
 	// //baseid
 	// var sellerid="<?php echo $sellerId?>";
 	// var openid="<?php echo $openId?>";
@@ -1526,20 +1526,20 @@ footer {
 	//基地址
 	var BASEURL='/weChat/';
 	//fake
-	BASEURLSMALLICON='http://192.168.1.196/weChat/img/wap/myicon-personalcenter.png';
-	BASEURLBIGICON='http://192.168.1.196/weChat/img/wap/myicon-personalcenter-middle.png';
+	BASEURLSMALLICON='<?php echo Yii::app()->baseUrl?>/img/wap/myicon-personalcenter.png';
+	BASEURLBIGICON='<?php echo Yii::app()->baseUrl?>/img/wap/myicon-personalcenter-middle.png';
 	//var BASEURLSMALLICON='/weChat/img/wap/myicon-personalcenter.png';
 	//var BASEURLBIGICON='/weChat/img/wap/myicon-personalcenter-big.png';
 
 	var MYJQUERY='http://libs.baidu.com/jquery/2.0.3/jquery.min.js';
 	//fake
-	var MYOWNJS='http://192.168.1.196/weChat/js/wap/personalcenter.js';
+	var MYOWNJS='<?php echo Yii::app()->baseUrl?>/js/wap/personalcenter.js';
 	// var MYOWNJS='<?php echo Yii::app()->baseUrl?>/js/wap/personalcenter.js';
 
 
 	//fake
-	var AJAXFORRESULT='http://192.168.1.196/weChat/index.php/wap/order/getPartOrders';
-	var AJAXFORBASEINFO='http://192.168.1.196/weChat/index.php/wap/order/getPersonalInfo';
+	var AJAXFORRESULT='<?php echo Yii::app()->baseUrl?>/index.php/wap/order/getPartOrders';
+	var AJAXFORBASEINFO='<?php echo Yii::app()->baseUrl?>/index.php/wap/wap/getPersonalInfo';
 	// var AJAXFORDATA='<?php echo Yii::app()->createUrl('wap/wap/getData'); ?>';
 	// var AJAXFORSUBMIT='<?php echo Yii::app()->createUrl('wap/order/order'); ?>';
 	// var AJAXFORRESULT='<?php echo Yii::app()->createUrl('wap/order/getPartOrders'); ?>';

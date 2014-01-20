@@ -145,7 +145,7 @@ footer {
 }
 .store-item-nor {
 	background:#f8f8f8;
-	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.2) ;
+	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.2);
 	list-style:none;
 	width:100%;
 	height:80px;
@@ -295,10 +295,11 @@ footer {
 <script type="text/javascript">
 
     //fake
-	var sellerid=9;
-	var openid='lvxiang';
-	var identitykey=123123123;
-	var publicID='iFruits_cn';
+	var sellerid=<?php echo $sellerId?>;
+	var openid="<?php echo $openId?>";
+	var identitykey="<?php echo $key?>";
+	var publicID="<?php echo $wxid?>";
+
 	//baseid
 	// var sellerid="<?php echo $sellerId?>";
 	// var openid="<?php echo $openId?>";
@@ -311,7 +312,7 @@ footer {
 	var WRONGINIT='wronginit';
 
 	//fake
-	var BASEURLICON='http://192.168.1.196/weChat/img/wap/myicon-storelist.png';
+	var BASEURLICON='<?php echo Yii::app()->request->hostInfo?>/weChat/img/wap/myicon-storelist.png';
 	//基地址
 	// var BASEURL='/weChat/';
 	// var BASEURLICON='/weChat/img/wap/myicon-storelist.png';
@@ -390,21 +391,17 @@ footer {
 
 	function filllist(){
 		var mystorelist=datasource.storelist;
-		var totalphonebind=0;
-		var totalvipbind=0;
+		var storein=0;
 		for(var i=0;i<mystorelist.length;i++){
 			mystore=mystorelist[i];
-			if(mystore.phonebind){
-				totalphonebind++;
-			}
-			if(mystore.vipbind){
-				totalvipbind++;
+			if(mystore.storestatus){
+				storein++;
 			}
 		}
 		insert='';
 		insert+='<div class="title" id="storestitle">'+
 		'<h4>请选择店铺</h4>'+
-		'<h5>共'+mystorelist.length+'家店铺</h5>'+
+		'<h5>共'+mystorelist.length+'家店铺，'+storein+'家正在运营</h5>'+
 		'</div>';
 		for(var i=0;i<mystorelist.length;i++){
 			mystore=mystorelist[i];
@@ -412,36 +409,38 @@ footer {
 			'<img src='+mystore.logo+'>'+
 			'<div class="mainarea-in-list">'+
 			'<h4>'+mystore.storename+'</h4>'+
-			'<h5>最新订单：'+mystore.lastorder+'</h5>'+
-			'<h5>'+showbind(mystore)+'</h5>'+
-			'</div>'+
-			'<div class="list-item-icon" style="background:url('+BASEURLICON+')"></div>'+
-			'</a>';
+			'<h5>'+(mystore.announcement?mystore.announcement:'暂无公告')+'</h5>'+
+			'<h5>'+showdelivery(mystore)+'</h5>'+
+			'</div>';
+			if(mystore.storestatus){
+				insert+='<div class="list-item-icon" style="background:url('+BASEURLICON+')"></div>';
+			}else{
+				insert+='<h4 class="list-item-tips">休息中</h4>'
+			}
+			insert+='</a>';
 
 		}
 		document.getElementById("storelistcontent").innerHTML=insert;
 
-		function showbind(mystore){
-			bindinsert='';
-			if(mystore.phonebind&&mystore.vipbind){
-				bindinsert+='已绑定手机及会员卡';
-			}else if(mystore.phonebind&&!mystore.vipbind){
-				bindinsert+='已绑定手机，未绑定会员卡';
-			}else if(!mystore.phonebind&&mystore.vipbind){
-				bindinsert+='未绑定手机，已绑定会员卡';
-			}else{
-				bindinsert+='未绑定手机，未绑定会员卡';
+		function showdelivery(mystore){
+			deliveryinsert="";
+			if(mystore.deliveryfee>0&&mystore.isdeliveryfree&&mystore.sendingfee>0){
+				deliveryinsert+='外送费用：￥'+mystore.deliveryfee+'（购满￥'+mystore.sendingfee+'免外送费）';
+			}else if(mystore.deliveryfee>0&&!mystore.isdeliveryfree&&mystore.sendingfee>0){
+				deliveryinsert+='外送费用：￥'+mystore.deliveryfee+'（起送价格：￥'+mystore.sendingfee+'）';
+			}else if(mystore.deliveryfee>0&&!(mystore.sendingfee>0)){
+				deliveryinsert+='外送费用：￥'+mystore.deliveryfee+'（起送价格：无）';
+			}else if(!(mystore.deliveryfee>0)&&mystore.sendingfee>0){
+				deliveryinsert+='外送费用：无（起送价格：￥'+mystore.sendingfee+'）';
+			}else if(!(mystore.deliveryfee>0)&&!(mystore.sendingfee>0)){
+				deliveryinsert+='外送费用：无（起送价格：无）';
 			}
-			return bindinsert;
+			return deliveryinsert;
 		}
 	}
 
 	//fakedatasource
-    var datasource={"storelist":[
-	{"storeid":0,"storename":"茹果","lastorder":"2014-1-12 12:30","phonebind":true,"vipbind":false,"logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
-	{"storeid":0,"storename":"茹果","lastorder":"2014-1-12 12:30","phonebind":true,"vipbind":false,"logo":"http://192.168.1.196/weChat/img/default-logo.jpg","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"}
-	]
-	};
+    var datasource=eval('(' + '<?php echo $stores?>' + ')');
 	//storestatus分true和false，当且仅当店铺处于正常状态并在营业时间内，值为true。
 
 	//全局唤起出错
@@ -450,14 +449,13 @@ footer {
 		document.getElementById('tips-error').style.display='block';
 		document.getElementById('reload-btnarea').style.display='none';
 		document.getElementById('tips-errordesc-error').innerHTML='检测到您的url异常，请确保从微信公众账号访问哦~';
-
 	}
 
 
 	//key错误
 	function callwrongkey(){
-		isverified=false;
 		document.getElementById("warning-desc").innerHTML='您当前处于非验证状态，页面仅供浏览。如需使用本页面服务，敬请关注微信号:'+publicID;
+		isverified=false;
 		document.getElementById('warning').style.display = 'block';
 	}
 	

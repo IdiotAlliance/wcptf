@@ -143,13 +143,12 @@ footer {
 	margin:0;
 	padding:0
 }
-.sort-item-rec {
+.store-item-nor {
 	background:#f8f8f8;
-	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.2);
+	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.2) ;
 	list-style:none;
 	width:100%;
-	height:100%;
-	min-height:80px;
+	height:80px;
 	padding:0;
 	border:0;
 	margin:0;
@@ -160,75 +159,18 @@ footer {
 	white-space:nowrap;
 	text-align:left
 }
-.sort-item-rec:active {
-	-webkit-box-shadow:none
-}
-.sort-item-rec>img {
-	height:auto;
-	width:100%;
-	display:block;
-	position:relative
-}
-.sort-item-rec>.mainarea-in-list {
-	height:auto;
-	display:block;
-	position:absolute;
-	width:100%;
-	bottom:0;
-	padding:8px 10px;
-	background:rgba(80,80,80,.8)
-}
-.sort-item-rec>.mainarea-in-list>h4,.sort-item-rec>.mainarea-in-list>h5 {
-	width:100%;
-	position:relative;
-	text-overflow:ellipsis;
-	white-space:nowrap;
-	overflow:hidden;
-	color:#fff
-}
-.sort-item-rec>.mainarea-in-list>h5 {
-	margin-top:5px
-}
-.sort-item-rec>.p-aside {
-	padding:2px 10px;
-	position:absolute;
-	width:auto;
-	height:auto;
-	top:0;
-	left:auto;
-	right:0;
-	bottom:auto;
-	color:#fff;
-	background:rgba(211, 15, 70, 0.75);
-	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.25);
-}
-
-
-.store-item-nor {
-	background:#f8f8f8;
-	list-style:none;
-	width:100%;
-	height:60px;
-	padding:0;
-	border:0;
-	margin:0;
-	display:block;
-	position:relative;
-	overflow:hidden;
-	white-space:nowrap;
-	text-align:left
-}
 .store-item-nor:active {
 	background:#c1c1c1;
 	-webkit-box-shadow:none
 }
-.store-item-nor>.shadow{
-	width: 120%;
-	height: 120%;
-	position:absolute;
-	bottom: 0;
-	left: -10%;
-	-webkit-box-shadow:0 -1px 1px 0px rgba(0,0,0,0.25) inset;
+.store-item-nor>img {
+	float:left;
+	height: 80px;
+	width:auto;
+	border-width:0;
+	white-space:nowrap;
+	overflow:hidden
+	z-index:-1;
 }
 .store-item-nor>.list-item-tips {
 	height:20px;
@@ -244,7 +186,7 @@ footer {
 .store-item-nor>.list-item-icon {
 	height:20px;
 	width: 20px;
-	margin:20px 0;
+	margin:30px 0;
 	float:right;
 	position:relative;
 	display:inline-block;
@@ -258,8 +200,13 @@ footer {
 	height:100%;
 	display:block;
 	width:100%;
+	margin-left:80px;
 	margin-right:40px;
-	padding:10px;
+	padding:12px 10px;
+	padding-right: 120px;
+	background:linear-gradient(to right, rgba(245, 245, 245, 0.75) -40px, #f8f8f8 30px, rgba(245, 245, 245, 0.75) 100%);
+	-webkit-box-shadow:-3px 0px 2px rgba(0,0,0,0.2);
+
 }
 }
 .store-item-nor>.mainarea-in-list>h4 {
@@ -320,7 +267,7 @@ footer {
 	background: #ebebeb;
 }
 </style>
-<title>热卖推荐</title>
+<title>店铺列表</title>
 <div id="warning" style="display:none"><h4 id="warning-desc"></h4></div>
 <div id="storelistcontent" class="content-frame">
 </div>
@@ -348,10 +295,10 @@ footer {
 <script type="text/javascript">
 
     //fake
-	var sellerid=9;
-	var openid='lvxiang';
-	var identitykey=123123123;
-	var publicID='iFruits_cn';
+	var sellerid=<?php echo $sellerId?>;
+	var openid="<?php echo $openId?>";
+	var identitykey="<?php echo $key?>";
+	var publicID="<?php echo $wxid?>";
 	//baseid
 	// var sellerid="<?php echo $sellerId?>";
 	// var openid="<?php echo $openId?>";
@@ -364,8 +311,7 @@ footer {
 	var WRONGINIT='wronginit';
 
 	//fake
-	var BASEURLICON='http://192.168.1.196/weChat/img/wap/myicon-storelist.png';
-	//基地址
+	var BASEURLICON='<?php echo Yii::app()->request->hostInfo?>/weChat/img/wap/myicon-storelist.png';
 	// var BASEURL='/weChat/';
 	// var BASEURLICON='/weChat/img/wap/myicon-storelist.png';
 
@@ -442,48 +388,55 @@ footer {
 	}
 
 	function filllist(){
-		var myreclist=datasource.reclist;
-		var totalrec=0;
-		for(var i=0;i<myreclist.length;i++){
-			totalrec+=myreclist[i].totalrec;
+		var mystorelist=datasource.storelist;
+		var totalphonebind=0;
+		var totalvipbind=0;
+		for(var i=0;i<mystorelist.length;i++){
+			mystore=mystorelist[i];
+			if(mystore.phonebind){
+				totalphonebind++;
+			}
+			if(mystore.vipbind){
+				totalvipbind++;
+			}
 		}
 		insert='';
-		insert+='<div class="title" id="rectitle">'+
-		'<h4>热卖推荐</h4>'+
-		'<h5>'+myreclist.length+'家店铺共'+totalrec+'个热卖推荐</h5>'+
+		insert+='<div class="title" id="storestitle">'+
+		'<h4>请选择店铺</h4>'+
+		'<h5>共'+mystorelist.length+'家店铺</h5>'+
 		'</div>';
-		for(var i=0;i<myreclist.length;i++){
-			myrec=myreclist[i];
-			insert+='<a class="store-item-nor" href="'+myrec.url+'">'+
-			'<div class="shadow"></div>'+
+		for(var i=0;i<mystorelist.length;i++){
+			mystore=mystorelist[i];
+			insert+='<a class="store-item-nor" href="'+mystore.url+'">'+
+			'<img src='+mystore.logo+'>'+
 			'<div class="mainarea-in-list">'+
-			'<h4>'+myrec.storename+'</h4>'+
-			'<h5>共'+myrec.totalrec+'个热卖推荐，查看全部</h5>'+
+			'<h4>'+mystore.storename+'</h4>'+
+			'<h5>最新订单：'+mystore.lastorder+'</h5>'+
+			'<h5>'+showbind(mystore)+'</h5>'+
 			'</div>'+
 			'<div class="list-item-icon" style="background:url('+BASEURLICON+')"></div>'+
 			'</a>';
-			insert+='<a class="sort-item-rec" href="'+myrec.recurl+'">'+
-			'<img src='+myrec.recimg+' alt="无真相>_<~">'+
-			'<div class="mainarea-in-list">'+
-			'<h4>'+myrec.recname+'</h4>'+
-			'<h5>'+myrec.recdesc+'</h5>'+
-			'</div>'+
-			'<p class="p-aside">'+myrec.rectag+'</p>'+
-			'</a>';
-			
 
 		}
 		document.getElementById("storelistcontent").innerHTML=insert;
 
+		function showbind(mystore){
+			bindinsert='';
+			if(mystore.phonebind&&mystore.vipbind){
+				bindinsert+='已绑定手机及会员卡';
+			}else if(mystore.phonebind&&!mystore.vipbind){
+				bindinsert+='已绑定手机，未绑定会员卡';
+			}else if(!mystore.phonebind&&mystore.vipbind){
+				bindinsert+='未绑定手机，已绑定会员卡';
+			}else{
+				bindinsert+='未绑定手机，未绑定会员卡';
+			}
+			return bindinsert;
+		}
 	}
 
 	//fakedatasource
-    var datasource={"reclist":[
-	{"storeid":0,"storename":"茹果","recname":"新酒","recdesc":"新酒品上线咯好喝的类","rectag":"热卖","recimg":"http://192.168.1.196/weChat/img/111.jpg","totalrec":3,"recurl":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345&sortid=1","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
-	{"storeid":0,"storename":"茹果","recname":"新酒","recdesc":"新酒品上线咯好喝的类","rectag":"热卖","recimg":"http://192.168.1.196/weChat/img/111.jpg","totalrec":3,"recurl":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345&sortid=1","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
-	{"storeid":0,"storename":"茹果","recname":"新酒","recdesc":"新酒品上线咯好喝的类","rectag":"热卖","recimg":"http://192.168.1.196/weChat/img/111.jpg","totalrec":3,"recurl":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345&sortid=1","url":"http://192.168.1.196/weChat/index.php/wap/index/9?openid=lvxiang&token=12345"},
-	]
-	};
+    var datasource=eval('(' + '<?php echo $pstores?>' + ')');
 	//storestatus分true和false，当且仅当店铺处于正常状态并在营业时间内，值为true。
 
 	//全局唤起出错
@@ -498,8 +451,8 @@ footer {
 
 	//key错误
 	function callwrongkey(){
-		document.getElementById("warning-desc").innerHTML='您当前处于非验证状态，页面仅供浏览。如需使用本页面服务，敬请关注微信号:'+publicID;
 		isverified=false;
+		document.getElementById("warning-desc").innerHTML='您当前处于非验证状态，页面仅供浏览。如需使用本页面服务，敬请关注微信号:'+publicID;
 		document.getElementById('warning').style.display = 'block';
 	}
 	

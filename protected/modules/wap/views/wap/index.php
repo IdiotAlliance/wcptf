@@ -774,16 +774,16 @@ footer {
 <script type="text/javascript">
 
 //baseid
-var storeid=1;
+var storeid="<?php echo $storeid?>";
 var sellerid="<?php echo $sellerId?>";
 var openid="<?php echo $openId?>";
-var firstsortid=-1;
-var isfromfather=true;
+var firstsortid=<?php echo $sortid?$sortid:-1; ?>;
+var isfromfather=(('<?php echo $referer?>')=='1');
 //fake
-identitykey='123123123123123123123';
+var identitykey='<?php echo $key?>';
 //var identitykey="<?php echo ($key?$key:'');?>";
-var publicID=null;
-var isvip=true;
+var publicID='<?php echo $wxname?>';
+var isvip=('<?php echo $vip?>' == '1');
 
 //错误常量
 var WRONGURL='wrongurl';
@@ -798,13 +798,13 @@ var MYJQUERY='http://libs.baidu.com/jquery/2.0.3/jquery.min.js';
 var MYOWNJS='<?php echo Yii::app()->baseUrl?>/js/wap/wechat1.3.js';
 
 //
-var AJAXFORSHOPLIST='http://192.168.1.196/weChat/index.php/wap/wap/getShopList';
+var AJAXFORSHOPLIST='<?php echo Yii::app()->baseUrl?>/index.php/wap/wap/getShopList';
 
 //fake
-var AJAXFORDATA='http://192.168.1.196/weChat/index.php/wap/wap/getData';
+var AJAXFORDATA='<?php echo Yii::app()->baseUrl?>/index.php/wap/wap/getData';
 //var AJAXFORDATA='<?php echo Yii::app()->createUrl('wap/wap/getData'); ?>';
-var AJAXFORSUBMIT='<?php echo Yii::app()->createUrl('wap/order/order'); ?>';
-var AJAXFORRESULT='<?php echo Yii::app()->createUrl('wap/order/getPartOrders'); ?>';
+var AJAXFORSUBMIT="<?php echo Yii::app()->createUrl('wap/order/order'); ?>";
+var AJAXFORRESULT="<?php echo Yii::app()->createUrl('wap/order/getPartOrders'); ?>";
 
 //全局运行变量
 var isverified=true;

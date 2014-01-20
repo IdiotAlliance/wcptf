@@ -269,23 +269,32 @@ class WechatAccessController extends Controller {
 	 		switch ($type) {
 	 			case 0x80:
 	 				# order
-	 				$url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token);
+	 				if($item->store_id == 0)
+	 					$url = Yii::app()->createAbsoluteUrl('/wap/wap/stores/'.$sellerId.'?openid='.$openid.'&token='.$token);
+	 				else
+	 					$url = Yii::app()->createAbsoluteUrl('/wap/wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token.'&storeid='.$item->store_id);
 	 				break;
 	 			case 0x81:
-	 				# history
-					$url = Yii::app()->createAbsoluteUrl('/wap/wap/history/'.$sellerId.'?openid='.$openid.'&token='.$token).'#mp.weixin.qq.com';					 				
+	 				if($item->store_id == 0)
+	 					$url = Yii::app()->createAbsoluteUrl('/wap/wap/pstores/'.$sellerId.'?openid='.$openid.'&token='.$token);
+	 				else
+	 					$url = Yii::app()->createAbsoluteUrl('/wap/wap/personal/'.$sellerId.'?openid='.$openid.'&token='.$token.'&storeid='.$item->store_id);
 	 				break;
 	 			case 0x82:
 	 				# promotions
-	 				$hot_url = $url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token);
-	 				$hot_products = HotProductsAR::model()->getHotProductsById($sellerId);
-	 				foreach ($hot_products as $hot) {
-	 					$hot_url = $url.'&sortid='.$hot->product_id;
-	 					if($hot->onindex == 1){
-	 						break;
-	 					}
+	 				if($item->store_id == 0)
+	 					$url = Yii::app()->createAbsoluteUrl('/wap/wap/reclist/'.$sellerId.'?openid='.$openid.'&token='.$token);
+	 				else{
+		 				$hot_url = $url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token);
+		 				$hot_products = HotProductsAR::model()->getHotProductsById($sellerId);
+		 				foreach ($hot_products as $hot) {
+		 					$hot_url = $url.'&sortid='.$hot->product_id;
+		 					if($hot->onindex == 1){
+		 						break;
+		 					}
+		 				}
+		 				$url = $hot_url.'&storeid='.$item->store_id;
 	 				}
-	 				$url = $hot_url;
 	 				break;
 	 			case 0x83:
 	 				# contact us

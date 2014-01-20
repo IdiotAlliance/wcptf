@@ -115,4 +115,17 @@ class HotProductsAR extends CActiveRecord
 	public function deleteHotProductsByUserId($userId){
 		HotProductsAR::model()->deleteAll('store_id=:store_id', array(':store_id'=>$userId));
 	}
+
+	public static function getHotIndexProductsBySellerId($sellerId){
+		$connection = HotProductsAR::model()->getDbConnection();
+		$query = "SELECT pt.id AS pid, st.id AS sid, st.name AS sname, pt.type_name AS pname, 
+				 pt.type_description as drp, hp.pic_url AS pic, hp.description AS tag FROM 
+				 hot_products as hp, product_type AS pt, store AS st WHERE hp.product_id=pt.id AND 
+				 pt.store_id=st.id AND st.seller_id=${sellerId} AND hp.onindex=1 AND pt.deleted<>1 
+				 AND st.deleted<>1";
+		if($stmt=$connection->createCommand($query)){
+			return $stmt->queryAll();
+		}
+		return null;
+	}
 }

@@ -119,7 +119,7 @@ class SdmsgsAR extends CActiveRecord
 				$matches = array();
 				$stop = false;
 				for($i=0; $i<count($results); $i++){
-					$keywords = split(';', $results[$i]['keyword']);
+					$keywords = explode(',', $results[$i]['keyword']);
 					switch ($results[$i]['match_rule']) {
 						case 0:
 							# complete match

@@ -10,19 +10,24 @@ class WapController extends Controller{
 		$url = Yii::app()->request->getUrl();
 		// 用正则表达式从url获取seller id
 		preg_match('/.*wap\/index\/(\d+)[?](.*)/i', $url, $matches);
+		$storeid = null;
 		$sellerId = null;
 		$openid = null;
 		$sortId = null;
 		$token  = null;
-		if(isset($matches[1]) &&  isset($_GET['openid']) && isset($_GET['token'])){
+		$user   = null;
+		if(isset($matches[1]) &&  isset($_GET['openid']) && isset($_GET['token']) && isset($_GET['storeid'])){
 			$sellerId = $matches[1];
 			$openid = $_GET['openid'];
 			$token = $_GET['token'];
+			$storeid = $_GET['storeid'];
+			if(isset($_GET['sortid']))
+				$sortId = $_GET['sortid'];
 		}else{
-			$this->redirect(Yii::app()->createUrl('errors/error/404'));
+			throw new CHttpException(404, "Error Processing Request");
 		}
 		if($sellerId && $openid && 
-		   UsersAR::model()->getUserById($sellerId) &&
+		   ($user = UsersAR::model()->getUserById($sellerId)) &&
 		   ($member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid))){
 			
 			$key = null;
@@ -30,10 +35,195 @@ class WapController extends Controller{
 			if(MemberTokenAR::model()->validateToken($sellerId, $openid, $token)){
 				$key = $member->wapkey;
 			}
-			
-			$this->render('index', array('key'=>$key, 'sellerId'=>$sellerId, 'openId'=>$openid));
+			$referer = (isset($_SERVER['HTTP_REFERER'])?1:0);
+			$bound = MemberBoundAR::model()->find("store_id={$storeid} AND member_id={$member->id}");
+			$this->render('index', array('key'=>$key, 'sellerId'=>$sellerId, 
+										 'openId'=>$openid, 'storeid'=>$storeid, 
+										 'referer'=>$referer, 'sortid'=>$sortId,
+										 'wxname'=>$user->wechat_name, 
+										 'vip'=>($bound?1:0)));
 		}else{
 			$this->redirect(Yii::app()->createUrl('errors/error/404'));
+		}
+	}
+
+	public function actionPersonal(){
+		// 获取商家id
+		$url = Yii::app()->request->getUrl();
+		// 用正则表达式从url获取seller id
+		preg_match('/.*wap\/personal\/(\d+)[?](.*)/i', $url, $matches);
+		$storeid = null;
+		$sellerId = null;
+		$openid = null;
+		$sortId = null;
+		$token  = null;
+		$user   = null;
+		if(isset($matches[1]) &&  isset($_GET['openid']) && isset($_GET['token']) && isset($_GET['storeid'])){
+			$sellerId = $matches[1];
+			$openid = $_GET['openid'];
+			$token = $_GET['token'];
+			$storeid = $_GET['storeid'];
+		}else{
+			throw new CHttpException(404, "Error Processing Request");
+		}
+		if($sellerId && $openid && 
+		   ($user = UsersAR::model()->getUserById($sellerId)) &&
+		   ($member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid))){
+			
+			$key = null;
+			// 验证token
+			if(MemberTokenAR::model()->validateToken($sellerId, $openid, $token)){
+				$key = $member->wapkey;
+			}
+			$referer = (isset($_SERVER['HTTP_REFERER'])?1:0);
+			$this->render('personalcenter', array('key'=>$key, 'sellerId'=>$sellerId, 
+										 'openId'=>$openid, 'storeid'=>$storeid, 
+										 'referer'=>$referer, 'wxname'=>$user->wechat_name));
+		}else{
+			$this->redirect(Yii::app()->createUrl('errors/error/404'));
+		}
+	}
+
+	public function actionStores(){
+		// 获取商家id
+		$url = Yii::app()->request->getUrl();
+		// 用正则表达式从url获取seller id
+		preg_match('/.*wap\/stores\/(\d+)[?](.*)/i', $url, $matches);
+		$sellerId = null;
+		$openid = null;
+		$sortId = null;
+		$token  = null;
+		$user   = null;
+		if(isset($matches[1]) &&  isset($_GET['openid']) && isset($_GET['token'])){
+			$sellerId = $matches[1];
+			$openid = $_GET['openid'];
+			$token = $_GET['token'];
+		}else{
+			throw new CHttpException(404, "Error Processing Request");
+		}
+		if($sellerId && $openid && 
+		   ($user = UsersAR::model()->getUserById($sellerId)) &&
+		   ($member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid))){
+			$key = null;
+			// 验证token
+			if(MemberTokenAR::model()->validateToken($sellerId, $openid, $token)){
+				$key = $member->wapkey;
+			}
+			$stores = StoreAR::model()->findAll('seller_id=:sid AND deleted<>1', array(':sid'=>$sellerId));
+			$starr  = array('storelist'=>array());
+			foreach ($stores as $store) {
+				array_push($starr['storelist'], 
+						   array('storeid'=>$store->id,
+						   		 'storename'=>$store->name,
+						   		 'announcement'=>$store->broadcast,
+						   		 'storestatus'=>($store->status==0),
+						   		 'deliveryfee'=>$store->takeaway_fee,
+						   		 'sendingfee'=>$store->start_price,
+						   		 'isdeliveryfree'=>($store->threshold==1),
+						   		 'logo'=>(Yii::app()->request->hostInfo.Yii::app()->request->baseUrl.($store->logo?$store->logo:'/img/default-logo.jpg')),
+						   		 'url'=>Yii::app()->createUrl('wap/index/')."/".$sellerId."?openid={$openid}&token={$token}&storeid={$store->id}"));
+			}
+			$this->render('storelist', array('key'=>$key, 'sellerId'=>$sellerId, 
+										 'openId'=>$openid, 'wxid'=>$user->wechat_name, 
+										 'stores'=>json_encode($starr)));
+		}
+	}
+
+	public function actionReclist(){
+		// 获取商家id
+		$url = Yii::app()->request->getUrl();
+		// 用正则表达式从url获取seller id
+		preg_match('/.*wap\/reclist\/(\d+)[?](.*)/i', $url, $matches);
+		$sellerId = null;
+		$openid = null;
+		$sortId = null;
+		$token  = null;
+		$user   = null;
+		if(isset($matches[1]) &&  isset($_GET['openid']) && isset($_GET['token'])){
+			$sellerId = $matches[1];
+			$openid = $_GET['openid'];
+			$token = $_GET['token'];
+		}else{
+			throw new CHttpException(404, "Error Processing Request");
+		}
+		if($sellerId && $openid && 
+		   ($user = UsersAR::model()->getUserById($sellerId)) &&
+		   ($member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid))){
+			$key = null;
+			// 验证token
+			if(MemberTokenAR::model()->validateToken($sellerId, $openid, $token)){
+				$key = $member->wapkey;
+			}
+			$hots = HotProductsAR::model()->getHotIndexProductsBySellerId($sellerId);
+			$hotarr = array('reclist'=>array());
+			if($hots){
+				foreach ($hots as $hot) {
+					array_push($hotarr['reclist'], array(
+						'storeid'=>$hot['sid'],
+						'storename'=>$hot['sname'],
+						'recname'=>$hot['pname'],
+						'recdesc'=>$hot['drp'],
+						'rectag'=>$hot['tag'],
+						'recimg'=>(Yii::app()->request->hostInfo.Yii::app()->request->baseUrl.'/'.($hot['pic']?$hot['pic']:'img/default-type.jpg')),
+						'recurl'=>Yii::app()->createAbsoluteUrl('wap/wap/index').'/'.$sellerId."?storeid={$hot['sid']}&openid={$openid}&token={$token}&sortid=".$hot['pid'],
+						'url'=>Yii::app()->createAbsoluteUrl('wap/wap/index').'/'.$sellerId."?openid={$openid}&token={$token}&storeid={$hot['sid']}",
+						));
+				}
+			}
+			$this->render('reclist', array('key'=>$key, 'sellerId'=>$sellerId, 
+										 'openId'=>$openid, 'wxid'=>$user->wechat_name, 
+										 'hots'=>json_encode($hotarr)));
+		}
+	}
+
+	public function actionPstores(){
+		// 获取商家id
+		$url = Yii::app()->request->getUrl();
+		// 用正则表达式从url获取seller id
+		preg_match('/.*wap\/pstores\/(\d+)[?](.*)/i', $url, $matches);
+		$sellerId = null;
+		$openid = null;
+		$sortId = null;
+		$token  = null;
+		$user   = null;
+		if(isset($matches[1]) &&  isset($_GET['openid']) && isset($_GET['token'])){
+			$sellerId = $matches[1];
+			$openid = $_GET['openid'];
+			$token = $_GET['token'];
+		}else{
+			throw new CHttpException(404, "Error Processing Request");
+		}
+		if($sellerId && $openid && 
+		   ($user = UsersAR::model()->getUserById($sellerId)) &&
+		   ($member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid))){
+			$key = null;
+			// 验证token
+			if(MemberTokenAR::model()->validateToken($sellerId, $openid, $token)){
+				$key = $member->wapkey;
+			}
+			$member  = MembersAR::model()->find("openid='{$openid}' AND seller_id={$sellerId}");
+			$stores = StoreAR::model()->findAll("seller_id={$sellerId} AND deleted<>1");
+
+			$pstorearr = array('storelist'=>array());
+			foreach ($stores as $store) {
+				$mtime = OrdersAR::model()->getMaxOrderTime($store->id, $member->id);
+				$bound = (MemberBoundAR::model()->find("member_id={$member->id} AND store_id={$store->id}") != null);
+				$phone = (MemberNumbersAR::model()->find("member_id={$member->id} AND store_id={$store->id}") != null);
+				array_push($pstorearr['storelist'], 
+								array(
+									'storeid'=>$store->id,
+									'storename'=>$store->name,
+									'lastorder'=>$mtime[0]['mtime']?$mtime[0]['mtime']:'尚未下过单',
+									'phonebind'=>$phone,
+									'vipbind'=>$bound,
+									'logo'=>(Yii::app()->request->hostInfo.Yii::app()->request->baseUrl.($store->logo?$store->logo:'/img/default-logo.jpg')),
+									'url'=>Yii::app()->createAbsoluteUrl('wap/wap/personal').'/'.$sellerId."?openid={$openid}&token={$token}&storeid={$store->id}",
+									));
+				
+			}
+			$this->render('storelistpersonal', array('key'=>$key, 'sellerId'=>$sellerId, 
+										 'openId'=>$openid, 'wxid'=>$user->wechat_name, 
+										 'pstores'=>json_encode($pstorearr)));
 		}
 	}
 	
@@ -86,6 +276,20 @@ class WapController extends Controller{
 		}else{
 			$this->redirect(Yii::app()->createUrl('errors/error/404'));
 		}
+	}
+
+	public function actionGetPersonalInfo(){
+		if(isset($_POST['openid']) && isset($_POST['storeid']) && isset($_POST['sellerid'])){
+
+			$member = MembersAR::model()->find("openid='{$_POST['openid']}' AND seller_id={$_POST['sellerid']}");
+			if($member){
+				$result = array('success'=>'1', 'result'=>array('lastorder'=>OrdersAR::model()->getMaxOrderTime($_POST['storeid'], $member->id)[0]['mtime']));
+				echo json_encode($result);
+			}
+			echo null;
+		}
+		else 
+			throw new CHttpException(403, "Error Processing Request");
 	}
 	
 	

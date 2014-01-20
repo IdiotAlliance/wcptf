@@ -92,7 +92,7 @@ class AccountController extends Controller{
 				$uid    = Yii::app()->user->sellerId;
 				$stores = StoreAR::model()->getStoreByUserId($uid);
 				foreach ($stores as $store) {
-					if($store->name == $_POST['name']){
+					if($store->name == $_POST['name'] && $store->deleted != 1){
 						echo json_encode(array('result'=>1));
 						exit;
 					}
