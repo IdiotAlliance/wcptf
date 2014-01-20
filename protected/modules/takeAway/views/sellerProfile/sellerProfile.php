@@ -31,6 +31,28 @@
 		padding-left: 20px;
 		background-color: #ffffff;
 		border-bottom: 1px solid #808080;
+		z-index: 100;
+	}
+	.cover-desc {
+		margin-left: 50px;
+		position: relative;
+		overflow: hidden;
+		margin-right: 4px;
+		display: inline-block;
+		padding: 4px 10px 4px;
+		font-size: 14px;
+		line-height: 18px;
+		color: #fff;
+		text-align: center;
+		vertical-align: middle;
+		cursor: pointer;
+		background-color: #5bb75b;
+		border: 1px solid #cccccc;
+		border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+		border-bottom-color: #b3b3b3;
+		-webkit-border-radius: 4px;
+		-moz-border-radius: 4px;
+		border-radius: 4px;
 	}
 </style>
 <div id="seller_profile_config">
@@ -77,7 +99,8 @@
 				<img class="span2" alt="" src="" id="logoimg" />
 				<form id="uploadLogoForm" method="post" 
 						action="<?php echo Yii::app()->createUrl('takeAway/sellerProfile/imgUpload')?>">
-					<input id="uploadlogo" type="file" name="logo" >
+					<div id="uploadmask" class="cover-desc" onclick="$('#uploadlogo').click();">点击上传</div>
+					<input class="hidden" id="uploadlogo" type="file" name="logo" >
 				</form>
 			</div>
 			<!-- 上传店内环境照，最多十张 -->
@@ -218,7 +241,7 @@
 				data['shopinfo']['logo'] = result.pic_path;
 			},
 			error:function(xhr){
-				alert("上传失败");
+				$('#uploadmask').html("上传失败");
 			}
 		});
 	}
@@ -233,7 +256,7 @@
 
 	function initView(){
 		$('#store_name').val(data['shopinfo']['store_name']);
-		$('#store_type').html(data['shopinfo']['store_type'] == '0' ? '外卖' : '其他');
+		$('#store_type').html(data['shopinfo']['store_type'] == '1' ? '外卖' : '其他');
 		$('#phone_number').val(data['shopinfo']['phone']);
 		data['shopinfo']['stime'] = data['shopinfo']['stime'].substr(0, 5);
 		data['shopinfo']['etime'] = data['shopinfo']['etime'].substr(0, 5);

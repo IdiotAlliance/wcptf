@@ -293,7 +293,7 @@
 					 '<div class="store_item_padding padding3"></div>'.
 					 '<div class="store_item_padding padding4"></div>'.
 					 '<a href="'.
-					 Yii::app()->createUrl('takeAway/members').
+					 Yii::app()->createUrl('takeAway/orderFlow/orderFlow').
 					 '?sid='.$store->id.'" class="store_folder">'.
 					 '<span class="store_folder_name">'.$store->name.'</span>'.
 					 	'<div class="store_tools" id="'.$store->id.'" name="'.$store->name.'">'.

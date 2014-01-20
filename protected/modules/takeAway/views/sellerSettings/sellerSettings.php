@@ -29,6 +29,32 @@
 		-webkit-box-shadow: 0xp 1px 3px #808080;
 		margin-bottom: 10px;
 	}
+	.cover-desc {
+		margin-left: 50px;
+		position: relative;
+		overflow: hidden;
+		margin-right: 4px;
+		display: inline-block;
+		padding: 4px 10px 4px;
+		font-size: 14px;
+		line-height: 18px;
+		color: #fff;
+		text-align: center;
+		vertical-align: middle;
+		cursor: pointer;
+		background-color: #5bb75b;
+		border: 1px solid #cccccc;
+		border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+		border-bottom-color: #b3b3b3;
+		-webkit-border-radius: 4px;
+		-moz-border-radius: 4px;
+		border-radius: 4px;
+	}
+	.cover-desc.disabled{
+		background-color: #808080;
+		color: #fff;
+		cursor: default;
+	}
 	#seller_settings_container{
 		position: absolute;
 		left: 200px;
@@ -48,6 +74,7 @@
 		padding-left: 20px;
 		background-color: #ffffff;
 		border-bottom: 1px solid #808080;
+		z-index: 100;
 	}
 	#seller_settings_main_container{
 		margin-top: 60px;
@@ -224,7 +251,9 @@
 			 types.append('<tr>' +
 						  		'<td><b>' + type.type_name + '</b></td>' +
 						  		'<td id="pic_url_' + type.id + '">' + (type.picurl?type.picurl:"未上传图片") + '</td>' + 
-						  		'<td>' + '<input type="file" id="fileupload_' + type.id +'" name="hots"></td>' +
+						  		'<td>' + 
+						  			'<div id="uploadmask_' + type.id + '" class="cover-desc" onclick="$(\'#fileupload_' + type.id + '\').click();">点击上传图片</div>' +
+						  			'<input class="hidden" type="file" id="fileupload_' + type.id +'" name="hots"></td>' +
 						  		'<td>' + 
 						  			'<select onchange="select(this)" id="select_' + type.id + '">' +
 										'<option value="无">无</option>' +
@@ -238,6 +267,7 @@
 			//设置选项
 			$('#select_' + type.id).val(type.tag);
 			if(!type.hot){
+				$('#uploadmask_' + type.id).addClass('disabled');
 				$('#fileupload_' + type.id).attr('disabled', true);
 				$('#set_index_' + type.id).addClass('index_switch_disabled');
 			}else{
@@ -248,7 +278,7 @@
 			}
 			
 			/*图片上传*/
-			$("#fileupload_" + type.id).wrap("<form class='span2' id=\"myupload_" + type.id + "\" action='<?php echo Yii::app()->createUrl('takeAway/sellerSettings/imgUpload')?>/typeId/" + type.id + "' method='post' enctype='multipart/form-data'></form>");
+			$("#fileupload_" + type.id).wrap("<form class=\"hidden\" id=\"myupload_" + type.id + "\" action='<?php echo Yii::app()->createUrl('takeAway/sellerSettings/imgUpload')?>/typeId/" + type.id + "' method='post' enctype='multipart/form-data'></form>");
 		}
 	}
 
@@ -338,12 +368,15 @@
 		if($(elem).val()=='无'){
 			if($('#set_index_' + typeid).html() == '首页推荐'){
 				$('#set_index_' + typeid).html('设为首页');
+				$('#set_index_' + typeid).removeClass('set_index');
 			}
 			$('#set_index_' + typeid).addClass('index_switch_disabled');
 			$('#fileupload_' + typeid).attr('disabled', true);
+			$('#uploadmask_' + typeid).addClass('disabled');
 		}else{
 			$('#set_index_' + typeid).removeClass('index_switch_disabled');
 			$('#fileupload_' + typeid).attr('disabled', false);
+			$('#uploadmask_' + typeid).removeClass('disabled');
 		}
 	}
 

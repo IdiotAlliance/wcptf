@@ -125,7 +125,7 @@ class SdmsgsAR extends CActiveRecord
 							# complete match
 							if(in_array($content, $keywords)){
 								// if a complete match is found, clear the array and insert the result
-								unset($matches);
+								$matches = array();
 								array_push($matches, $results[$i]);
 								// stop iteration
 								$stop = true;

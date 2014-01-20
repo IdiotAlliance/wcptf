@@ -181,7 +181,7 @@
   }
 
   #custom-list{
-    margin-top: 20px;
+    margin-top: 30px;
     margin-bottom: 20px;
     max-height: -webkit-calc(100% - 162px);;
     overflow: scroll;
