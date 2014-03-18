@@ -42,4 +42,11 @@ class SeriesGenerator extends Controller{
 		return $key;
 	}
 	
+	public static function generateVericode($digit){
+		$code = '';
+		for($i = 0; $i < $digit; $i ++){
+			$code .= (int)rand(0, 9);
+		}
+		return $code;
+	}
 }

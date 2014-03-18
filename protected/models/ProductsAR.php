@@ -208,6 +208,7 @@ class ProductsAR extends CActiveRecord
 		}
 		return $productList;
 	}
+
 	//将产品list数组转成二维数组，原因在于联表查询没法转成json
 	public function getAllProducts($productList){
 		$prodList = array();
@@ -227,6 +228,7 @@ class ProductsAR extends CActiveRecord
 		}
 		return $prodList;
 	}
+	
 	//将产品转为数组
 	public function getProductArray($product){
 		$prod = array();
@@ -275,7 +277,7 @@ class ProductsAR extends CActiveRecord
 	
 
 	/**
-	 * @param unknown $storeId
+	 * @param $storeId
 	 * @deprecated
 	 */
 	public function getUndeletedProductsBySellerId($storeId){
@@ -285,12 +287,17 @@ class ProductsAR extends CActiveRecord
 	}
 	
 	/**
-	 * @param unknown $storeId
+	 * @param $storeId
 	 */
 	public function getUndeletedProductsBystoreId($storeId){
-		$products = ProductsAR::model()->findAll('store_id=:storeId and deleted<>1', 
-												 array(':storeId'=>$storeId));
-		return $products;
+		// $products = ProductsAR::model()->findAll('store_id=:storeId and deleted<>1', 
+		// 										 array(':storeId'=>$storeId));
+		$connection = ProductsAR::model()->getDbConnection();
+		$query = "SELECT * FROM products WHERE store_id={$storeId} AND deleted<>1";
+		if($stmt = $connection->createCommand($query)){
+			return $stmt->queryAll();
+		}
+		return null;
 	}
 
 	/**

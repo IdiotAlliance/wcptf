@@ -163,6 +163,55 @@ class MembersController extends TakeAwayController{
 		}
 	}
 	
+	/***
+	 * Bind a phone number to the current member account
+	 */
+	function actionBindNumber(){
+		if(isset($_GET['memberid']) && isset($_GET['wapkey']) && isset($_GET['number'])){
+			$memberid = $_GET['memberid'];
+			$number   = $_GET['number'];
+			$wapkey   = $_GET['wapkey'];
+			if(MembersAR::model()->find('id=:id AND wapkey=:key',
+										array(':id'=>$memberid, ':key'=>$wapkey))){
+				$vericode = SeriesGenerator::generateVericode(6);
+				$mnar = new MemberNumbersAR();
+				$mnar->member_id = $memberid;
+				$mnar->number    = $number;
+				$mnar->vericode  = $vericode;
+				$mnar->save();
+			}else{
+				throw new CHttpException(403, "invalid member info");
+			}
+		}else{
+			throw new CHttpException(403, "illegal arguments");
+		}
+	}
+
+	/***
+	 * confirm a number binding process with received verification code
+	 */
+	function actionConfirmNumber(){
+		if(isset($_GET['memberid']) && isset($_GET['wapkey']) && 
+			isset($_GET['number']) && isset($_GET['vericode'])){
+			$member   = null;
+			$mnar     = null;
+			$memberid = $_GET['memberid'];
+			$number   = $_GET['number'];
+			$wapkey   = $_GET['wapkey'];
+			$vericode = $_GET['vericode'];
+			if(($member = MembersAR::model()->find('id=:id AND wapkey=:key',
+										array(':id'=>$memberid, ':key'=>$wapkey))) && 
+			   ($mnar = MemberNumbersAR::model()->find('member_id=:mid AND number=:num AND vericode=:vcode',
+			   							array(':mid'=>$memberid, ':num'=>$number, ':vcode'=>$vericode)))){
+				$member->phone = $number;
+				$member->update();
+				$mnar->delete();
+			}
+		}else{
+			throw new CHttpException(403, "illegal arguments");
+		}
+	}
+
 	function actionConfirmMember($memberId){
 		if(isset($_GET['sid']) && $_GET['sid'] >= 0){
 			$sid = $_GET['sid'];

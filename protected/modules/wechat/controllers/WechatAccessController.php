@@ -286,7 +286,7 @@ class WechatAccessController extends Controller {
 	 					$url = Yii::app()->createAbsoluteUrl('/wap/wap/reclist/'.$sellerId.'?openid='.$openid.'&token='.$token);
 	 				else{
 		 				$hot_url = $url = Yii::app()->createAbsoluteUrl('/wap/index/'.$sellerId.'?openid='.$openid.'&token='.$token);
-		 				$hot_products = HotProductsAR::model()->getHotProductsById($sellerId);
+		 				$hot_products = HotProductsAR::model()->getHotProductsByStoreId($item->store_id);
 		 				foreach ($hot_products as $hot) {
 		 					$hot_url = $url.'&sortid='.$hot->product_id;
 		 					if($hot->onindex == 1){
@@ -298,7 +298,7 @@ class WechatAccessController extends Controller {
 	 				break;
 	 			case 0x83:
 	 				# contact us
-	 				
+	 				$url = Yii::app()->createAbsoluteUrl('/wap/wap/contact/'.$sellerId.'?openid='.$openid);
 	 				break;
 	 		}
 	 		$itemtpl = sprintf($itemtpl, $item->title, $item->content, $this->getAbsoluteImgUrl($item->picurl), $url);
@@ -310,9 +310,12 @@ class WechatAccessController extends Controller {
 	}
 
 	public function getAbsoluteImgUrl($imgUrl){
-		$url = Yii::app()->request->baseUrl.'/'.$imgUrl;
-		$url = str_replace('//', '/', $url);
-		$url = Yii::app()->request->hostInfo.$url;
-		return $url;
+		if($imgUrl && $imgUrl != ""){
+            $url = Yii::app()->request->baseUrl.'/'.$imgUrl;
+            $url = str_replace('//', '/', $url);
+            $url = Yii::app()->request->hostInfo.$url;
+            return $url;
+		}
+        return null;
 	}
 }

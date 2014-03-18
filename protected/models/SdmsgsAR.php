@@ -135,7 +135,7 @@ class SdmsgsAR extends CActiveRecord
 						case 1:
 							# partial match
 							foreach ($keywords as $word) {
-								if(strpos($word, $content) >= 0){
+								if(strpos($content, $word) >= 0){
 									array_push($matches, $results[$i]);
 								}
 							}

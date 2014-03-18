@@ -709,4 +709,20 @@ class OrdersAR extends CActiveRecord
 		}
 		return null;
 	}
+
+	public static function getOrdersAfter($sellerId, $time){
+		$connection = OrdersAR::model()->getDbConnection();
+		$query = "SELECT o.id AS oid, o.order_no AS ono, o.store_id AS sid,
+				  o.ctime AS ctime, o.order_name AS oname, o.phone AS number,
+				  o.area_name AS district, o.address AS address, o.description AS extrainfo, 
+				  o.status AS status, o.total AS total, o.member_no  as mno, 
+				  o.member_phone AS mphone, o.member_status AS mstatus 
+				  FROM orders o WHERE o.store_id IN(
+				  SELECT s.id FROM store s WHERE s.seller_id={$sellerId} 
+				  ) AND o.ctime > {$time} ORDER BY o.ctime ASC";
+		if($stmt = $connection->createCommand($query)){
+			return $stmt->queryAll();
+		}
+		return null;
+	}
 }

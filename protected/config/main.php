@@ -23,10 +23,8 @@ return array(
 	'timeZone'=>'Asia/Shanghai',
 	'charset'=>'utf-8',
 
-
 	'modules'=>array(
 		// uncomment the following to enable the Gii tool
-		
 		'gii'=>array(
 			'class'=>'system.gii.GiiModule',
 			'password'=>'123',
@@ -40,6 +38,8 @@ return array(
 		'errors',
 		'messages',
 		'payment',
+		'service',
+		'resource'
 	),
 
 	// application components
@@ -87,7 +87,7 @@ return array(
 			),
 		),
 		'db'=>array(
-			'connectionString' => 'mysql:host=192.168.1.107;dbname=wcptf_dev',
+			'connectionString' => 'mysql:host=localhost;dbname=wcptf',
 			'emulatePrepare' => true,
 			'username' => 'wcadmin',
 			'password' => '123',
@@ -120,7 +120,6 @@ return array(
 					'levels'=>'info',
 					'logFile'=>'info.log',
 				),
-
 			),
 		),
 	),

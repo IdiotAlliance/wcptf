@@ -19,40 +19,96 @@ class ProductManagerController extends TakeAwayController
 				$productList = ProductsAR::model()->getCategoryProducts($typeId);
 				$prodList = ProductsAR::model()->getAllProducts($productList);
 				$productInfo = null;
+				$images = null;
 				if($productList != null && $prodId==0){
 					$productInfo = $productList[0];
+					$images = ProductImageAR::model()->getImagesByPid($productInfo['id']);
 				}
 
 				if($prodId!=0){
 					$productInfo = ProductsAR::model()->findByPK($prodId);
-					$now = date('Y-m-d h:m:s');
-					if($now< $productInfo->stime )
-						$productInfo->status = "未到期";
-					else if($now > $productInfo->etime)
-						$productInfo->status = "已过期";
-					else{
-						switch ($productInfo->status) {
-							case 1:
-								$productInfo->status = '已上架';
-								break;
-							case 2:
-								$productInfo->status = '已下架';
-								break;
-							default:
-								$productInfo->status = '已上架';
-								break;
+					if($productInfo){
+						$now = date('Y-m-d h:m:s');
+						if($now< $productInfo->stime) $productInfo->status = "未到期";
+						else if($now > $productInfo->etime) $productInfo->status = "已过期";
+						else{
+							switch ($productInfo->status) {
+								case 1:
+									$productInfo->status = '已上架';
+									break;
+								case 2:
+									$productInfo->status = '已下架';
+									break;
+								default:
+									$productInfo->status = '已上架';
+									break;
+							}
 						}
+						$images = ProductImageAR::model()->getImagesByPid($productInfo['id']);
+					}
+					else{
+						throw new CHttpException(404, "The page is not found");
 					}
 				}
 				$productType = ProductTypeAR::model()->findByPK($typeId);
-
 				$this->render('allProducts',array(
 					'productType'=>$productType,
 					'prodList'=>$prodList,
 					'productInfo'=>$productInfo,
+					'images'=>$images
 				));	
 			}			
 		}		
+	}
+
+	public function actionGetDiscounts($pid){
+		$discounts = TimelyDiscountsAR::model()->findAll('pid=:pid', array(':pid' => $pid));
+		$arr = array();
+		foreach ($discounts as $discount) {
+			array_push($arr, array('id'=>$discount->id,
+								   'sdate'=>$discount->cdate,
+								   'edate'=>$discount->edate,
+								   'stime'=>$discount->ctime,
+								   'etime'=>$discount->etime));
+		}
+		echo json_encode($arr);
+	}
+
+	public function actionAddDiscount(){
+		if(isset($_POST['pid']) && isset($_POST['sdate']) && isset($_POST['edate']) &&
+		   isset($_POST['stime']) && isset($_POST['etime'])){
+			$discount = new TimelyDiscountsAR();
+			$discount->pid   = $_POST['pid'];
+			$discount->cdate = $_POST['sdate'];
+			$discount->edate = $_POST['edate'];
+			$discount->ctime = $_POST['stime'];
+			$discount->etime = $_POST['etime'];
+			$discount->save();
+			echo $discount->id;
+		}
+		echo '-1';
+	}
+
+	public function actionUpdateDiscount(){
+		if(isset($_POST['id']) && isset($_POST['sdate']) && isset($_POST['edate']) &&
+		   isset($_POST['stime']) && isset($_POST['etime'])){
+			$discount = TimelyDiscountsAR::model()->find("id=:id", array(":id"=>$_POST['id']));
+			if($discount){
+				$discount->cdate = $_POST['sdate'];
+				$discount->edate = $_POST['edate'];
+				$discount->ctime = $_POST['stime'];
+				$discount->etime = $_POST['etime'];
+				$discount->update();
+				echo '0';
+				return;
+			}
+		}
+		throw new CHttpException(403, "Invalid parameter");
+	}
+
+	public function actionDeleteDiscount($id){
+		$count = TimelyDiscountsAR::model()->deleteAll("id=:id", array(":id"=>$id));
+		echo $count;
 	}
 
 	public function actionNoProducts(){
@@ -75,11 +131,14 @@ class ProductManagerController extends TakeAwayController
 		}
 	}
 
+
 	public function actionGetProduct()
 	{
 		if(isset($_POST['id'])){
 			$product = ProductsAR::model()->getDetailProductById($_POST['id']);
 			$prodArray = ProductsAR::model()->getProductArray($product);
+			$images = ProductImageAR::model()->getImagesByPid($_POST['id']);
+			$prodArray['images'] = $images;
 			echo json_encode($prodArray);
 		}
 	}
@@ -186,7 +245,7 @@ class ProductManagerController extends TakeAwayController
 			$product->stime = $_POST['stime'];
 			$product->etime = $_POST['etime'];
 			$product->instore = $_POST['instore'];
-			$product->richtext = $_POST['richtext'];
+			// $product->richtext = $_POST['richtext'];
 			$product->type_id = $_POST['typeId'];
 			$product->update();
 		}
@@ -217,7 +276,6 @@ class ProductManagerController extends TakeAwayController
 	{	
 		$pictureId = UpPicture::uploadPicture("upload/cover/","cover");
         //存储到数据库中
-
         $product = ProductsAR::model()->findByPK($productId);
         $product->cover = $pictureId;
         $product->update();
@@ -230,6 +288,21 @@ class ProductManagerController extends TakeAwayController
 		$picture = PicturesAR::model()->findByPK($pictureId);
 		$category->pic_url = $picture->pic_url;
 		$category->update();
+	}
+
+	public function actionProdImgUp($productId){
+		$result = UpPicture::uploadPictureWithoutEcho("upload/detail/","prodImg");
+		$prodimg   = new ProductImageAR();
+		$prodimg->pid = $productId;
+		$prodimg->iid = $result['pid'];
+		$prodimg->save();
+		$result['piid'] = $prodimg->id;
+		echo json_encode($result);
+	}
+
+	public function actionDelimg($id){
+		$count = ProductImageAR::model()->deleteAll('id=:id', array(":id"=>$id));
+		echo json_encode(array('count' => $count));
 	}
 
 	public function actionBatchCategory()

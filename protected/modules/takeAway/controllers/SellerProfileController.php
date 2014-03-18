@@ -49,7 +49,7 @@ class SellerProfileController extends TakeAwayController{
 						}else if(!isset($poster->deleted)){
 							$dbposter = new PostersAR();
 							$dbposter->name = $poster->name;
-							$dbposter->store_id = $userId;
+							$dbposter->store_id = $sid;
 							$dbposter->phone = $poster->phone;
 							$dbposter->description  = $poster->desc;
 							$dbposter->save();
@@ -68,7 +68,7 @@ class SellerProfileController extends TakeAwayController{
 							$dbdistrict->update();
 						}else if(!isset($district->deleted)){
 							$dbdistrict = new DistrictsAR();
-							$dbdistrict->store_id = $userId;
+							$dbdistrict->store_id = $sid;
 							$dbdistrict->name = $district->name;
 							$dbdistrict->description = $district->desc;
 							$dbdistrict->save();

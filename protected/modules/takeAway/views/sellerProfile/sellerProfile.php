@@ -354,7 +354,7 @@
 	function setStoreName(){
 		var store_name = $('#store_name').val();
 		if(!store_name){
-			alert('店铺名称不能为空！');
+			TOAST.warn('店铺名称不能为空！');
 			$('#store_name').val(data['shopinfo']['store_name']);
 		}else{
 			data['shopinfo']['store_name'] = store_name;
@@ -369,7 +369,7 @@
 		if(phone && /(\d+[-])*\d{3,16}/.test(phone)){
 			data['shopinfo']['phone'] = phone;
 		}else if(phone){
-			alert('无效的号码！');
+			TOAST.warn('无效的号码！');
 			$('#phone_number').val(data['shopinfo']['phone']);
 		}
 	}
@@ -382,7 +382,7 @@
 		if(/^([0-1][0-9]|2[0-3]):[0-5]*[0-9]$/.test(stime)){
 			stime = formatTime(stime);
 			if(stime > data['shopinfo']['etime']){
-				alert('开始时间不能晚于结束时间！');
+				TOAST.warn('开始时间不能晚于结束时间！');
 				$('#stime').val(data['shopinfo']['stime']);
 				return;
 			}
@@ -400,7 +400,7 @@
 		if(/^([0-1][0-9]|2[0-3]):[0-5]*[0-9]$/.test(etime)){
 			etime = formatTime(etime);
 			if(etime < data['shopinfo']['stime']){
-				alert('结束时间不能早于开始时间！');
+				TOAST.warn('结束时间不能早于开始时间！');
 				$('#etime').val(data['shopinfo']['etime']);
 				return;
 			}
@@ -422,7 +422,7 @@
 		if(addr.length <= 140){
 			data['shopinfo']['address'] = addr;
 		}else{
-			alert('地址过长！');
+			TOAST.warn('地址过长！');
 			$('#store_address').val(data['shopinfo']['address']);
 		}
 	}
@@ -503,7 +503,7 @@
 		var length = data['posters'].length;
 			
 		if(!name){
-			alert('派送员名称不能为空！');
+			TOAST.warn('派送员名称不能为空！');
 			return;
 		}
 
@@ -542,17 +542,17 @@
 		var desc = $('#add_district_desc').val();
 			
 		if(!name){
-			alert('片区名称不能为空！');
+			TOAST.warn('片区名称不能为空！');
 			return;
 		}
 		if(!desc){
-			alert('片区描述不能为空！');
+			TOAST.warn('片区描述不能为空！');
 			return;
 		}
 		for(disindex in data['districts']){
 			var district = data['districts'][disindex];
 			if(!district.deleted && district.name == name && disindex != length){
-				alert('该片区已存在！');
+				TOAST.warn('该片区已存在！');
 				return;
 			}
 		}
@@ -570,18 +570,18 @@
 		var length = data['districts'].length;
 			
 		if(!name){
-			alert('片区名称不能为空！');
+			TOAST.warn('片区名称不能为空！');
 			return;
 		}
 		if(!desc){
-			alert('片区描述不能为空！');
+			TOAST.warn('片区描述不能为空！');
 			return;
 		}
 		
 		for(disindex in data['districts']){
 			var district = data['districts'][disindex];
 			if(!district.deleted && district.name == name){
-				alert('该片区已存在！');
+				TOAST.warn('该片区已存在！');
 				return;
 			}
 		}
@@ -594,7 +594,7 @@
 		);
 		if(selected_dis == -1)
 			setDistrict();
-		alert('添加成功！');
+		TOAST.warn('添加成功！');
 	}
 
 	function deleteDistrict(){
@@ -613,7 +613,7 @@
 		var length = data['posters'].length;
 			
 		if(!name){
-			alert('派送员名称不能为空！');
+			TOAST.warn('派送员名称不能为空！');
 			return;
 		}
 		
@@ -627,7 +627,7 @@
 		);
 		if(selected_pos == -1)
 			setPoster();
-		alert('添加成功！');
+		TOAST.warn('添加成功！');
 	}
 
 	function deletePoster(){
@@ -640,7 +640,7 @@
 
 	function submit(){
 		if(data['districts'].length == 0){
-			alert('您至少需要添加一个片区');
+			TOAST.warn('您至少需要添加一个片区');
 			return;
 		}else{
 			var count = 0;
@@ -649,12 +649,12 @@
 					count ++;
 			}
 			if(count == 0){
-				alert('您至少需要添加一个片区');
+				TOAST.warn('您至少需要添加一个片区');
 				return;
 			}
 		}
 		if(data['posters'].length == 0){
-			alert('您至少需要一个配送人员');
+			TOAST.warn('您至少需要一个配送人员');
 			return;
 		}else{
 			var count = 0;
@@ -663,7 +663,7 @@
 					count ++;
 			}
 			if(count == 0){
-				alert('您至少需要一个配送人员');
+				TOAST.warn('您至少需要一个配送人员');
 				return;
 			}
 		}

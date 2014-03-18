@@ -171,7 +171,6 @@
       -moz-transition: border linear .2s,box-shadow linear .2s;
       -o-transition: border linear .2s,box-shadow linear .2s;
       transition: border linear .2s,box-shadow linear .2s;
-
   }
 
   /*印章效果*/
@@ -501,4 +500,32 @@
 @-webkit-keyframes bounce_circular{
     0%{-webkit-transform:scale(1); opacity: 1;}
     100%{-webkit-transform:scale(.3); opacity: 1;}
+}
+#toast-container{
+  position: absolute;
+  width: 400px;
+  height: 30px;
+  left: 50%;
+  top: -31px;
+  margin-left: -200px;
+  line-height: 30px;
+  font-size: 1.1em;
+  text-align: center;
+  z-index: 10001;
+  color: #fff;
+  border-bottom:1px solid #a0a0a0;
+  border-left: 1px solid #a0a0a0;
+  border-right: 1px solid #a0a0a0;
+}
+#toast-container.info{
+  background-color: #61BFC7;
+}
+#toast-container.success{
+  background-color: #729939;
+}
+#toast-container.warn{
+  background-color: #FFA72B;
+}
+#toast-container.err{
+  background-color: #C90739;
 }

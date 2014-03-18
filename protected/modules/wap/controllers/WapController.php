@@ -3,6 +3,11 @@ class WapController extends Controller{
 	
 	public $layout = '/layouts/main';
 	public $defaultAction = "index";
+
+	// template function
+	public function actionTemp(){
+		$this->render('aqitemplate');
+	}
 	
 	public function actionIndex(){
 		
@@ -24,12 +29,15 @@ class WapController extends Controller{
 			if(isset($_GET['sortid']))
 				$sortId = $_GET['sortid'];
 		}else{
-			throw new CHttpException(404, "Error Processing Request");
+			// throw new CHttpException(404, "Error Processing Request");
 		}
 		if($sellerId && $openid && 
 		   ($user = UsersAR::model()->getUserById($sellerId)) &&
 		   ($member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid))){
-			
+			if($user->balance <= 0){
+				$this->actionNobalance();
+				return;
+			}
 			$key = null;
 			// 验证token
 			if(MemberTokenAR::model()->validateToken($sellerId, $openid, $token)){
@@ -45,6 +53,66 @@ class WapController extends Controller{
 		}else{
 			$this->redirect(Yii::app()->createUrl('errors/error/404'));
 		}
+	}
+
+	public function actionContact(){
+		$user = null;
+		$url  = Yii::app()->request->getUrl();
+		preg_match('/.*wap\/contact\/(\d+)(.*)/i', $url, $matches);
+		if(isset($matches[1]) &&
+		   ($user = UsersAR::model()->find("id=:id", array(":id"=>$matches[1]))))
+		{
+			if(Yii::app()->request->isPostRequest){
+				$sid     = $_POST['store'];
+				$content = $_POST['content'];
+				$mid     = $_POST['memberid'];
+				if(strlen(trim($content)) > 0 && strlen(trim($content)) < 128){
+					$comment = new CommentsAR();
+					$comment->member_id = $mid;
+					$comment->store_id  = $sid;
+					$comment->comment   = $content;
+					$comment->save();
+					$comment = CommentsAR::model()->find("id=:cid", array(":cid"=>$comment->id));
+
+					$mq = new MsgQueueAR();
+					$mq->type = 3;
+					$mq->seller_id = $matches[1];
+					$mq->msg_id    = $comment->id;
+					$mq->save();
+
+					$member = MembersAR::model()->find("id=:mid", array(':mid' => $mid));
+					$member->latest_comment = $comment->ctime;
+					$member->save();
+					$this->render('contact', array("result"=>"感谢您的热心反馈，我们会继续努力改进为您提供更好的服务！"));
+				}
+				else{
+					$this->render('contact', array("result"=>"抱歉, 您输入的内容无效"));
+				}
+			}
+			else if(isset($_GET['openid'])){
+				$member = MembersAR::model()->find("seller_id=:sid AND openid=:oid AND unsubscribed<>1 AND deleted<>1",
+												   array(":sid"=>$matches[1], ":oid"=>$_GET['openid']));
+				if($member){
+					$stores = StoreAR::model()->findAll("seller_id=:sid", 
+														array(":sid"=>$user->id));
+					$storearr = array();
+					foreach ($stores as $store) {
+						array_push($storearr, array("id"=>$store->id, "sname"=>$store->name));
+					}
+					$this->render('contact', array('sellerid' => $user->id,
+												   'stores' => $storearr,
+												   'memberid' => $member->id));
+				}else{
+					$this->render('contact', array("result"=>"抱歉，您还不能发表意见"));
+				}
+			} else{
+				$this->render('contact', array("result"=>"抱歉，您还不能发表意见"));
+			}
+		}
+	}
+
+	public function actionNobalance(){
+		$this->render('nobalance');
 	}
 
 	public function actionPersonal(){
@@ -64,12 +132,17 @@ class WapController extends Controller{
 			$token = $_GET['token'];
 			$storeid = $_GET['storeid'];
 		}else{
-			throw new CHttpException(404, "Error Processing Request");
+			throw new CHttpException(403, "Error Processing Request");
 		}
 		if($sellerId && $openid && 
 		   ($user = UsersAR::model()->getUserById($sellerId)) &&
 		   ($member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid))){
-			
+		   	if($user->balance <= 0){
+				$this->actionNobalance();
+				return;
+			}
+			$bindon = PluginsStoreAR::model()->find('store_id=:sid AND plugin_id=:pid',
+													array(':sid'=>$storeid, ':pid'=>0))? 1 : 0;
 			$key = null;
 			// 验证token
 			if(MemberTokenAR::model()->validateToken($sellerId, $openid, $token)){
@@ -78,7 +151,9 @@ class WapController extends Controller{
 			$referer = (isset($_SERVER['HTTP_REFERER'])?1:0);
 			$this->render('personalcenter', array('key'=>$key, 'sellerId'=>$sellerId, 
 										 'openId'=>$openid, 'storeid'=>$storeid, 
-										 'referer'=>$referer, 'wxname'=>$user->wechat_name));
+										 'referer'=>$referer, 'wxname'=>$user->wechat_name,
+										 'memberid'=>$member->id, 'phone'=>$member->phone,
+										 'bindon'=>$bindon));
 		}else{
 			$this->redirect(Yii::app()->createUrl('errors/error/404'));
 		}
@@ -104,6 +179,10 @@ class WapController extends Controller{
 		if($sellerId && $openid && 
 		   ($user = UsersAR::model()->getUserById($sellerId)) &&
 		   ($member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid))){
+		   	if($user->balance <= 0){
+				$this->actionNobalance();
+				return;
+			}
 			$key = null;
 			// 验证token
 			if(MemberTokenAR::model()->validateToken($sellerId, $openid, $token)){
@@ -149,6 +228,10 @@ class WapController extends Controller{
 		if($sellerId && $openid && 
 		   ($user = UsersAR::model()->getUserById($sellerId)) &&
 		   ($member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid))){
+		   	if($user->balance <= 0){
+				$this->actionNobalance();
+				return;
+			}
 			$key = null;
 			// 验证token
 			if(MemberTokenAR::model()->validateToken($sellerId, $openid, $token)){
@@ -196,6 +279,10 @@ class WapController extends Controller{
 		if($sellerId && $openid && 
 		   ($user = UsersAR::model()->getUserById($sellerId)) &&
 		   ($member = MembersAR::model()->getMemberBySellerIdAndOpenId($sellerId, $openid))){
+		   	if($user->balance <= 0){
+				$this->actionNobalance();
+				return;
+			}
 			$key = null;
 			// 验证token
 			if(MemberTokenAR::model()->validateToken($sellerId, $openid, $token)){
@@ -281,9 +368,11 @@ class WapController extends Controller{
 	public function actionGetPersonalInfo(){
 		if(isset($_POST['openid']) && isset($_POST['storeid']) && isset($_POST['sellerid'])){
 
-			$member = MembersAR::model()->find("openid='{$_POST['openid']}' AND seller_id={$_POST['sellerid']}");
+			$member  = MembersAR::model()->find("openid='{$_POST['openid']}' AND seller_id={$_POST['sellerid']}");
+			$maxtime = OrdersAR::model()->getMaxOrderTime($_POST['storeid'], $member->id);
 			if($member){
-				$result = array('success'=>'1', 'result'=>array('lastorder'=>OrdersAR::model()->getMaxOrderTime($_POST['storeid'], $member->id)[0]['mtime']));
+				$result = array('success'=>'1', 
+								'result'=>array('lastorder'=>$maxtime[0]['mtime']));
 				echo json_encode($result);
 			}
 			echo null;

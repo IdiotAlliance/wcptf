@@ -8,18 +8,28 @@
 class UpPicture
 {
     public static function uploadPicture($pic_path,$name){
+        $arr = UpPicture::handleUpload($pic_path, $name);
+        echo json_encode($arr);
+        return $arr['pid'];
+    }
+
+    public static function uploadPictureWithoutEcho($pic_path,$name){
+        return UpPicture::handleUpload($pic_path, $name);
+    }
+
+    private static function handleUpload($pic_path,$name){
         $picname = $_FILES[$name]['name'];
         $picsize = $_FILES[$name]['size'];
         if ($picname != "") {
             if ($picsize > 4096000) {
-                echo '图片大小不能超过1M';
+                throw new CHttpException(403, '图片大小不能超过1M');
                 exit;
             }
-			preg_match('/.*(\.jpg|\.JPG|\.png|\.PNG)$/i', $picname, $matches);
-			$type = $matches[1];
-			
+            preg_match('/.*(\.jpg|\.JPG|\.png|\.PNG)$/i', $picname, $matches);
+            $type = $matches[1];
+            
             if ($type != ".png" && $type != ".jpg" && $type != ".PNG" && $type != ".JPG") {
-                echo '图片格式不对！';
+                throw new CHttpException(403, '图片格式不对！');
                 exit;
             }
             $rand = rand(100, 999);
@@ -36,12 +46,12 @@ class UpPicture
         }
         $size = round($picsize/1024,2);
         $arr = array(
+            'pid'=>$picture->id,
             'name'=>$picname,
             'pic_path'=>$pic_path,
             'size'=>$size
         );
-        echo json_encode($arr);
-        return $picture->id;
+        return $arr;
     }
 
     /**

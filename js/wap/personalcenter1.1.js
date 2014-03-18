@@ -102,6 +102,29 @@ function showordercontent(){
   $('#personaltitle').html('历史订单');
 }
 
+function showbindphone(){
+  if(bindon){
+    $('#maincontent').hide();
+    $('#phonebinding').show();
+    if(boundphone && boundphone != ""){
+      
+    }
+    $('#personalcenterfooter').show();
+    $('#personaltitle').html('绑定号码');
+  }else{
+    Toast("手机绑定功能未开启", 3000);
+  }
+}
+
+function showbindcard(){
+  if(bindon){
+    $('#maincontent').hide();
+    $('#phonebinding').show();
+  }else{
+    Toast("会员卡绑定功能未开启", 3000);
+  }
+}
+
        //获得图片资源
 function getbackground(btnname){
   var position=0;
@@ -287,4 +310,7 @@ function orderlistprepared(sellerphone){
     orderload(nexttime,LIMITNUM);
   });
   isorderlistprepared=true;
+}
+function onPhoneBindClick(){
+
 }
