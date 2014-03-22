@@ -434,24 +434,23 @@ $(document).ready(function(event){
 		$.ajax({
             type: 'POST',
             url: "<?php echo CHtml::normalizeUrl(array('replyRules/saveImageTexts'));?>",
-            data: {'current_rule':'default','sdmsgId':current_sdmsgs_id,'current_json':current_json},
+            data: {'current_rule':'default','sdmsgId':current_sdmsgs_id,'current_json':$.toJSON(current_json)},
             dataType: 'json',
              
             success:function(json){
             	if(current_rule=='auto'){
-            		$("#rule-list li").eq(0).find("h5").text(ruleName);
+            		// $("#rule-list li").eq(0).find("h5").text(ruleName);
             		$("#rule-list li").eq(0).find("label").text("回复类型："+current_type);
             	}else{
-            		$("#rule-list li").eq(1).find("h5").text(ruleName);
+            		// $("#rule-list li").eq(1).find("h5").text(ruleName);
             		$("#rule-list li").eq(1).find("label").text("回复类型："+current_type);
             	}
-            	
             	current_json = json;
             	alert('保存成功！');
             },
             error:function(){
             	alert('保存多图文失败！');
-            },				
+            },
 		})
 	}
 

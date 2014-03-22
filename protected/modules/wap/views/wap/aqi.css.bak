@@ -1,0 +1,424 @@
+*{
+		margin: 0;
+		padding: 0;
+		background-size: 100%;
+		font-size: 100%;
+	}
+	body{
+		width: 100%;
+		height: 100%;
+		font-size: 100%;
+		text-align: center;
+		overflow: auto;
+		margin: 0;
+		background-color: #d0d0d0;
+	}
+	li{
+		list-style: none;
+		text-align: left;
+		margin: auto;
+		margin-bottom: 10px;
+	}
+	img{
+		max-width: 100%;
+		max-height: 100%;
+	}
+	.lpten{
+		padding-left: 10px;
+	}
+	.rpten{
+		padding-right: 10px;
+	}
+	.nav_bar{
+		position: fixed;
+		width: 100%;
+		z-index: 1000;
+		box-shadow: 1px 1px 3px #808080;
+	}
+	.header_bar{
+		height: 70px;
+		top: 0;
+		left: 0;
+		right: 0;
+		background-color: #ea4b35;
+	}
+	.header_bar .header_logo{
+		margin-left: 10px;
+		margin-top: 15px;
+		width: 75px;
+		height: 40px;
+		background: url('<?php echo Yii::app()->baseUrl?>/img/aqi/logo.png') 0 0 no-repeat;
+		background-size: 100% 100%;
+	}
+	.header_bar .header_order{
+		float: right;
+		padding-top: 35px;
+		height: 50px;
+		margin-right: 10px;
+		color: #fff;
+		margin-top: -40px;
+		text-align: center;
+		font-size: 0.7em;
+		font-weight: bold;
+		background: url('<?php echo Yii::app()->baseUrl?>/img/aqi/icon.png') top center no-repeat;
+		background-size: auto auto;
+	}
+	.footer_bar{
+		height: 50px;
+		right: 0;
+		left: 0;
+		bottom: 0;
+		background-color: rgba(0,0,0,0.8);
+	}
+	.footer_bar .footer_nav_button{
+		position: absolute;
+		left: 10px;
+		top: 12px;
+		width: 35px;
+		height: 25px;
+		background: url('<?php echo Yii::app()->baseUrl?>/img/aqi/return_icon.png') 0 0 no-repeat;
+		display: none;
+	}
+	.footer_bar .footer_main_button{
+		position: absolute;
+		width: 50%;
+		left: 50%;
+		margin-left: -25%;
+		border-radius: 10px;
+		background-color: #d0d0d0;
+		color: #fff;
+		text-align: center;
+		height: 44px;
+		top: 3px;
+		font-size: 1.2em;
+		font-weight: bold;
+		line-height: 44px;
+	}
+	.footer_bar .footer_main_button.active{
+		background-color: #ea4b35;
+		font-size: 1em;
+	}
+	.footer_bar .footer_main_button.active .info{
+		font-size: 0.7em;
+		height: 17px;
+		line-height: 17px;
+	}
+	.footer_bar .footer_main_button.active .instruction{
+		font-size: 1em;
+		height: 30px;
+		line-height: 30px;
+	}
+	.aqi_body{
+		width: 100%;
+		height: 100%;
+	}
+	.aqi_body .alert_container{
+		width: 100%;
+		color: #b94a48;
+		background-color: #f2dede;
+		border-color: #eed3d7;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		line-height: 20px;
+		display: none;
+	}
+	.aqi_body .aqiframe_container{
+		position: relative;
+		left: 0;
+		top: 0;
+		width: 100%;
+	}
+	.aqi_body .aqiframe_container .frame{
+		position: absolute;
+		left: 100%;
+		right: 0;
+		width: 100%;
+		display: none;
+		padding-bottom: 60px;
+		padding-top: 70px;
+	}
+	.aqi_body .aqiframe_container .frame.active{
+		left: 0;
+		display: block;
+	}
+	.aqi_body .promotion_container{
+		width: 100%;
+	}
+	.aqi_body .promotion_container .promotion_item{
+		width: 100%;
+		margin-bottom: 8px;
+		box-shadow: 1px 1px 3px #808080;
+	}
+	.aqi_body .promotion_container .promotion_item .promotion_img{
+		width: 100%;
+		min-height: 180px;
+		max-height: 250px;
+		background-size: cover;
+	}
+	.aqi_body .promotion_container .promotion_banner{
+		width: 150px;
+		height: 40px;
+		background: url('<?php echo Yii::app()->baseUrl?>/img/aqi/activity_recommend.png') 0 0 no-repeat;
+		background-size: 100%;
+	}
+	.aqi_body .promotion_container .promotion_desc{
+		width: 100%;
+		height: 45px;
+		background: #fff;
+		line-height: 45px;
+		text-align: left;
+	}
+	.product_name{
+		height: 100%;
+		line-height: 100%;
+		padding-left: 10px;
+	}
+	.product_price{
+		height: 100%;
+		line-height: 100%;
+		font-size: 1.1em;
+		color: #ff0000;
+		float: center;
+	}
+	.product_detail{
+		font-size: 1em;
+		color: #a0a0a0;
+		float: right;
+		padding-right: 10px;
+		background: url('<?php echo Yii::app()->baseUrl?>/img/aqi/detail_icon.png') center right no-repeat;
+		background-size: 6px 14px;
+		margin-right: 10px;
+	}
+	.image_mask{
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5) url('<?php echo Yii::app()->baseUrl?>/img/aqi/select_icon.png') center center no-repeat;
+		background-size: 25px 25px;
+		margin-bottom: 0;
+		min-height: inherit;
+	}
+	.products_container{
+		width: 100%;
+	}
+	.product_item_container{
+		width: 100%;
+	}
+	.product_item{
+		box-shadow: 1px 1px 3px #808080;
+		width: 44%;
+		display: inline-block;
+		margin-left: 4%;
+		margin-bottom: 0;
+		background-color: #fff;
+	}
+	.product_item .product_image{
+		width: 100%;
+	}
+	.product_desc{
+		width: 100%;
+		background-color: #fff;
+		padding-top: 5px;
+	}
+	.product_desc .product_name{
+		line-height: 100%;
+	}
+	.product_desc .product_info_group{
+		height: 20px;
+		line-height: 20px;
+	}
+	#frame_detail{
+		padding-top: 70px;
+		width: 100%;
+		text-align: left;
+	}
+	#frame_detail img{
+		width: 100%;
+	}
+	#frame_detail .detail_prod_name{
+		font-size: 1.1em;
+		font-weight: bold;
+		padding-left: 10px;
+		margin-top: 5px;
+	}
+	#frame_detail .detail_prod_price{
+		color: #ff0000;
+		font-weight: bold;
+		font-size: 1.1em;
+		padding-left: 10px;
+		margin-top: 5px;
+	}
+	#frame_detail .img_group_title{
+		margin-top: 5px;
+		padding-left: 10px;
+		font-size: 1.1em;
+		font-weight: bold;
+	}
+	#frame_detail .detail_img_group img{
+		margin-top: 0;
+		margin-top: -5px;
+	}
+	#frame_detail .detail_prod_btn{
+		width: 150px;
+		height: 35px;
+		line-height: 35px;
+		background-color: #ea4b35;
+		color: #ffffff;
+		border-radius: 5px;
+		text-align: center;
+		margin-top: 5px;
+		margin-left: 10px;
+	}
+	#frame_detail .detail_prod_btn.disabled{
+		background-color: #808080;
+		color: #ffffff;
+	}
+	#frame_order .order_title{
+		text-align: center;
+		border-bottom: 3px dotted #808080;
+		padding-top: 15px;
+		padding-bottom: 15px;
+	}
+	#frame_order #order_list{
+		width: 100%;
+	}
+	#frame_order #order_list li{
+		width: 100%;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		border-bottom: 1px solid #c0c0c0;
+		box-shadow: 0px 1px 1px #f0f0f0;
+	}
+	#frame_order #order_list .info_group{
+		display: inline-block;
+		padding-left: 10px;
+	}
+	#frame_order #order_list .info_group .info_group_title{
+		font-size: 1.1em;
+	}
+	#frame_order #order_list .info_group .price{
+		color: #ff0000;
+		padding-right: 10px;
+	}
+	#frame_order #order_list .control_group{
+		float: right;
+		padding-right: 10px;
+		display: inline-block;
+		margin-bottom: 0;
+		padding-top: 3px;
+	}
+	#frame_order #order_list .control_group .less{
+		display: inline-block;
+		width: 35px;
+		height: 35px;
+		background: url('<?php echo Yii::app()->baseUrl?>/img/aqi/less.png') center center no-repeat; 
+		background-size: cover;
+	}
+	#frame_order #order_list .control_group .less.disabled{
+		background: url('<?php echo Yii::app()->baseUrl?>/img/aqi/less_disabled.png') center center no-repeat;
+		background-size: cover;
+	}
+	#frame_order #order_list .control_group .amount{
+		display: inline-block;
+		width: 35px;
+		height: 33px;
+		line-height: 33px;
+		text-align: center;
+		color: #fff;
+		background: -webkit-gradient(linear, left top, left bottom, from(#aaa), to(#ddd));
+		margin-bottom: 2px;
+		overflow: hidden;
+	}
+	#frame_order #order_list .control_group .more{
+		display: inline-block;
+		width: 35px;
+		height: 35px;
+		background: url('<?php echo Yii::app()->baseUrl?>/img/aqi/more.png') center center no-repeat;
+		background-size: cover;
+		margin-right: 25px;
+	}
+	#frame_order #order_list .control_group .discard{
+		display: inline-block;
+		width: 35px;
+		height: 35px;
+		background: url('<?php echo Yii::app()->baseUrl?>/img/aqi/delete_button.png') center center no-repeat;
+		background-size: cover;
+	}
+	#frame_order #order_total{
+		padding-left: 10px;
+		font-size: 1.1em;
+		font-weight: bold;
+		color: #ff0000;
+		text-align: left;
+	}
+	#frame_submit{
+		text-align: left;
+	}
+	#frame_submit .label{
+		width: 20%;
+		text-align: right;
+		display: inline-block;
+		padding-right: 10px;
+		margin-top: 0;
+		height: 30px;
+		line-height: 30px;
+	}
+	#frame_submit .submit_group{
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+	#frame_submit select{
+		width: 70%;
+		padding: 0;
+		margin: 0;
+		outline-style: none;
+		border: 0;
+		height: 30px;
+		margin-left: -5px;
+		background-color: #fff;
+	}
+	#frame_submit input{
+		width: 70%;
+		border: 0px;
+		border-color: #fff;
+		font-family:arial,sans-serif;
+		outline-style: none;
+		height: 30px;
+	}
+	#frame_submit textarea{
+		border: 0px;
+		width: 70%;
+		height: 100px;
+		padding: 0px;
+		border-color: #fff;
+		font-family:arial,sans-serif;
+		outline-style:none;
+		resize: none;
+		font-size: 100%;
+		vertical-align: text-top;
+	}
+	#toast{
+		position: fixed;
+		width: 70%;
+		left: 15%;
+		bottom: 70px;
+		height: 35px;
+		line-height: 35px;
+		padding-left: 10px;
+		padding-right: 10px;
+		font-weight: bold;
+		font-size: 100%;
+		color: #fff;
+		box-shadow: 0 0 3px #808080;
+		max-width: 100%;
+		opacity: 0;
+		background-color: #808080;
+		z-index: 1002;
+		-webkit-transition: opacity 1s ease-in-out;
+		-moz-transition: opacity 1s ease-in-out;
+		-o-transition: opacity 1s ease-in-out;
+		-ms-transition: opacity 1s ease-in-out;
+		transition: opacity 1s ease-in-out;
+	}
+	#toast.active{
+		opacity: 1;
+	}

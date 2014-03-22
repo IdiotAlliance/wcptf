@@ -5,8 +5,12 @@ class WapController extends Controller{
 	public $defaultAction = "index";
 
 	// template function
-	public function actionTemp(){
-		$this->render('aqitemplate');
+	public function actionTemp($name, $sid, $openid, $token=""){
+		if($name && $sid && $openid){
+			
+		}else{
+			throw new CHttpException(403, "illegal arguments");
+		}
 	}
 	
 	public function actionIndex(){
